@@ -1,6 +1,12 @@
-// ?Rva009C0A30Vp6AddNoise@@YAXPAEIIHH@Z
-// partial score=1.0 date=2026-10-11
+// ?Rva009C0A30Vp6AddNoise@@YAXPAEIIHH@Z -- 524 bytes at 0x009C0A30.
 // cl: /O2 /G6 /Z7 /MD
+//
+// VP6 plane denoise pass: builds a gaussian-derived char distribution from
+// the noise level, seeds a 2048-byte noise table with rand(), then adds the
+// noise to each row with the SSE clamp sequence below. Ported from the Open
+// BFME 2 donor Code/Libraries/Source/VP6/PlaneAddNoiseWmt.cpp; the caller is
+// the matched VP6 plane decoder family in this directory. The 16-byte
+// aligned clamp vectors force the entry alloca alignment that retail shows.
 #include <stdlib.h>
 #include <string.h>
 #include <emmintrin.h>

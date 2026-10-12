@@ -36477,7 +36477,6 @@ _piSBStopListingAutoMatches,,0x00864BF0,54,game/GameEngine/Source/Common/BfmeCon
 ?d_009b8130@@YAXXZ,,0x009B8130,5572,game/gen_asm/d_00968910.asm,matched,gen-dump;bounds=high
 ?d_009bebb0@@YAXXZ,,0x009BEBB0,3721,game/gen_asm/d_009b6740.asm,matched,gen-dump;ghidra=FUN_00dbebb0
 ?d_009bfa40@@YAXXZ,,0x009BFA40,4068,game/gen_asm/d_009b6740.asm,matched,gen-dump;ghidra=FUN_00dbfa40
-?d_009c0a30@@YAXXZ,,0x009C0A30,524,game/gen_asm/d_009b9700.asm,matched,gen-dump;bounds=high
 ?d_009c2ce0@@YAXXZ,,0x009C2CE0,2374,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009c3630@@YAXXZ,,0x009C3630,1724,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009c3d50@@YAXXZ,,0x009C3D50,1777,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
@@ -172548,3 +172547,4 @@ uw_00c1b9d0,,0x00C1B9D0,8,game/GameEngine/Source/GameLogic/System/GameLogic_load
 ?resetCamera@View@@UAEXPBUCoord3D@@HMM@Z,,0x0045BC40,3,game/GameEngine/Source/GameClient/View.cpp,matched,View vtable slot 49 and doResetCamera caller prove the BFME four-argument base stub; View.h inline empty body; View.cpp COMDAT equals retail (census c1012a);model=claude-opus-5-5;host=GreatFaram
 ?Compute_Ram_Size@AABTreeClass@@QAEHXZ,,0x0096A630,17,game/Libraries/Source/WWVegas/WW3D2/meshgeometry.cpp,matched,AABTreeClass ram-size formula; aabtree.h inline; meshgeometry.cpp COMDAT equals retail (census c1012a);model=claude-opus-5-5;host=GreatFaram
 ?Class_ID@HLodClass@@UBEHXZ,,0x0097BC00,6,game/Libraries/Source/WWVegas/WW3D2/hlod.cpp,matched,returns CLASSID_HLOD; hlod.h declares it inline; hlod.cpp COMDAT equals retail (census c1012a);model=claude-opus-5-5;host=GreatFaram
+?Rva009C0A30Vp6AddNoise@@YAXPAEIIHH@Z,,0x009C0A30,524,game/GameEngine/Source/Common/Rva009C0A30Vp6AddNoise.cpp,matched,VP6 plane denoise pass ported from the Open BFME 2 donor VP6/PlaneAddNoiseWmt.cpp; builds a gaussian char distribution from the noise level seeds the 2048-byte noise table with rand() then adds it per row through the SSE clamp sequence; 16-byte aligned clamp vectors force the entry alloca alignment retail shows; all three callees are matched rows;model=codex-cli;host=chalco.vps

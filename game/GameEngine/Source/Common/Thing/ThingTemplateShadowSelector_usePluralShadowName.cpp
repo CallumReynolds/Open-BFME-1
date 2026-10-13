@@ -1,10 +1,13 @@
 // ?usePluralShadowName@BfmeThingTemplateShadowSelector@@QBE_NXZ
 // cl: /O2 /DNDEBUG /DWIN32 /MD /EHsc
 //
-// BfmeThingTemplateShadowSelector::usePluralShadowName, retail 0x0087E8D0
-// (36 bytes of a 47-byte body; the tail falls through into the already
-// matched ?dup_0087e8f4@@YAXXZ alias of W3DTerrainBackground::isCulled,
-// reused here by identical-code folding for the single-element check).
+// BfmeThingTemplateShadowSelector::usePluralShadowName, retail 0x0087E8D0/47:
+// one body.  Its last 11 bytes (+0x24) happen to equal the code for
+// W3DTerrainBackground::isCulled, but retail was linked without identical-code
+// folding, the +0x24 entry is only the fall-through after the count test, and
+// no caller reaches it.  The name is the ledger's; the callers (BuildAssistant
+// footprint code, Weapon::isGoalPosWithinAttackRange) suggest a geometry
+// predicate, so treat it as unproven.
 //
 // The selector sits at ThingTemplate+0x60 and its begin/end pointers walk a
 // vector of 36-byte shadow-layer entries; the retail predicate is true only

@@ -29153,7 +29153,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?bfmeDropTexture@Bfme5TextureHolderA@@QAEXXZ,,0x00719F80,30,game/GameEngine/Source/Common/Bfme5ReadyQueue.cpp,matched,
 ?bfmeDropTexture@Bfme5TextureHolderB@@QAEXXZ,,0x00726D90,30,game/GameEngine/Source/Common/Bfme5ReadyQueue.cpp,matched,
 ?bfmeDropUC@BfmeSubUC@@QAEXPAVBfmeThingUC@@@Z,,0x0081C3D0,72,game/GameEngine/Source/Common/BfmeThreeHundredFiftyFour.cpp,matched,
-?bfmeDropXX@BfmeLinkXX@@QAEXXZ,,0x009A2320,25,game/GameEngine/Source/Common/BfmeOneHundredFortyEight.cpp,matched,
 ?bfmeDropYQ@PartitionManagerImpl@@QAEXPAVBfmeThingYQ@@@Z,,0x009F5170,65,game/Libraries/Source/partitionmanager/BfmeConv2102.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/ea-worldbuilder-labels.md;model=claude-opus-5-5;host=ymo-workstation
 ?bfmeDropZP@BfmeListZP@@QAEXPAUBfmeNodeZP@@@Z,,0x0010AB40,69,game/GameEngine/Source/Common/BfmeOneHundredSixty.cpp,matched,
 ?bfmeDtorCDE@BfmeThingCDE@@QAEXXZ,,0x008F8340,170,game/Libraries/Source/shroudmanager/shroudmanager_data.cpp,matched,address-derived CDE destructor; matched caller bfmeGoCDE
@@ -49845,7 +49844,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?dup_0087dcf0@@YAXXZ,,0x0087DCF0,23,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-alias;object-symbol=?Set@Vector3@@QAEXMMM@Z;C++ alias
 ?dup_0087dd10@@YAXXZ,,0x0087DD10,23,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-alias;object-symbol=?Set@Vector3@@QAEXMMM@Z;C++ alias
 ?dup_0087dd60@@YAXXZ,,0x0087DD60,10,game/Libraries/Source/WWVegas/WW3D2/mesh.cpp,matched,gen-alias;object-symbol=?Set_Sort_Level@MeshGeometryClass@@QAEXH@Z;C++ alias
-?dup_0087e8f4@@YAXXZ,,0x0087E8F4,11,game/GameEngineDevice/Source/W3DDevice/GameClient/FlatHeightMap.cpp,matched,gen-alias;object-symbol=?isCulled@W3DTerrainBackground@@QAE_NXZ;C++ alias
 ?dup_0087e9a0@@YAXXZ,,0x0087E9A0,14,game/GameEngine/Source/GameClient/Eva.cpp,matched,gen-alias;object-symbol=??A?$vector@UEvaSideSounds@@V?$allocator@UEvaSideSounds@@@_STL@@@_STL@@QBEABUEvaSideSounds@@I@Z;C++ alias
 ?dup_0087ec10@@YAXXZ,,0x0087EC10,10,game/Libraries/Source/WWVegas/WW3D2/sphereobj.cpp,matched,gen-alias;object-symbol=??0KeyClass@?$PrimitiveAnimationChannelClass@VVector3@@@@QAE@XZ;C++ alias
 ?dup_00881c30@@YAXXZ,,0x00881C30,20,game/GameEngine/Source/Common/VirtualSlot9DispatchThunk.cpp,matched,gen-alias;object-symbol=?dispatchVirtualSlot9@@YAXPAUVirtualSlot9Dispatch@@PAX1@Z;C++ alias
@@ -50367,7 +50365,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?dup_009a1e10@@YAXXZ,,0x009A1E10,16,game/GameEngine/Source/Common/DamageFX.cpp,matched,gen-alias;object-symbol=??0DFX@DamageFX@@QAE@XZ;C++ alias
 ?dup_009a1e20@@YAXXZ,,0x009A1E20,43,game/GameEngine/Source/GameLogic/AI/partition_solver.cpp,matched,gen-alias;object-symbol=?clear@?$vector@U?$pair@W4ObjectID@@W41@@_STL@@V?$allocator@U?$pair@W4ObjectID@@W41@@_STL@@@2@@_STL@@QAEXXZ;C++ alias
 ?dup_009a1e50@@YAXXZ,,0x009A1E50,305,game/GameEngine/Source/GameLogic/Object/SpecialPower/OCLUpgradesVectorInsert.cpp,matched,gen-alias;object-symbol=?_M_insert_overflow@?$vector@UUpgrades@OCLSpecialPowerModuleData@@V?$allocator@UUpgrades@OCLSpecialPowerModuleData@@@_STL@@@_STL@@IAEXPAUUpgrades@OCLSpecialPowerModuleData@@ABU34@ABU__false_type@2@I_N@Z;C++ alias
-?dup_009a2339@@YAXXZ,,0x009A2339,8,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,gen-alias;object-symbol=?Invalidate_Archive@?$IndexClass@HPAUINIEntry@@@@ABEXXZ;C++ alias
 ?dup_009a2c80@@YAXXZ,,0x009A2C80,9,game/GameEngine/Source/GameLogic/Object/Object.cpp,matched,gen-alias;object-symbol=??0?$BitFlags@$0BB@@@QAE@XZ;C++ alias
 ?dup_009a2d20@@YAXXZ,,0x009A2D20,19,game/GameEngine/Source/Common/PointerValueLessThunk.cpp,matched,gen-alias;object-symbol=?pointerValueLess@@YG_NPBK0@Z;C++ alias
 ?dup_009a2d40@@YAXXZ,,0x009A2D40,13,game/GameEngine/Source/Common/OneWordCopyThunk.cpp,matched,gen-alias;object-symbol=?copyFrom@OneWordCopyThunk@@QAEPAU1@PBU1@@Z;C++ alias
@@ -135512,7 +135509,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?upper_bound@@YAXPAX000@Z,,0x004378F0,31,game/GameEngine/Source/Common/Q2TrailingZeroForwarders.cpp,matched,31-byte __cdecl forwarder passing its four arguments plus a trailing 0 to a five-argument __cdecl callee; 27 concrete bytes outside the single REL32; address-derived name
 ?useCameraInReplaysAddrDerived@Rva00090880OptionPreferences@@QAE_NXZ,,0x00090880,95,game/GameEngine/Source/Common/Rva00090880UseCameraInReplays.cpp,matched,byte-twin of usesSystemMapDir at 0x00090780; key string UseCameraInReplays
 ?useCommandButtonOnNearestThing_002FDAC0@@YAXPAVObject@@PBVCommandButton@@PBVThingTemplate@@@Z,,0x002FDAC0,416,game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActionsUseCommandButtonOnNearestThing.cpp,matched,file-static nearest-object command helper; callers 0x002FDCD0 and 0x002FE110; VC7.1 private ABI unit ESI button EDI template stack reproduced by keeping the static helper beside its named caller;model=claude-opus-5-5;host=Jakob
-?usePluralShadowName@BfmeThingTemplateShadowSelector@@QBE_NXZ,,0x0087E8D0,36,game/GameEngine/Source/Common/Thing/ThingTemplateShadowSelector_usePluralShadowName.cpp,matched,tail falls into the isCulled-alias check at 0x0087E8F4 for a single-element vector
 ?use_merged_upsample@D3DX@@YGHPAUjpeg_decompress_struct@1@@Z,,0x00AA9230,125,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\jdmaster.obj
 ?usesInlineBuffer@Rva00892500Object@@QAE_NXZ,,0x00892500,18,game/GameEngine/Source/Common/Rva00892500InlinePointerPredicate.cpp,matched,reconstructed inline-buffer pointer equality predicate
 ?usesInlineBuffer@Rva00892550Object@@QAE_NXZ,,0x00892550,18,game/GameEngine/Source/Common/Rva00892500InlinePointerPredicate.cpp,matched,reconstructed identical inline-buffer pointer equality predicate
@@ -172552,3 +172548,5 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?calcSleepTime@FlammableUpdate@@IAE?AW4UpdateSleepTime@@XZ,,0x00292FA0,84,game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateConstructorThunk.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00292fa0-calcsleeptime.md;model=claude-opus-5-5;host=GreatFaram
 ?onDamage@FlammableUpdate@@UAEXPAVDamageInfo@@@Z,,0x002940D0,346,game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp,matched,ZH FlammableUpdate::onDamage twin plus BFME underwater guard and contained splash damage; ilt_oracle CONFIRMED;model=claude-opus-5-5;host=vm
 ?onDie@SpawnBehavior@@UAEXPBVDamageInfo@@@Z,,0x0020B340,298,game/GameEngine/Source/GameLogic/Object/Behavior/SpawnBehaviorOnDie.cpp,matched,ZH SpawnBehavior::onDie twin; die interface at +0x24; ilt_oracle CONFIRMED;model=claude-opus-5-5;host=vm
+?usePluralShadowName@BfmeThingTemplateShadowSelector@@QBE_NXZ,,0x0087E8D0,47,game/GameEngine/Source/Common/Thing/ThingTemplateShadowSelector_usePluralShadowName.cpp,matched,one 47-byte body; the +0x24 tail was a generated isCulled alias (retired); name unproven - callers are footprint and weapon-range code;model=claude-opus-5-5;host=GreatFaram
+?bfmeDropXX@BfmeLinkXX@@QAEXXZ,,0x009A2320,33,game/GameEngine/Source/Common/BfmeOneHundredFortyEight.cpp,matched,one 33-byte unlink body; the +0x19 tail was a generated Invalidate_Archive alias (retired);model=claude-opus-5-5;host=GreatFaram

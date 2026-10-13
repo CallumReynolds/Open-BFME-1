@@ -2717,7 +2717,8 @@ void ControlBar::setPortraitByImage( const Image *image )
 	* show for an object given its current state or object type */
 //-------------------------------------------------------------------------------------------------
 // ?setPortraitByObject@ControlBar@@IAEXPAVObject@@@Z
-// Body in ControlBar_setPortraitByObject.asm (exact 739B retail).
+// BFME's body is empty (retail 0x0049CFE0, ret 4); it is defined in
+// ControlBarSetPortraitByObject.cpp so that the calls below stay calls.
 
 // ControlBar::populateBeacon, retail 0x004A3830, 416 bytes.  The callback is
 // the BEACON arm of switchToContext: its three function-local name keys and
@@ -2754,22 +2755,11 @@ public:
 	UnicodeString getName(void);
 };
 
-// The portrait-looking ILT at 0x0002262E is not the named
-// ControlBar::setPortraitByObject body: it jumps to the already matched 3-byte
-// Gen_0049cfe0::m(int) body at 0x0049CFE0, whose raw body is ret 4.  The old
-// AAE setPortraitByObject spelling therefore is not asserted here; call the
-// existing RVA owner with its independently established thiscall ABI.
-class Gen_0049cfe0
-{
-public:
-	void m(Int value);
-};
-
 void ControlBar::populateBeacon( Object *beacon )
 {
 
-	// Preserve the retail no-op member call and its one-argument ABI.
-	((Gen_0049cfe0 *)this)->m((Int)beacon);
+	// set the portrait for the thing being constructed (empty in BFME: ILT 0x0002262E)
+	setPortraitByObject( beacon );
 
 	static NameKeyType textID = NAMEKEY("ControlBar.wnd:EditBeaconText");
 	static NameKeyType staticTextID = NAMEKEY("ControlBar.wnd:StaticTextBeaconLabel");

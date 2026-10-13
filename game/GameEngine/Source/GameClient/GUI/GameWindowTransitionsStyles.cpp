@@ -216,7 +216,10 @@ ButtonFlashTransition::~ButtonFlashTransition( void )
 
 // ButtonFlashTransition::init: retail body in ButtonFlashTransition_init_Thunk.cpp.
 
-// ?update@ButtonFlashTransition@@UAEXH@Z present-unmatched
+// ?update@ButtonFlashTransition@@UAEXH@Z
+// Retail 0x0059A6B0 (vtable 0x00D0C604 slot 2).  BFME's update is the Zero Hour
+// one without the "GUIButtonsFadeIn" audio event: GameWindow::winHide is its
+// only callee.
 void ButtonFlashTransition::update( Int frame )
 {
 	m_drawState = -1;
@@ -241,16 +244,7 @@ void ButtonFlashTransition::update( Int frame )
 					break;
 				m_win->winHide(TRUE);
 				if(m_isForward)
-				{
-					AudioEventRTS buttonClick("GUIButtonsFadeIn");
-	
-					if( TheAudio )
-					{
-						TheAudio->addAudioEvent( &buttonClick );
-					}  // end if
-
 					m_drawState = frame;
-				}
 				else
 					m_drawState = BUTTONFLASHTRANSITION_FADE_TO_BACKGROUND_4;
 		}

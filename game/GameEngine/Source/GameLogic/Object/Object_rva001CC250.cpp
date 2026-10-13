@@ -21,8 +21,8 @@
 //    attribute-modifier kinds 8 and 16, divides by the contain count, and hands
 //    the clamped shortfall to the locomotor at AI+0x1CC.
 //
-// 0x001BD790 has no ledger row. It is 24 bytes (`if (v < m_3c) m_3c = v;` on
-// the locomotor), reached through ILT 0x00032A24, which carries an
+// 0x001BD790 is 24 bytes (`if (v < m_3c) m_3c = v;` on the locomotor,
+// Locomotor_rva001BD790.cpp), reached through ILT 0x00032A24, which carries an
 // address-named pin.
 
 #define _STLP_NO_EXCEPTIONS 1

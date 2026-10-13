@@ -94,6 +94,10 @@
  *   INIClass::Enumerate_Entries -- Count how many entries begin with a certain prefix followed by a range *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.
+#define _OPERATOR_NEW_DEFINED_
 #include	"always.h"
 #include	"b64pipe.h"
 #include	"b64straw.h"

@@ -3,6 +3,10 @@
 // readable body of ??1Buffer@@: game/Libraries/Source/WWVegas/WW3D2/bw_render.cpp
 
 
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.
+#define _OPERATOR_NEW_DEFINED_
 #include	"always.h"
 #define BFME_BUFFER_DTOR_OUT_OF_LINE
 #include	"buff.h"

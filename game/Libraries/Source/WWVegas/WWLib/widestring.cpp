@@ -39,6 +39,10 @@
 
 #pragma warning(disable : 4514)
 
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.
+#define _OPERATOR_NEW_DEFINED_
 #include "widestring.h"
 #include "win.h"
 #include <stdio.h>

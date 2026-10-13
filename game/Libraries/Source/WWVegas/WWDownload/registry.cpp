@@ -1,5 +1,9 @@
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
 #define WIN32_LEAN_AND_MEAN
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.
+#define _OPERATOR_NEW_DEFINED_
 #include <windows.h>
 
 namespace _STL

@@ -10152,7 +10152,6 @@ name,address,notes
 ??3ServiceHubImpl@@SAXPAXI@Z,0x007F0170,Open-BFME5 the sized member operator delete the ServiceHubImpl scalar deleting destructor calls
 ??4?$PrimitiveAnimationChannelClass@M@@QAEABV0@ABV0@@Z,0x000026AD,pinharvest x2 (thunk)
 ??4?$PrimitiveAnimationChannelClass@UAlphaVectorStruct@@@@QAEABV0@ABV0@@Z,0x00021468,"exact retail rel32 target of the byte-verified caller; replaces a harvested pin at 0x0001F90B, which is an unclaimed neighbouring body"
-??4?$PrimitiveAnimationChannelClass@VVector2@@@@QAEABV0@ABV0@@Z,0x0000D828,pinharvest x3 (thunk)
 ??4?$PrimitiveAnimationChannelClass@VVector3@@@@QAEABV0@ABV0@@Z,0x000026AD,pinharvest x2 (thunk)
 ??4?$VectorClass@H@@QAEAAV0@ABV0@@Z,0x00905C80,pinharvest x1 (body)
 ??4?$VectorClass@PAVRender2DClass@@@@QAEAAV0@ABV0@@Z,0x00905C80,pinharvest x1 (body)
@@ -16530,7 +16529,6 @@ name,address,notes
 ?addSupplyWarehouse@ResourceGatheringManager@@QAEXPAVObject@@@Z,0x00028646,pinned by SupplyWarehouseCreate::onCreate packet 002505a0
 ?addTOCEntry@GameClient@@AAEXVAsciiString@@G@Z,0x00431C60,GameClient addTOCEntry; source GameClient.cpp and retail this+0xF0 list insertion with AsciiString plus ushort; caller 0x00431DC0 via ILT 0x000266F2; ret 8
 ?addTargetIds@Rva007F1F60Feedback@@QAEXPAVRva007E8810Message@@PBURva007F2010TargetId@@H@Z,0x007F2010,V2 lane: FESL feedback request target-id array serializer
-?addTeam@TeamsInfoRec@@QAEXPBVDict@@@Z,0x0000D828,pinharvest x4 (thunk)
 ?addTeamToList@Player@@QAEXPAVTeamPrototype@@@Z,0x0002C1CE,Team owner transfer calls the canonical Player list insertion ILT to body 0x000D2240
 ?addTimeOutGameStartMessage@NetPacket@@IAE_NPAVNetCommandRef@@@Z,0x00037263,the address addCommand's arm encodes; the body's own incremental-link thunk is a further hop
 ?addToBuildList@SidesInfo@@QAEXPAVBuildListInfo@@H@Z,0x0000DD9B
@@ -81012,7 +81010,6 @@ name,address,notes
 ?clear@PrereqUnitRecAllocateAndCopyShim@_STL@@QAEXXZ,0x003B0F00,_STL vector _M_clear PrereqUnitRec incremental-link thunk target through a TU-local forwarding shim
 ?clear@ProductionPrerequisiteAllocateAndCopyShim@_STL@@QAEXXZ,0x003AFE10,_STL vector _M_clear ProductionPrerequisite incremental-link thunk target through a TU-local forwarding shim
 ?clear@RadarDeleteListResourcesShim@@QAEXXZ,0x00106A90,Radar deleteListResources incremental-link thunk target through a TU-local forwarding shim
-?clear@RadiusDecal@@QAEXXZ,0x00026F35,pinharvest x3 (thunk)
 ?clear@Rva000F4250Hash@@QAEXXZ,0x0001F1BD,Team destructor retail call via proven ILT
 ?clear@Rva0019A1D0Owner@@QAEXXZ,0x001991F0,retail 0x0019EA80+0x146 and +0x14D call this through ILT 0x0002DF65 with ECX=+0x630 and +0x64C of the 0x1C-byte team record; body stores ESI=ECX on entry resets members through +0x1A and ends at C3 with no stack argument; same address pair as the existing ?clear@Rva0019BE80TeamRec pin and both matched SidesList reset/clear bodies drive 0x0019B4C0 then this target twice; the record owner name is the address-derived one its own matched constructor 0x0019A1D0 already carries; model=space-bunny-free
 ?clear@Rva0019BE80TeamRec@@QAEXXZ,0x0002DF65,"Root reviewed complete source, full COFF extent, exact relocations and no emitted vtable. Root traced2DF65 to full1991F0/115 clear, resetting fields through1A. Traced45DC7 to full19BA40/331 append: ECX record, one Dict pointer, ret4, returns EBX index in EAX. Corrected append return type from void to int and pin spelling, removed generated fallback pragmas. Two records at630/64C each1C; Dict temporary releases after real append."

@@ -5,14 +5,6 @@
 
 #include "../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
-// Preserve the ledger's return-type spelling while the real AsciiString
-// supplies the StringBase<char> copy and release calls.
-class AsciiStringZM
-{
-public:
-	AsciiString m_bfmeNarrowZM;
-};
-
 // ILT 0x0002D204 reaches the matched NetCommandMsg description at
 // 0x006747C0. The qualified call below invokes that base implementation.
 class NetCommandMsg
@@ -24,17 +16,17 @@ public:
 class BfmeOrderZM
 {
 public:
-	AsciiStringZM bfmeDescribeZM(void);
+	AsciiString bfmeDescribeZM(void);
 
 	char m_bfmePadZM[0x1c];
 	unsigned char m_bfmeLeavingZM;
 };
 
-AsciiStringZM BfmeOrderZM::bfmeDescribeZM(void)
+AsciiString BfmeOrderZM::bfmeDescribeZM(void)
 {
-	AsciiStringZM text;
+	AsciiString text;
 
-	text.m_bfmeNarrowZM.format(AsciiString("%s, leavingPlayer=%d"),
+	text.format(AsciiString("%s, leavingPlayer=%d"),
 			((NetCommandMsg *)this)->NetCommandMsg::getContentsAsAsciiString().str(), m_bfmeLeavingZM);
 
 	return text;

@@ -19828,5 +19828,105 @@
   "after_sha256": "435d2915b61974852a4b98b9bc0de3f35153e01c6943cc4fb8ddadfbd39edb0b",
   "evidence": "targets/game/reverse/re_attempts.log",
   "reason": "0x001B3B70 sits in ??_7GhostObject@@6B@ slot 3 and ilt_oracle CONTRADICTS ?xfer@GhostObject (M and U spellings); the bank keeps an address-derived method name"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_00",
+  "new_name": "m_pad",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_00",
+  "new_name": "m_pad00",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_04",
+  "new_name": "m_pad04",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_0c",
+  "new_name": "m_pad0c",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_14",
+  "new_name": "m_pad14",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_18",
+  "new_name": "m_pad18",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_24",
+  "new_name": "m_pad24",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_40",
+  "new_name": "m_pad40",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_78",
+  "new_name": "m_pad78",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x002940d0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp",
+  "old_name": "m_unreconstructed_94",
+  "new_name": "m_pad94",
+  "before_sha256": "de0a41f033f26e839d217e81fc255c934098404c8e045e8c0c292000b148bfbc",
+  "after_sha256": "41a5a6dc5cf90fb6303c10535d288e81ac8b2ab2494c8e078a5047d97f933f25",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "unnamed padding spans of the superseded 0x002940D0 bank renamed by offset in the landed source; no member identity is involved"
  }
 ]

@@ -37058,7 +37058,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0028f2a0@@YAXXZ,,0x0028F2A0,208,game/gen_asm/d_0027db50.asm,matched,gen-dump;ghidra=FUN_0068f2a0
 ?d_00290b90@@YAXXZ,,0x00290B90,536,game/gen_asm/d_0028fdf0.asm,matched,gen-dump;ghidra=FUN_00690b90
 ?d_00290e50@@YAXXZ,,0x00290E50,2052,game/gen_asm/d_002310f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00690e50
-?d_002940d0@@YAXXZ,,0x002940D0,346,game/gen_asm/d_0028fdf0.asm,matched,gen-dump;ghidra=FUN_006940d0
 ?d_00295760@@YAXXZ,,0x00295760,654,game/gen_asm/d_00280010.asm,matched,gen-dump;bounds=high
 ?d_00296300@@YAXXZ,,0x00296300,14,game/GameEngine/Source/Common/VtableSlot2StoreThunk.cpp,matched,object-symbol=?getSeventySeventh@VtableSlot2StoreThunk@@QBE?AUVtableSlot2Result@@XZ;Open-BFME5 clean C++ vtable slot 2 value return
 ?d_002963a0@@YAXXZ,,0x002963A0,14,game/GameEngine/Source/Common/VtableSlot2StoreThunk.cpp,matched,object-symbol=?getSeventyEighth@VtableSlot2StoreThunk@@QBE?AUVtableSlot2Result@@XZ;Open-BFME5 clean C++ vtable slot 2 value return
@@ -172552,3 +172551,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?rva006E6A80@Rva006E2540@@UAEXXZ,,0x006E6A80,309,game/GameEngine/Source/Common/Rva006E6A80.cpp,matched,slot 5 (SubsystemInterface update slot) of table VA 0x0111E250 via ILT 0x0001511D; owner of Rva006E2540::update which it tail-calls; address-derived names;model=claude-opus-5-5;host=vm
 ?rva002D6FE0@ObjectCreationUpgrade@@UAEXXZ,,0x002D6FE0,210,game/GameEngine/Source/GameLogic/Object/Upgrade/ObjectCreationUpgradeRva002D6FE0.cpp,matched,ObjectCreationUpgrade table VA 0x010CD620 slot 6 via ILT 0x000432F7; ZH giveSelfUpgrade sequence on wouldUpgrade of player|object completed masks else removeUpgrade; name unproven;model=claude-opus-5-5;host=vm
 ?calcSleepTime@FlammableUpdate@@IAE?AW4UpdateSleepTime@@XZ,,0x00292FA0,84,game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateConstructorThunk.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00292fa0-calcsleeptime.md;model=claude-opus-5-5;host=GreatFaram
+?onDamage@FlammableUpdate@@UAEXPAVDamageInfo@@@Z,,0x002940D0,346,game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateOnDamage.cpp,matched,ZH FlammableUpdate::onDamage twin plus BFME underwater guard and contained splash damage; ilt_oracle CONFIRMED;model=claude-opus-5-5;host=vm

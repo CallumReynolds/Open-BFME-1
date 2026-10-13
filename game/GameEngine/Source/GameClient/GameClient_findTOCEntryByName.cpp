@@ -22,11 +22,8 @@ public:
 		const char *otherText = other.m_data ? other.m_data + 8 : "";
 		int thisLength = m_data ? *(const unsigned short *)(m_data + 4) : 0;
 		const char *thisText = m_data ? m_data + 8 : "";
-		int length = thisLength < otherLength ? thisLength : otherLength;
-		int result = memcmp( thisText, otherText, length );
-		if (result != 0)
-			return result;
-		return thisLength - otherLength;
+		int result = memcmp( thisText, otherText, thisLength < otherLength ? thisLength : otherLength );
+		return result ? result : thisLength - otherLength;
 	}
 
 	bool operator==( const AsciiString &other ) const

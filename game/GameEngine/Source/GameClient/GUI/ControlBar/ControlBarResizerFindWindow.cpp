@@ -10,22 +10,14 @@ inline AsciiString::~AsciiString()
 }
 
 template <>
-inline int StringBase<char>::compare(const char *text, int length) const
-{
-    const int ownLength = m_data ? m_data->length : 0;
-    const char *ownText = m_data ? m_data->data : "";
-    int result = memcmp(ownText, text, ownLength < length ? ownLength : length);
-    if (result == 0)
-        result = ownLength - length;
-    return result;
-}
-
-template <>
 inline int StringBase<char>::compare(const StringBase<char> &text) const
 {
-    const int length = text.m_data ? text.m_data->length : 0;
-    const char *data = text.m_data ? text.m_data->data : "";
-    return compare(data, length);
+    const int otherLength = text.m_data ? text.m_data->length : 0;
+    const char *otherData = text.m_data ? text.m_data->data : "";
+    const int length = m_data ? m_data->length : 0;
+    const char *data = m_data ? m_data->data : "";
+    int result = memcmp(data, otherData, length < otherLength ? length : otherLength);
+    return result ? result : length - otherLength;
 }
 
 ResizerWindow *ControlBarResizer::findResizerWindow(AsciiString name)
@@ -39,7 +31,7 @@ ResizerWindow *ControlBarResizer::findResizerWindow(AsciiString name)
             ++it;
             continue;
         }
-        if (window->m_name.compare(name) == 0)
+        if (((const StringBase<char> *)&window->m_name)->compare(*(const StringBase<char> *)&name) == 0)
             return window;
         ++it;
     }

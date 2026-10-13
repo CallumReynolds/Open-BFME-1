@@ -43,6 +43,20 @@ struct Coord3D { Real x, y, z; };
 
 #include "../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
+// Retail AsciiString::compare shape (repe cmpsb over the shared prefix, then
+// the length difference), spelled as the StringBase<char> specialization so
+// this TU emits no AsciiString::compare COMDAT of its own. Same spelling as
+// game/GameEngine/Source/GameNetwork/Rva00692570KeyLess.cpp.
+template <> inline int StringBase<char>::compare(const StringBase<char> &str) const
+{
+	int otherLength = str.m_data ? str.m_data->length : 0;
+	const char *otherData = str.m_data ? str.m_data->data : (const char *)"";
+	int length = m_data ? m_data->length : 0;
+	const char *data = m_data ? m_data->data : (const char *)"";
+	int result = memcmp(data, otherData, length < otherLength ? length : otherLength);
+	return result ? result : length - otherLength;
+}
+
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/ScriptEngine.h
 struct NamedReveal
 {
@@ -175,7 +189,7 @@ void ScriptEngine::doNamedMapReveal(const AsciiString& revealName)
 
 	NamedReveal *reveal = 0;
 	for (it = m_namedReveals.begin(); it != m_namedReveals.end(); ++it) {
-		if (it->m_revealName.compare(revealName) == 0) {
+		if (it->m_revealName.StringBase<char>::compare(revealName) == 0) {
 			reveal = &(*it);
 			break;
 		}
@@ -201,7 +215,7 @@ void ScriptEngine::undoNamedMapReveal(const AsciiString& revealName)
 
 	NamedReveal *reveal = 0;
 	for (it = m_namedReveals.begin(); it != m_namedReveals.end(); ++it) {
-		if (it->m_revealName.compare(revealName) == 0) {
+		if (it->m_revealName.StringBase<char>::compare(revealName) == 0) {
 			reveal = &(*it);
 			break;
 		}
@@ -226,7 +240,7 @@ void ScriptEngine::removeNamedMapReveal(const AsciiString& revealName)
 	VecNamedRevealIt it;
 
 	for (it = m_namedReveals.begin(); it != m_namedReveals.end(); ++it) {
-		if (it->m_revealName.compare(revealName) == 0) {
+		if (it->m_revealName.StringBase<char>::compare(revealName) == 0) {
 			m_namedReveals.erase(it);
 			return;
 		}
@@ -239,7 +253,7 @@ void ScriptEngine::createNamedMapReveal(const AsciiString& revealName, const Asc
 
 	// Will fail if there's already one in existence of the same name.
 	for (it = m_namedReveals.begin(); it != m_namedReveals.end(); ++it) {
-		if (it->m_revealName.compare(revealName) == 0) {
+		if (it->m_revealName.StringBase<char>::compare(revealName) == 0) {
 			return;
 		}
 	}

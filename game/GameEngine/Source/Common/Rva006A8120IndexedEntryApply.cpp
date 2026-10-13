@@ -20,9 +20,17 @@ struct Rva0069C300Element
 
 namespace _STL
 {
-	template <> void __cdecl _Construct<Rva0069C300Element, Rva0069C300Element>(
+	// Retail 0x0069C300 (ILT 0x0004A818): the 23-byte out-of-line placement copy.
+	template <> __declspec(noinline) void __cdecl _Construct<Rva0069C300Element, Rva0069C300Element>(
 		Rva0069C300Element *destination,
-		const Rva0069C300Element &source);
+		const Rva0069C300Element &source)
+	{
+		if (destination)
+		{
+			destination->m_field0 = source.m_field0;
+			destination->m_field1 = source.m_field1;
+		}
+	}
 }
 
 typedef _STL::vector<Rva0069C300Element> Rva006A8120Vector;

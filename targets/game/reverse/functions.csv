@@ -36968,7 +36968,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0022c160@@YAXXZ,,0x0022C160,251,game/gen_asm/d_00218ee0.asm,matched,gen-dump;bounds=high
 ?d_0022c560@@YAXXZ,,0x0022C560,1253,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062c560
 ?d_0022dd10@@YAXXZ,,0x0022DD10,865,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062dd10
-?d_0022e150@@YAXXZ,,0x0022E150,222,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062e150
 ?d_0022ed10@@YAXXZ,,0x0022ED10,268,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062ed10
 ?d_00230850@@YAXXZ,,0x00230850,7,game/GameEngine/Source/Common/Rva00230850ByteGetter.cpp,matched,object-symbol=?get@Rva00230850ByteGetter@@QBEEXZ;identity=address-derived-byte-getter;field-offset=0x121
 ?d_002310f0@@YAXXZ,,0x002310F0,1744,game/gen_asm/d_002310f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_006310f0
@@ -172553,3 +172552,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?Rva008FF0F0Method@@YA_NPAVRenderObjClass@@PAVRva00900FF0VecOfVec@@1H@Z,,0x008FF0F0,181,game/Libraries/Source/WWVegas/WW3D2/Rva008FFF40WaterTrackApply.cpp,matched,static private-convention helper of 0x008FFF40 compiled in the same TU; object pointer arrives in EAX;model=claude-opus-5-5;host=vm
 ?Rva008FFF40@Rva00900FF0@@UAEXXZ,,0x008FFF40,889,game/Libraries/Source/WWVegas/WW3D2/Rva008FFF40WaterTrackApply.cpp,matched,Rva00900FF0 table slot 3; bank finished by typing the 008FF6A0 call with the pinned const string references and claiming the static 008FF0F0 helper from the same TU;model=claude-opus-5-5;host=vm
 ?onEnter@AIAttackPursueTargetState@@UAE?AW4StateReturnType@@XZ,,0x00176070,379,game/GameEngine/Source/GameLogic/AI/AIAttackPursueTargetState_onEnter.cpp,matched,ZH AIStates.cpp twin; vftable 0x0109A5C8 slot 4; static canPursue compiled in-TU for its private register ABI; ilt_oracle CONFIRMED;model=claude-opus-5-5;host=vm
+?method@Rva0022E150@@QAEPAVObject@@PBVThingTemplate@@PAVRva0022E150Sink@@PAV2@HH@Z,,0x0022E150,222,game/GameEngine/Source/GameLogic/Object/Contain/Rva0022E150CreateContained.cpp,matched,TransportContain-family +0xD4 interface slot 0 via ILT 0x000115A9; thiscall ret 0x14 ignoring this; creates via ThingFactory::newObject with a status mask; identity unproven so address-derived;model=claude-opus-5-5;host=vm

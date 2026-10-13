@@ -7,18 +7,10 @@
 #include "../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
 #include "System/message_stream.h"
 
-// Keep the ledger's return-type spelling while using AsciiString's real
-// copy constructor and releaseBuffer implementation for its storage.
-class AsciiStringZK
-{
-public:
-	AsciiString m_bfmeNarrowZK;
-};
-
 class BfmeMessageZK
 {
 public:
-	AsciiStringZK bfmeDescribeZK(void);
+	AsciiString bfmeDescribeZK(void);
 
 	char m_bfmePadAZK[8];
 	int m_bfmeFrameZK;
@@ -28,11 +20,11 @@ public:
 	int m_bfmeTypeZK;
 };
 
-AsciiStringZK BfmeMessageZK::bfmeDescribeZK(void)
+AsciiString BfmeMessageZK::bfmeDescribeZK(void)
 {
-	AsciiStringZK text;
+	AsciiString text;
 
-	text.m_bfmeNarrowZK.format(AsciiString("GameMessage:%s, frame=%d, player=%d, id=%d"),
+	text.format(AsciiString("GameMessage:%s, frame=%d, player=%d, id=%d"),
 			GameMessage::getCommandTypeAsAsciiString((GameMessage::Type)m_bfmeTypeZK).str(),
 			m_bfmeFrameZK, m_bfmePlayerZK,
 			m_bfmeIdZK);

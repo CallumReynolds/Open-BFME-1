@@ -273,10 +273,12 @@ def row_obj(row):
 def load_swap(rows):
     """game/gen_asm/ dumps link as tools/dump_relocs.py's relocatable objects
     (build/dump_relocs/obj/), the way data_scaffold.py's trial link does:
-    conversion_gate rule C1 keeps their sources raw `db`."""
+    conversion_gate rule C1 keeps their sources raw `db`. Dumpness is the
+    gen-dump note (build.is_scaffold_row); only dumps that dump_relocs.py
+    rebuilt have a relocatable object to swap in."""
     swap = {}
     for row in rows:
-        if row["source"].startswith("game/gen_asm/"):
+        if build.is_scaffold_row(row):
             stem = re.sub(r"[^A-Za-z0-9_]+", "_", Path(row["source"]).with_suffix("").as_posix())
             relobj = ROOT / "build" / "dump_relocs" / "obj" / f"{stem}.obj"
             if relobj.exists():

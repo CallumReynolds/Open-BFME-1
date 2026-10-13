@@ -208,5 +208,17 @@ def test_a_new_label_row_produces_no_note(repo, capsys):
 
 def test_label_writers_stamp():
     tools = Path(__file__).resolve().parents[1]
-    assert 'gate_writers.stamp("eh_label", raw, functions_csv.read_bytes())' in (tools / "add_match.py").read_text()
+    assert 'gate_writers.stamp("eh_label", raw, functions_csv.read_bytes(), root=root)' in (tools / "add_match.py").read_text()
     assert 'gate_writers.stamp("eh_label", raw, functions.read_bytes())' in (tools / "eh_state_pins.py").read_text()
+
+
+def test_a_stamp_for_another_checkout_lands_in_its_git_dir(repo, tmp_path_factory, monkeypatch):
+    """add_match --root writes another checkout's ledger, so its stamp must land in THAT
+    checkout's git dir even when the shell sits somewhere else."""
+    elsewhere = tmp_path_factory.mktemp("elsewhere")       # not a git checkout at all
+    monkeypatch.chdir(elsewhere)
+    gw.stamp("data_row", DATA_HEAD.encode(), (DATA_HEAD + ROW_B).encode(), root=repo)
+    assert (repo / ".git" / "bfme-gate-writers").exists()
+    assert not (elsewhere / ".git" / "bfme-gate-writers").exists()
+    monkeypatch.chdir(repo)
+    assert gw.stamped()

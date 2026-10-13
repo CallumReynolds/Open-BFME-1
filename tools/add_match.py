@@ -685,7 +685,7 @@ def main():
                                None if replaced is None else replaced["rva"])
     if replaced is not None:
         import gate_writers             # a verified relabel of an existing row (pre-commit shadow check)
-        gate_writers.stamp("eh_label", raw, functions_csv.read_bytes())
+        gate_writers.stamp("eh_label", raw, functions_csv.read_bytes(), root=root)
     remove_stash(rva, args.root)
     # Verified HERE is not landed: the commit may never be pushed, or be
     # rejected. Releasing now (force, anyone's claim -- the old behaviour) let

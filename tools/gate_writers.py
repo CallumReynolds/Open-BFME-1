@@ -32,6 +32,7 @@ import json
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 FILES = {
     "imp_pin": "targets/game/reverse/symbols.csv",
@@ -51,13 +52,21 @@ TOOLS = {
 }
 
 
-def _git(*args):
-    return subprocess.run(["git", *args], capture_output=True)
+def _git(*args, cwd=None):
+    return subprocess.run(["git", *args], capture_output=True, cwd=cwd)
 
 
-def stamp_path():
-    got = _git("rev-parse", "--git-path", "bfme-gate-writers")
-    return got.stdout.decode().strip() if got.returncode == 0 and got.stdout.strip() else None
+def stamp_path(root=None):
+    """The stamp file in the git dir of `root` (default: the current directory).
+
+    `git rev-parse --git-path` answers relative to the directory git ran in, so a
+    relative answer is joined back onto `root`: a writer run with --root against
+    another checkout stamps that checkout, not whatever the shell happens to be in."""
+    got = _git("rev-parse", "--git-path", "bfme-gate-writers", cwd=root)
+    if got.returncode != 0 or not got.stdout.strip():
+        return None
+    path = Path(got.stdout.decode().strip())
+    return str(path if root is None or path.is_absolute() else Path(root) / path)
 
 
 def _rows(lines):
@@ -124,9 +133,9 @@ def facts(kind, before, after):
     raise ValueError(kind)
 
 
-def stamp(kind, before, after):
+def stamp(kind, before, after, root=None):
     """Record the facts a tool's own write made, for the pre-commit check."""
-    path = stamp_path()
+    path = stamp_path(root)
     made = facts(kind, before, after)
     if not path or not made:
         return made

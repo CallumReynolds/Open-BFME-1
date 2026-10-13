@@ -19937,7 +19937,7 @@
   "before_sha256": "2294a657f007e3171531819d9c016857563854e733f941e556aadfbf4b7c5a15",
   "after_sha256": "c67ab7e86b2df0755327eb2365a0e0bf55db1b92db8b7c9b28b33f7d8d67dfb5",
   "evidence": "targets/game/reverse/identity_evidence/00674b30-asciistring-return.md",
-  "reason": "false pairing: the per-file stand-in AsciiStringZK is replaced by the real AsciiString (its dtor ILT 0x0000D828 is the matched ??1AsciiString thunk); BfmeMessageZK is unchanged"
+  "reason": "false pairing: the per-file stand-in AsciiStringZK is replaced by the real AsciiString (its dtor ILT 0x0000D828 is the matched ??1AsciiString thunk); BfmeMessageZK is unchanged; an agent proposed this entry and the project lead approved it manually on 2026-10-13"
  },
  {
   "old_path": "game/GameEngine/Source/Common/BfmeOrderDescribeZM.cpp",
@@ -19947,7 +19947,7 @@
   "before_sha256": "ba6ec2d1423492da093662c322ccc45016014175fb6b679fcecc28eda26fca5d",
   "after_sha256": "63797866c7dc2f976ab5125a1193a6f581a31172c9e64ab184d16e7d33f2090f",
   "evidence": "targets/game/reverse/identity_evidence/00674f00-asciistring-return.md",
-  "reason": "false pairing: the per-file stand-in AsciiStringZM is replaced by the real AsciiString (its dtor ILT 0x0000D828 is the matched ??1AsciiString thunk); BfmeOrderZM is unchanged"
+  "reason": "false pairing: the per-file stand-in AsciiStringZM is replaced by the real AsciiString (its dtor ILT 0x0000D828 is the matched ??1AsciiString thunk); BfmeOrderZM is unchanged; an agent proposed this entry and the project lead approved it manually on 2026-10-13"
  },
  {
   "old_path": "game/GameEngine/Source/Common/BfmeOrderDescribeZN.cpp",
@@ -19957,6 +19957,6 @@
   "before_sha256": "501bd30a2f062b5433053185f2c6437e0bafb03fed0c31e7721bbd9168e80f3f",
   "after_sha256": "b8b7ac33d17315eb283b8fbb0778b6b9c961f7a24da1fa6a5320100d05fe6102",
   "evidence": "targets/game/reverse/identity_evidence/00674ff0-asciistring-return.md",
-  "reason": "false pairing: the per-file stand-in AsciiStringZN is replaced by the real AsciiString (its dtor ILT 0x0000D828 is the matched ??1AsciiString thunk); BfmeOrderZN is unchanged"
+  "reason": "false pairing: the per-file stand-in AsciiStringZN is replaced by the real AsciiString (its dtor ILT 0x0000D828 is the matched ??1AsciiString thunk); BfmeOrderZN is unchanged; an agent proposed this entry and the project lead approved it manually on 2026-10-13"
  }
 ]

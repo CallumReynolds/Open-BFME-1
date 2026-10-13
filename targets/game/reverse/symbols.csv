@@ -3720,6 +3720,7 @@ name,address,notes
 ??0Rva006D5280TextureBase@@QAE@IIIIII@Z,0x0090CF90,pin near-twin reuses base texture constructor body
 ??0Rva006D6050TextureBase@@QAE@IIIIII@Z,0x0090CF90,base texture constructor used by Rva006D6050::init
 ??0Rva006D65B0ScorchHandle@@QAE@W4MipCountType@@@Z,0x006D65B0,address-derived typed one-pointer scorch texture handle constructor; EXScorch tag consumer and initHeightData call chain verify MipCountType ABI; campaign=luna36h-20260907;lane=shaders;model=gpt-5.6-sol-ultra
+??0Rva006DE9B0Target@@QAE@PAVDrawable@@H@Z,0x006DB470,address-derived constructor of the 0x58-byte target inserted into the Rva006DE9B0 sets: thiscall ret 8 storing a vftable then the Drawable (scale and position) and the index; called from 0x006DEE60 through ILT 0x00035274; the body row is still the gen-asm dump ?d_006db470 (vftable 0x0111E134 is TBuff-like, conversion blocked on EH state order)
 ??0Rva006DED60RoadBuffer@@QAE@XZ,0x006DED60,constructor identity from BaseHeightMap road-buffer allocation and matching reset call
 ??0Rva006DED60RoadRef@@QAE@XZ,0x0001F3B1,first road-buffer array element constructor used by retail EH vector construction
 ??0Rva006DED60RoadSet@@QAE@XZ,0x00029BE5,road-buffer set element constructor used by retail EH vector construction

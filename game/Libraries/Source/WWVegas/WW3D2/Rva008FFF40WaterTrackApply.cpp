@@ -1,8 +1,12 @@
-// ?Rva008FFF40@Rva00900FF0@@UAEXXZ
-// partial score=1.0 date=2026-10-13
-// ?Rva008FFF40@Rva00900FF0@@UAEXXZ
 // stlport
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/Compression /Iinputs/reference/shims/sweep
+// Rva00900FF0 table slot 3, retail 0x008FFF40 (889 bytes), with its private
+// helper 0x008FF0F0 (181 bytes).  The helpers 0x008FEF60 and 0x008FF060 are
+// defined here as TU statics too: VC7.1 then gives them retail's private
+// register convention (object in EAX, vector in ECX) at their visible call
+// sites.  0x008FF060 is claimed by Rva008FF060WaterMaterialTextureSwap.cpp and
+// 0x008FEF60 stays a MASM row (one jump target differs); only 0x008FFF40 and
+// 0x008FF0F0 are claimed from this file.  Identities stay address-derived.
 
 #define _OPERATOR_NEW_DEFINED_ 1
 #include <string.h>
@@ -196,8 +200,8 @@ extern RenderObjClass *Create_Render_Obj(const char *name);
 extern void Rva008FEB90(RenderObjClass *object);
 
 
-void Rva008FF6A0(RenderObjClass *object, Rva00900FF0InnerVector *first,
-	Rva00900FF0InnerVector *second, int source);
+void Rva008FF6A0(RenderObjClass *object, const Rva00900FF0InnerVector &first,
+	const Rva00900FF0InnerVector &second, int source);
 
 
 class BfmeHandleCX
@@ -297,7 +301,8 @@ static __declspec(noinline) bool Rva008FF0F0Method(RenderObjClass *object, Rva00
     char *meshName=(char *)first->back().c_str();
     char *textureName=(char *)second->back().c_str();
     bool result=false;
-    if (strcmp(object->Get_Name(),meshName)==0)
+    const char *objectName=object->Get_Name();
+    if (strcmp(objectName,meshName)==0)
         result=Rva008FF060Method(object,textureName,index);
     else {
         RenderObjClass *sub=object->Get_Sub_Object_By_Name(meshName);
@@ -376,7 +381,7 @@ void Rva00900FF0::Rva008FFF40(void)
     } else if(!m_vec40.empty()) {
         Rva008FEB90(m_render70);
         for(unsigned i=0;i<m_vec40.size();++i)
-            Rva008FF6A0(m_render70,m_vec40.begin()+i,m_vec4c.begin()+i,m_vector58.m_start[i]);
+            Rva008FF6A0(m_render70,m_vec40.begin()[i],m_vec4c.begin()[i],m_vector58.m_start[i]);
     } else if(hasBoth) {
         Rva008FEB90(m_render70);
         char *textureName=(char *)m_vec28.back().c_str();

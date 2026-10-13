@@ -66,8 +66,12 @@ public:
     FlammableUpdate(Thing *, const ModuleData *);
     virtual ~FlammableUpdate();
 
-    // The flag gate falls through into the calcSleepTime body.
-    UpdateSleepTime bfmeCalcSleepTimeGate();
+protected:
+    // BFME's calcSleepTime: the Zero Hour body behind an early "1" for the
+    // byte at +0x40, which the Zero Hour layout lacks.
+    UpdateSleepTime calcSleepTime();
+
+    friend class FlameStep00294410;
 
 private:
     int m_status;
@@ -103,8 +107,10 @@ FlammableUpdate::FlammableUpdate(
     setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 
-// ?bfmeCalcSleepTimeGate@FlammableUpdate@@QAE?AW4UpdateSleepTime@@XZ
-UpdateSleepTime FlammableUpdate::bfmeCalcSleepTimeGate()
+// ?calcSleepTime@FlammableUpdate@@IAE?AW4UpdateSleepTime@@XZ
+// One body at 0x00292FA0/84: tryToIgnite (ILT 0x0003D81B) and update
+// (0x00294410) call its start; nothing reaches the old +0x0D split.
+UpdateSleepTime FlammableUpdate::calcSleepTime()
 {
     if ( m_flag40 )
         return (UpdateSleepTime)1;

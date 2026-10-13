@@ -28652,7 +28652,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?bfmeCachePosERV@BfmeHostERV@@QAEPAVBfmeCacheERV@@XZ,,0x0073DFD0,97,game/GameEngine/Source/Common/BfmeConv1963.cpp,matched,cached position accessor; function-local static with an inline empty destructor and EH off for the TU
 ?bfmeCalc919G@BfmeCalc919G@@QAEHXZ,,0x0041CEC0,364,game/GameEngine/Source/Common/BfmeCalc919G.cpp,matched,BFME cache interpolation and Hermite position update
 ?bfmeCalcBWF@BfmeCalcBWF@@QAE_NPAVBfmeRetBWF@@M0@Z,,0x0087E0D0,120,game/GameEngine/Source/Common/BfmeCalcBWF.cpp,matched,
-?bfmeCalcSleepTimeGate@FlammableUpdate@@QAE?AW4UpdateSleepTime@@XZ,,0x00292FA0,13,game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateConstructorThunk.cpp,matched,row-less unclaimed-boundary sweep; tail-branches into already-landed calcSleepTime
 ?bfmeCalcVND@BfmeThingVND@@QAEHPBUBfmeRectVND@@@Z,,0x00207DD0,94,game/GameEngine/Source/Common/BfmeConv1505.cpp,matched,
 ?bfmeCalcZonesIncrementalStep00408480@PathfindZoneManager@@QAEXPAPAVPathfindCell@@ABUIRegion2D@@HH@Z,,0x00408480,292,game/GameEngine/Source/GameLogic/AI/PathfindZoneManagerCalculateZonesIncrementalStep00408480.cpp,matched,caller and retail boundary prove incremental zone step; dependent worker has an address-derived pin
 ?bfmeCalculateAndStore720@@YGXPAXH@Z,,0x002EE720,78,game/GameEngine/Source/Common/BfmeConv831.cpp,matched,
@@ -34005,7 +34004,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?calcRandomForce@@YAXMMMMPAUCoord3D@@@Z,,0x001D6510,321,game/GameEngine/Source/GameLogic/Object/ObjectCreationList.cpp,matched,authentic upstream ObjectCreationList body; BFME retail diagnostic file and line context restored
 ?calcSleepDelay@DeletionUpdate@@IAEIII@Z,,0x0028C4B0,56,game/GameEngine/Source/GameLogic/Object/Update/DeletionUpdate.cpp,matched,Open-BFME5 m_dieFrame at +0x20; retail file and line via existing #line 55
 ?calcSleepDelay@LifetimeUpdate@@AAEIII@Z,,0x00297E00,59,game/GameEngine/Source/GameLogic/Object/Update/LifetimeUpdate.cpp,matched,BFME stores current frame before die frame
-?calcSleepTime@FlammableUpdate@@IAE?AW4UpdateSleepTime@@XZ,,0x00292FAD,71,game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdate.cpp,matched,
 ?calcSleepTime@PoisonedBehavior@@IAE?AW4UpdateSleepTime@@XZ,,0x00202930,45,game/GameEngine/Source/GameLogic/Object/Behavior/PoisonedBehavior.cpp,matched,
 ?calcSleepTime@StealthUpdate@@IBE?AW4UpdateSleepTime@@XZ,,0x002AC090,18,game/GameEngine/Source/GameLogic/Object/Update/StealthUpdate.cpp,matched,
 ?calcStat@LZHLEncoderStat@@QAEXPAH@Z,,0x00826090,887,game/Libraries/Source/Compression/LZHCompress/CompLibSource/Huff.cpp,matched,vendored=lzhl-1.0
@@ -172553,3 +172551,4 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?rva001CEE10@Object@@MAEXXZ,,0x001CEE10,336,game/GameEngine/Source/GameLogic/Object/ObjectRva001CEE10.cpp,matched,Object Snapshot slot 1 via ILT 0x0001D51B; ZH loadPostProcess twin body but the ILT window rejects every loadPostProcess spelling so the name keeps the address; native Thing and Snapshot bases give the +0x60 receiver;model=claude-opus-5-5;host=vm
 ?rva006E6A80@Rva006E2540@@UAEXXZ,,0x006E6A80,309,game/GameEngine/Source/Common/Rva006E6A80.cpp,matched,slot 5 (SubsystemInterface update slot) of table VA 0x0111E250 via ILT 0x0001511D; owner of Rva006E2540::update which it tail-calls; address-derived names;model=claude-opus-5-5;host=vm
 ?rva002D6FE0@ObjectCreationUpgrade@@UAEXXZ,,0x002D6FE0,210,game/GameEngine/Source/GameLogic/Object/Upgrade/ObjectCreationUpgradeRva002D6FE0.cpp,matched,ObjectCreationUpgrade table VA 0x010CD620 slot 6 via ILT 0x000432F7; ZH giveSelfUpgrade sequence on wouldUpgrade of player|object completed masks else removeUpgrade; name unproven;model=claude-opus-5-5;host=vm
+?calcSleepTime@FlammableUpdate@@IAE?AW4UpdateSleepTime@@XZ,,0x00292FA0,84,game/GameEngine/Source/GameLogic/Object/Update/FlammableUpdateConstructorThunk.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00292fa0-calcsleeptime.md;model=claude-opus-5-5;host=GreatFaram

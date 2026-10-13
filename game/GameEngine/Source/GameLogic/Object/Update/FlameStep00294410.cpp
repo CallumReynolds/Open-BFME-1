@@ -223,7 +223,7 @@ extern AI *TheAI;
 class BfmeMarksYE { public: void bfmeSetYE(unsigned char,unsigned char); };
 class Rva002918E0Object { public: void set(unsigned char); };
 enum UpdateSleepTime { SLEEP1=1 };
-class FlammableUpdate { public: void doAflameDamage(); UpdateSleepTime bfmeCalcSleepTimeGate(); };
+class FlammableUpdate { public: void doAflameDamage(); protected: UpdateSleepTime calcSleepTime(); friend class FlameStep00294410; };
 class FlameCleanup00293E50 { public: void apply(); };
 struct Config00294410 { char pad00[0x10]; unsigned at10; char pad14[0x21]; bool at35; char pad36[2]; float at38,at3c,at40; bool at44; };
 inline const unsigned& minimum00294410(const unsigned& a,const unsigned& b) { return a<b?a:b; }
@@ -296,7 +296,7 @@ int FlameStep00294410::update() {
   if(data->at44 && at3c && obj->m_ai) { obj->m_ai->setFlag00294410(false); obj->getAI00294410()->set(0); at3c=false; }
   ((Body00294410*)obj->m_body)->notify();
  }
- return primary()->bfmeCalcSleepTimeGate();
+ return primary()->calcSleepTime();
 }
 
 

@@ -157,23 +157,10 @@ UpdateSleepTime FlammableUpdate::update( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime FlammableUpdate::calcSleepTime()
-{
-	UnsignedInt now = TheGameLogic->getFrame();
-	if (m_status == FS_AFLAME && m_aflameEndFrame != 0 && m_aflameEndFrame > now)
-	{
-		UnsignedInt soonest = m_aflameEndFrame;
-		if (m_burnedEndFrame != 0 && m_burnedEndFrame < soonest && m_burnedEndFrame > now) soonest = m_burnedEndFrame;
-		if (m_damageEndFrame != 0 && m_damageEndFrame < soonest && m_damageEndFrame > now) soonest = m_damageEndFrame;
-		DEBUG_ASSERTCRASH(soonest - now > 0, ("hmm"));
-		// UPDATE_SLEEP requires a count-of-frames, not an absolute-frame, so subtract 'now' 
-		return UPDATE_SLEEP(soonest - now);
-	}
-	else
-	{
-		return UPDATE_SLEEP_FOREVER;
-	}
-}
+// FlammableUpdate::calcSleepTime is defined in FlammableUpdateConstructorThunk.cpp.
+// BFME adds an early return for a flag at +0x40 that this Zero Hour layout
+// lacks; retail's one body is 0x00292FA0/84, and its Zero Hour tail at +0x0D
+// is not a separate function.
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

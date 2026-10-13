@@ -70,6 +70,15 @@ private:
 
 class GenItem;
 
+// The out-of-line clear of the 320-bit flag storage: a void body that zeroes
+// ten words (0x001C2B80, reached through ILT 0x0002194A).  Retail inlines the
+// same clear in the NONE branch and calls this copy only before a plain token.
+class Rva001C2B80
+{
+public:
+	void clear();
+};
+
 class Gen000140D8
 {
 public:
@@ -113,7 +122,7 @@ __declspec( noinline ) bool Gen000140D8::handle( GenItem *item, bool *foundNorma
 	if ( *foundAddOrSub )
 		throw INIException( 2, "you may not mix normal and +- ops in bitstring lists" );
 	if ( !*foundNormal )
-		m_bits.reset();
+		reinterpret_cast< Rva001C2B80 * >( &m_bits )->clear();
 	unsigned int bitIndex = INI::scanIndexList( token, ModelConditionNames );
 	m_bits._Unchecked_set( bitIndex );
 	*foundNormal = true;

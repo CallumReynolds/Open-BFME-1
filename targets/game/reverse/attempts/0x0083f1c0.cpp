@@ -1,5 +1,5 @@
 // ?register_callback@ios_base@_STL@@QAEXP6AXW4event@12@AAV12@H@ZH@Z
-// partial score=0.977 date=2026-09-25
+// partial score=0.9773 date=2026-09-25
 // cl: /O2 /MD
 // Open-BFME5: STLport ios_base::register_callback, retail 0x0083F1C0, 132
 // bytes. The grown pair is copied into a block-local before the member stores

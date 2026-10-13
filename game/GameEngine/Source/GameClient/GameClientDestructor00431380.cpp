@@ -138,7 +138,8 @@ extern RayEffectSystem *TheRayEffects;
 extern HotKeyManager *TheHotKeyManager;
 extern InGameUI *TheInGameUI;
 extern Shell *TheShell;
-extern IMEManager *TheIMEManager;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 extern Rva00579160Manager *Rva00579160TheManager;
 extern GameWindowManager *TheWindowManager;
 extern FontLibrary *TheFontLibrary;
@@ -228,7 +229,7 @@ GameClient::~GameClient()
 	delete TheShell;
 	TheShell = NULL;
 
-	delete TheIMEManager;
+	delete (IMEManager *)TheIMEManager;
 	TheIMEManager = NULL;
 
 	if (Rva00579160TheManager)

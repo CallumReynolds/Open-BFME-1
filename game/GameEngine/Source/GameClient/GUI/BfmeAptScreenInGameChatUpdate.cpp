@@ -37,7 +37,8 @@ public:
 	virtual void bfmeNotifyHidden( void );
 };
 
-extern Glo012F3344Type *Glo012F3344;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 extern void HideInGameChat( void );
 extern void j_00023cc7( void );
 extern int g_012F4994;
@@ -77,8 +78,8 @@ int AptInGameChat::update( void )
 				layout->runShutdown( 0 );
 				layout->deleteInstance();
 
-				if( Glo012F3344 )
-					Glo012F3344->bfmeNotifyHidden();
+				if( TheIMEManager )
+					((Glo012F3344Type *)TheIMEManager)->bfmeNotifyHidden();
 			}
 	}
 

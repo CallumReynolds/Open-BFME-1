@@ -25,7 +25,8 @@ public:
 	virtual GameWindow *slot3C() = 0;
 };
 
-extern Glo012F3344Type *Glo012F3344;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 
 class Open2Dtor4793C0
 {
@@ -76,8 +77,8 @@ protected:
 
 GameWindow::~GameWindow()
 {
-	if( Glo012F3344 && Glo012F3344->slot3C() == this )
-		Glo012F3344->slot28();
+	if( TheIMEManager && ((Glo012F3344Type *)TheIMEManager)->slot3C() == this )
+		((Glo012F3344Type *)TheIMEManager)->slot28();
 
 	if( m_inputData )
 		delete m_inputData;

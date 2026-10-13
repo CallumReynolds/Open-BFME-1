@@ -53,7 +53,8 @@ public:
 	virtual void detatch();
 };
 
-extern IMEManager *TheIMEManager;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 
 class Shell : public SubsystemInterface
 {
@@ -117,5 +118,5 @@ void Shell::doPop(Bool impendingPush)
         m_clearBackground = false;
 
 	if (TheIMEManager)
-		TheIMEManager->detatch();
+		((IMEManager *)TheIMEManager)->detatch();
 }

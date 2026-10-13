@@ -6917,7 +6917,6 @@ name,va
 ?TheBfmeHeldHandle@@3HA,0x012B7430
 ?TheBfmeHeldResource@@3PAXA,0x012F4974
 ?TheBfmeHordeGlobalData@@3PAVBfmeHordeGlobalData@@A,0x012F0898
-?TheBfmeImeManager@@3PAVBfmeImeManager@@A,0x012F3344
 ?TheBfmeImpl_002EFC30@@3PAUGen_002EFC30Impl@@A,0x012EF4CC
 ?TheBfmeKeyboardModifiers@@3PAVBfmeKeyboardModifiers@@A,0x012F4C50
 ?TheBfmeLivingWorldCampaignState@@3PAVCampaignManager@@A,0x012F1028

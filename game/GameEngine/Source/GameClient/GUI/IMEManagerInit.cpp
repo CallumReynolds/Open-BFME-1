@@ -119,8 +119,7 @@ public:
 
 // The global is only passed through GameWindow::winSetUserData; its concrete
 // object layout is outside this body, so keep the declaration opaque.
-class BfmeImeManager;
-extern BfmeImeManager *TheBfmeImeManager;
+extern IMEManagerInterface *TheIMEManager;
 extern void *Rva0048CD50WindowHandle;
 
 extern "C"
@@ -192,8 +191,8 @@ void IMEManager::init()
 
 	if ( m_candidateWindow != 0 )
 	{
-		m_candidateWindow->winSetUserData( TheBfmeImeManager );
-		m_candidateTextArea->winSetUserData( TheBfmeImeManager );
+		m_candidateWindow->winSetUserData( TheIMEManager );
+		m_candidateTextArea->winSetUserData( TheIMEManager );
 	}
 
 	detatch();

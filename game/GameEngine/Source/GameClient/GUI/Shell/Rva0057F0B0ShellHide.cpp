@@ -30,8 +30,10 @@ public:
 	virtual void notifyHidden() = 0;
 };
 
-// The recorded pointer at VA 0x012F3344 is zero-initialized in retail.
-Rva0057F0B0ShellGlobal *Glo012F3344 = 0;
+// TheIMEManager at VA 0x012F3344 (GameClient::init names it "TheIMEManager";
+// ZH IMEManager.cpp:325), zero-initialized in retail.
+class IMEManagerInterface;
+IMEManagerInterface *TheIMEManager = 0;
 
 class Rva0057F0B0Shell
 {
@@ -53,6 +55,6 @@ void Rva0057F0B0Shell::hide(Bool value)
 			m_screenStack[i]->hide(value);
 	}
 
-	if (Glo012F3344)
-		Glo012F3344->notifyHidden();
+	if (TheIMEManager)
+		((Rva0057F0B0ShellGlobal *)TheIMEManager)->notifyHidden();
 }

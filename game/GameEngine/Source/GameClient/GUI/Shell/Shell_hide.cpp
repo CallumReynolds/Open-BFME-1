@@ -45,7 +45,8 @@ public:
 	virtual void bfmeNotifyHidden(void) = 0;		// slot 10, vtable+0x28
 };
 
-extern Glo012F3344Type *Glo012F3344;				// 0x012F3344
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;				// 0x012F3344
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
 class UnicodeString
@@ -169,8 +170,8 @@ void Shell::hide(Bool hide)
 		}
 	}
 
-	if (Glo012F3344)
-		Glo012F3344->bfmeNotifyHidden();
+	if (TheIMEManager)
+		((Glo012F3344Type *)TheIMEManager)->bfmeNotifyHidden();
 
 	m_bfmeShown = false;
 

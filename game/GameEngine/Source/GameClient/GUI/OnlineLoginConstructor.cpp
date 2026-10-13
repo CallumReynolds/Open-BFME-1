@@ -144,7 +144,8 @@ public:
 	virtual void bfmeNotify();
 };
 
-extern BfmeImeManager *TheBfmeImeManager;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 extern class BfmeAptScreenOnlineLogin *TheBfmeOnlineLogin;
 
 void _bfme_setAptScreenRef( const AsciiString &name,
@@ -268,6 +269,6 @@ BfmeAptScreenOnlineLogin::BfmeAptScreenOnlineLogin( void *context )
 
 		m_gadgetState9E = _bfme_loginGadgetsState();
 		m_zA1 = _bfme_loginGadgetsState();
-		TheBfmeImeManager->bfmeNotify();
+		((BfmeImeManager *)TheIMEManager)->bfmeNotify();
 	}
 }

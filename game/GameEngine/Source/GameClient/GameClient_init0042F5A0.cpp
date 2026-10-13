@@ -180,7 +180,8 @@ extern Mouse *TheMouse;
 extern Display *TheDisplay;
 extern HeaderTemplateManager *TheHeaderTemplateManager;
 extern GameWindowManager *TheWindowManager;
-extern IMEManager *TheIMEManager;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 extern Shell *TheShell;
 extern InGameUI *TheInGameUI;
 extern HotKeyManager *TheHotKeyManager;
@@ -303,11 +304,11 @@ void GameClient::init()
         TheWindowManager->init();
         TheWindowManager->setName(AsciiString("TheWindowManager"));
     }
-    TheIMEManager = (IMEManager *)make0048D380();
+    TheIMEManager = (IMEManagerInterface *)make0048D380();
     if (TheIMEManager)
     {
-        TheIMEManager->init();
-        TheIMEManager->setName(AsciiString("TheIMEManager"));
+        ((IMEManager *)TheIMEManager)->init();
+        ((IMEManager *)TheIMEManager)->setName(AsciiString("TheIMEManager"));
     }
     TheShell = new Shell;
     if (TheShell)

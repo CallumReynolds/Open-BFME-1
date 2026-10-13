@@ -108,7 +108,8 @@ public:
 void _bfme_closeAptScreen( const AsciiString &name );
 
 extern GameWindowManager *TheWindowManager;
-extern BfmeImeManager *TheBfmeImeManager;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 
 class BfmeAptScreenOnlineLogin;
 extern BfmeAptScreenOnlineLogin *TheBfmeOnlineLogin;
@@ -134,7 +135,7 @@ BfmeAptScreenOnlineLogin::~BfmeAptScreenOnlineLogin()
 		}
 		if( TheWindowManager )
 			TheWindowManager->bfmeOnlineLoginShutdown();
-		TheBfmeImeManager->bfmeDetach();
+		((BfmeImeManager *)TheIMEManager)->bfmeDetach();
 		TheBfmeOnlineLogin = 0;
 	}
 }

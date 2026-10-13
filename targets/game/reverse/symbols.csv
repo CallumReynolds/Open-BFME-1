@@ -14204,7 +14204,6 @@ name,address,notes
 ?TheBfmeGameLogic@@3PAVGameLogic@@A,0x012F0898,GameLogic global from Team::getTeamTargetObject
 ?TheBfmeGenAE@@3PAVBfmeGenAE@@A,0x00EED600
 ?TheBfmeGhostAH@@3PAVBfmeGhostAH@@A,0x00EEF4FC
-?TheBfmeImeManager@@3PAVBfmeImeManager@@A,0x012F3344,IME manager notified by OnlineLogin destructor
 ?TheBfmeLogicXG@@3PAVBfmeLogicXG@@A,0x00EF0898
 ?TheBfmeLogicYO@@3PAVBfmeLogicYO@@A,0x00EF0898
 ?TheBfmeManagerZE@@3PAVBfmeManagerZE@@A,0x00EF1B40

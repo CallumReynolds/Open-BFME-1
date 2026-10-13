@@ -20,7 +20,8 @@ public:
     virtual void bfmeDetach() = 0;
 };
 
-extern BfmeImeManager *TheBfmeImeManager;
+class IMEManagerInterface;
+extern IMEManagerInterface *TheIMEManager;
 class GameSpyInfoInterface;
 extern GameSpyInfoInterface *TheGameSpyInfo;
 void GameSpyCloseAllOverlays();
@@ -85,8 +86,8 @@ private:
         Bool immediatePop = false;
         screen->runShutdown(&immediatePop);
 
-        if (TheBfmeImeManager)
-            TheBfmeImeManager->bfmeDetach();
+        if (TheIMEManager)
+            ((BfmeImeManager *)TheIMEManager)->bfmeDetach();
     }
 
     WindowLayout *m_screenStack[16];
@@ -99,8 +100,8 @@ private:
 
 void Shell::reset()
 {
-    if (TheBfmeImeManager)
-        TheBfmeImeManager->bfmeDetach();
+    if (TheIMEManager)
+        ((BfmeImeManager *)TheIMEManager)->bfmeDetach();
 
     while (m_screenCount)
         pop();

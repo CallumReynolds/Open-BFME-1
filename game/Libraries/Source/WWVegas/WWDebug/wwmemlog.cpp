@@ -41,6 +41,11 @@
  *   WWMemoryLogClass::Release_Memory -- frees memory                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.  Template instances retail took
+// from objects that did declare them are emitted elsewhere (see the ledger).
+#define _OPERATOR_NEW_DEFINED_
 #include "always.h"
 // FastAllocator's inline lock sites use the BFME spin-call model, not the
 // reference mutex.h class whose inline-asm constructor materializes a sentry.

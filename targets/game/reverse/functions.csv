@@ -1676,19 +1676,16 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??0?$TRect@H@@QAE@HHHH@Z,,0x0005BA90,32,game/Libraries/Source/WWVegas/WWLib/xsurface.cpp,matched,
 ??0?$VectorClass@E@@QAE@HPBE@Z,,0x009121A0,71,game/Libraries/Source/WWVegas/WW3D2/pointgr.cpp,matched,
 ??0?$VectorClass@G@@QAE@HPBG@Z,,0x00AFE9C0,74,game/Libraries/Source/WWVegas/WW3D2/render2d.cpp,matched,TU-local specialization preserves retail 4-byte allocation shape
-??0?$VectorClass@H@@QAE@HPBH@Z,,0x009062F0,74,game/Libraries/Source/WWVegas/WWDebug/wwmemlog.cpp,matched,
+??0?$VectorClass@H@@QAE@HPBH@Z,,0x009062F0,74,game/Libraries/Source/WWVegas/WWSaveLoad/twiddler.cpp,matched,
 ??0?$VectorClass@K@@QAE@HPBK@Z,,0x00981080,74,game/Libraries/Source/WWVegas/WW3D2/meshmdl.cpp,matched,
-??0?$VectorClass@M@@QAE@HPBM@Z,,0x0093CE50,74,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,
 ??0?$VectorClass@PAD@@QAE@HPBQAD@Z,,0x009062F0,74,game/Libraries/Source/WWVegas/WW3D2/collect.cpp,matched,
 ??0?$VectorClass@PAULegacyMaterialClass@MeshLoadContextClass@@@@QAE@HPBQAULegacyMaterialClass@MeshLoadContextClass@@@Z,,0x009810D0,74,game/Libraries/Source/WWVegas/WW3D2/meshmdlio.cpp,matched,
 ??0?$VectorClass@PAUW3dAggregateSubobjectStruct@@@@QAE@HPBQAUW3dAggregateSubobjectStruct@@@Z,,0x009062F0,74,game/Libraries/Source/WWVegas/WW3D2/agg_def.cpp,matched,
 ??0?$VectorClass@PAUtThreadInfoType@@@@QAE@HPBQAUtThreadInfoType@@@Z,,0x009062F0,74,game/Libraries/Source/WWVegas/WWLib/Except.cpp,matched,
 ??0?$VectorClass@PAVDefinitionClass@@@@QAE@HPBQAVDefinitionClass@@@Z,,0x009062F0,74,game/Libraries/Source/WWVegas/WWSaveLoad/definitionmgr.cpp,matched,
-??0?$VectorClass@PAVHAnimComboDataClass@@@@QAE@HPBQAVHAnimComboDataClass@@@Z,,0x0094DE30,74,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,
 ??0?$VectorClass@PAVPrototypeClass@@@@QAE@HPBQAVPrototypeClass@@@Z,,0x0093CCD0,74,game/Libraries/Source/WWVegas/WW3D2/assetmgr.cpp,matched,
 ??0?$VectorClass@PAVPrototypeLoaderClass@@@@QAE@HPBQAVPrototypeLoaderClass@@@Z,,0x0092FB50,74,game/Libraries/Source/WWVegas/WW3D2/assetmgr.cpp,matched,
 ??0?$VectorClass@PAVRenderObjClass@@@@QAE@HPBQAVRenderObjClass@@@Z,,0x00912300,74,game/Libraries/Source/WWVegas/WW3D2/agg_def.cpp,matched,
-??0?$VectorClass@PAVTextureClass@@@@QAE@HPBQAVTextureClass@@@Z,,0x00973EC0,74,game/Libraries/Source/WWVegas/WW3D2/matinfo.cpp,matched,
 ??0?$VectorClass@PAVVertexMaterialClass@@@@QAE@HPBQAVVertexMaterialClass@@@Z,,0x0096CCD0,74,game/Libraries/Source/WWVegas/WW3D2/matinfo.cpp,matched,
 ??0?$VectorClass@PAX@@QAE@HPBQAX@Z,,0x009062F0,74,game/Libraries/Source/WWVegas/WWLib/msgloop.cpp,matched,
 ??0?$VectorClass@UAcceleratorTracker@@@@QAE@HPBUAcceleratorTracker@@@Z,,0x00913500,175,game/Libraries/Source/WWVegas/WWLib/msgloop.cpp,matched,
@@ -6275,7 +6272,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??1?$DynamicVectorClass@UAddInfoStruct@MixFileFactoryClass@@@@UAE@XZ,,0x0093E480,67,game/Libraries/Source/WWVegas/WWLib/mixfile.cpp,matched,icf-owner=??1?$DynamicVectorClass@UFileOffsetStruct@@@@UAE@XZ
 ??1?$DynamicVectorClass@UFileOffsetStruct@@@@UAE@XZ,,0x0093E480,67,game/Libraries/Source/WWVegas/WWLib/mixfile.cpp,matched,
 ??1?$DynamicVectorClass@UPendingSurfaceStruct@Render2DSentenceClass@@@@UAE@XZ,,0x009409A0,67,game/Libraries/Source/WWVegas/WW3D2/render2dsentence.cpp,matched,
-??1?$DynamicVectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ,,0x0093E480,67,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,icf-owner=??1?$DynamicVectorClass@UFileOffsetStruct@@@@UAE@XZ
 ??1?$DynamicVectorClass@U_ENUM_VALUE@EnumParameterClass@@@@UAE@XZ,,0x0093E480,67,game/Libraries/Source/WWVegas/WWSaveLoad/parameter.cpp,matched,
 ??1?$DynamicVectorClass@VStringClass@@@@UAE@XZ,,0x0013BB30,67,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplay.cpp,matched,
 ??1?$GXHalfEdgePMesh@G$00$0PPPP@@@QAE@XZ,,0x00A134A0,65,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\createmesh.obj
@@ -6401,7 +6397,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??1?$VectorClass@UFileOffsetStruct@@@@UAE@XZ,,0x0093E480,67,game/Libraries/Source/WWVegas/WWLib/mixfile.cpp,matched,icf-owner=??1?$DynamicVectorClass@UFileOffsetStruct@@@@UAE@XZ
 ??1?$VectorClass@UPendingSurfaceStruct@Render2DSentenceClass@@@@UAE@XZ,,0x00940810,67,game/Libraries/Source/WWVegas/WW3D2/render2dsentence.cpp,matched,
 ??1?$VectorClass@UTextureStatisticsStruct@@@@UAE@XZ,,0x00937F60,67,game/Libraries/Source/WWVegas/WW3D2/TextureStatisticsVector.cpp,matched,anonymous dump converted; TextureStatisticsVector.cpp already emits this body byte-exact (found by scanning neighbouring TU objects for unclaimed symbols);model=claude-opus-5-5
-??1?$VectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ,,0x0093E480,67,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,icf-owner=??1?$DynamicVectorClass@UFileOffsetStruct@@@@UAE@XZ
 ??1?$VectorClass@U_ENUM_VALUE@EnumParameterClass@@@@UAE@XZ,,0x0093E480,67,game/Libraries/Source/WWVegas/WWSaveLoad/parameter.cpp,matched,
 ??1?$VectorClass@VActiveCategoryStackClass@@@@UAE@XZ,,0x00AFEF80,73,game/Libraries/Source/WWVegas/WWDebug/wwmemlog.cpp,matched,
 ??1?$VectorClass@VStringClass@@@@UAE@XZ,,0x0013B3F0,67,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplay.cpp,matched,
@@ -8708,7 +8703,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??1WeaponSetUpgrade@@MAE@XZ,,0x002DA4A0,32,game/GameEngine/Source/GameLogic/Object/Upgrade/WeaponSetUpgradeDestructor.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/002da4a0-weaponsetupgrade-dtor.md;empty protected destructor inlines UpgradeModule teardown and tail-jumps to ObjectModule dtor ILT 0x00047C53; deleting wrapper reaches it via ILT 0x0003E45A; ilt_oracle confirms MAE;model=claude-opus-5-5;host=GreatFaram
 ??1WeaponStore@@UAE@XZ,,0x001E67F0,212,game/GameEngine/Source/GameLogic/Object/WeaponStoreDestructor.cpp,matched,dedicated vtable 0x010A13C8 from ctor 0x001E5290 and scalar wrapper 0x001E7F20 call ILT 0x0000D7AB; vector layout and delete loop match retail; separate TU models BFME layout without the Zero Hour delayed-damage list
 ??1WeaponTemplate@@MAE@XZ,,0x001E7940,600,game/GameEngine/Source/GameLogic/Object/WeaponTemplateDestructor.cpp,matched,The ILT at 0x0004456C names WeaponTemplate and constructor vtable 0x010A1418 matches this 0x53C field layout
-??1WeightInfoStruct@NamedPivotMapClass@@QAE@XZ,,0x00072A40,14,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DDefaultDraw.cpp,matched,
 ??1Win32BIGFile@@UAE@XZ,,0x009D1500,95,game/GameEngineDevice/Source/Win32Device/Common/Win32BIGFileLifecycle.cpp,matched,
 ??1Win32BIGFileSystem@@UAE@XZ,,0x009CC370,11,game/GameEngineDevice/Source/Win32Device/Common/Win32BIGFileSystem_dtor.cpp,matched,installs vtable 0x01143B40 then tail-jumps to the matched ~ArchiveFileSystem at 0x009CA550
 ??1Win32LocalFileSystem@@UAE@XZ,,0x009CDE20,7,game/GameEngineDevice/Source/Win32Device/Common/Win32LocalFileSystem.cpp,matched,empty body -- the seven bytes are the inlined ~LocalFileSystem installing the base vtable 0x01143B78
@@ -13646,17 +13640,14 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Class_ID@Vector3SolidSphereRandomizer@@UBEIXZ,,0x00B02290,6,game/Libraries/Source/WWVegas/WWMath/v3_rnd.cpp,matched,vtable slot between destructor and Get_Vector; returns CLASSID_SOLIDSPHERE; consolidate canonical v3_rnd header-emitted body;model=gpt-6-astra;host=GreatFaram
 ?Class_ID@W3DStatusCircle@@UBEHXZ,,0x00725B50,4,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DStatusCircle.cpp,matched,
 ?CleanUpClip@CPSLegacyProgram@D3DXShader@@IAEJXZ,,0x00A874E4,640,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\cpslegacyprogram.obj
-?Clear@?$DynamicVectorClass@G@@UAEXXZ,,0x00981520,42,game/Libraries/Source/WWVegas/WW3D2/render2d.cpp,matched,
 ?Clear@?$DynamicVectorClass@H@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WWSaveLoad/twiddler.cpp,matched,
 ?Clear@?$DynamicVectorClass@K@@UAEXXZ,,0x0097C880,42,game/Libraries/Source/WWVegas/WW3D2/meshmdl.cpp,matched,
-?Clear@?$DynamicVectorClass@M@@UAEXXZ,,0x0093D670,42,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAD@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WW3D2/collect.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAULegacyMaterialClass@MeshLoadContextClass@@@@UAEXXZ,,0x00981410,42,game/Libraries/Source/WWVegas/WW3D2/meshmdlio.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAUW3dAggregateSubobjectStruct@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WW3D2/agg_def.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAUtThreadInfoType@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WWLib/Except.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAVDefinitionClass@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WWSaveLoad/definitionmgr.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAVFontCharsBuffer@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WW3D2/render2dsentence.cpp,matched,
-?Clear@?$DynamicVectorClass@PAVHAnimComboDataClass@@@@UAEXXZ,,0x0093D810,42,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAVPrototypeClass@@@@UAEXXZ,,0x00930240,42,game/Libraries/Source/WWVegas/WW3D2/assetmgr.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAVPrototypeLoaderClass@@@@UAEXXZ,,0x009074D0,42,game/Libraries/Source/WWVegas/WW3D2/assetmgr.cpp,matched,
 ?Clear@?$DynamicVectorClass@PAVRender2DClass@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WW3D2/render2dsentence.cpp,matched,
@@ -13682,14 +13673,11 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Clear@?$DynamicVectorClass@VModelNodeClass@HLodClass@@@@UAEXXZ,,0x0094E2E0,42,game/Libraries/Source/WWVegas/WW3D2/hlod.cpp,matched,
 ?Clear@?$DynamicVectorClass@VRenderDeviceDescClass@@@@UAEXXZ,,0x0090B440,67,game/Libraries/Source/WWVegas/WW3D2/dxwrapper.cpp,matched,BFME RenderDeviceDesc layout shim
 ?Clear@?$DynamicVectorClass@VResolutionDescClass@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WW3D2/dxwrapper.cpp,matched,
-?Clear@?$DynamicVectorClass@VShaderClass@@@@UAEXXZ,,0x009744B0,42,game/Libraries/Source/WWVegas/WW3D2/matinfo.cpp,matched,
 ?Clear@?$DynamicVectorClass@VStringClass@@@@UAEXXZ,,0x0013B770,64,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplay.cpp,matched,
 ?Clear@?$DynamicVectorClass@VTCBClass@TCBSpline3DClass@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WWMath/tcbspline.cpp,matched,
 ?Clear@?$DynamicVectorClass@VTangentsClass@HermiteSpline1DClass@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WWMath/cardinalspline.cpp,matched,
 ?Clear@?$DynamicVectorClass@VTangentsClass@HermiteSpline3DClass@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WWMath/cardinalspline.cpp,matched,
-?Clear@?$DynamicVectorClass@VVector2@@@@UAEXXZ,,0x007BB8D0,42,game/Libraries/Source/WWVegas/WW3D2/render2d.cpp,matched,
 ?Clear@?$DynamicVectorClass@VVector3@@@@UAEXXZ,,0x00930C80,42,game/Libraries/Source/WWVegas/WW3D2/dx8renderer.cpp,matched,
-?Clear@?$DynamicVectorClass@VVector4@@@@UAEXXZ,,0x00974670,42,game/Libraries/Source/WWVegas/WW3D2/meshmdl.cpp,matched,
 ?Clear@?$IndexClass@HPAUINIEntry@@@@QAEXXZ,,0x009E27B0,32,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,IndexClass sibling
 ?Clear@?$IndexClass@HPAUINISection@@@@QAEXXZ,,0x009E2CE0,32,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,IndexClass sibling
 ?Clear@?$ShareBufferClass@E@@QAEXXZ,,0x00923DA0,27,game/Libraries/Source/WWVegas/WW3D2/MeshGeometryShareBufferInstantiations.cpp,matched,reinstantiated after the Reset_Geometry lift removed meshgeometry.cpp only use
@@ -18345,8 +18333,7 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Resize@?$SimpleVecClass@VVector3i16@@@@UAE_NH@Z,,0x0078C820,131,game/Libraries/Source/WWVegas/WW3D2/assetmgr.cpp,matched,object-symbol=?Resize@?$SimpleVecClass@PAVFontCharsClass@@@@UAE_NH@Z;C++ alias
 ?Resize@?$SimpleVecClass@VVector4@@@@UAE_NH@Z,,0x00919BC0,211,game/Libraries/Source/WWVegas/WW3D2/StreakLineCtor.cpp,matched,PointColors base vtable 0x0113ACF0 slot1;16-byte elements;slot2 named Vector4 Uninitialised_Grow
 ?Resize@?$VectorClass@E@@UAE_NHPBE@Z,,0x009121F0,165,game/Libraries/Source/WWVegas/WW3D2/pointgr.cpp,matched,
-?Resize@?$VectorClass@H@@UAE_NHPBH@Z,,0x0005E610,177,game/Libraries/Source/WWVegas/WWDebug/wwmemlog.cpp,matched,
-?Resize@?$VectorClass@K@@UAE_NHPBK@Z,,0x00973C00,177,game/Libraries/Source/WWVegas/WW3D2/meshmdl.cpp,matched,
+?Resize@?$VectorClass@H@@UAE_NHPBH@Z,,0x0005E610,177,game/Libraries/Source/WWVegas/WWSaveLoad/twiddler.cpp,matched,
 ?Resize@?$VectorClass@M@@UAE_NHPBM@Z,,0x00912350,319,game/Libraries/Source/WWVegas/WW3D2/pointgr.cpp,matched,
 ?Resize@?$VectorClass@PAD@@UAE_NHPBQAD@Z,,0x0005E610,177,game/Libraries/Source/WWVegas/WW3D2/collect.cpp,matched,
 ?Resize@?$VectorClass@PAULegacyMaterialClass@MeshLoadContextClass@@@@UAE_NHPBQAULegacyMaterialClass@MeshLoadContextClass@@@Z,,0x00980CE0,177,game/Libraries/Source/WWVegas/WW3D2/meshmdlio.cpp,matched,
@@ -18354,13 +18341,11 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Resize@?$VectorClass@PAUtThreadInfoType@@@@UAE_NHPBQAUtThreadInfoType@@@Z,,0x0005E610,177,game/Libraries/Source/WWVegas/WWLib/Except.cpp,matched,
 ?Resize@?$VectorClass@PAVDefinitionClass@@@@UAE_NHPBQAVDefinitionClass@@@Z,,0x0005E610,177,game/Libraries/Source/WWVegas/WWSaveLoad/definitionmgr.cpp,matched,
 ?Resize@?$VectorClass@PAVFontCharsBuffer@@@@UAE_NHPBQAVFontCharsBuffer@@@Z,,0x0005E610,177,game/Libraries/Source/WWVegas/WW3D2/render2dsentence.cpp,matched,
-?Resize@?$VectorClass@PAVHAnimComboDataClass@@@@UAE_NHPBQAVHAnimComboDataClass@@@Z,,0x0094DE80,177,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,
 ?Resize@?$VectorClass@PAVPrototypeClass@@@@UAE_NHPBQAVPrototypeClass@@@Z,,0x0093CD20,177,game/Libraries/Source/WWVegas/WW3D2/assetmgr.cpp,matched,
 ?Resize@?$VectorClass@PAVPrototypeLoaderClass@@@@UAE_NHPBQAVPrototypeLoaderClass@@@Z,,0x0092F700,177,game/Libraries/Source/WWVegas/WW3D2/assetmgr.cpp,matched,
 ?Resize@?$VectorClass@PAVRender2DClass@@@@UAE_NHPBQAVRender2DClass@@@Z,,0x0005E610,177,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DControlBar.cpp,matched,
 ?Resize@?$VectorClass@PAVRenderObjClass@@@@UAE_NHPBQAVRenderObjClass@@@Z,,0x00906090,177,game/Libraries/Source/WWVegas/WW3D2/agg_def.cpp,matched,
 ?Resize@?$VectorClass@PAVTextureClass@@@@UAE_NHPBQAVTextureClass@@@Z,,0x0096CD20,177,game/Libraries/Source/WWVegas/WW3D2/matinfo.cpp,matched,
-?Resize@?$VectorClass@PAVVertexMaterialClass@@@@UAE_NHPBQAVVertexMaterialClass@@@Z,,0x00AFEA70,177,game/Libraries/Source/WWVegas/WW3D2/matinfo.cpp,matched,
 ?Resize@?$VectorClass@PAX@@UAE_NHPBQAX@Z,,0x0005E610,177,game/Libraries/Source/WWVegas/WWLib/msgloop.cpp,matched,
 ?Resize@?$VectorClass@UFileInfoStruct@MixFileCreator@@@@UAE_NHPBUFileInfoStruct@MixFileCreator@@@Z,,0x009302C0,403,game/Libraries/Source/WWVegas/WWLib/VectorClassMixFileInfoResizeThunk.cpp,matched,Open-BFME5 exact C++ __emit thunk converted from MASM dump;object-symbol=_bfme_VectorClassMixFileInfoResize_9302C0
 ?Resize@?$VectorClass@UPendingSurfaceStruct@Render2DSentenceClass@@@@UAE_NHPBUPendingSurfaceStruct@Render2DSentenceClass@@@Z,,0x00940450,382,game/Libraries/Source/WWVegas/WW3D2/PendingSurfaceStructResizeThunk.cpp,matched,Resize slot of vtable 0x0113CE74 (Render2DSentenceClass::PendingSurfaceStruct); reuses W3DRadarResetSurface AddRef/Release slot1/slot2 pattern from matched dtor 0x0005F5E0 and W3DDisplayDrawImage.cpp addRef; Renderers assign pinned to matched dup_0093cea0
@@ -41517,7 +41502,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?dup_001a33f0@@YAXXZ,,0x001A33F0,11,game/GameEngine/Source/Common/Audio/GameAudio.cpp,matched,gen-alias;object-symbol=??0?$_List_iterator@PAUAudioRequest@@U?$_Nonconst_traits@PAUAudioRequest@@@_STL@@@_STL@@QAE@PAU?$_List_node@PAUAudioRequest@@@1@@Z;C++ alias
 ?dup_001a3400@@YAXXZ,,0x001A3400,11,game/GameEngine/Source/Common/Audio/GameAudio.cpp,matched,gen-alias;object-symbol=??0?$_List_iterator@PAUAudioRequest@@U?$_Nonconst_traits@PAUAudioRequest@@@_STL@@@_STL@@QAE@PAU?$_List_node@PAUAudioRequest@@@1@@Z;C++ alias
 ?dup_001a3440@@YAXXZ,,0x001A3440,11,game/GameEngine/Source/GameNetwork/GameSpy/Thread/PersistentStorageThread.cpp,matched,gen-alias;object-symbol=??0?$_Eq_char_bound@V?$char_traits@D@_STL@@@_STL@@QAE@D@Z;C++ alias
-?dup_001a3d10@@YAXXZ,,0x001A3D10,24,game/Libraries/Source/WWVegas/WW3D2/motchan.cpp,matched,gen-alias;object-symbol=??1TimeCodedMotionChannelClass@@QAE@XZ;C++ alias
 ?dup_001a41b0@@YAXXZ,,0x001A41B0,14,game/GameEngine/Source/Common/RTS/PlayerTemplate.cpp,matched,gen-alias;object-symbol=?empty@?$list@VAsciiString@@V?$allocator@VAsciiString@@@_STL@@@_STL@@QBE_NXZ;C++ alias
 ?dup_001a41f0@@YAXXZ,,0x001A41F0,9,game/GameEngine/Source/Common/INI/INILineBuffer.cpp,matched,gen-alias;object-symbol=?size@?$vector@UINILine@@V?$allocator@UINILine@@@_STL@@@_STL@@QBEIXZ;C++ alias
 ?dup_001a4220@@YAXXZ,,0x001A4220,25,game/gen_small/tgrid_005.cpp,matched,gen-alias;object-symbol=?size@?$vector@UGen_p48cd@@V?$allocator@UGen_p48cd@@@_STL@@@_STL@@QBEIXZ;C++ alias
@@ -50291,15 +50275,11 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?dup_00972870@@YAXXZ,,0x00972870,7,game/Libraries/Source/WWVegas/WW3D2/nullrobj.cpp,matched,gen-alias;object-symbol=?Get_Name@Null3DObjClass@@UBEPBDXZ;C++ alias
 ?dup_00972920@@YAXXZ,,0x00972920,6,game/GameEngine/Source/Common/CommandLine.cpp,matched,gen-alias;object-symbol=?parseNoLogOrCrash@@YAHQAPADH@Z;C++ alias
 ?dup_00973530@@YAXXZ,,0x00973530,8,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,gen-alias;object-symbol=?Invalidate_Archive@?$IndexClass@HPAUINIEntry@@@@ABEXXZ;C++ alias
-?dup_00973580@@YAXXZ,,0x00973580,39,game/Libraries/Source/WWVegas/WW3D2/pointgr.cpp,matched,zh-landmulti exact-multi ZH twin (rel32-all-resolve);object-symbol=?Clear@?$VectorClass@E@@UAEXXZ
 ?dup_00973610@@YAXXZ,,0x00973610,9,game/GameEngine/Source/GameLogic/Object/Object.cpp,matched,gen-alias;object-symbol=??0?$BitFlags@$0BB@@@QAE@XZ;C++ alias
 ?dup_00973620@@YAXXZ,,0x00973620,10,game/GameEngine/Source/Common/ConditionalPointerStoreThunk.cpp,matched,gen-alias;object-symbol=?assignSecond@ConditionalPointerStoreThunk@@QAEXPAX@Z;C++ alias
 ?dup_00973630@@YAXXZ,,0x00973630,10,game/GameEngine/Source/Common/GameEngine.cpp,matched,gen-alias;object-symbol=?setFramesPerSecondLimit@GameEngine@@UAEXH@Z;C++ alias
 ?dup_00973b00@@YAXXZ,,0x00973B00,19,game/Libraries/Source/WWVegas/WWMath/aabtreecull.cpp,matched,gen-alias;object-symbol=??0?$ObjectPoolClass@VAABTreeLinkClass@@$0BAA@@@QAE@XZ;C++ alias
-?dup_00973b20@@YAXXZ,,0x00973B20,45,game/Libraries/Source/WWVegas/WW3D2/meshmdl.cpp,matched,zh-landmulti exact-multi ZH twin (dir32-masked);object-symbol=??1?$DynamicVectorClass@K@@UAE@XZ
 ?dup_00973b90@@YAXXZ,,0x00973B90,25,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DTankDraw.cpp,matched,gen-alias;object-symbol=?ID@?$VectorClass@PAVRender2DClass@@@@UAEHPBQAVRender2DClass@@@Z;C++ alias
-?dup_00973f10@@YAXXZ,,0x00973F10,45,game/Libraries/Source/WWVegas/WW3D2/meshmdl.cpp,matched,zh-landmulti exact-multi ZH twin (dir32-masked);object-symbol=??1?$DynamicVectorClass@K@@UAE@XZ
-?dup_00973f90@@YAXXZ,,0x00973F90,45,game/Libraries/Source/WWVegas/WW3D2/meshmdl.cpp,matched,zh-landmulti exact-multi ZH twin (dir32-masked);object-symbol=??1?$DynamicVectorClass@K@@UAE@XZ
 ?dup_009744e0@@YAXXZ,,0x009744E0,25,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DTankDraw.cpp,matched,gen-alias;object-symbol=?ID@?$VectorClass@PAVRender2DClass@@@@UAEHPBQAVRender2DClass@@@Z;C++ alias
 ?dup_009746a0@@YAXXZ,,0x009746A0,25,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DTankDraw.cpp,matched,gen-alias;object-symbol=?ID@?$VectorClass@PAVRender2DClass@@@@UAEHPBQAVRender2DClass@@@Z;C++ alias
 ?dup_00975010@@YAXXZ,,0x00975010,12,game/Libraries/Source/WWVegas/WW3D2/TextureHandleDestructor.cpp,matched,gen-alias;object-symbol=??1BfmeHandleCX@@QAE@XZ;C++ alias: null-guarded tail jump to TextureClass::Release_Ref 0x009EB7A0 (not NetCommandMsg::detach)
@@ -141875,7 +141855,6 @@ dup_92f90,,0x00092F90,35,game/gen_small/zhstl_006.cpp,matched,vendored=cnc-zh;zh
 dup_933d30,,0x00933D30,192,game/Libraries/Source/WWVegas/WW3D2/VectorClassProxyResizeThunk.cpp,matched,dup-of=??0?$VectorClass@VProxyClass@@@@QAE@HPBVProxyClass@@@Z;object-symbol=??0?$VectorClass@VProxyClass@@@@QAE@HPBVProxyClass@@@Z;matched Render2D caller proves ProxyClass identity
 dup_93da50,,0x0093DA50,33,game/Libraries/Source/WWVegas/WWLib/Rva0093DA50VectorAssignment.cpp,matched,address-derived vector assignment; independent four-byte element base contract;object-symbol=??4Rva0093DA50Vector@@QAEAAU0@ABU0@@Z
 dup_93e170,,0x0093E170,39,game/GameEngine/Source/GameNetwork/ConnectionManager.cpp,matched,authentic byte-identical STLport narrow-key tree internal-lower-bound template alias;object-symbol=?_M_lower_bound@?$_Rb_tree@GU?$pair@$$CBGE@_STL@@U?$_Select1st@U?$pair@$$CBGE@_STL@@@2@U?$less@G@2@V?$allocator@U?$pair@$$CBGE@_STL@@@2@@_STL@@ABEPAU?$_Rb_tree_node@U?$pair@$$CBGE@_STL@@@2@ABG@Z
-dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,vendored=cnc-zh;dup-of=??1?$VectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ;object-symbol=??1?$VectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ
 dup_940b40,,0x00940B40,121,game/gen_small/zhstl_007.cpp,matched,vendored=cnc-zh;zhstl;dup-of=??A?$map@GHU?$less@G@_STL@@V?$allocator@U?$pair@$$CBGH@_STL@@@2@@_STL@@QAEAAHABG@Z;object-symbol=??A?$map@GHUGen_lt_00940b40@@V?$allocator@U?$pair@$$CBGH@_STL@@@_STL@@@_STL@@QAEAAHABG@Z
 dup_94c1b0,,0x0094C1B0,11,game/GameEngineDevice/Source/W3DDevice/GameClient/WorldHeightMap.cpp,matched,authentic byte-identical STLport alloc-proxy constructor template alias;dup-of=??0?$_STLP_alloc_proxy@PAU?$_Rb_tree_node@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@_STL@@U12@V?$allocator@U?$_Rb_tree_node@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@_STL@@@2@@_STL@@QAE@ABV?$allocator@U?$_Rb_tree_node@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@_STL@@@1@PAU?$_Rb_tree_node@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@1@@Z;object-symbol=??0?$_STLP_alloc_proxy@IPAVMapObject@@V?$allocator@PAVMapObject@@@_STL@@@_STL@@QAE@ABV?$allocator@PAVMapObject@@@1@I@Z
 dup_94c4c0,,0x0094C4C0,35,game/gen_small/zhstl_003.cpp,matched,vendored=cnc-zh;zhstl;dup-of=??0?$_Rb_tree_base@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@V?$allocator@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@2@@_STL@@QAE@ABV?$allocator@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@1@@Z;object-symbol=??0?$_Rb_tree_base@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@V?$allocator@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@2@@_STL@@QAE@ABV?$allocator@U?$pair@$$CBVAsciiString@@VArchivedFileInfo@@@_STL@@@1@@Z
@@ -172554,3 +172533,20 @@ uw_00c62070,,0x00C62070,19,game/GameEngine/Source/Common/Rva00C62070PlacementCle
 ?bfmeDescribeZM@BfmeOrderZM@@QAE?AVAsciiString@@XZ,,0x00674F00,182,game/GameEngine/Source/Common/BfmeOrderDescribeZM.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00674f00-asciistring-return.md;sibling order description; returns the real AsciiString (funclet 0x00C451A0 jumps through the AsciiString dtor ILT 0xD828);model=claude-opus-5-5;host=GreatFaram
 ?bfmeDescribeZN@BfmeOrderZN@@QAE?AVAsciiString@@XZ,,0x00674FF0,181,game/GameEngine/Source/Common/BfmeOrderDescribeZN.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00674ff0-asciistring-return.md;sibling order description; returns the real AsciiString (funclet 0x00C451E0 jumps through the AsciiString dtor ILT 0xD828);model=claude-opus-5-5;host=GreatFaram
 ??1Rva0059AA90@@UAE@XZ,,0x0059A690,18,game/GameEngine/Source/GameClient/GUI/Rva0059A690Dtor.cpp,matched,vftable 0x0110C604 re-seat plus clear of int at +0xC then tail jump to base dtor ILT 0x0001AA9B; class name is the DIR32 recorded address-derived Rva0059AA90 (ilt_oracle says ButtonFlashTransition; rename pending);model=claude-sonnet-5-5;host=SARUMAN
+??0?$VectorClass@M@@QAE@HPBM@Z,,0x0093CE50,74,game/Libraries/Source/WWVegas/WWMath/cardinalspline.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Clear@?$DynamicVectorClass@M@@UAEXXZ,,0x0093D670,42,game/Libraries/Source/WWVegas/WWMath/cardinalspline.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Clear@?$DynamicVectorClass@G@@UAEXXZ,,0x00981520,42,game/Libraries/Source/WWVegas/WW3D2/Render2DVectorArrayOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+??0?$VectorClass@PAVHAnimComboDataClass@@@@QAE@HPBQAVHAnimComboDataClass@@@Z,,0x0094DE30,74,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Clear@?$DynamicVectorClass@PAVHAnimComboDataClass@@@@UAEXXZ,,0x0093D810,42,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Resize@?$VectorClass@PAVHAnimComboDataClass@@@@UAE_NHPBQAVHAnimComboDataClass@@@Z,,0x0094DE80,177,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOpsInstances.cpp,matched,vendored=cnc-zh;dup-of=??1?$VectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ;object-symbol=??1?$VectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ;item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+??0?$VectorClass@PAVTextureClass@@@@QAE@HPBQAVTextureClass@@@Z,,0x00973EC0,74,game/Libraries/Source/WWVegas/WW3D2/MatInfoVectorScalarOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Clear@?$DynamicVectorClass@VShaderClass@@@@UAEXXZ,,0x009744B0,42,game/Libraries/Source/WWVegas/WW3D2/MatInfoVectorScalarOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Resize@?$VectorClass@PAVVertexMaterialClass@@@@UAE_NHPBQAVVertexMaterialClass@@@Z,,0x00AFEA70,177,game/Libraries/Source/WWVegas/WW3D2/MatInfoVectorScalarOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Clear@?$DynamicVectorClass@VVector4@@@@UAEXXZ,,0x00974670,42,game/Libraries/Source/WWVegas/WW3D2/MeshVectorScalarOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?Resize@?$VectorClass@K@@UAE_NHPBK@Z,,0x00973C00,177,game/Libraries/Source/WWVegas/WW3D2/MeshVectorScalarOpsInstances.cpp,matched,item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?dup_00973b20@@YAXXZ,,0x00973B20,45,game/Libraries/Source/WWVegas/WW3D2/MeshVectorScalarOpsInstances.cpp,matched,zh-landmulti exact-multi ZH twin (dir32-masked);object-symbol=??1?$DynamicVectorClass@K@@UAE@XZ;item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?dup_00973f10@@YAXXZ,,0x00973F10,45,game/Libraries/Source/WWVegas/WW3D2/MeshVectorScalarOpsInstances.cpp,matched,zh-landmulti exact-multi ZH twin (dir32-masked);object-symbol=??1?$DynamicVectorClass@K@@UAE@XZ;item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?dup_00973f90@@YAXXZ,,0x00973F90,45,game/Libraries/Source/WWVegas/WW3D2/MeshVectorScalarOpsInstances.cpp,matched,zh-landmulti exact-multi ZH twin (dir32-masked);object-symbol=??1?$DynamicVectorClass@K@@UAE@XZ;item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?dup_00973580@@YAXXZ,,0x00973580,39,game/Libraries/Source/WWVegas/WW3D2/MeshVectorScalarOpsInstances.cpp,matched,zh-landmulti exact-multi ZH twin (rel32-all-resolve);object-symbol=?Clear@?$VectorClass@E@@UAEXXZ;item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram
+?dup_001a3d10@@YAXXZ,,0x001A3D10,24,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOpsInstances.cpp,matched,object-symbol=?body@Rva001A3D10@@QAEXXZ;address-derived C++ body (TimeCodedMotionChannelClass-shaped with operator delete[]);item 12: emitted from an object built like retail for its new/delete targets;model=claude-opus-5-5;host=GreatFaram

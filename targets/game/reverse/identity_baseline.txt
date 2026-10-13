@@ -36,7 +36,7 @@ multi_name.different = 0
 size_outlier.indicted = 1
 ctor_vtable.contradicted = 20
 ctor_vtable.unreadable = 0
-one_identity.surplus = 2147
+one_identity.surplus = 2143
 # Retail registration proves DynamicPortalBehaviour owns ctor 001F8B80 and factory 001156B0; four false aliases retired.
 # fcf825b4f7 retired the false FXNugget zero-store claim; the body still has aliases.
 # 4c8346b3c9 retired the GDIFileStream ctor over-claim at 0x00087A50 (a zero-store body).
@@ -208,7 +208,6 @@ null_reloc.max_unreadable = 1000
 @ one_identity.surplus 0x00072A40 ??1?$_Vector_base@VAsciiString@@V?$allocator@VAsciiString@@@_STL@@@_STL@@QAE@XZ
 @ one_identity.surplus 0x00072A40 ??1?$vector@PAVObjectCreationNugget@@V?$allocator@PAVObjectCreationNugget@@@_STL@@@_STL@@QAE@XZ
 @ one_identity.surplus 0x00072A40 ??1ObjectCreationList@@QAE@XZ
-@ one_identity.surplus 0x00072A40 ??1WeightInfoStruct@NamedPivotMapClass@@QAE@XZ
 @ one_identity.surplus 0x00072A40 ?_M_clear@?$vector@PAVObjectCreationNugget@@V?$allocator@PAVObjectCreationNugget@@@_STL@@@_STL@@IAEXXZ
 @ one_identity.surplus 0x00075E00 ?compareNoCase@?$StringBase@D@@QBEHPBD@Z
 @ one_identity.surplus 0x00075E00 __stringbase_isnone_cmp_char
@@ -1926,7 +1925,6 @@ null_reloc.max_unreadable = 1000
 @ one_identity.surplus 0x007BB8D0 ?Clear@?$DynamicVectorClass@VTCBClass@TCBSpline3DClass@@@@UAEXXZ
 @ one_identity.surplus 0x007BB8D0 ?Clear@?$DynamicVectorClass@VTangentsClass@HermiteSpline1DClass@@@@UAEXXZ
 @ one_identity.surplus 0x007BB8D0 ?Clear@?$DynamicVectorClass@VTangentsClass@HermiteSpline3DClass@@@@UAEXXZ
-@ one_identity.surplus 0x007BB8D0 ?Clear@?$DynamicVectorClass@VVector2@@@@UAEXXZ
 @ one_identity.surplus 0x007BB950 ??8?$VectorClass@VTCBClass@TCBSpline3DClass@@@@UBE_NABV0@@Z
 @ one_identity.surplus 0x007BB950 ??8?$VectorClass@VVector3@@@@UBE_NABV0@@Z
 @ one_identity.surplus 0x007BBA50 ?ID@?$DynamicVectorClass@VTCBClass@TCBSpline3DClass@@@@UAEHABVTCBClass@TCBSpline3DClass@@@Z
@@ -2577,11 +2575,9 @@ null_reloc.max_unreadable = 1000
 @ one_identity.surplus 0x0093DBB0 ??0?$VectorClass@U_ENUM_VALUE@EnumParameterClass@@@@QAE@HPBU_ENUM_VALUE@EnumParameterClass@@@Z
 @ one_identity.surplus 0x0093E480 ??1?$DynamicVectorClass@UAddInfoStruct@MixFileFactoryClass@@@@UAE@XZ
 @ one_identity.surplus 0x0093E480 ??1?$DynamicVectorClass@UFileOffsetStruct@@@@UAE@XZ
-@ one_identity.surplus 0x0093E480 ??1?$DynamicVectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ
 @ one_identity.surplus 0x0093E480 ??1?$DynamicVectorClass@U_ENUM_VALUE@EnumParameterClass@@@@UAE@XZ
 @ one_identity.surplus 0x0093E480 ??1?$VectorClass@UAddInfoStruct@MixFileFactoryClass@@@@UAE@XZ
 @ one_identity.surplus 0x0093E480 ??1?$VectorClass@UFileOffsetStruct@@@@UAE@XZ
-@ one_identity.surplus 0x0093E480 ??1?$VectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE@XZ
 @ one_identity.surplus 0x0093E480 ??1?$VectorClass@U_ENUM_VALUE@EnumParameterClass@@@@UAE@XZ
 @ one_identity.surplus 0x0093E6C0 ?Clear@?$DynamicVectorClass@UAddInfoStruct@MixFileFactoryClass@@@@UAEXXZ
 @ one_identity.surplus 0x0093E6C0 ?Clear@?$DynamicVectorClass@UFileOffsetStruct@@@@UAEXXZ

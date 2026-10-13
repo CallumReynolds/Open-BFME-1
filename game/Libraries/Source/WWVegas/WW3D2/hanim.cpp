@@ -1,5 +1,10 @@
 // cl: /DNDEBUG /MD /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/Wwutil /Igame/Libraries/Source/WWVegas/WWDownload /Igame/Libraries/Source/Compression /Igame/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/shims/sweep
 #define Matrix4x4 Matrix4
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.  Template instances retail took
+// from objects that did declare them are emitted elsewhere (see the ledger).
+#define _OPERATOR_NEW_DEFINED_
 #include "winbase_shim.h"
 /*
 **	Command & Conquer Generals Zero Hour(tm)

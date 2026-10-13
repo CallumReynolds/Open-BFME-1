@@ -2,6 +2,10 @@
 // stlport
 #define Matrix4x4 Matrix4  // BFME renamed it
 #define __PLACEMENT_VEC_NEW_INLINE  // always.h/GameMemory.h define array placement-new themselves
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.
+#define _OPERATOR_NEW_DEFINED_
 #include "registry_win32.h"
 /*
 **	Command & Conquer Generals Zero Hour(tm)

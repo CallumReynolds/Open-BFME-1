@@ -338,10 +338,12 @@ void d_004dd2b0( void )
                 break;
             case PSResponse::Rva004DD2B0Case5:
                 rva00545d00CopyBlocks(resp.field_1dc,resp.field_1e0,resp.field_1e4,resp.field_1e8);
-                delete [] resp.field_1e4; resp.field_1e4=0;
-                delete [] resp.field_1dc; resp.field_1dc=0;
-                delete [] resp.field_1e0; resp.field_1e0=0;
-                delete [] resp.field_1e8; resp.field_1e8=0;
+                // Retail frees these four buffers with scalar operator delete (
+                // ??3 at 0x00881EB0), not operator delete[].
+                delete resp.field_1e4; resp.field_1e4=0;
+                delete resp.field_1dc; resp.field_1dc=0;
+                delete resp.field_1e0; resp.field_1e0=0;
+                delete resp.field_1e8; resp.field_1e8=0;
                 break;
             case PSResponse::PSRESPONSE_PLAYERSTATS:
 				{

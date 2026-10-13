@@ -45,6 +45,11 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+// Retail built this object without always.h's operator new[]/delete[]
+// declarations: its array new/delete call ::operator new/delete (??2/??3,
+// 0x00881F30/0x00881EB0), as in hash.cpp.  Template instances retail took
+// from objects that did declare them are emitted elsewhere (see the ledger).
+#define _OPERATOR_NEW_DEFINED_
 #include "motchan.h"
 #include "w3d_file.h"
 #include "chunkio.h"

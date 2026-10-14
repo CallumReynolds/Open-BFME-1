@@ -9,6 +9,14 @@ constructing all four coordinates makes the canonical home-TU bank exact.
 This recovery remains banked because another callback prevents the home
 file from linking. See identity_evidence/00793260-empty-coordinate.md.
 
+At `0x007CCF50`, the 3931-byte road shader bank differed in seven stack
+operands: shroud return storage and the last diagnostic string. Expose the
+actual noinline 29-byte `W3DShroud::getShroudTexture` counted-member return and
+scope `blendVector` with its pixel-constant call. Neither change works alone;
+together they reproduce every byte and all 18 unwind receiver offsets,
+including state 17 at EBP-0x1F4. See
+`identity_evidence/007ccf50-road-shader.md` for the verified combination.
+
 Run `python3 tools/probe.py <file.cpp> "<symbol>" 0x<RVA>` first: it compiles, diffs against retail with relocations masked, and prints the symptom row below with its lever.
 
 Read this before banking a near-miss. Each lever below turned a 0.9+ partial into

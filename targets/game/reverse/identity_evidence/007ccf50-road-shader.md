@@ -1,6 +1,41 @@
 # Road shader reconstruction at RVA 0x007CCF50
 
-## Result and remaining work
+## Verified recovery, 2026-10-13
+
+The 3931-byte body now passes the strict scoped build in
+`game/GameEngineDevice/Source/W3DDevice/GameClient/RoadShaderPixelShader_init.cpp`.
+The existing 179-byte initializer also remains exact. This recovery uses the
+identity and complete boundary established below; it introduces no pins or
+shared-header changes.
+
+The new lever is the genuine, non-inlined `W3DShroud::getShroudTexture` definition
+from its matched 29-byte TU: return the counted member handle at +0x1C. That
+helper independently probes exact. Its visibility alone changes the shader to
+3944 bytes with a larger frame. Combine it with a lexical block containing only
+`blendVector` and its pixel-constant call, and all 3931 bytes match, including
+all seven previously differing stack operands. The lexical block alone had
+failed in earlier attempts. Adding the other texture handle's counting copy
+constructor alone preserves the seven differences and is not needed.
+
+Independent COFF/retail unwind-map inspection confirms all 18 states have the
+same predecessor (-1) and cleanup receiver offset. In particular, state 17 now
+cleans EBP-0x1F4, as retail does; it no longer cleans EBP-0x1E8. The handle and
+string destructors retain the previously decoded release/Free_String behavior.
+
+Raw receipts are `build/worker5-round3/base.log`, `getter.log`,
+`getter-helper.log`, `counted.log`, `getter-scope.log`, `integrated.log`,
+`init.log`, `eh-audit.log`, and `add-match.log`. The strict build reports 2/2
+functions matched, 3 strings verified, 4 float constants verified, 237 DIR32
+references checked, and no body-guard findings. The bank is removed by
+`add_match.py --model gpt-6-astra`. The link census still reports LINKED 0 -> 0
+for this TU: unresolved wrapper globals and string/helper names, existing
+competing init/set definitions, the additionally visible shroud getter, and
+COMDAT selections remain. The byte recovery therefore adds 3931 verified
+source bytes but no demonstrated linked-byte credit. No pins or link baselines
+were changed. The following sections preserve the earlier
+partial's investigation and independent identity evidence.
+
+## Earlier partial result
 
 The complete candidate emits 3931 bytes against the 3931-byte retail extent, with 7 differing non-relocation bytes. It is a banked partial and adds no matched bytes. The scoped gate fails byte comparison. The preferred source is `targets/game/reverse/attempts/0x007ccf50.cpp`; every trial and raw output remains under `build/ccf50-retry/`. The tested base revision is `ebff4e78e2e6849857edb9f257640c7fe8c0a369`, and the model is `gpt-6.1-sol`.
 
@@ -49,3 +84,12 @@ Reopening is justified by evidence for a different temporary type or lexical lif
 ## Checks
 
 `check-csv-final.txt`, `pin-check.txt`, and `class-banked.txt` pass. The saved bank reproduces the same measurement in `probe-banked.txt` and `audit-banked.txt`. The raw scoped gate `gate-banked.txt` fails byte comparison, so the candidate was not added to functions.csv and a full gate was not run. The name-regression CLI in this revision accepts Git revisions rather than two file paths; the requested file form fails with an invalid object-name message in `check-29-names.txt`. Calling its `regressions` routine directly on the unedited old bank and new source returns an empty list in `audit-banked.txt`. The declared-unmatched check against the bank reports the unclaimed target because it has not landed; the raw result is `find-unmatched-banked.txt`. No check failure was bypassed.
+
+## Landing name, 2026-10-14
+
+ilt_guard rejects `?set@RoadShaderPixelShader@@EAEHH@Z` (and the U/A/M/Q
+decorations) as outside slot 44172's window 26494-26499. The matched init and
+reset rows of this class are contradicted the same way and sit in
+ilt_contradicted_baseline.txt, so the class spelling itself is in doubt. The
+body lands as the address-derived `set007CCF50` (vtable slot 0) until the
+spelling is proven.

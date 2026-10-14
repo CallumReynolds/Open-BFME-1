@@ -37263,7 +37263,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_003a2700@@YAXXZ,,0x003A2700,2291,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_007a2700
 ?d_003a40a0@@YAXXZ,,0x003A40A0,117,game/gen_asm/d_003a04a0.asm,matched,gen-dump;ghidra=FUN_007a40a0
 ?d_003a44a0@@YAXXZ,,0x003A44A0,165,game/gen_asm/d_003a04a0.asm,matched,gen-dump;ghidra=FUN_007a44a0
-?d_003a4fd0@@YAXXZ,,0x003A4FD0,220,game/gen_asm/d_003a04a0.asm,matched,gen-dump;ghidra=FUN_007a4fd0
 ?d_003a50f0@@YAXXZ,,0x003A50F0,179,game/gen_asm/d_003a04a0.asm,matched,gen-dump;ghidra=FUN_007a50f0
 ?d_003a60a0@@YAXXZ,,0x003A60A0,1,game/GameEngine/Source/Common/Rva003A60C0Noop.cpp,matched,carved one byte ret with no semantic evidence; address-derived identity preserves the boundary
 ?d_003a6150@@YAXXZ,,0x003A6150,1,game/GameEngine/Source/Common/Rva003A6150.cpp,matched,carved ret body; caller and ret plus int3 boundary evidence; address-derived identity
@@ -172549,3 +172548,4 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ?draw@TextTypeTransition@@UAEXXZ,,0x005A0A00,57,game/GameEngine/Source/GameClient/GUI/TextTypeTransitionDraw.cpp,matched,ZH TextTypeTransition::draw (ilt_oracle CONFIRMED): setText(m_partialText) then the static drawTypeText;model=claude-opus-5-5;host=vm
 ?rva0045C2F0@View@@UAEXPAUCoord3D@@000M@Z,,0x0045C2F0,229,game/GameEngine/Source/GameClient/ViewRva0045C2F0.cpp,matched,View corner projection virtual (ZH getScreenCornerWorldPointsAtZ body; that name is ILT-contradicted here so address-derived); getOrigin +0x4C and screenToWorldAtZ +0x168 BFME slots;model=claude-opus-5-5;host=vm
 ?rva003CAE00@LivingWorldRegionManager@@QAE_NPAVLivingWorldRegion@@@Z,,0x003CAE00,45,game/GameEngine/Source/Common/BfmeConv897.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/003CAE00-region-manager-thiscall.md;region-manager member that ignores this; only caller 0x003A4FD0 loads ECX=manager (thiscall) via ILT 0x00003611;model=claude-opus-5-5;host=vm
+?update@Rva003A4FD0State@@QAEXPAX@Z,,0x003A4FD0,220,game/GameEngine/Source/GameLogic/System/LivingWorld/Rva003A4FD0StateUpdate.cpp,matched,living-world state update: region under (x y 0) via the campaign region manager then 0x003C9CB0 and 0x003BE020; address-derived;model=claude-opus-5-5;host=vm

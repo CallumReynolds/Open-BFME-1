@@ -19998,5 +19998,25 @@
   "after_sha256": "d736fb5935048375984c8f46fdf344dffdf7910bfd3eea87724ed11d89146390",
   "evidence": "targets/game/reverse/re_attempts.log",
   "reason": "tools/ilt_oracle.py check ?getScreenCornerWorldPointsAtZ@View@@UAEXPAUCoord3D@@000M@Z 0x0045C2F0 is CONTRADICTED (outside slot 26657 window 17078-17083, recorded in re_attempts.log); the commit hook refuses that name, so the body keeps an address-derived method name until its identity is settled"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x003a4fd0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/System/LivingWorld/Rva003A4FD0StateUpdate.cpp",
+  "old_name": "gap",
+  "new_name": "m_unmodelled14",
+  "before_sha256": "23ea2e9797e09dd4f0bd8e89cbc872b2f13456507cef5c5a7c6b18d768650e92",
+  "after_sha256": "56c7391341467ce6caa2a42d996e9ff2fb9bb2d091240758bab328a7e9104cd1",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "The bank's scratch spellings (an unnamed pad array and the stringAt003A4390 helper) become the repo conventions: an m_unmodelled offset filler and the existing ILT-pinned Gen003BD7D0Node::rva003a4390 name for the 0x003A4390 getter, so the call resolves without /alternatename; no identity is claimed or lost"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x003a4fd0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/System/LivingWorld/Rva003A4FD0StateUpdate.cpp",
+  "old_name": "pad",
+  "new_name": "m_unmodelled00",
+  "before_sha256": "23ea2e9797e09dd4f0bd8e89cbc872b2f13456507cef5c5a7c6b18d768650e92",
+  "after_sha256": "56c7391341467ce6caa2a42d996e9ff2fb9bb2d091240758bab328a7e9104cd1",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "The bank's scratch spellings (an unnamed pad array and the stringAt003A4390 helper) become the repo conventions: an m_unmodelled offset filler and the existing ILT-pinned Gen003BD7D0Node::rva003a4390 name for the 0x003A4390 getter, so the call resolves without /alternatename; no identity is claimed or lost"
  }
 ]

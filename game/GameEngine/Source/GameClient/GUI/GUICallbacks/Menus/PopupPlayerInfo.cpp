@@ -309,27 +309,13 @@ inline void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 }
 
 // default values
-// Reference constructor; actual BFME constructor is 206 bytes at 0x004DAFA0.
-// ??0RankPoints@@ present-unmatched
-RankPoints::RankPoints(void)
-{
-	m_ranks[RANK_PRIVATE]							= 0;
-	m_ranks[RANK_CORPORAL]						= TheGameSpyConfig->getPointsForRank(RANK_CORPORAL); // 5
-	m_ranks[RANK_SERGEANT]						= TheGameSpyConfig->getPointsForRank(RANK_SERGEANT); // 10
-	m_ranks[RANK_LIEUTENANT]					= TheGameSpyConfig->getPointsForRank(RANK_LIEUTENANT); // 20
-	m_ranks[RANK_CAPTAIN]							= TheGameSpyConfig->getPointsForRank(RANK_CAPTAIN); // 50
-	m_ranks[RANK_MAJOR]								= TheGameSpyConfig->getPointsForRank(RANK_MAJOR); // 100
-	m_ranks[RANK_COLONEL]							= TheGameSpyConfig->getPointsForRank(RANK_COLONEL); // 200
-	m_ranks[RANK_BRIGADIER_GENERAL]		= TheGameSpyConfig->getPointsForRank(RANK_BRIGADIER_GENERAL); // 500
-	m_ranks[RANK_GENERAL]							= TheGameSpyConfig->getPointsForRank(RANK_GENERAL); // 1000
-	m_ranks[RANK_COMMANDER_IN_CHIEF]	= TheGameSpyConfig->getPointsForRank(RANK_COMMANDER_IN_CHIEF); // 2000
-
-	m_winMultiplier = 3.0f;
-	m_lostMultiplier = 0.0f;
-	m_hourSpentOnlineMultiplier = 1.0f;
-	m_completedSoloCampaigns = 5.0f;
-	m_disconnectMultiplier = -1.0f;
-}
+// The BFME constructor is 206 bytes at 0x004DAFA0 and uses the compact
+// 0x30-byte layout: int m_ranks[10] plus m_winMultiplier = 3.0f (0x28) and
+// m_lostMultiplier = 1.0f (0x2C); the Zero Hour body that used to live here
+// is four floats longer and is not this function.  The reconstruction is in
+// PopupPlayerInfo_RankPoints_ctor.asm: retail wraps the bare body in a VC7.1
+// EH frame whose single unwind state has no cleanup action, which no tested
+// C++ spelling reproduces on this toolchain (see the .asm header).
 
 RankPoints *TheRankPointValues = NULL;
 

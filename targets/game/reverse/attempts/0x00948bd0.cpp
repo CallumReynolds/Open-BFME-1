@@ -1,5 +1,5 @@
 // ?Render@DX8TextureCategoryClass@@QAEXXZ
-// partial score=0.9918125999545144 date=2026-09-25
+// partial score=0.9918 date=2026-09-25
 // ?Render@DX8TextureCategoryClass@@QAEXXZ
 // BFME RVA 0x00948BD0, 4397 bytes: decoded through RET at 0x00949CFC;
 // INT3 begins at 0x00949CFD. The internal branch target 0x009498A0 is not a start.

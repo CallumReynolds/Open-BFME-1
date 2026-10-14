@@ -7,9 +7,16 @@
 extern "C" __declspec(dllimport) int __cdecl _memicmp( const void *left,
 	const void *right, unsigned int count );
 
+class AsciiString;
+static __forceinline int victoryNameCompareNoCase( const AsciiString &left,
+	const AsciiString &right );
+
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
 class AsciiString
 {
+	friend int victoryNameCompareNoCase( const AsciiString &left,
+		const AsciiString &right );
+
 public:
 	AsciiString( const char *text )
 	{
@@ -38,17 +45,17 @@ private:
 	Header *m_data;
 };
 
-// Retail StringBase<char>::compareNoCase shape (_memicmp over the shared
-// prefix, then the length difference), spelled as the explicit specialization
-// so this TU emits no AsciiString::compareNoCase COMDAT of its own. Same
-// spelling as game/Libraries/Source/WWVegas/WWLib/RvaTreeInsertUniqueNoCase.cpp.
-template <>
-inline int StringBase<char>::compareNoCase( const StringBase<char> &str ) const
+// StringBase<char>::compareNoCase as retail inlines it here (_memicmp over the
+// shared prefix, then the length difference). A file-static helper, so this TU
+// emits no compareNoCase COMDAT of its own; retail's out-of-line copy is
+// StringBase.cpp's (0x00090570).
+static __forceinline int victoryNameCompareNoCase( const AsciiString &left,
+	const AsciiString &right )
 {
-	int thatLen = str.m_data ? str.m_data->length : 0;
-	const char *thatData = str.m_data ? &str.m_data->data[ 0 ] : (const char *)"";
-	int thisLen = m_data ? m_data->length : 0;
-	const char *thisData = m_data ? &m_data->data[ 0 ] : (const char *)"";
+	int thatLen = right.m_data ? right.m_data->m_length : 0;
+	const char *thatData = right.m_data ? (const char *)( right.m_data + 1 ) : (const char *)"";
+	int thisLen = left.m_data ? left.m_data->m_length : 0;
+	const char *thisData = left.m_data ? (const char *)( left.m_data + 1 ) : (const char *)"";
 	int n = thisLen < thatLen ? thisLen : thatLen;
 	int c = _memicmp( thisData, thatData, n );
 	if( c != 0 )
@@ -128,7 +135,7 @@ unsigned int VictorySystem::_bfme_findFactionVictoryParametersIndex(
 		index < m_factionVictoryParameters.size() && !found;
 		++index )
 	{
-		if( ( (const StringBase<char> *)&m_factionVictoryParameters[index].m_name )->compareNoCase( *(const StringBase<char> *)&name ) == 0 )
+		if( victoryNameCompareNoCase( m_factionVictoryParameters[index].m_name, name ) == 0 )
 		{
 			result = index;
 			found = true;

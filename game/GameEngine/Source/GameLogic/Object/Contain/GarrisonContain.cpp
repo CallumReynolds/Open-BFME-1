@@ -2047,65 +2047,7 @@ __declspec(naked) void GarrisonContain::exitObjectViaDoor( Object *, ExitDoorTyp
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-// ?onRemoving@GarrisonContain@@UAEXPAVObject@@@Z present-unmatched
-void GarrisonContain::onRemoving( Object *obj )
-{
-	OpenContain::onRemoving(obj);
-
-
-  if (isEnclosingContainerFor( obj ))
-	  // first remove the object from any garrison fire point if it's at one
-  	removeObjectFromGarrisonPoint( obj );
-  else
-  {
-    removeObjectFromStationPoint( obj );
-		//Kris: Patch 1.01 -- Passing in correct argument for Y (instead of X) fixes cases where selling firebases
-		//were dropping contained infantry to incorrect altitudes.
-    obj->setPositionZ( TheTerrainLogic->getGroundHeight( obj->getPosition()->x, obj->getPosition()->y ) );
-  }
-	// give the object back a regular weapon
-	obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
-
-	// object is no longer held inside a garrisoned building
-	obj->clearDisabled( DISABLED_HELD );
-
-	// if we have nothing left inside of us then we are once again back to our original team
-	if( getContainCount() == 0 )
-	{
-
-		// put us back on our original team
-		// (hokey exception: if our team is null, don't bother -- this
-		// usually means we are being called during game-teardown and
-		// the teams are no longer valid...)
-		if (getObject()->getTeam() != NULL)
-		{
-			getObject()->setTeam( m_originalTeam );
-			m_originalTeam = NULL;
-		}
-
-		// we also lose our transient attack ability
-		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_ATTACK ) );
-		m_hideGarrisonedStateFromNonallies = false;
-
-		// change the state back from garrisoned
-		Drawable *draw = getObject()->getDrawable();
-		if( draw )
-		{
-			draw->clearModelConditionState( MODELCONDITION_GARRISONED );
-		}
-
-	}  // end if
-	else if( getStealthUnitsContained() != getContainCount() )
-	{
-		m_hideGarrisonedStateFromNonallies = false;
-	}
-
-	// disable occlusion while the unit walks out of the building
-	///@todo: we should probably not draw the unit to begin with and just have them pop out.
-	obj->setSafeOcclusionFrame(TheGameLogic->getFrame()+obj->getTemplate()->getOcclusionDelay());
-
-	recalcApparentControllingPlayer();
-}  // end onRemoving
+// Retail GarrisonContain::onRemoving is implemented in GarrisonContain_onRemoving.cpp.
 
 // ------------------------------------------------------------------------------------------------
 /** A GarrisonContain always lets people shoot out */

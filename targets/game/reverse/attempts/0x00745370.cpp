@@ -1,5 +1,5 @@
 // ?pickDrawable@W3DView@@UAEPAVDrawable@@PBUICoord2D@@_NW4PickType@@@Z
-// partial score=0.82 date=2026-09-24
+// partial score=0.1765 date=2026-10-14
 // cl: /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 // stlport
 // BFME reconstruction scratch for retail 0x00745370, full boundary 793 bytes.
@@ -83,7 +83,7 @@ public:
 	virtual void slot08();
 	virtual void slot09();
 	virtual void slot10();
-	virtual void notifyPick(unsigned int id);
+	virtual void *notifyPick(unsigned int id);
 };
 extern RetailGameClientAt012F1464 *TheGameClientNotify007;
 
@@ -174,15 +174,17 @@ Drawable *W3DView::pickDrawable(const ICoord2D *screen,
 			return 0;
 		if (terrainResult->field0c == 0)
 			return 0;
-		// The retail tail emits one of four notification ids based on the
-		// two result bytes at +0x2c/+0x2d.
-		unsigned int id = 0x05f5e0fe;
+		// The retail tail returns notifyPick()'s result directly with one of
+		// four constant ids (four call sites; 0xe0fc and 0xe0fe share one).
 		if (terrainResult->flag2c)
-			id = terrainResult->flag2d ? 0x05f5e0ff : 0x05f5e0fc;
-		else if (terrainResult->flag2d)
-			id = 0x05f5e0fd;
-		if (TheGameClientNotify007)
-			TheGameClientNotify007->notifyPick(id);
+		{
+			if (terrainResult->flag2d)
+				return (Drawable *)TheGameClientNotify007->notifyPick(0x05f5e0ff);
+			return (Drawable *)TheGameClientNotify007->notifyPick(0x05f5e0fc);
+		}
+		if (terrainResult->flag2d)
+			return (Drawable *)TheGameClientNotify007->notifyPick(0x05f5e0fd);
+		return (Drawable *)TheGameClientNotify007->notifyPick(0x05f5e0fe);
 	}
 
 	Drawable *draw = 0;

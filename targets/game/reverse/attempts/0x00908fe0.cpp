@@ -1,5 +1,5 @@
 // ?End_Scene@DX8Wrapper@@SAX_N@Z
-// partial score=0.6867 date=2026-09-28
+// partial score=0.6883 date=2026-10-14
 // cl: /Igame/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/shims/dx8wrapper /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 // stlport
 #define Matrix4x4 Matrix4  // BFME renamed it
@@ -161,8 +161,9 @@ struct BfmeD3D9CapsMaxTextures {
 void DX8Wrapper::End_Scene(bool flip_frames)
 {
     *reinterpret_cast<unsigned *>(0x013405c8) = *reinterpret_cast<unsigned *>(0x013405c4);
+    BfmeEndSceneDevice *dev = reinterpret_cast<BfmeEndSceneDevice *>(D3DDevice);
     *reinterpret_cast<unsigned *>(0x013405c4) = 0;
-    reinterpret_cast<BfmeEndSceneDevice *>(D3DDevice)->vtable->EndScene(reinterpret_cast<BfmeEndSceneDevice *>(D3DDevice));
+    dev->vtable->EndScene(dev);
     ++number_of_DX8_calls;
     bfmeEndSceneTouch00958910(0);
     if (flip_frames) {

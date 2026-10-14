@@ -205,7 +205,8 @@ public:
 	virtual DebugStream00409E20 *Get_Stream(void *owner, void *context);
 };
 
-extern DebugView00409E20 *DebugGlobal00409E20;
+extern void *g_Rva00F36E5C; // VA 01336E5C debug manager cell (data_rows.csv owner)
+#define DebugGlobal00409E20 (static_cast<DebugView00409E20 *>(g_Rva00F36E5C))
 extern void _bfme_debugRecordCallsite(int kind);
 bool __cdecl _bfme_debugReportingEnabled(void);
 

@@ -57,19 +57,18 @@ class BfmeStrVKJ
 public:
     BfmeStrVKJ *bfmeAssignVKJ(const BfmeStrVKJ &other);
 };
-// Existing opaque sized-deallocator pin. Retail EH state 0 pushes 16 and
-// the allocation pointer, calls 00891A80, then removes eight argument bytes.
-// 00891A80 is the six-byte jump through callback VA 01337830.
-class Gen_uws16_00891a80
-{
-public:
-    static void operator delete(void *memory, unsigned bytes);
-};
-class Rva008A9B00 : public Gen_uws16_00891a80
+extern void (__cdecl *TheBfmeFree)(void *, unsigned int);
+class Rva008A9B00
 {
 public:
     Rva008A9B00();
     void *operator new(unsigned bytes) { return Rva008C5D70Alloc(bytes); }
+    // Retail EH state 0 pushes 16 and the allocation pointer, calls 00891A80,
+    // the six-byte jump through callback VA 01337830, then removes eight bytes.
+    // Same inline body as Rva008C6990StringTransform.cpp, whose copy is retail's.
+    __forceinline static void operator delete(void *memory, unsigned bytes) {
+        TheBfmeFree(memory, bytes);
+    }
     void *m_unknown00;
     unsigned m_flags;
     BfmeStringData3AF0 *m_data;

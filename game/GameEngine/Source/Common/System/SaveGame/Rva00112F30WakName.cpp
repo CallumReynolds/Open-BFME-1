@@ -19,7 +19,7 @@ inline AsciiString::AsciiString(const AsciiString &source, int start, int length
 
 static __declspec(noinline) void rva00112F30(const AsciiString &source, AsciiString &destination)
 {
-    int length = source.getLength() - 4;
+    int length = source.StringBase<char>::getLength() - 4;
     if (length > 0)
     {
         AsciiString temporary(source, 0, length);

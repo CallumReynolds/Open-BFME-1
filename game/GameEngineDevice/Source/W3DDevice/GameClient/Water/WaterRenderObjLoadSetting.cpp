@@ -5,8 +5,6 @@ typedef unsigned int UnsignedInt;
 typedef char Char;
 typedef float Real;
 
-extern const char g_bfmeEmptyAscii[];
-
 // The retail global is an array of WaterSetting objects (element size 0x7C, six
 // elements, base 0x012F1608) defined by Rva00C6B810StaticInit.cpp.  Only the
 // symbol name matters here: this body reads the elements through its own
@@ -116,7 +114,7 @@ public:
 	{
 		if (m_data)
 			return m_data + 8;
-		return (Char *)g_bfmeEmptyAscii;
+		return (Char *)"";
 	}
 };
 

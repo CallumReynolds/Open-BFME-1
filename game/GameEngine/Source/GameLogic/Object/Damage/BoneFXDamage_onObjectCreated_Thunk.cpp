@@ -1,15 +1,13 @@
 // cl: /DNDEBUG /MD /EHsc
 // readable body of ?onObjectCreated@BoneFXDamage@@: game/GameEngine/Source/GameLogic/Object/Damage/BoneFXDamage.cpp
 // Open-BFME5: lift BoneFXDamage::onObjectCreated __emit thunk to clean C++.
-// Function-static MemoryPool from the factory (guard byte + static store),
+// Function-static name key from TheNameKeyGenerator (guard byte + static store;
+// retail ILT 0x0003ADD7 -> NameKeyGenerator::nameToKey 0x0008FFC0, global VA 0x012ED600),
 // a findModule call on the member at +0x08 (retail's ILT thunk 0x0002AE23),
 // and a throw of a variadic exception object on failure.
 
-class MemoryPool;
-
-// The static key and the call below resolve through retail's Object::findModule
-// (the ILT thunk 0x0002AE23 in the body's disassembly), whose parameter is a
-// NameKeyType, so the parameter type is only forward-declared here.
+// The call below resolves through retail's Object::findModule (the ILT thunk
+// 0x0002AE23 in the body's disassembly), whose parameter is a NameKeyType.
 enum NameKeyType;
 class Module;
 
@@ -22,14 +20,14 @@ protected:
     friend class BoneFXDamage;
 };
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GameMemory.h
-class MemoryPoolFactory
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/NameKeyGenerator.h
+class NameKeyGenerator
 {
 public:
-    MemoryPool *findMemoryPool(const char *name);
+    NameKeyType nameToKey(const char *name);
 };
 
-extern MemoryPoolFactory *TheMemoryPoolFactory;
+extern NameKeyGenerator *TheNameKeyGenerator;
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/INIException.h
 class INIException
@@ -66,8 +64,8 @@ private:
 // ?onObjectCreated@BoneFXDamage@@MAEXXZ
 void BoneFXDamage::onObjectCreated()
 {
-    static MemoryPool *pool = TheMemoryPoolFactory->findMemoryPool("BoneFXUpdate");
-    if (!m_object->findModule((NameKeyType)(size_t)pool)) {
+    static NameKeyType key = TheNameKeyGenerator->nameToKey("BoneFXUpdate");
+    if (!m_object->findModule(key)) {
         throw INIException(3, "BoneFXDamage requires BoneFXUpdate");
     }
 }

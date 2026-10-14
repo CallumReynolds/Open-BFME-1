@@ -4,16 +4,10 @@
 #include "debug.h"
 #include <math.h>
 
-Coord3DBase &Coord3DBase::operator=(const Coord3DBase &that)
-{
-    struct Raw {
-        unsigned int x;
-        unsigned int y;
-        unsigned int z;
-    };
-    *(Raw *)this = *(const Raw *)&that;
-    return *this;
-}
+// Coord3DBase::operator= (0x007E5960, 29 bytes) is an inline header member in
+// retail: nine TUs emit it as a pick-any COMDAT.  An out-of-line copy here was
+// an exclusive duplicate; its row lives with an inline emitter
+// (Common/System/BuildAssistant_buildTiledLocations.cpp).
 
 Coord3D::Coord3D(const Coord2D &that)
 {

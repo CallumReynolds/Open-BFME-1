@@ -39,7 +39,9 @@ AsciiString &AsciiString::operator=(char c)
     return *this;
 }
 
-AsciiString &AsciiString::operator=(const char *str)
+// Retail's operator=(const char *) is a COMDAT that many TUs emit; a strong
+// definition here collides with those copies, so keep it inline and emit it.
+inline AsciiString &AsciiString::operator=(const char *str)
 {
     ((StringBase<char> *)this)->set(str, str ? strlen(str) : 0);
     return *this;
@@ -103,3 +105,10 @@ void AsciiString::translate(const UnicodeString &that)
     const StringBase<wchar_t> *w = (const StringBase<wchar_t> *)&that;
     format(AsciiString("%ls"), w->m_data ? &w->m_data->data[0] : (const wchar_t *)L"");
 }
+
+#pragma auto_inline(off)
+void bfme_force_ascii_string_cstr_assign_emission(AsciiString &dst, const char *src)
+{
+    dst = src;
+}
+#pragma auto_inline(on)

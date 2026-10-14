@@ -347,39 +347,40 @@ def outside_emit_defs(rev):
     keep = [l for l in lines if _DEFINE_RE.match(l).group(1) in names]
     files = {p for p, l in owners if _DEFINE_RE.match(l).group(1) in names}
     _OUTSIDE[rev] = ("\n".join(keep), names)
-    _OUTSIDE[(rev, "files")] = _include_closure(rev, files)
+    _OUTSIDE[(rev, "files")] = files
     return _OUTSIDE[rev]
 
 
 def _include_closure(rev, files):
     """{outside path: emit file it reaches}: the files defining an emit
-    macro plus every outside file whose #include (suffix match) reaches one,
-    by reverse fixpoint over `git grep` for the reached files' basenames."""
+    macro plus every outside file whose #include (suffix match) reaches one.
+    One `git grep` of every outside #include line, then a reverse fixpoint;
+    only run when a diff adds an include that can resolve outside."""
+    cmd = ["git", "grep", "-n", "-I"] + (["--cached"] if rev == ":" else [])
+    cmd += ["-E", r'^\s*#\s*include\s*[<"][^">]+[">]'] + ([] if rev == ":" else [rev])
+    out = subprocess.run(cmd + ["--"] + list(_OUTSIDE_GLOBS), capture_output=True,
+                         text=True).stdout
+    edges = []
+    for row in out.splitlines():
+        if rev != ":":
+            row = row.split(":", 1)[1]
+        path, _, line = row.split(":", 2)
+        m = _INCLUDE_RE.match(line)
+        if m:
+            edges.append((path, m.group(1)))
     reach = {p: p for p in files}
-    new = set(files)
     for _ in range(8):
-        if not new:
-            break
-        bases = sorted({p.rsplit("/", 1)[-1] for p in new})
-        pat = r'^\s*#\s*include\s*[<"]([^">]*[/\\])?(%s)[">]' % "|".join(map(re.escape, bases))
-        cmd = ["git", "grep", "-n", "-I"] + (["--cached"] if rev == ":" else []) + ["-E", pat]
-        cmd += [] if rev == ":" else [rev]
-        out = subprocess.run(cmd + ["--"] + list(_OUTSIDE_GLOBS), capture_output=True,
-                             text=True).stdout
-        found = set()
-        for row in out.splitlines():
-            if rev != ":":
-                row = row.split(":", 1)[1]
-            path, _, line = row.split(":", 2)
-            m = _INCLUDE_RE.match(line)
-            if not m or path in reach:
+        grew = False
+        for path, name in edges:
+            if path in reach:
                 continue
-            for target in _outside_matches(rev, m.group(1)):
+            for target in _outside_matches(rev, name):
                 if target in reach:
                     reach[path] = reach[target]
-                    found.add(path)
+                    grew = True
                     break
-        new = found
+        if not grew:
+            break
     return reach
 
 
@@ -409,9 +410,14 @@ def _outside_matches(rev, name):
 def _emitting_include(rev, name):
     """The outside emit file include `name` reaches (directly or through
     other outside includes), or None."""
+    matches = _outside_matches(rev, name)
+    if not matches:
+        return None
     outside_emit_defs(rev)
-    reach = _OUTSIDE[(rev, "files")]
-    for path in _outside_matches(rev, name):
+    if (rev, "reach") not in _OUTSIDE:
+        _OUTSIDE[(rev, "reach")] = _include_closure(rev, _OUTSIDE[(rev, "files")])
+    reach = _OUTSIDE[(rev, "reach")]
+    for path in matches:
         if path in reach:
             return reach[path]
     return None

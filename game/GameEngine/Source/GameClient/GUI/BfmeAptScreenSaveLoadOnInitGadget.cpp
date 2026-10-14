@@ -24,6 +24,7 @@ template <typename T> class StringBase
 private:
 	StringBase(const T *text);
 	StringBase(const StringBase<T> &other);
+	void releaseBuffer();
 
 	void *m_data;
 };
@@ -35,7 +36,8 @@ public:
 		: StringBase<unsigned short>(text) {}
 	UnicodeString(const UnicodeString &other)
 		: StringBase<unsigned short>(other) {}
-	~UnicodeString() {}
+	// Retail 0x0005EEA0 is a bare jmp to StringBase<G>::releaseBuffer.
+	~UnicodeString() { releaseBuffer(); }
 };
 
 void GadgetTextEntrySetText(GameWindow *window, UnicodeString text);

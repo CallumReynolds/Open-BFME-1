@@ -10,7 +10,7 @@ private:
 	StringBase() : m_data(0) {}
 	StringBase(const T *text);
 	StringBase(const StringBase<T> &other);
-	~StringBase();
+	void releaseBuffer();
 
 	void *m_data;
 };
@@ -21,7 +21,8 @@ public:
 	UnicodeString() : StringBase<unsigned short>() {}
 	UnicodeString(const unsigned short *text) : StringBase<unsigned short>(text) {}
 	UnicodeString(const UnicodeString &other) : StringBase<unsigned short>(other) {}
-	~UnicodeString() {}
+	// Retail 0x0005EEA0 is a bare jmp to StringBase<G>::releaseBuffer.
+	~UnicodeString() { releaseBuffer(); }
 };
 
 // Retail VA 0x01088AF4: an empty wide literal (two zero bytes).

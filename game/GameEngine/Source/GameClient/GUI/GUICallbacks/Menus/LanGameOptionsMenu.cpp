@@ -766,60 +766,102 @@ void LANEnableStartButton(Bool enabled)
 	buttonSelectMap->winEnable(enabled);
 }
 
-static void handleColorSelection(int index)
+// Retail 0x004CB3F0 (392 bytes), Zero Hour's handleColorSelection; the
+// address suffix keeps it apart from WOLGameSetupMenu.cpp's static of the
+// same name (0x004F3F20). BFME keeps Zero Hour's colour checks but,
+// like handlePlayerTemplateSelection below, the host path sends the
+// serialized game info instead of an options string, and the client path also
+// requires the slot to be the local player's.
+class BfmeColorSettings
+{
+public:
+	Int getNumColors()
+	{
+		if (m_numColors == 0)
+			m_numColors = m_colorCount;
+		return m_numColors;
+	}
+
+private:
+	char m_unmodelled[ 0x34 ];
+	Int m_colorCount;			// +0x34: node count of the colour map at +0x30
+	char m_unmodelled38[ 4 ];
+	Int m_numColors;			// +0x3C
+};
+
+struct BfmeColorSlot
+{
+	char m_unmodelled[ 0x0C ];
+	Int m_color;				// +0x0C
+	Int getColor() const { return m_color; }
+	void setColor( Int color ) { m_color = color; }
+};
+
+// BfmePlayerTemplateLANAPI with RequestGameOptions taking the engine
+// AsciiString: retail's colour request copies the options string through that
+// type's constructor, exactly as rva004CB5E0Update's team request does.
+class BfmeColorLANAPI
+{
+public:
+	virtual void slot00() = 0; virtual void slot04() = 0; virtual void slot08() = 0;
+	virtual void slot0C() = 0; virtual void slot10() = 0; virtual void slot14() = 0;
+	virtual void slot18() = 0; virtual void slot1C() = 0; virtual void slot20() = 0;
+	virtual void slot24() = 0; virtual void slot28() = 0; virtual void slot2C() = 0;
+	virtual void slot30() = 0; virtual void slot34() = 0; virtual void slot38() = 0;
+	virtual void slot3C() = 0; virtual void slot40() = 0; virtual void slot44() = 0;
+	virtual void slot48() = 0; virtual void slot4C() = 0;
+	virtual void RequestGameOptions( AsciiString options, Bool isPublic,
+		const BfmePlayerTemplateAddress &address = BfmePlayerTemplateAddress() ) = 0;
+};
+
+static void handleColorSelection004CB3F0(int index)
 {
 	GameWindow *combo = comboBoxColor[index];
 	Int color, selIndex;
 	GadgetComboBoxGetSelectedPos(combo, &selIndex);
 	color = (Int)GadgetComboBoxGetItemData(combo, selIndex);
 
-	LANGameInfo *myGame = TheLAN->GetMyGame();
+	LANGameInfo *myGame = ((BfmePlayerTemplateLANAPI *)TheLAN)->GetMyGame();
 
 	if (myGame)
 	{
-		LANGameSlot * slot = myGame->getLANSlot(index);
+		BfmeColorSlot *slot = (BfmeColorSlot *)((BfmeLANGameSlots *)myGame)->getLANSlot(index);
 		if (color == slot->getColor())
 			return;
 
-		if (color >= -1 && color < TheMultiplayerSettings->getNumColors())
+		if (color >= -1 && color < ((BfmeColorSettings *)TheMultiplayerSettings)->getNumColors())
 		{
-			Bool colorAvailable = TRUE;
-			if(color != -1 )
+			if (color != -1)
 			{
-				for(Int i=0; i <MAX_SLOTS; i++)
+				for (Int i = 0; i < MAX_SLOTS; i++)
 				{
-					LANGameSlot *checkSlot = myGame->getLANSlot(i);
-					if(color == checkSlot->getColor() && slot != checkSlot)
-					{
-						colorAvailable = FALSE;
-						break;
-					}
+					BfmeColorSlot *checkSlot = (BfmeColorSlot *)((BfmeLANGameSlots *)myGame)->getLANSlot(i);
+					if (color == checkSlot->getColor() && slot != checkSlot)
+						return;
 				}
 			}
-			if(!colorAvailable)
-				return;
 		}
 
 		slot->setColor(color);
 
-		if (myGame->amIHost())
+		if (((BfmeThing935B *)myGame)->bfmeGo935B())
 		{
 			if (!s_isIniting)
 			{
-				// send around a new slotlist
-				TheLAN->RequestGameOptions(GenerateGameOptionsString(), true);
-				lanUpdateSlotList();
+				BfmePlayerTemplateAddress address;
+				((BfmePlayerTemplateLANAPI *)TheLAN)->requestSerializedGameInfo(
+					TRUE, &address);
+				lanUpdateSlotList004CAF70();
 			}
 		}
 		else
 		{
-			// request the color from the host
-			if (!slot->isLocalPlayer() || !AreSlotListUpdatesEnabled())
-				return;
-
-			AsciiString options;
-			options.format("Color=%d", color);
-			TheLAN->RequestGameOptions(options, true);
+			if (((LANGameSlot *)slot)->isLocalPlayer() && AreSlotListUpdatesEnabled())
+			{
+				AsciiString options;
+				options.format("Color=%d", color);
+				((BfmeColorLANAPI *)TheLAN)->RequestGameOptions(options, TRUE);
+			}
 		}
 	}
 }
@@ -1627,7 +1669,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				  {
 					  if (controlID == comboBoxColorID[i])
 					  {
-						  handleColorSelection(i);
+						  handleColorSelection004CB3F0(i);
 					  }
 					  else if (controlID == comboBoxPlayerTemplateID[i])
 					  {

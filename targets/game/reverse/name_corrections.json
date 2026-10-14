@@ -19958,5 +19958,25 @@
   "after_sha256": "b8b7ac33d17315eb283b8fbb0778b6b9c961f7a24da1fa6a5320100d05fe6102",
   "evidence": "targets/game/reverse/identity_evidence/00674ff0-asciistring-return.md",
   "reason": "false pairing: the per-file stand-in AsciiStringZN is replaced by the real AsciiString (its dtor ILT 0x0000D828 is the matched ??1AsciiString thunk); BfmeOrderZN is unchanged; an agent proposed this entry and the project lead approved it manually on 2026-10-13"
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameClient/GUI/GUICallbacks/Menus/LanGameOptionsMenu.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/GUICallbacks/Menus/LanGameOptionsMenu.cpp",
+  "old_name": "LANGameSlot",
+  "new_name": "BfmeColorSlot",
+  "before_sha256": "40c9dae5d4a0c42da7908db2a8b7fe1364b89a07c3a3ce82bafcb2f4d63f3092",
+  "after_sha256": "afded5444469de17b1f8abec57429a45ac73ba2a130346ee6547ce19a748de6f",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "Retail 0x004CB3F0 calls the ledger-pinned ?bfmeGo935B@BfmeThing935B (the same host test the matched sibling handlePlayerTemplateSelection path uses) and reads the slot colour at +0x0C through ?at@Rva0068D3E0Arr, so the ZH LANGameSlot/amIHost spellings would bind the wrong offsets and symbols; BfmeColorSlot is a TU-local view of that slot, and LANGameSlot is still used for isLocalPlayer"
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameClient/GUI/GUICallbacks/Menus/LanGameOptionsMenu.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/GUICallbacks/Menus/LanGameOptionsMenu.cpp",
+  "old_name": "amIHost",
+  "new_name": "bfmeGo935B",
+  "before_sha256": "40c9dae5d4a0c42da7908db2a8b7fe1364b89a07c3a3ce82bafcb2f4d63f3092",
+  "after_sha256": "afded5444469de17b1f8abec57429a45ac73ba2a130346ee6547ce19a748de6f",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "Retail 0x004CB3F0 calls the ledger-pinned ?bfmeGo935B@BfmeThing935B (the same host test the matched sibling handlePlayerTemplateSelection path uses) and reads the slot colour at +0x0C through ?at@Rva0068D3E0Arr, so the ZH LANGameSlot/amIHost spellings would bind the wrong offsets and symbols; BfmeColorSlot is a TU-local view of that slot, and LANGameSlot is still used for isLocalPlayer"
  }
 ]

@@ -215,8 +215,7 @@ def assemble(text, obj):
     env = build.compiler_environment(root, None)
     asm = obj.with_suffix(".asm")
     asm.write_text(text, encoding="utf-8", newline="\n")
-    proc = subprocess.run([str(root / "Vc7" / "bin" / "ml.exe"), "-nologo", "-c", "-Cp", f"-Fo{obj}", str(asm)],
-                          capture_output=True, text=True, env=env, cwd=str(asm.parent))
+    proc = subprocess.run(D.ml_command(asm, obj), capture_output=True, text=True, env=env, cwd=str(asm.parent))
     if proc.returncode:
         raise RuntimeError((proc.stdout + proc.stderr).strip()[-600:])
 

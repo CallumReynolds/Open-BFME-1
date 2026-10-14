@@ -92,6 +92,7 @@ import csv
 import json
 import os
 import re
+import shutil
 import struct
 import subprocess
 import sys
@@ -991,10 +992,25 @@ def emit_asm(source, items):
     return "\n".join(lines), rename
 
 
+def ml_command(asm_path, obj_path):
+    """ml.exe for one dump, run as build.compiler_command runs the toolchain: through
+    Wine off Windows (the tracked .exe files carry no execute bit), with paths in
+    Windows form (ml.exe reads a leading '/' as an option)."""
+    root = build.vc71_root()
+    command = [str(root / "Vc7" / "bin" / "ml.exe"), "-nologo", "-c", "-Cp",
+               f"-Fo{build.wine_path(obj_path)}", build.wine_path(asm_path)]
+    if os.name != "nt":
+        wine = shutil.which("wine")
+        if wine is None:
+            raise SystemExit("wine not found. Install Wine to run MSVC 7.1 on this host.")
+        command.insert(0, wine)
+    return command
+
+
 def assemble(asm_path, obj_path, rename):
     root = build.vc71_root()
     env = build.compiler_environment(root, None)
-    cmd = [str(root / "Vc7" / "bin" / "ml.exe"), "-nologo", "-c", "-Cp", f"-Fo{obj_path}", str(asm_path)]
+    cmd = ml_command(asm_path, obj_path)
     proc = subprocess.run(cmd, capture_output=True, text=True, env=env, cwd=str(asm_path.parent))
     if proc.returncode != 0:
         raise RuntimeError(f"ml failed for {asm_path.name}: {(proc.stdout + proc.stderr).strip()[-2000:]}")

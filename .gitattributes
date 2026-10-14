@@ -36,6 +36,7 @@ targets/game/reverse/name_corrections.json merge=jsonlist
 # Target ledgers remain independent; validation rejects overlapping appends.
 targets/worldbuilder/reverse/functions.csv text eol=lf merge=union
 targets/worldbuilder/reverse/attempts.jsonl text eol=lf merge=union
+targets/worldbuilder/reverse/data.csv text eol=lf merge=union
 # Attempt hashes bind the exact saved source, including its line endings.
 targets/worldbuilder/reverse/attempts/*.cpp -text
 targets/worldbuilder/reverse/*.json text eol=lf

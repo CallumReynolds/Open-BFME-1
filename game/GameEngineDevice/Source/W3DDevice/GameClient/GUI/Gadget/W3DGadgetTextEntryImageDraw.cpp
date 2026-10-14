@@ -1,5 +1,21 @@
 // ?W3DGadgetTextEntryImageDraw@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z
-// partial score=0.89 date=2026-09-26
+//
+// Retail 0x007991A0 (860 bytes through RET +0x35B, then INT3) is the image
+// variant of the text entry gadget's draw callback. It cancels the
+// pending-unichar flag, reads the window's screen position and size, selects
+// the text/composite colours and the left/right/center/small-center images for
+// the disabled, hilited and enabled states, tiles the center bar and the small
+// center pieces between the end images, then measures the entry text through
+// the DisplayString vtable (slot 15) and draws the edit text through the
+// file-static seven-word helper at 0x007986C0.
+//
+// Identity: the FunctionLexicon callback table maps this callback name to
+// 0x007991A0; the extent is pinned by RET at +0x35B and INT3 at +0x35C.
+//
+// Shape: the coordinate locals carry an empty default constructor through an
+// address-qualified construction-only template; the seven-word helper is
+// declared under its address-derived name (additive symbols.csv row) exactly
+// as the matched sibling W3DGadgetTextEntryDraw.cpp does.
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 // stlport
 #define Matrix4x4 Matrix4  // BFME renamed it
@@ -325,29 +341,16 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 // W3DGadgetTextEntryImageDraw ================================================
 /** Draw horizontal slider with user supplied images */
 //=============================================================================
-class DisplayStringSizeView007991A0 { public:
-  virtual void slot0() = 0;
-  virtual void slot1() = 0;
-  virtual void slot2() = 0;
-  virtual void slot3() = 0;
-  virtual void slot4() = 0;
-  virtual void slot5() = 0;
-  virtual void slot6() = 0;
-  virtual void slot7() = 0;
-  virtual void slot8() = 0;
-  virtual void slot9() = 0;
-  virtual void slot10() = 0;
-  virtual void slot11() = 0;
-  virtual void slot12() = 0;
-  virtual void slot13() = 0;
-  virtual void slot14() = 0;
-  virtual void getSize(Int *width, Int *height) = 0;
+extern void Rva007986C0(GameWindow*, Color, Color, Color, Color, Int, Int);
+template <class Coord>
+struct DefaultConstructed007991a0 : Coord
+{
+    DefaultConstructed007991a0() {}
 };
-extern void __cdecl drawTextEntryText(GameWindow *window, Color textColor, Color textBorder, Color compositeColor, Color compositeBorder, Int x, Int y);
 void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData )
 {
 	EntryData *e = (EntryData *)window->winGetUserData();
-	ICoord2D origin, size, start, end;
+	DefaultConstructed007991a0<ICoord2D> origin, size, start, end;
 	Color textColor, textBorder;
 	Color compositeColor, compositeBorder;
 	const Image *leftImage, *rightImage, *centerImage, *smallCenterImage;
@@ -409,14 +412,14 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 	if (leftImage && rightImage)
 	{
 	// get image sizes for the ends
-	ICoord2D leftSize, rightSize;
+	DefaultConstructed007991a0<ICoord2D> leftSize, rightSize;
 	leftSize.x = leftImage->getImageWidth();
 	leftSize.y = leftImage->getImageHeight();
 	rightSize.x = rightImage->getImageWidth();
 	rightSize.y = rightImage->getImageHeight();
 
 	// get two key points used in the end drawing
-	ICoord2D leftEnd, rightStart;
+	DefaultConstructed007991a0<ICoord2D> leftEnd, rightStart;
 	leftEnd.x = origin.x + leftSize.x + xOffset;
 	leftEnd.y = origin.y + size.y + yOffset;
 	rightStart.x = origin.x + size.x - rightSize.x + xOffset;
@@ -481,7 +484,9 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 
 	// draw the text
 	Int textWidth, fontHeight;
-	((DisplayStringSizeView007991A0 *)e->text)->getSize( &textWidth, &fontHeight );
+	union { void *address; void (DisplayString::*method)(Int*, Int*); } slot;
+	slot.address = (*(void***)e->text)[15];
+	(e->text->*slot.method)(&textWidth, &fontHeight);
 	Int startOffset = 5;
 	volatile Int width;
 
@@ -493,7 +498,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 		start.y = origin.y + startOffset;  // offset a little bit into the entry
 
 	// draw the edit text
-	drawTextEntryText( window, textColor, textBorder, compositeColor, compositeBorder,
+	Rva007986C0( window, textColor, textBorder, compositeColor, compositeBorder,
 										 start.x, start.y );
 
 	

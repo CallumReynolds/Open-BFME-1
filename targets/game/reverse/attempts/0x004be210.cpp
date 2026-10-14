@@ -1,5 +1,5 @@
 // ?GadgetTextEntrySetCursorPosition@@YAXPAVGameWindow@@I@Z
-// partial score=0.479339 date=2026-09-25
+// partial score=0.4545 date=2026-09-25
 // cl: /DNDEBUG /MD /EHsc
 // The DisplayString vtable offsets below are the retail slots used by this body.
 typedef unsigned char Byte;

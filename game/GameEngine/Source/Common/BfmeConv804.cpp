@@ -99,7 +99,6 @@ void BfmeThingECGb::bfmeGoECGb()
 	m_bfmeSub.bfmeTwoECG();
 }
 
-void __cdecl bfmeFreeECH(void *p);
 
 struct BfmeThingECHa
 {
@@ -109,7 +108,7 @@ struct BfmeThingECHa
 
 void BfmeThingECHa::bfmeGoECHa()
 {
-	bfmeFreeECH(m_bfmeP);
+	::operator delete(m_bfmeP);
 	m_bfmeP = 0;
 }
 
@@ -121,7 +120,7 @@ struct BfmeThingECHb
 
 void BfmeThingECHb::bfmeGoECHb()
 {
-	bfmeFreeECH(m_bfmeP);
+	::operator delete(m_bfmeP);
 	m_bfmeP = 0;
 }
 

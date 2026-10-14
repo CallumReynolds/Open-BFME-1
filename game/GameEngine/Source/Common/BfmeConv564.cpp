@@ -13,7 +13,6 @@ public:
 	BfmeRefCAD *m_bfmeRef;
 };
 
-void bfmeFreeCAD(void *what);
 
 void BfmeThingCAD::bfmeGoCAD()
 {
@@ -24,7 +23,7 @@ void BfmeThingCAD::bfmeGoCAD()
 		if (m_bfmeRef != 0)
 		{
 			ref->bfmeDtorCAD();
-			bfmeFreeCAD(ref);
+			::operator delete(ref);
 		}
 	}
 }

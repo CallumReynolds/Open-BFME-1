@@ -78329,7 +78329,6 @@ name,address,notes
 ?bfmeFree1040E@@YGXPAX@Z,0x009F6C10,pin
 ?bfmeFree1049@@YAXPAX@Z,0x00012E90,pin
 ?bfmeFree1183@BfmeStr1183@@QAEXXZ,0x00887940,pin
-?bfmeFree592A10@@YAXPAX@Z,0x00881EB0,scalar delete target called by the 0x00592A10 reset
 ?bfmeFree915A@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFree923F@@YGXPAXH@Z,0x0003F413,pin
 ?bfmeFreeArrDLB@@YAXPAX@Z,0x00881EF0,pin
@@ -78358,11 +78357,9 @@ name,address,notes
 ?bfmeFreeBXD@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeBXE@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeBlock@@YAXPAX@Z,0x00881EF0,Open-BFME5 the free the derived destructors at 0x00924090 and its siblings call
-?bfmeFreeCAD@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeCDE@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeCJD@BfmePoolCJD@@QAEXPAX@Z,0x00035EE5,pin
 ?bfmeFreeDXK@@YAXPAX@Z,0x00881EF0,pin
-?bfmeFreeECH@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeEHB@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeEXB@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeEYG@@YAXPAXI@Z,0x0082E5F0,pin

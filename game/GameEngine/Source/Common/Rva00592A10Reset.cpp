@@ -1,6 +1,5 @@
 // cl: /O2 /Ob0
 
-void __cdecl bfmeFree592A10( void *block );
 
 class Rva00592A10Resource
 {
@@ -42,7 +41,7 @@ void Rva00592A10Owner::reset()
 	if( resource )
 	{
 		resource->destroy();
-		bfmeFree592A10( resource );
+		::operator delete( resource );
 	}
 	m_first = 0;
 
@@ -50,7 +49,7 @@ void Rva00592A10Owner::reset()
 	if( resource )
 	{
 		resource->destroy();
-		bfmeFree592A10( resource );
+		::operator delete( resource );
 	}
 	m_second = 0;
 

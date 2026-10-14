@@ -32,6 +32,11 @@ def includes(before, after, fn=None):
                 if text is None:
                     full.unlink(missing_ok=True)
                     continue
+                if isinstance(text, tuple):  # ("link", target): a symlink
+                    full.parent.mkdir(parents=True, exist_ok=True)
+                    full.unlink(missing_ok=True)
+                    os.symlink(text[1], full)
+                    continue
                 full.parent.mkdir(parents=True, exist_ok=True)
                 full.write_text(text)
             git("add", "-A", "--", ".", ":(exclude)build")
@@ -494,3 +499,97 @@ def test_a5_deleted_sibling_sends_include_outside_refused():
     b = dict(use, **{"game/G/_pch.h": "int z;\n"})
     a = dict(use, **{"game/G/_pch.h": None})
     assert includes(b, a, gate.reach_growth) == ["inputs/reference/ea/profile/internal.h"]
+
+
+# --- verification pass (VR3) ---
+VC7 = "inputs/toolchains/vs2003/Program Files/Microsoft Visual Studio .NET 2003/Vc7/include"
+EMITB = "inline void ff(){ __asm _emit 0x90 }\n"
+
+
+def _s1(stl_foo):
+    return {"inputs/vendor/stlport/foo.h": stl_foo, "inputs/vendor/stlport/list": "x\n",
+            "game/X/foo.h": "int x;\n"}
+
+
+def test_removed_cl_line_rejudges_refused():
+    q, body = "game/G/a.cpp", "// stlport\n#include <foo.h>\nint a;\n"
+    hdr = _s1(EMITB)
+    assert includes(dict(hdr, **{q: "// cl: /Igame/X\n" + body}), dict(hdr, **{q: body})) != []
+
+
+def test_removed_cl_line_clean_passes():
+    q, body = "game/G/a.cpp", "// stlport\n#include <foo.h>\nint a;\n"
+    hdr = _s1("int f;\n")
+    assert includes(dict(hdr, **{q: "// cl: /Igame/X\n" + body}), dict(hdr, **{q: body})) == []
+
+
+def test_removed_one_of_two_cl_lines_refused():
+    q, body = "game/G/a.cpp", "// stlport\n#include <foo.h>\nint a;\n"
+    hdr = _s1(EMITB)
+    assert includes(dict(hdr, **{q: "// cl: /DNDEBUG\n// cl: /Igame/X\n" + body}),
+                    dict(hdr, **{q: "// cl: /DNDEBUG\n" + body})) != []
+
+
+def test_removed_other_of_two_cl_lines_passes():
+    q, body = "game/G/a.cpp", "// stlport\n#include <foo.h>\nint a;\n"
+    hdr = _s1(EMITB)
+    assert includes(dict(hdr, **{q: "// cl: /DNDEBUG\n// cl: /Igame/X\n" + body}),
+                    dict(hdr, **{q: "// cl: /Igame/X\n" + body})) == []
+
+
+def test_removed_stlport_line_rejudges_refused():
+    q = "game/G/a.cpp"
+    hdr = {"inputs/vendor/stlport/foo.h": "int f;\n", "inputs/vendor/stlport/list": "x\n",
+           VC7 + "/foo.h": EMITB}
+    assert includes(dict(hdr, **{q: "// stlport\n#include <foo.h>\nint a;\n"}),
+                    dict(hdr, **{q: "#include <foo.h>\nint a;\n"})) != []
+
+
+def test_removed_stlport_line_clean_passes():
+    q = "game/G/a.cpp"
+    hdr = {"inputs/vendor/stlport/foo.h": "int f;\n", "inputs/vendor/stlport/list": "x\n",
+           VC7 + "/foo.h": "int g;\n"}
+    assert includes(dict(hdr, **{q: "// stlport\n#include <foo.h>\nint a;\n"}),
+                    dict(hdr, **{q: "#include <foo.h>\nint a;\n"})) == []
+
+
+def test_removed_cl_line_is_not_skipped():
+    q, body = "game/G/a.cpp", "// stlport\n#include <foo.h>\nint a;\n"
+    hdr = _s1(EMITB)
+    assert _work(dict(hdr, **{q: "// cl: /Igame/X\n" + body}), dict(hdr, **{q: body}))[0] is True
+
+
+def test_symlink_to_vendor_emit_header_refused():
+    b = dict(VE, **{P: F("")})
+    a = dict(VE, **{P: '#include "e.h"\n' + F(""), "game/G/e.h": ("link", "../../inputs/vendor/v/e.h")})
+    assert includes(b, a, gate.added_symlinks) == ["game/G/e.h"]
+
+
+def test_symlink_to_anything_refused():
+    b = {P: F("")}
+    a = {P: F(""), "game/G/l.h": ("link", "a.cpp"), SHIMS_L: ("link", "x")}
+    assert includes(b, a, gate.added_symlinks) == sorted(["game/G/l.h", SHIMS_L])
+
+
+def test_normal_file_is_not_a_symlink():
+    assert includes({P: F("")}, {P: F(""), "game/G/l.h": "int l;\n"}, gate.added_symlinks) == []
+
+
+SHIMS_L = "inputs/reference/shims/x/l.h"
+
+
+def _r(files):
+    return includes(files, files, lambda o, n: sorted(gate.reach_set(n)))
+
+
+def test_reach_set_stlport_marker_within_8k_counts():
+    q = "game/G/w.cpp"
+    files = dict(STL, **{q: "// cl: /DX\n// stlport\n#include <evil.h>\n"})
+    assert _r(files) == ["inputs/vendor/stlport/evil.h"]
+
+
+def test_reach_set_stlport_marker_past_8k_ignored():
+    q = "game/G/w.cpp"
+    pad = "".join("// %s\n" % ("x" * 76) for _ in range(120))  # > 8 KiB
+    files = dict(STL, **{q: "// cl: /DX\n" + pad + "// stlport\n#include <evil.h>\n"})
+    assert _r(files) == []

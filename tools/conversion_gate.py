@@ -303,9 +303,11 @@ def header_prelude(rev):
 # holds a literal __emit/_emit outside comments, strings and char literals.
 # - Rule A3 refuses an include a game/ or shims file adds (an #include line,
 #   or a `// cl:` /FI) that resolves to an emit file or to an outside file
-#   that includes one. A changed `// cl:` line or an added `// stlport`
+#   that includes one. An added, changed or removed `// cl:` or `// stlport`
 #   line re-judges that file's includes; one that reached the same emit
 #   files before is not blamed again.
+# - Rule A6 refuses a symlink (mode 120000) under game/ or shims: the gate
+#   reads a link as its target text and cannot resolve through it.
 # - Rule A5 refuses a diff after which the emit files reached from the
 #   existing includes of game/ and shims files (R) hold one they did not:
 #   the macro or raw-body flip of an included file, reach growing behind an
@@ -639,22 +641,66 @@ def reach_set(rev):
             continue  # not a match row (a grep diagnostic)
         path, line = parts[-3], parts[-1]
         texts[path].append(line)
+    # `// stlport` (and its opt-out) count only in a file's first 8 KiB, as
+    # in A3 and build.py: read those files' heads, not the joined grep rows.
+    marked = sorted(p for p, t in texts.items() if any("// stlport" in l for l in t))
+    heads = _heads(rev, marked)
     hits = set()
     for path, text in texts.items():
-        hits |= set(_reached(rev, path, "\n".join(text)))
+        lines = [l for l in text if "// stlport" not in l]
+        head = heads.get(path, "")
+        lines += [m for m in ("// stlport", _STLPORT_OPT_OUT) if m in head]
+        hits |= set(_reached(rev, path, "\n".join(lines)))
     return hits
 
 
+def _heads(rev, paths):
+    """{path: first 8192 characters} at rev, one `git cat-file --batch`."""
+    if not paths:
+        return {}
+    spec = "".join(("%s:%s\n" % ("" if rev == ":" else rev, p)) for p in paths)
+    out = subprocess.run(["git", "cat-file", "--batch"], input=spec.encode(),
+                         capture_output=True).stdout
+    heads, pos = {}, 0
+    for path in paths:
+        end = out.index(b"\n", pos)
+        header = out[pos:end].split()
+        pos = end + 1
+        if len(header) == 3 and header[1] == b"blob":
+            size = int(header[2])
+            heads[path] = out[pos:pos + size].decode("utf-8", "replace")[:8192]
+            pos += size + 1
+    return heads
+
+
 def reach_growth(old, new):
-    """Rule A5: emit files R(new) holds that R(old) did not."""
-    return sorted(reach_set(new) - reach_set(old))
+    """Rule A5: emit files R(new) holds that R(old) did not (R(old) is
+    skipped when R(new) is empty)."""
+    grown = reach_set(new)
+    return sorted(grown - reach_set(old)) if grown else []
+
+
+def added_symlinks(old, new):
+    """Rule A6: paths under game/ or shims that the diff makes a symlink
+    (mode 120000). The gate reads a link as its target text, so an include
+    through one is never resolved; the repo tracks none."""
+    cmd = ["git", "diff", "--raw", "--no-renames"]
+    cmd += ["--cached", old] if new == ":" else [old, new]
+    out = subprocess.run(cmd + ["--", "game/", SHIMS], capture_output=True, text=True).stdout
+    bad = []
+    for row in out.splitlines():
+        meta, _, path = row.partition("\t")
+        fields = meta.split()
+        if len(fields) >= 2 and fields[1] == "120000":
+            bad.append(path)
+    return bad
 
 
 def added_outside_includes(old, new, lines=None):
     """Rule A3: [(path, include, outside emit file)] for each include a
     game/ or shims file adds that reaches an outside emit file. An include
-    the same diff removes from the same file is a move; a changed `// cl:`
-    or added `// stlport` line re-judges every include of that file, and
+    the same diff removes from the same file is a move; an added, changed or
+    removed `// cl:` or `// stlport` line re-judges every include of that file, and
     one that reached the same emit file before is not blamed again."""
     if lines is None:
         lines = collect_diff_lines(old, new)
@@ -667,7 +713,7 @@ def added_outside_includes(old, new, lines=None):
         elif line[:1] in "+-" and path and path.startswith(("game/", SHIMS)) \
                 and not path.startswith("game/gen_small/"):
             body = line[1:].lstrip("﻿")
-            if line[0] == "+" and (body.startswith("// cl:") or "// stlport" in body):
+            if body.startswith("// cl:") or "// stlport" in body:  # added or removed
                 recl.add(path)
             m = _INCLUDE_RE.match(line[1:])
             if m:
@@ -1349,6 +1395,11 @@ def main():
         print("conversion gate: %s adds an include of \"%s\", which reaches %s: an\n"
               "emit outside game/ and inputs/reference/shims/ is never judged where it is\n"
               "written. Copy what you need into game/ as C++." % (path, name, hit),
+              file=sys.stderr)
+    for path in added_symlinks(old, new):
+        failed = True
+        print("conversion gate: %s is a symlink. game/ and inputs/reference/shims/ hold\n"
+              "real files only: the gate cannot judge what a link points at." % path,
               file=sys.stderr)
     for hit in reach_growth(old, new) if run_a5 else ():
         failed = True

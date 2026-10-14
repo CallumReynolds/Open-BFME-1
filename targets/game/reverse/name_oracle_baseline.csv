@@ -66,7 +66,6 @@ MultiListObjectClass+0x4|m_next|ListNode,game/Libraries/Source/WWVegas/WW3D2/Sim
 MultiListObjectClass+0x4|m_next|ListNode,game/Libraries/Source/WWVegas/WW3D2/SimpleSceneClass_Unregister_Thunk.cpp,22,1.00,layout_witness
 MultiListObjectClass+0x4|m_next|ListNode,game/Libraries/Source/WWVegas/WW3D2/SimpleSceneClass_Remove_Render_Object_Thunk.cpp,19,1.00,layout_witness
 MultiListObjectClass+0x4|m_prev|ListNode,game/Libraries/Source/WWVegas/WW3D2/MeshClassBaseDestructor.cpp,45,1.00,layout_witness
-MultiListObjectClass+0x4|m_prev|ListNode,game/Libraries/Source/WWVegas/WW3D2/RenderObjClassDestructorThunk.cpp,49,1.00,layout_witness
 NetCommandList+0xc|m_lastInserted|m_lastMessageInserted,game/GameEngine/Source/GameNetwork/ConnectionManager_getFrameCommandList.cpp,17,0.93,layout_witness
 OBBoxClass+0x0|m_unreconstructed_00|Basis,game/Libraries/Source/WWVegas/WW3D2/AABTreeClass_OBBoxAPTContextStruct_Ctor_Thunk.cpp,22,1.00,layout_witness
 OCLSpecialPowerModuleData+0x210|m_upgradeBegin|m_upgradeOCL,game/GameEngine/Source/GameLogic/Object/SpecialPower/OCLSpecialPowerFindOCL.cpp,34,1.00,field_names
@@ -149,7 +148,6 @@ RefCountClass+0x4|m_numRefs|NumRefs,game/GameEngineDevice/Source/W3DDevice/GameC
 RefCountClass+0x4|m_numRefs|NumRefs,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DStatusCircleCtorThunk.cpp,45,1.00,layout_witness
 RefCountClass+0x4|m_numRefs|NumRefs,game/Libraries/Source/WWVegas/WW3D2/MaterialPassClassCtorThunk.cpp,22,1.00,layout_witness
 RefCountClass+0x4|m_numRefs|NumRefs,game/Libraries/Source/WWVegas/WW3D2/MeshClassBaseDestructor.cpp,25,1.00,layout_witness
-RefCountClass+0x4|m_numRefs|NumRefs,game/Libraries/Source/WWVegas/WW3D2/RenderObjClassDestructorThunk.cpp,29,1.00,layout_witness
 RefCountClass+0x4|m_refCount|NumRefs,game/GameEngineDevice/Source/MilesAudioDevice/PlayingAudioConstructor.cpp,35,1.00,layout_witness
 RefCountClass+0x4|m_refCount|NumRefs,game/GameEngineDevice/Source/W3DDevice/GameClient/BaseHeightMapResetBuffer_removeTreeAtIndex.cpp,25,1.00,layout_witness
 RefCountClass+0x4|m_refCount|NumRefs,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DTreeBuffer_freeTreeBuffers.cpp,30,1.00,layout_witness

@@ -1,5 +1,5 @@
 // ?queue007B4FE0@W3DProjectedShadowManager@@QAEXPAUShadow007B6D30@@HH@Z
-// partial score=0.868 date=2026-09-28
+// partial score=0.2684 date=2026-09-28
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas
 // stlport
 #define _STLP_NO_EXCEPTIONS 1

@@ -113,6 +113,10 @@ class Target:
         return self.ledger_root / "functions.csv"
 
     @property
+    def data_ledger_path(self):
+        return self.ledger_root / "data.csv"
+
+    @property
     def text_section(self):
         matches = [section for section in self.sections if section.name == ".text"]
         if len(matches) != 1:

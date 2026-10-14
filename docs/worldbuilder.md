@@ -3,8 +3,7 @@
 WorldBuilder is a separate target; the ordinary game commands still operate
 on BFME1. Start with `python3 tools/worldbuilder.py next`. Staff the lane with
 two editor workers on distinct files and one dependency/tooling lane, whose
-next target is support for independently witnessed unexported data and
-callees.
+next target is support for independently witnessed unexported callees.
 
 ## Target and source ownership
 
@@ -46,7 +45,7 @@ python3 tools/worldbuilder.py probe \
 byte-compares in a fresh run directory.
 
 - Each relocation needs an independent named export, import, verified target
-  function or witnessed literal data. An unknown reference stops
+  function, witnessed literal data or data.csv row. An unknown reference stops
   verification; there is no masked-relocation success mode.
 - Identity comes from named exports, resource labels, class records or
   independently decoded MFC runtime-class/message-map chains, never a guessed

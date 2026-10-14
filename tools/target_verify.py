@@ -38,6 +38,61 @@ def read_rows(target):
     return rows
 
 
+DATA_FIELDS = ("name", "target_rva", "size", "section", "witnesses", "evidence", "model")
+
+
+def read_data_rows(target):
+    """Unexported data a target's bodies may reference, keyed by symbol.
+
+    A row names one datum and lists the retail operand sites that witness it:
+    each witness is an RVA in the image's HIGHLOW relocation table whose
+    four-byte value is the datum's address. The name stays a claim the
+    evidence must carry; the address is proven by the witnesses alone.
+    """
+    path = target.data_ledger_path
+    if not path.exists():
+        return {}
+    raw = path.read_bytes()
+    _require(b"\r" not in raw and raw.endswith(b"\n"),
+             f"{path}: target data ledger must use LF and end with newline")
+    reader = csv.DictReader(io.StringIO(raw.decode("utf-8")))
+    _require(reader.fieldnames == list(DATA_FIELDS),
+             f"{path}: expected header {','.join(DATA_FIELDS)}")
+    highlow = {entry.rva for entry in target.relocations if entry.type == 3}
+    exports = _exports(target)
+    rows, spans = {}, []
+    for row in reader:
+        _require(set(row) == set(DATA_FIELDS) and all(row[key] for key in DATA_FIELDS),
+                 f"{path}: data row needs nonempty {', '.join(DATA_FIELDS)}")
+        name = row["name"]
+        _require(name not in rows, f"{path}: duplicate data symbol {name}")
+        _require(name not in exports, f"{name}: exported data needs no data row")
+        rva, size = _number(row["target_rva"]), _number(row["size"])
+        _require(size > 0, f"{name}: data size must be positive")
+        section = target.section_for_rva(rva)
+        _require(section.name == row["section"],
+                 f"{name}: RVA {rva:#x} lies in {section.name}, not {row['section']}")
+        _require(not section.characteristics & 0x20000000,
+                 f"{name}: data row must not lie in an executable section")
+        _require(rva + size <= section.rva + section.virtual_size,
+                 f"{name}: data extent leaves {section.name}")
+        witnesses = [_number(value) for value in row["witnesses"].split(";")]
+        _require(len(set(witnesses)) == len(witnesses), f"{name}: duplicate witness")
+        for site in witnesses:
+            _require(site in highlow, f"{name}: witness {site:#x} is not a HIGHLOW relocation site")
+            _require(_executable(target, site, 4),
+                     f"{name}: witness {site:#x} is not in executable code")
+            value = struct.unpack("<I", target.read_rva(site, 4))[0]
+            _require(value == target.image_base + rva,
+                     f"{name}: witness {site:#x} addresses {value - target.image_base:#x}, not {rva:#x}")
+        rows[name] = {**row, "rva": rva, "size_bytes": size, "witness_rvas": witnesses}
+        spans.append((rva, rva + size, name))
+    spans.sort()
+    for before, after in zip(spans, spans[1:]):
+        _require(before[1] <= after[0], f"overlapping data rows: {before[2]} and {after[2]}")
+    return rows
+
+
 def _exclusive_roots(target):
     return (target.root / "worldbuilder",)
 
@@ -48,6 +103,7 @@ def validate_rows(target, rows):
     validated = _validate_rows(target, list(rows))
     for _, _, row, _ in validated:
         _identity(target, row)
+    read_data_rows(target)
     claimed = {source for _, _, _, source in validated}
     roots = [path.relative_to(target.root).as_posix() for path in _exclusive_roots(target)]
     tracked = subprocess.run(["git", "ls-files", "-z", "--", *roots], cwd=target.root,
@@ -256,7 +312,8 @@ def _import_identity(target, entry, symbol, *, call=False):
     return receipt
 
 
-def _relocate(target, row, obj, code, relocs, known):
+def _relocate(target, row, obj, code, relocs, known, data=None):
+    data = {} if data is None else data
     rva = _number(row["target_rva"])
     retail = target.read_rva(rva, len(code))
     linked = bytearray(code)
@@ -304,9 +361,17 @@ def _relocate(target, row, obj, code, relocs, known):
             elif symbol.startswith("__imp_"):
                 entry = imports.get(destination)
                 check["import"] = _import_identity(target, entry, symbol)
+            elif symbol in data:
+                datum = data[symbol]
+                _require(destination == datum["rva"],
+                         f"{symbol}: operand addresses RVA {destination:#x}, "
+                         f"but its data row records {datum['rva']:#x}")
+                check["data"] = {"rva": datum["rva"], "size": datum["size_bytes"],
+                                 "witnesses": datum["witness_rvas"]}
             else:
                 _require(symbol in exports and exports[symbol] == destination,
-                         f"{symbol}: absolute data/code identity has no matching target export")
+                         f"{symbol}: absolute data/code identity has no matching target export "
+                         "or witnessed data row")
             value = actual
             check["target_rva"] = destination
         else:
@@ -347,6 +412,7 @@ def _verify(target, rows, selectors, *, probing=False):
     identities = {row["name"]: _identity(target, row) for _, _, row, _ in validated}
     known = _exports(target)
     known.update({row["name"]: _number(row["target_rva"]) for _, _, row, _ in validated})
+    data = read_data_rows(target)
     selected = validated
     if selectors:
         missing = [selector for selector in selectors if not any(
@@ -373,7 +439,7 @@ def _verify(target, rows, selectors, *, probing=False):
         code, relocations = _object_body(obj, row["name"])
         _require(len(code) == end - start,
                  f"{row['name']}: object extent {len(code)} differs from target extent {end-start}")
-        linked, checks = _relocate(target, row, obj, code, relocations, known)
+        linked, checks = _relocate(target, row, obj, code, relocations, known, data)
         _extent(target, start, linked, checks)
         section = next(section for section in target.sections
                        if section.rva <= start and end <= section.rva + section.raw_size)

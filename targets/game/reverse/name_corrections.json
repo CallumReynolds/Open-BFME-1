@@ -19988,5 +19988,15 @@
   "after_sha256": "6bf14d796e82a40d1a0a9b7fdbbe95b51f1f21351ac38b154d95893ba66ed1d2",
   "evidence": "targets/game/reverse/re_attempts.log",
   "reason": "tools/ilt_oracle.py check ?copyClearMask@AttributeModifierDefinitionStore@@QBE?AV?$BitFlags@$0BEA@@@H@Z 0x0036B330 returns CONTRADICTED (outside every window of slot 19570); the body is the definition+0x44 twin of the address-named 0x0036B250 getter, so it keeps an address-derived name"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x0045c2f0.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/ViewRva0045C2F0.cpp",
+  "old_name": "getScreenCornerWorldPointsAtZ",
+  "new_name": "rva0045C2F0",
+  "before_sha256": "08f8bc28d6f043b88410558bb8b9978bf1e6069e6c73e8e0549e5f46d04785e2",
+  "after_sha256": "d736fb5935048375984c8f46fdf344dffdf7910bfd3eea87724ed11d89146390",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "tools/ilt_oracle.py check ?getScreenCornerWorldPointsAtZ@View@@UAEXPAUCoord3D@@000M@Z 0x0045C2F0 is CONTRADICTED (outside slot 26657 window 17078-17083, recorded in re_attempts.log); the commit hook refuses that name, so the body keeps an address-derived method name until its identity is settled"
  }
 ]

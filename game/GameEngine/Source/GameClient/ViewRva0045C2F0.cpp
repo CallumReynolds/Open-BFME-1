@@ -1,31 +1,33 @@
 // cl: /DNDEBUG /MD /EHsc
-// partial score=0.99 date=2026-09-15
+//
+// Open-BFME: retail 0x0045C2F0 (229 bytes), a View virtual that projects the
+// four screen corners to world points at a given Z -- Zero Hour's
+// View::getScreenCornerWorldPointsAtZ body. Retail's ILT order contradicts that
+// name at this address (tools/ilt_oracle.py), so the method keeps an
+// address-derived name until its identity is settled.
+//
+// Shape note measured against retail: ICoord2D has an empty user-declared
+// constructor; without it the corner lea encodes [eax+edi] where retail has
+// [edi+eax] (the residue the 0.99 bank carried behind a volatile pointer hack).
 typedef int Int;
 typedef float Real;
 #define NULL 0
 
 struct ICoord2D
 {
+	ICoord2D() {}
 	Int x;
 	Int y;
 };
 
-struct Coord3D
-{
-	Real x;
-	Real y;
-	Real z;
-};
+#include "../../../Libraries/Include/Lib/Coord3D.h"
 
 class View
 {
 public:
-	virtual void getScreenCornerWorldPointsAtZ(
-		Coord3D *, Coord3D *, Coord3D *, Coord3D *, Real);
+	virtual void rva0045C2F0( Coord3D *topLeft, Coord3D *topRight, Coord3D *bottomLeft, Coord3D *bottomRight, Real z );
 };
 
-// ?getScreenCornerWorldPointsAtZ@View@@UAEXPAUCoord3D@@000M@Z
-// partial score=0.99 date=2026-09-10
 // BFME's View class inserts extra virtuals relative to the ZH layout this TU
 // compiles View against: 2 slots before setWidth (matches the Display.cpp
 // BFMERetailTacticalViewVTable shim) and 70 more between getOrigin and
@@ -132,8 +134,7 @@ public:
 /** project the 4 corners of this view into the world and return each point as a parameter,
 		the world points are at the requested Z */
 //-------------------------------------------------------------------------------------------------
-// ?getScreenCornerWorldPointsAtZ@View@@UAEXPAUCoord3D@@000M@Z present-unmatched
-void View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
+void View::rva0045C2F0( Coord3D *topLeft, Coord3D *topRight,
 																					Coord3D *bottomLeft, Coord3D *bottomRight,
 																					Real z )
 {
@@ -141,7 +142,6 @@ void View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 	ICoord2D origin;
 	Int viewWidth = reinterpret_cast<BFMEViewCornerVTable *>( this )->getWidth();
 	Int viewHeight = reinterpret_cast<BFMEViewCornerVTable *>( this )->getHeight();
-	volatile char *viewWidthPointer = (char *)(unsigned)viewWidth;
 
 	// sanity
 	if( topLeft == NULL || topRight == NULL || bottomLeft == NULL || bottomRight == NULL )
@@ -151,7 +151,7 @@ void View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 	reinterpret_cast<BFMEViewCornerVTable *>( this )->getOrigin( &origin.x, &origin.y );
 	screenTopLeft.x     = origin.x;								// upper left
 	screenTopLeft.y     = origin.y;								// upper left
-	screenTopRight.x    = (Int)(origin.x + (unsigned)viewWidthPointer);		// upper right
+	screenTopRight.x    = origin.x + viewWidth;		// upper right
 	screenTopRight.y    = origin.y;								// upper right
 	screenBottomLeft.x  = origin.x + viewWidth;		// lower right
 	screenBottomLeft.y  = origin.y + viewHeight;  // lower right

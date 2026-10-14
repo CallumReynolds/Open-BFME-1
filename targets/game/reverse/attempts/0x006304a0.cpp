@@ -1,13 +1,19 @@
 // ?StartPatchCheck@@YAX_N@Z
-// partial score=0.9404 date=2026-10-07
-// cl: /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /O2 /Ob2 /Igame/Libraries/Source/WWVegas/WWLib
+// partial score=0.9679 date=2026-10-13
+// cl: /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /O2 /Ob2 /Iinputs/reference/shims/stringinline
 // stlport
 
 // LEVER: TU-local `static` globals (as in ZH MainMenuUtils.cpp) move retail's
 // first difference from +0x2D to +0x3B; extern or defined-extern globals do not.
 // Shipping needs StartPatchCheck in the TU that owns these statics.
-#include "ascii_string.h"
-#include "unicode_string.h"
+// LEVER: the by-value UnicodeString temporary must use the INLINE forwarding
+// string model (inputs/reference/shims/stringinline/StringInline.h, per
+// docs/shape_levers.md row 2); the out-of-line unicode_string.h transposes the
+// EH saved-esp at +0x6C (13 -> 7 non-reloc bytes). Remaining 7 bytes are two
+// scheduler rotations: `mov bl,1` vs the fetch-label push at +0x3B, and the
+// onlineCancelFlag store vs the vtable load at +0x48. 720 store permutations,
+// volatile, barriers, comma-expression and flag (/G7,/GB,/Os) trials are inert.
+#include "StringInline.h"
 
 typedef void (*GameWinMsgBoxFunc)();
 class GameWindow;

@@ -217,19 +217,7 @@ DX8TextureCategoryClass::DX8TextureCategoryClass(
 }
 
 // ??1DX8TextureCategoryClass@@UAE@XZ present-unmatched
-DX8TextureCategoryClass::~DX8TextureCategoryClass()
-{
-	// Unregistering the mesh where polygon renderers are connected to kills all polygon renderers
-	while (DX8PolygonRendererClass* p_renderer=PolygonRendererList.Get_Head()) {
-		TheDX8MeshRenderer.Unregister_Mesh_Type(p_renderer->Get_Mesh_Model_Class());
-	}
-	for (int a=0;a<MeshMatDescClass::MAX_TEX_STAGES;++a) 
-	{
-		REF_PTR_RELEASE(textures[a]);
-	}
-
-	REF_PTR_RELEASE(material);
-}
+// ~DX8TextureCategoryClass lives in DX8TextureCategoryDestructor00946540.cpp (retail body 0x00946540).
 
 // ?Add_Render_Task@DX8TextureCategoryClass@@QAEXPAVDX8PolygonRendererClass@@PAVMeshClass@@@Z
 void DX8TextureCategoryClass::Add_Render_Task(DX8PolygonRendererClass * p_renderer,MeshClass * p_mesh)

@@ -100,7 +100,7 @@ void Rva003D2B80Child::update(Rva003D2B80Child *first,
 }
 
 // ?setSlots@Rva003CBA90@@QAEXPAVY1SlotArray@@@Z
-// The caller uses the complete helper for optimization; its owner remains in Y1EightSlotRefCounts.cpp.
+// The caller needs the complete helper visible for its schedule; this is the only definition.
 inline void Rva003CBA90::setSlots(Y1SlotArray *incoming)
 {
 	m_nullCount = 0;

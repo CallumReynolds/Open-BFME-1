@@ -84,27 +84,9 @@ public:
 	void repoint( void *owned, int extra );
 };
 
-void Rva003CBA90::setSlots( Y1SlotArray *incoming )
-{
-	m_nullCount = 0;
-
-	if ( incoming->m_slot[ 0 ] == 0 ) ++m_nullCount;
-	m_slot[ 0 ] = incoming->m_slot[ 0 ];
-	if ( incoming->m_slot[ 1 ] == 0 ) ++m_nullCount;
-	m_slot[ 1 ] = incoming->m_slot[ 1 ];
-	if ( incoming->m_slot[ 2 ] == 0 ) ++m_nullCount;
-	m_slot[ 2 ] = incoming->m_slot[ 2 ];
-	if ( incoming->m_slot[ 3 ] == 0 ) ++m_nullCount;
-	m_slot[ 3 ] = incoming->m_slot[ 3 ];
-	if ( incoming->m_slot[ 4 ] == 0 ) ++m_nullCount;
-	m_slot[ 4 ] = incoming->m_slot[ 4 ];
-	if ( incoming->m_slot[ 5 ] == 0 ) ++m_nullCount;
-	m_slot[ 5 ] = incoming->m_slot[ 5 ];
-	if ( incoming->m_slot[ 6 ] == 0 ) ++m_nullCount;
-	m_slot[ 6 ] = incoming->m_slot[ 6 ];
-	if ( incoming->m_slot[ 7 ] == 0 ) ++m_nullCount;
-	m_slot[ 7 ] = incoming->m_slot[ 7 ];
-}
+// 0x003CBA90 (setSlots) is defined where its caller needs it visible:
+// LargeGroupAudio/Rva003D2B80ChildUpdate.cpp.  A second definition here was a
+// duplicate strong symbol that kept both files from linking.
 
 void *Rva003CBA90::releaseSlots()
 {

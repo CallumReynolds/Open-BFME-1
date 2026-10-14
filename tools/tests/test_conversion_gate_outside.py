@@ -19,8 +19,8 @@ VE = {V: "#define OP(x) __asm _emit x\n"}
 F = lambda body: "void f()\n{\n%s}\n" % body
 
 
-def includes(before, after):
-    """Rule A3 on a staged change (before/after: path -> text)."""
+def includes(before, after, fn=None):
+    """Rule A3 (or fn(old, new)) on a staged change (before/after: path -> text)."""
     with tempfile.TemporaryDirectory() as tmp:
         git = lambda *a: subprocess.run(["git", "-C", tmp, *a], check=True,
                                         capture_output=True, text=True)
@@ -38,7 +38,7 @@ def includes(before, after):
         try:
             gate._LISTING.clear()
             gate._OUTSIDE.clear()
-            return gate.added_outside_includes("HEAD", ":")
+            return (fn or gate.added_outside_includes)("HEAD", ":")
         finally:
             os.chdir(here)
 
@@ -115,20 +115,23 @@ def test_use_of_vendor_non_emit_macro_passes():
 
 
 # --- grandfathered state on master ---
-def test_allowlisted_include_passes():
-    path, name = sorted(gate.OUTSIDE_INCLUDE_ALLOW)[0]
-    o = "inputs/reference/ea/debug/" + name
-    hdr = {o: "#define ts_lock _emit 0xF0\n"}
-    assert includes(dict(hdr, **{path: "int a;\n"}),
-                    dict(hdr, **{path: '#include "%s"\nint a;\n' % name})) == []
-
-
-def test_same_include_in_other_file_refused():
-    path, name = sorted(gate.OUTSIDE_INCLUDE_ALLOW)[0]
-    hdr = {"inputs/reference/ea/debug/" + name: "#define ts_lock _emit 0xF0\n"}
+def test_ea_pch_sibling_internal_is_not_a_reach():
+    # The EA debug/_pch.h includes "internal.h": its clean sibling, not the
+    # profile/internal.h that defines ts_lock.
+    hdr = {"inputs/reference/ea/debug/_pch.h": '#include "internal.h"\n',
+           "inputs/reference/ea/debug/internal.h": "int q;\n",
+           "inputs/reference/ea/profile/internal.h": "#define ts_lock _emit 0xF0\n"}
     q = "game/G/other.h"
     assert includes(dict(hdr, **{q: "int a;\n"}),
-                    dict(hdr, **{q: '#include "%s"\nint a;\n' % name})) != []
+                    dict(hdr, **{q: '#include "_pch.h"\nint a;\n'})) == []
+
+
+def test_ea_pch_reaching_profile_internal_refused():
+    hdr = {"inputs/reference/ea/profile/_pch.h": '#include "internal.h"\n',
+           "inputs/reference/ea/profile/internal.h": "#define ts_lock _emit 0xF0\n"}
+    q = "game/G/other.h"
+    assert includes(dict(hdr, **{q: "int a;\n"}),
+                    dict(hdr, **{q: '#include "_pch.h"\nint a;\n'})) != []
 
 
 def test_existing_own_definition_use_passes():
@@ -145,11 +148,160 @@ def test_existing_own_definition_new_use_refused():
     assert _gate(dict(o, **{P: d + F("\tint a;\n")}), dict(o, **{P: d + F("\tint a;\n\t__asm ts_lock\n")})) != []
 
 
-def test_allowlist_is_todays_three_pairs():
-    assert len(gate.OUTSIDE_INCLUDE_ALLOW) == 3  # shrink-only
+def test_allowlist_is_empty():
+    assert len(gate.OUTSIDE_INCLUDE_ALLOW) == 0  # shrink-only
 
 
 def test_sibling_quoted_include_is_not_outside():
     hdr = {"inputs/reference/ea/profile/internal.h": "#define ts_lock _emit 0xF0\n",
            "game/G/internal.h": "int z;\n"}
     assert includes(dict(hdr, **{P: F("")}), dict(hdr, **{P: '#include "internal.h"\n' + F("")})) == []
+
+
+# --- round 1 (VR1A, VR1B) ---
+SW = "inputs/reference/shims/sweep/_pch.h"
+CL = "// cl: /DNDEBUG /Iinputs/reference/shims/sweep /Iinputs/reference/ea/debug\n"
+EAP = {"inputs/reference/ea/profile/_pch.h": '#include "internal.h"\n',
+       "inputs/reference/ea/profile/internal.h": "#define ts_lock _emit 0xF0\n"}
+
+
+def test_h1_outside_flip_to_emit_refused():
+    b = {V: "#define OP(x) (x)\n", P: F("\tint a = OP(1);\n")}
+    a = {V: "#define OP(x) __asm _emit x\n", P: F("\tint a = OP(1);\n")}
+    assert includes(b, a, gate.new_outside_emit_names) == ["OP"]
+
+
+def test_h1_outside_existing_emit_macro_edit_passes():
+    b = {V: "#define OP(x) __asm _emit x\n"}
+    a = {V: "#define OP(x) __asm _emit x\n#define Q 1\n"}
+    assert includes(b, a, gate.new_outside_emit_names) == []
+
+
+def test_h2_raw_emit_body_header_refused():
+    hdr = {"inputs/vendor/v/b.h": "inline void bb(){ __asm _emit 0x90 }\n"}
+    assert includes(dict(hdr, **{P: F("")}), dict(hdr, **{P: '#include "v/b.h"\n' + F("")})) != []
+
+
+def test_h2_emit_only_in_string_or_comment_passes():
+    hdr = {"inputs/vendor/v/b.h": "// __emit\nconst char *s = \"_emit\"; char c = '\"';\n"}
+    assert includes(dict(hdr, **{P: F("")}), dict(hdr, **{P: '#include "v/b.h"\n' + F("")})) == []
+
+
+def test_quoted_sibling_shadows_outside_header():
+    hdr = dict(EAP, **{"game/G/_pch.h": "int z;\n"})
+    assert includes(dict(hdr, **{P: F("")}), dict(hdr, **{P: '#include "_pch.h"\n' + F("")})) == []
+
+
+def test_angle_include_does_not_see_sibling():
+    hdr = dict(EAP, **{"game/G/_pch.h": "int z;\n"})
+    assert includes(dict(hdr, **{P: F("")}), dict(hdr, **{P: '#include <_pch.h>\n' + F("")})) != []
+
+
+def test_cl_include_dir_resolution_new_debug_tu_passes():
+    hdr = dict(EAP, **{SW: "int z;\n"})
+    q = "game/Libraries/Source/debug/new_tu.cpp"
+    assert includes(dict(hdr, **{q: CL + "int a;\n"}),
+                    dict(hdr, **{q: CL + '#include "_pch.h"\nint a;\n'})) == []
+
+
+def test_cl_include_dir_into_emit_dir_refused():
+    cl = "// cl: /Iinputs/reference/ea/profile\n"
+    q = "game/Libraries/Source/debug/new_tu.cpp"
+    assert includes(dict(EAP, **{q: cl + "int a;\n"}),
+                    dict(EAP, **{q: cl + '#include "_pch.h"\nint a;\n'})) != []
+
+
+def test_cl_line_change_rejudges_existing_includes():
+    q = "game/Libraries/Source/debug/new_tu.cpp"
+    body = '#include "_pch.h"\nint a;\n'
+    hdr = dict(EAP, **{SW: "int z;\n"})
+    assert includes(dict(hdr, **{q: CL + body}),
+                    dict(hdr, **{q: "// cl: /Iinputs/reference/ea/profile\n" + body})) != []
+
+
+def test_cl_line_change_to_clean_dirs_passes():
+    q = "game/Libraries/Source/debug/new_tu.cpp"
+    body = '#include "_pch.h"\nint a;\n'
+    hdr = dict(EAP, **{SW: "int z;\n"})
+    assert includes(dict(hdr, **{q: CL + body}),
+                    dict(hdr, **{q: CL.replace("/DNDEBUG", "/DFOO") + body})) == []
+
+
+def test_normpath_middle_dotdot_refused():
+    assert includes(dict(VE, **{P: F("")}), dict(VE, **{P: '#include "v/x/../e.h"\n' + F("")})) != []
+
+
+def test_normpath_to_clean_file_passes():
+    hdr = dict(VE, **{"inputs/vendor/v/c.h": "int c;\n"})
+    assert includes(dict(hdr, **{P: F("")}), dict(hdr, **{P: '#include "v/x/../c.h"\n' + F("")})) == []
+
+
+def test_case_insensitive_match_refused():
+    assert includes(dict(VE, **{P: F("")}), dict(VE, **{P: '#include "V/E.H"\n' + F("")})) != []
+
+
+def test_case_insensitive_clean_passes():
+    hdr = {"inputs/vendor/v/c.h": "int c;\n"}
+    assert includes(dict(hdr, **{P: F("")}), dict(hdr, **{P: '#include "V/C.H"\n' + F("")})) == []
+
+
+def _cache_files(tmp):
+    d = Path(tmp) / "build" / "conversion_gate_outside"
+    return sorted(d.glob("*.json")) if d.exists() else []
+
+
+def test_cache_cold_then_warm_same_answer():
+    with tempfile.TemporaryDirectory() as tmp:
+        git = lambda *a: subprocess.run(["git", "-C", tmp, *a], check=True,
+                                        capture_output=True, text=True)
+        git("init", "-q")
+        (Path(tmp) / "inputs/vendor/v").mkdir(parents=True)
+        (Path(tmp) / "inputs/vendor/v/e.h").write_text("#define OP(x) __asm _emit x\n")
+        git("add", "-A")
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "b")
+        here = os.getcwd()
+        os.chdir(tmp)
+        try:
+            gate._OUTSIDE.clear()
+            cold = gate.outside_state("HEAD")
+            assert len(_cache_files(tmp)) == 1
+            gate._OUTSIDE.clear()
+            calls = []
+            real = gate._outside_scan
+            gate._outside_scan = lambda rev: calls.append(rev) or real(rev)
+            try:
+                warm = gate.outside_state("HEAD")
+                staged = gate.outside_state(":")  # same outside trees: same key
+            finally:
+                gate._outside_scan = real
+            assert warm == cold == staged and calls == []
+            assert warm["names"] == ["OP"]
+        finally:
+            os.chdir(here)
+
+
+def test_cache_key_changes_with_outside_tree():
+    with tempfile.TemporaryDirectory() as tmp:
+        git = lambda *a: subprocess.run(["git", "-C", tmp, *a], check=True,
+                                        capture_output=True, text=True)
+        git("init", "-q")
+        (Path(tmp) / "inputs/vendor/v").mkdir(parents=True)
+        (Path(tmp) / "inputs/vendor/v/e.h").write_text("#define OP(x) (x)\n")
+        (Path(tmp) / "inputs/reference/shims").mkdir(parents=True)
+        (Path(tmp) / "inputs/reference/shims/s.h").write_text("int s;\n")
+        git("add", "-A")
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "b")
+        here = os.getcwd()
+        os.chdir(tmp)
+        try:
+            k1 = gate._outside_key("HEAD")
+            (Path(tmp) / "inputs/reference/shims/s.h").write_text("int t;\n")
+            git("add", "-A")
+            assert gate._outside_key(":") == k1  # shims are not outside
+            (Path(tmp) / "inputs/vendor/v/e.h").write_text("#define OP(x) __asm _emit x\n")
+            git("add", "-A")
+            gate._OUTSIDE.clear()
+            assert gate._outside_key(":") != k1
+            assert gate.outside_state(":")["names"] == ["OP"]
+        finally:
+            os.chdir(here)

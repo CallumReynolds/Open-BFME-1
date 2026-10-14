@@ -25,11 +25,12 @@ class DrawableIconInfo { public: void *vtable; Anim2D *icons[14]; };
 class Rva00415260Owner;
 class Drawable {
     friend class Rva00415260Owner;
-public:
-    DrawableIconInfo *getIconInfo();
 private:
     static Anim2DTemplate **s_animationTemplates;
 };
+// Retail ILT 0x000102A8 reaches the matched 0x00410F10 lazy allocation body.
+class Rva00410F10Allocation;
+class Rva00410F10Owner { public: Rva00410F10Allocation *ensure(); };
 class BfmeThingES { public: void bfmeDropES(int); };
 extern Anim2DCollection *TheAnim2DCollection;
 class Rva00415260Owner {
@@ -40,7 +41,7 @@ class Rva00415260Owner {
 public:
     void draw();
 private:
-    DrawableIconInfo *icons() { return ((Drawable *)this)->getIconInfo(); }
+    DrawableIconInfo *icons() { return (DrawableIconInfo *)((Rva00410F10Owner *)this)->ensure(); }
     void drop(int index) { ((BfmeThingES *)this)->bfmeDropES(index); }
 };
 void Rva00415260Owner::draw()

@@ -58,7 +58,12 @@ OPAQUE = re.compile(
     # Owner ruling 2026-10-09: bfme*/Bfme* names are converter-invented
     # placeholders, as ilt_oracle, name_lane and ilt_guard already treat them.
     r'_?bfme)', re.I)
-KEYWORDS = set('void bool char short int long float double signed unsigned const volatile static extern class struct public private protected return true false nullptr typedef typename auto Bool Byte Short UnsignedByte UnsignedShort WideChar Int UnsignedInt UnsignedInt32 Real Int64 UnsignedInt64 _emit __emit'.split())
+KEYWORDS = set('void bool char short int long float double signed unsigned const volatile static extern class struct public private protected return true false nullptr typedef typename auto Bool Byte Short UnsignedByte UnsignedShort WideChar Int UnsignedInt UnsignedInt32 Real Int64 UnsignedInt64 _emit __emit'
+               # MSVC keywords: an attribute, calling convention, sized integer,
+               # inline assembly or SEH block names no entity (`__declspec` aligned
+               # against an ILT ?j_ row's name in ten 10-12 commits).
+               ' __declspec __cdecl __stdcall __fastcall __thiscall __inline __forceinline'
+               ' __int8 __int16 __int32 __int64 __asm __try __except __finally inline virtual'.split())
 ADDRESS = re.compile(r'(?:rva|0x|(?:^|_)\s*)([0-9a-f]{8})(?![0-9a-f])', re.I)
 
 
@@ -81,8 +86,20 @@ def opaque(name):
     return bool(OPAQUE.match(name) or FIELD_OPAQUE.fullmatch(name))
 
 
+# Rva<address> with the leading zeros dropped is opaque on the NEW side only.
+# As an OLD name it is the type an Apt TU already uses, so renaming it away is
+# checked like a descriptive name; _without_respellings accepts a rename to a
+# name the base ledger backs or that keeps the address.
+SHORT_RVA = re.compile(r'^Rva([0-9a-f]{6,7})(?![0-9a-f])', re.I)
+
+
+def _short_rva(name):
+    return bool(SHORT_RVA.match(name)) and not re.match(r'^Rva[0-9a-f]{8}', name, re.I)
+
+
 def downgrade(old, new):
-    return old != new and bool(IDENT.fullmatch(old)) and old not in KEYWORDS and not opaque(old) and opaque(new)
+    return (old != new and bool(IDENT.fullmatch(old)) and old not in KEYWORDS
+            and (_short_rva(old) or not opaque(old)) and opaque(new))
 
 
 # `#pragma comment(linker, ...)` and friends name no identifier: a bank that
@@ -622,35 +639,86 @@ def _symbol_names(symbol):
     return tuple(part if IDENT.fullmatch(part) else '' for part in head[:2])
 
 
-def ledger_symbol_regressions(root, old, new):
-    """Catch a ledger-only rename of the same physical body."""
-    delta = ledger_diff(root, old, new)
-    removed, added = {}, {}
+def _symbol_name_pairs(old_symbol, new_symbol):
+    """Every (old, new) name part of two symbols of one declaration shape;
+    otherwise the method and immediate owner, by position."""
+    found = symbol_pairs(old_symbol, new_symbol)
+    if found is not None and (declaration_shape(old_symbol) == declaration_shape(new_symbol)
+                              or not old_symbol.startswith('?')):
+        return found
+    return list(zip(_symbol_names(old_symbol), _symbol_names(new_symbol)))
+
+
+def _function_row(row):
+    if len(row) < 6:
+        return None
+    try:
+        return row[0], int(row[2], 16), int(row[3])
+    except ValueError:
+        return None
+
+
+def _symbol_row(row):
+    if len(row) < 2 or row[0] == 'name':
+        return None
+    try:
+        return row[0], int(row[1], 16), 0
+    except ValueError:
+        return None
+
+
+def _data_row(row):
+    if len(row) < 4 or row[0] == 'name':
+        return None
+    try:
+        return (row[0], int(row[1], 16) - (IMAGE_BASE if row[2] == 'va' else 0),
+                int(row[3] or 0))
+    except ValueError:
+        return None
+
+
+def _paired_rows(delta, parse):
+    """(removed, added) changed rows paired 1:1: the same (address, size)
+    first, then the same start address among the rest. Never by overlap: a
+    retirement that corrects a false-tail start is routine work."""
+    removed, added = [], []
     for line in delta.splitlines():
         if not line.startswith(('+', '-')) or line.startswith(('+++', '---')):
             continue
-        row = next(csv.reader([line[1:]]), [])
-        if len(row) < 6:
-            continue
-        try:
-            key = (int(row[2], 16), int(row[3]))
-        except ValueError:
-            continue
-        (added if line[0] == '+' else removed).setdefault(key, []).append(
-            (row[0], line[1:]))
+        row = parse(next(csv.reader([line[1:]]), []))
+        if row is not None:
+            (added if line[0] == '+' else removed).append((row, line[1:]))
+    out = []
+    for key in (lambda r: (r[0][1], r[0][2]), lambda r: r[0][1]):
+        left, right = defaultdict(list), defaultdict(list)
+        for item in removed:
+            left[key(item)].append(item)
+        for item in added:
+            right[key(item)].append(item)
+        used = set()
+        for k in left.keys() & right.keys():
+            # A many-to-many ledger edit has no safe name pairing.
+            used.update(id(x) for x in left[k] + right[k])
+            if len(left[k]) == 1 and len(right[k]) == 1:
+                out.append((left[k][0], right[k][0]))
+        removed = [x for x in removed if id(x) not in used]
+        added = [x for x in added if id(x) not in used]
+    return out
 
+
+def ledger_symbol_regressions(root, old, new):
+    """Catch a ledger-only rename of the same physical body or datum."""
+    sides = [(FUNCTIONS, ledger_diff(root, old, new), _function_row)]
+    for path, parse in ((SYMBOLS, _symbol_row), (DATA_ROWS, _data_row)):
+        sides.append((path, git(root, 'diff', '--unified=0', '--no-renames',
+                                *diff_args(old, new), '--', path), parse))
     found = []
-    for key in removed.keys() & added.keys():
-        if len(removed[key]) != 1 or len(added[key]) != 1:
-            continue  # A many-to-many ledger edit has no safe name pairing.
-        old_symbol, before = removed[key][0]
-        new_symbol, after = added[key][0]
-        for old_name, new_name in zip(_symbol_names(old_symbol),
-                                      _symbol_names(new_symbol)):
-            if downgrade(old_name, new_name):
-                found.append(Finding('targets/game/reverse/functions.csv',
-                                     'targets/game/reverse/functions.csv', old_name, new_name,
-                                     digest(before), digest(after)))
+    for path, delta, parse in sides:
+        for ((old_symbol, _, _), before), ((new_symbol, _, _), after) in _paired_rows(delta, parse):
+            for old_name, new_name in _symbol_name_pairs(old_symbol, new_symbol):
+                if downgrade(old_name, new_name):
+                    found.append(Finding(path, path, old_name, new_name,
+                                         digest(before), digest(after)))
     return sorted(found, key=lambda f: (f.before_sha256, f.old_name, f.new_name))
 
 
@@ -666,6 +734,8 @@ class Finding:
 
 DIR32_RECORD = 'targets/game/reverse/dir32_addresses.csv'
 SYMBOLS = 'targets/game/reverse/symbols.csv'
+FUNCTIONS = 'targets/game/reverse/functions.csv'
+DATA_ROWS = 'targets/game/reverse/data_rows.csv'
 ILT_TOKEN = re.compile(r'^\??j_([0-9A-Fa-f]{8})(?:@@YAXXZ)?$')
 IMAGE_BASE = 0x400000
 
@@ -715,8 +785,10 @@ def _ilt_respellings(root, old, new):
         except (IndexError, ValueError):
             continue
         # Ledger ?j_ names spell the address in either case (?j_0000955c,
-        # re_attempts 59148); the address, not its case, is the identity.
-        if cols[0].lower() == f'?j_{rva:08x}@@yaxxz':
+        # re_attempts 59148); the address, not its case, is the identity. The
+        # address fixes the name whatever signature the row declares
+        # (?j_0000fd1c@@YAXPAVGameWindow@@_N@Z, d30e390803).
+        if cols[0].lower().startswith(f'?j_{rva:08x}@@'):
             ilt.add(rva)
     return recorded, ilt
 
@@ -772,7 +844,10 @@ def _is_pin_respelling(finding, recorded, names, targets):
     identity; a name the ledger row itself spells is never dropped here."""
     # In a decorated name a class/struct/union/enum type carries a one-letter
     # code (URva00080600Value@@); the identifier still ends at '@'.
-    word = lambda n: re.compile(r'(?:(?<![A-Za-z0-9_])|(?<=[^A-Za-z0-9_][UVTW]))'
+    # A constructor, destructor or other special member spells its class
+    # right after ??<digit> or ??_<letter> (??0AIGuardMachine@@).
+    word = lambda n: re.compile(r'(?:(?<![A-Za-z0-9_])|(?<=[^A-Za-z0-9_][UVTW])'
+                                r'|(?<=\?\?[0-9])|(?<=\?\?_[A-Za-z]))'
                                 + re.escape(n) + r'(?![A-Za-z0-9_])')
     new, old = word(finding.new_name), word(finding.old_name)
     embedded = re.match(r'(?:Rva|Glo|Gen_?|(?:d|dup|j|sub|FUN)_)([0-9A-Fa-f]{8})(?![0-9A-Fa-f])',
@@ -841,16 +916,67 @@ def _without_respellings(candidates, root, old, new):
     if any(ILT_TOKEN.match(f.new_name) for f in candidates):
         recorded, ilt = _ilt_respellings(root, old, new)
         candidates = [f for f in candidates if not _is_ilt_respelling(f, recorded, ilt)]
+    # The exemptions read the BASE ledger: a row renamed in the same change
+    # cannot certify its own respelling.
     if candidates:
         recorded = _recorded_components(root, old)
         if any(f.old_name in recorded for f in candidates):
-            names, targets = _ledger_rows_by_rva(root, new)
+            names, targets = _ledger_rows_by_rva(root, old)
+            _add_base_pins(root, old, candidates, recorded, names)
             candidates = [f for f in candidates
                           if not _is_pin_respelling(f, recorded, names, targets)]
     if any(ADDRESS_TAIL.match(f.old_name) for f in candidates):
-        ledger = _ledger_names_by_rva(root, new)
+        ledger = _ledger_names_by_rva(root, old)
         candidates = [f for f in candidates if not _is_address_respelling(f, ledger)]
+    if any(_short_rva(f.old_name) for f in candidates):
+        candidates = _without_short_rva_respellings(candidates, root, old)
     return candidates
+
+
+def _add_base_pins(root, old, candidates, recorded, names):
+    """Where the base has no functions.csv or data_rows.csv row at a recorded
+    address A, its symbols.csv pins at A and A - image base stand in for the
+    row (5ec282b785), less any pin that spells an old name."""
+    olds = [re.compile(r'(?<![A-Za-z0-9_])' + re.escape(f.old_name) + r'(?![A-Za-z0-9_])')
+            for f in candidates]
+    wanted = {a for f in candidates for a in recorded.get(f.old_name, ()) if not names.get(a)}
+    if not wanted:
+        return
+    pins = defaultdict(list)
+    for row in csv.DictReader(io.StringIO(read(root, old, SYMBOLS) or '')):
+        name = row.get('name') or ''
+        try:
+            rva = int(row['address'], 16)
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not any(o.search(name) for o in olds):
+            pins[rva].append(name)
+    for a in wanted:
+        names[a].extend(pins.get(a, []) + (pins.get(a - IMAGE_BASE, []) if a >= IMAGE_BASE else []))
+
+
+def _without_short_rva_respellings(candidates, root, old):
+    """Drop a rename of a short Rva<address> name to one that keeps the
+    address, or that a BASE functions.csv, symbols.csv or data_rows.csv name
+    spells as a whole word or a decorated type (PAUBfmeStringPool3AF0@@)."""
+    text = None
+    keep = []
+    for f in candidates:
+        m = SHORT_RVA.match(f.old_name) if _short_rva(f.old_name) else None
+        if m:
+            address = int(m.group(1), 16)
+            spelled = re.search(r'(?:(?<![0-9A-Fa-f])|(?<=Rva)|(?<=_))0*([0-9A-Fa-f]{6,8})(?![0-9A-Fa-f])', f.new_name)
+            if spelled and int(spelled.group(1), 16) == address:
+                continue
+            if text is None:
+                text = '\n'.join(line.split(',', 1)[0]
+                                 for path in (FUNCTIONS, SYMBOLS, DATA_ROWS)
+                                 for line in (read(root, old, path) or '').splitlines())
+            if re.search(r'(?:(?<![A-Za-z0-9_])|(?<=[UVTW]))' + re.escape(f.new_name)
+                         + r'(?![A-Za-z0-9_])', text):
+                continue
+        keep.append(f)
+    return keep
 
 
 class _Unread(Exception):

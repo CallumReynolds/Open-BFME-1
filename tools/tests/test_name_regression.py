@@ -1399,12 +1399,219 @@ def test_refused_respellings_is_check_on_a_rename_pair(tmp_path):
         ('destroy', 'j_00753454'), ('CodecState', 'BfmeThingJT')}
 
 
-def test_short_rva_address_type_respelled_to_ledger_placeholder_passes():
-    # owner-queue row 123: Rva8CB820StringPool -> BfmeStringPool3AF0 is placeholder to placeholder.
+APT_SRC = 'game/Libraries/Source/Apt/StringPool.cpp'
+APT_ROW = ('?get@Rva8CB820Cache@@QAEPAUBfmeStringPool3AF0@@XZ,,0x008CB830,16,'
+           'game/x.cpp,matched\n')
+
+
+def _short_rva_case(repo, new_type, base_rows='', new_rows=None):
+    put(repo, APT_SRC, 'struct Rva8CB820StringPool { int m_count; };\n'
+        'int f(Rva8CB820StringPool *p) { return p->m_count; }\n')
+    put(repo, 'targets/game/reverse/functions.csv', base_rows)
+    commit(repo)
+    put(repo, APT_SRC, f'struct {new_type} {{ int m_count; }};\n'
+        f'int f({new_type} *p) {{ return p->m_count; }}\n')
+    if new_rows is not None:
+        put(repo, 'targets/game/reverse/functions.csv', new_rows)
+    return [(f.old_name, f.new_name) for f in N.check(repo, 'HEAD', ':')[0]]
+
+
+def test_short_rva_address_type_respelled_to_ledger_placeholder_passes(repo):
+    # owner-queue row 123 (0835ab92be): the base ledger spells the new type.
     assert N.opaque('Rva8CB820StringPool') and N.opaque('Rva08CB820StringPool')
-    assert not N.downgrade('Rva8CB820StringPool', 'BfmeStringPool3AF0')
+    assert _short_rva_case(repo, 'BfmeStringPool3AF0', APT_ROW) == []
+
+
+def test_short_rva_type_respelled_to_its_own_address_passes(repo):
+    assert _short_rva_case(repo, 'Rva008CB820StringPool') == []
+
+
+def test_short_rva_type_respelled_to_unbacked_placeholder_fails(repo):
+    assert _short_rva_case(repo, 'BfmeStringPool3AF0') == [
+        ('Rva8CB820StringPool', 'BfmeStringPool3AF0')]
+
+
+def test_short_rva_type_backed_only_by_a_row_added_with_it_fails(repo):
+    assert ('Rva8CB820StringPool', 'BfmeStringPool3AF0') in _short_rva_case(
+        repo, 'BfmeStringPool3AF0', '', APT_ROW)
 
 
 def test_rva_without_an_address_stays_descriptive():
     assert not N.opaque('RvaFace') and not N.opaque('Rva8CB82String')
     assert N.downgrade('StringPool', 'Rva8CB820StringPool')
+
+
+@pytest.mark.parametrize('keyword', ['__declspec', '__cdecl', '__stdcall', '__fastcall',
+                                     '__thiscall', '__inline', '__forceinline', '__int8',
+                                     '__int16', '__int32', '__int64', '__asm', '__try',
+                                     '__except', '__finally', 'inline', 'virtual'])
+def test_msvc_keyword_is_not_a_renamed_name(keyword):
+    # 10 commits of 10-12 aligned `__declspec` against an ILT row's j_000070B3.
+    assert not N.downgrade(keyword, 'j_000070B3')
+
+
+def test_keyword_lookalike_is_still_a_name():
+    assert N.downgrade('declspecHelper', 'j_000070B3')
+    assert N.downgrade('virtualCall', 'j_000070B3')
+
+
+CTOR_SRC = 'game/GameEngine/Source/GameLogic/AI/AIGuardMachineCtor.cpp'
+CTOR_PIN = '??0AIGuardMachine@@QAE@PAVStateMachine@@@Z'
+
+
+def _ctor_case(repo, row, new_type='Rva0015D1D0', new_row=None):
+    put(repo, CTOR_SRC, 'class AIGuardMachine { public: AIGuardMachine(); };\n'
+        'AIGuardMachine::AIGuardMachine() {}\n')
+    put(repo, 'targets/game/reverse/symbols.csv', f'name,address,notes\n{CTOR_PIN},0x0015D1D0,pin\n')
+    put(repo, 'targets/game/reverse/functions.csv', f'{row},,0x0015D1D0,64,{CTOR_SRC},matched\n')
+    commit(repo)
+    put(repo, CTOR_SRC, f'class {new_type} {{ public: {new_type}(); }};\n'
+        f'{new_type}::{new_type}() {{}}\n')
+    if new_row is not None:
+        put(repo, 'targets/game/reverse/functions.csv', f'{new_row},,0x0015D1D0,64,{CTOR_SRC},matched\n')
+    return [(f.old_name, f.new_name) for f in N.check(repo, 'HEAD', ':')[0]]
+
+
+def test_pinned_ctor_class_respelled_to_its_address_fails(repo):
+    # The row still spells ??0AIGuardMachine@@: the pin is not dropped there.
+    assert ('AIGuardMachine', 'Rva0015D1D0') in _ctor_case(repo, CTOR_PIN)
+
+
+def test_pinned_ctor_class_respelled_to_base_row_name_passes(repo):
+    assert ('AIGuardMachine', 'Rva0015D1D0') not in _ctor_case(
+        repo, '??0Rva0015D1D0@@QAE@PAVStateMachine@@@Z')
+
+
+def test_row_renamed_with_its_source_does_not_certify_itself(repo):
+    # The exemption reads the BASE ledger, which still spells the old name.
+    found = _ctor_case(repo, CTOR_PIN, new_row='??0Rva0015D1D0@@QAE@PAVStateMachine@@@Z')
+    assert ('AIGuardMachine', 'Rva0015D1D0') in found
+
+
+DATUM_SRC = 'game/GameEngine/Source/Common/UnicodeString.cpp'
+
+
+def _base_pin_case(repo, pins):
+    put(repo, DATUM_SRC, 'extern const unsigned short *g_emptyUnicode;\n'
+        'const unsigned short *f() { return g_emptyUnicode; }\n')
+    put(repo, 'targets/game/reverse/symbols.csv', 'name,address,notes\n' + pins)
+    put(repo, 'targets/game/reverse/functions.csv', '')
+    commit(repo)
+    put(repo, DATUM_SRC, 'extern const unsigned short *BFMEEmptyUnicodeString;\n'
+        'const unsigned short *f() { return BFMEEmptyUnicodeString; }\n')
+    return [(f.old_name, f.new_name) for f in N.check(repo, 'HEAD', ':')[0]]
+
+
+def test_respelling_to_base_pin_at_the_same_address_passes(repo):
+    # 5ec282b785: no base row there, but the base pins the new name at the address.
+    assert _base_pin_case(repo, '?g_emptyUnicode@@3PBGB,0x00ABC000,pin\n'
+                          '?BFMEEmptyUnicodeString@@3PBGB,0x00ABC000,pin\n') == []
+
+
+def test_respelling_to_base_pin_at_the_image_base_relative_address_passes(repo):
+    assert _base_pin_case(repo, '?g_emptyUnicode@@3PBGB,0x00EBC000,pin\n'
+                          '?BFMEEmptyUnicodeString@@3PBGB,0x00ABC000,pin\n') == []
+
+
+def test_respelling_to_base_pin_at_another_address_fails(repo):
+    assert _base_pin_case(repo, '?g_emptyUnicode@@3PBGB,0x00ABC000,pin\n'
+                          '?BFMEEmptyUnicodeString@@3PBGB,0x00ABC004,pin\n') == [
+        ('g_emptyUnicode', 'BFMEEmptyUnicodeString')]
+
+
+ILT_SRC = 'game/GameEngine/Source/GameClient/GUI/GameListBox.cpp'
+
+
+def _ilt_signature_case(repo, row):
+    put(repo, ILT_SRC, 'void RefreshGameListBox(void *w, bool b);\n'
+        'void f(void *w) { RefreshGameListBox(w, true); }\n')
+    put(repo, 'targets/game/reverse/symbols.csv',
+        'name,address,notes\n?RefreshGameListBox@@YAXPAVGameWindow@@_N@Z,0x0000FD1C,pin\n')
+    put(repo, 'targets/game/reverse/functions.csv', '')
+    commit(repo)
+    put(repo, ILT_SRC, 'void j_0000fd1c(void *w, bool b);\n'
+        'void f(void *w) { j_0000fd1c(w, true); }\n')
+    put(repo, 'targets/game/reverse/functions.csv',
+        f'{row},,0x0000FD1C,5,game/gen_small/thunks_009.cpp,matched,gen-thunk\n')
+    return [(f.old_name, f.new_name) for f in N.check(repo, 'HEAD', ':')[0]]
+
+
+def test_respelling_to_ilt_row_with_a_signature_passes(repo):
+    # d30e390803: the ILT row carries its target's signature.
+    assert _ilt_signature_case(repo, '?j_0000fd1c@@YAXPAVGameWindow@@_N@Z') == []
+
+
+def test_respelling_to_ilt_row_of_another_address_fails(repo):
+    assert _ilt_signature_case(repo, '?j_0000fd1d@@YAXPAVGameWindow@@_N@Z') == [
+        ('RefreshGameListBox', 'j_0000fd1c')]
+
+
+def _ledger_change(repo, path, before, after):
+    put(repo, path, before)
+    commit(repo)
+    put(repo, path, after)
+    return {(f.old_name, f.new_name) for f in N.check(repo, 'HEAD', ':')[0]}
+
+
+FN = 'targets/game/reverse/functions.csv'
+
+
+def test_ledger_rename_hidden_by_a_size_change_fails(repo):
+    assert _ledger_change(repo, FN,
+                          '?calculateScore@Known@@QAEHXZ,,0x00123456,16,game/a.cpp,matched\n',
+                          '?Rva00123456@Known@@QAEHXZ,,0x00123456,20,game/a.cpp,matched\n') == {
+        ('calculateScore', 'Rva00123456')}
+
+
+def test_ledger_rows_are_not_paired_by_overlap(repo):
+    # 28fed15086: a false-tail retirement with a corrected start.
+    assert _ledger_change(repo, FN,
+                          '?onStructureUndone@Known@@QAEXXZ,,0x00C3546B,11,game/a.cpp,matched\n',
+                          '?dup_00C35468@@YAXXZ,,0x00C35468,14,game/a.cpp,matched\n') == set()
+
+
+def test_ledger_rename_of_an_outer_scope_fails(repo):
+    assert _ledger_change(repo, FN,
+                          '?update@Object@Game@@QAEXXZ,,0x00500100,16,game/a.cpp,matched\n',
+                          '?update@Object@Rva00500100@@QAEXXZ,,0x00500100,16,game/a.cpp,matched\n') == {
+        ('Game', 'Rva00500100')}
+
+
+def test_ledger_row_of_another_shape_compares_two_parts_only(repo):
+    # 95e52e3366: a ctor row converted to a ?j_ thunk lines up by position only.
+    assert _ledger_change(repo, FN,
+                          '??0SimpleParameterClass@@QAE@XZ,,0x00002874,5,game/a.cpp,matched\n',
+                          '?j_00002874@@YAXXZ,,0x00002874,5,game/a.cpp,matched\n') == set()
+
+
+SYM = 'targets/game/reverse/symbols.csv'
+DATA = 'targets/game/reverse/data_rows.csv'
+DATA_HEAD = 'name,address,address_kind,size,section,source,status,evidence,model\n'
+
+
+def test_symbols_only_rename_fails(repo):
+    assert _ledger_change(repo, SYM, 'name,address,notes\n?g_cameraPos@@3HA,0x01337A30,pin\n',
+                          'name,address,notes\n?Glo01337A30@@3HA,0x01337A30,pin\n') == {
+        ('g_cameraPos', 'Glo01337A30')}
+
+
+def test_symbols_pins_at_different_addresses_are_not_paired(repo):
+    assert _ledger_change(repo, SYM, 'name,address,notes\n?g_cameraPos@@3HA,0x01337A30,pin\n',
+                          'name,address,notes\n?Glo01337A34@@3HA,0x01337A34,pin\n') == set()
+
+
+def test_data_rows_only_rename_fails(repo):
+    assert _ledger_change(repo, DATA, DATA_HEAD + '?g_cameraPos@@3HA,0x01337A30,va,4,.data,game/a.cpp,matched,e,m\n',
+                          DATA_HEAD + '?Glo01337A30@@3HA,0x01337A30,va,4,.data,game/a.cpp,matched,e,m\n') == {
+        ('g_cameraPos', 'Glo01337A30')}
+
+
+def test_data_rows_at_different_addresses_are_not_paired(repo):
+    assert _ledger_change(repo, DATA, DATA_HEAD + '?g_cameraPos@@3HA,0x01337A30,va,4,.data,game/a.cpp,matched,e,m\n',
+                          DATA_HEAD + '?Glo01337A40@@3HA,0x01337A40,va,4,.data,game/a.cpp,matched,e,m\n') == set()
+
+
+def test_ci_workflow_watches_symbols_and_data_rows():
+    workflow = (Path(__file__).resolve().parents[2] / '.github/workflows/name-regression.yml').read_text()
+    for path in (SYM, DATA):
+        assert workflow.count(f"- '{path}'") == 2

@@ -13,7 +13,6 @@ public:
 	void *m_bfmePtr;
 };
 
-void bfmeFreeCDE(void *what);
 
 void BfmeThingCDE::bfmeGoCDE()
 {
@@ -23,5 +22,5 @@ void BfmeThingCDE::bfmeGoCDE()
 		return;
 	}
 	bfmeDtorCDE();
-	bfmeFreeCDE(this);
+	::operator delete(this);
 }

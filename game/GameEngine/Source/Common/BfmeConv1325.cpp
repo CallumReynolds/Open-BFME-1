@@ -59,7 +59,6 @@ public:
 	char m_bfmePad[0x10];
 };
 
-void bfmeFreeTWB(void *p);
 
 class BfmeThingTWB
 {
@@ -83,7 +82,7 @@ void *BfmeThingTWB::bfmeDelTWB(unsigned char flags)
 	m_bfmeList.bfmeDropTWB();
 	m_bfmeVft = g_bfmeVftBTWB;
 	if (flags & 1)
-		bfmeFreeTWB(this);
+		::operator delete(this);
 	return this;
 }
 

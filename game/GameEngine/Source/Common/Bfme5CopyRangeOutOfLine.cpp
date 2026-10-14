@@ -14,13 +14,12 @@
 // only ones this compiler declines to inline on its own -- hence the forced
 // inline, applied uniformly since it changes nothing for the other eighteen.
 
-void *bfmeNewAlloc(unsigned int bytes);				// retail 0x00881F30
 void *bfmeAllocNode(unsigned int bytes);			// retail 0x0082E540
 
 inline void *bfmeAllocate(unsigned int bytes)
 {
 	if (bytes > 0x80)
-		return bfmeNewAlloc(bytes);
+		return ::operator new(bytes);
 
 	return bfmeAllocNode(bytes);
 }

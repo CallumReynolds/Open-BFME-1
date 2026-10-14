@@ -28,7 +28,6 @@ public:
 	char m_storage[0x30];
 };
 
-void *__cdecl bfmeAllocate00788290(unsigned int size);
 
 // @?bfmeSetup00788290@@YAPAXPAVRva00788290Object@@@Z 0x00788290
 void *__cdecl bfmeSetup00788290(Rva00788290Object *object)
@@ -45,7 +44,7 @@ void *__cdecl bfmeSetup00788290(Rva00788290Object *object)
 		return object->m_source5c;
 	}
 
-	void *memory = bfmeAllocate00788290(sizeof(Rva00788290Allocation));
+	void *memory = ::operator new(sizeof(Rva00788290Allocation));
 	if (memory != 0)
 		return ((Rva00788290Allocation *)memory)->bfmeConstruct00788290(object);
 	return 0;

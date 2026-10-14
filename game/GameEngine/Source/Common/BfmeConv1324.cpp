@@ -43,7 +43,6 @@ BfmeThingTUA::BfmeThingTUA()
 extern void *g_bfmeVftTVA[];
 
 extern "C" __declspec(dllimport) void __stdcall CloseHandle(void *h);
-void bfmeFreeTVA(void *p);
 
 // 0x007F0300 is the shared 7-byte store-imm teardown step (ledger:
 // ?m@Gen_007f0300@@QAEXXZ); it is called on this inside the delete wrapper.
@@ -69,13 +68,12 @@ void *BfmeThingTVA::bfmeDelTVA(unsigned char flags)
 		CloseHandle(h);
 	reinterpret_cast<Gen_007f0300 *>(this)->m();
 	if (flags & 1)
-		bfmeFreeTVA(this);
+		::operator delete(this);
 	return this;
 }
 
 extern "C" __declspec(dllimport) void __stdcall SysFreeString(void *h);
 void bfmeFreeArrayTVB(void *p);
-void bfmeFreeTVB(void *p);
 
 class BfmeThingTVB
 {
@@ -92,7 +90,7 @@ void *BfmeThingTVB::bfmeDelTVB(unsigned char flags)
 	if (m_bfmeBuf)
 		bfmeFreeArrayTVB(m_bfmeBuf);
 	if (flags & 1)
-		bfmeFreeTVB(this);
+		::operator delete(this);
 	return this;
 }
 

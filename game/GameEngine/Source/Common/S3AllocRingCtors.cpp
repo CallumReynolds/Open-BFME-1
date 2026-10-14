@@ -13,7 +13,6 @@
 typedef bool Bool;
 
 void *bfmeAllocNode(unsigned int bytes);			// retail 0x0082E540
-void *bfmeNewAlloc(unsigned int bytes);				// retail 0x00881F30
 
 struct BfmeRing
 {
@@ -147,7 +146,7 @@ Gen_0037E2B0::Gen_0037E2B0(int flags)
 
 	bfmeInit(&ok, 0);
 
-	BfmeRing *ring = (BfmeRing *)bfmeNewAlloc(0xe0);
+	BfmeRing *ring = (BfmeRing *)::operator new(0xe0);
 
 	ring->m_bfmeNext = ring;
 	ring->m_bfmePrev = ring;
@@ -162,7 +161,7 @@ Gen_004FA1D0::Gen_004FA1D0(int flags)
 
 	bfmeInit(&ok, 0);
 
-	BfmeRing *ring = (BfmeRing *)bfmeNewAlloc(0x338);
+	BfmeRing *ring = (BfmeRing *)::operator new(0x338);
 
 	ring->m_bfmeNext = ring;
 	ring->m_bfmePrev = ring;

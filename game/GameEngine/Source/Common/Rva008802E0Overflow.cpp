@@ -10,7 +10,6 @@ struct BfmeElem2E
 	void copyFrom(const BfmeElem2E *src);
 };
 
-void *__cdecl bfmeAllocLarge2E(unsigned bytes);
 void *__cdecl bfmeAllocSmall2E(unsigned bytes);
 
 BfmeElem2E *bfmeCopy2E(const BfmeElem2E *first, const BfmeElem2E *last,
@@ -40,7 +39,7 @@ void BfmeVec2E::overflow(BfmeElem2E *pos, const BfmeElem2E &value,
 	{
 		unsigned bytes = length * sizeof(BfmeElem2E);
 		if (bytes > 128)
-			newStart = (BfmeElem2E *)bfmeAllocLarge2E(bytes);
+			newStart = (BfmeElem2E *)::operator new(bytes);
 		else
 			newStart = (BfmeElem2E *)bfmeAllocSmall2E(bytes);
 	}

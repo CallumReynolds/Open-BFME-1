@@ -11,13 +11,12 @@
 // the member, so the reload is real, and the local is what puts the bound in a
 // register for the entry test as well.
 
-void __cdecl bfmeFreeScalar(void *block);			// retail 0x00881EB0
 void __cdecl bfmeDeallocate(void *block, unsigned int bytes);	// retail 0x0082E5F0
 
 inline void bfmeRelease(void *block, unsigned int bytes)
 {
 	if (bytes > 0x80)
-		bfmeFreeScalar(block);
+		::operator delete(block);
 	else
 		bfmeDeallocate(block, bytes);
 }

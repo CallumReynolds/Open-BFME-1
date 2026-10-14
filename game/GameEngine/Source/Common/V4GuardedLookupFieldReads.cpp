@@ -1,6 +1,5 @@
 // cl: /Igame/Libraries/Source/WWVegas/WWLib
 void * __cdecl operator new( unsigned int size );
-void __cdecl f_00881eb0( void *block );
 class BfmeReportWeightScaleHolder
 {
 public:
@@ -152,7 +151,7 @@ void Glo012F4B98Type::report( int count, float weight )
 
 	if( report != m_report )
 	{
-		f_00881eb0( m_report );
+		::operator delete( m_report );
 		m_report = report;
 	}
 }

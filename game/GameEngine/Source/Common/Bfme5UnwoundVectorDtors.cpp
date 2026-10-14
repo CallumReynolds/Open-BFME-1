@@ -9,13 +9,12 @@
 // since by then nothing is left to clean. The member offset is the base width:
 // four, eight and twelve across the three.
 
-void __cdecl bfmeFreeScalar(void *block);			// retail 0x00881EB0
 void __cdecl bfmeDeallocate(void *block, unsigned int bytes);	// retail 0x0082E5F0
 
 inline void bfmeRelease(void *block, unsigned int bytes)
 {
 	if (bytes > 0x80)
-		bfmeFreeScalar(block);
+		::operator delete(block);
 	else
 		bfmeDeallocate(block, bytes);
 }

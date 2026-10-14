@@ -8,13 +8,12 @@
 // back to -1 and after the base vftable store. Everything past those two marks
 // belongs to the base, not to the derived class.
 
-void __cdecl bfmeFreeScalar(void *block);			// retail 0x00881EB0
 void __cdecl bfmeDeallocate(void *block, unsigned int bytes);	// retail 0x0082E5F0
 
 inline void bfmeRelease(void *block, unsigned int bytes)
 {
 	if (bytes > 0x80)
-		bfmeFreeScalar(block);
+		::operator delete(block);
 	else
 		bfmeDeallocate(block, bytes);
 }

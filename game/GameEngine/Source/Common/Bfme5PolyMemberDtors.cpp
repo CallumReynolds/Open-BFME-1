@@ -12,13 +12,12 @@
 // have forced the most-derived vptr in at the entry as well, whether or not
 // the derived class overrides anything.
 
-void __cdecl bfmeFreeScalar(void *block);			// retail 0x00881EB0
 void __cdecl bfmeDeallocate(void *block, unsigned int bytes);	// retail 0x0082E5F0
 
 inline void bfmeRelease(void *block, unsigned int bytes)
 {
 	if (bytes > 0x80)
-		bfmeFreeScalar(block);
+		::operator delete(block);
 	else
 		bfmeDeallocate(block, bytes);
 }

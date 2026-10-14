@@ -17,7 +17,6 @@ struct BfmeElemCD
 	BfmeTailCD m_0C;
 };
 
-void *__cdecl bfmeAllocLargeCD(unsigned bytes);
 void *__cdecl bfmeAllocSmallCD(unsigned bytes);
 
 BfmeElemCD *bfmeCopyCD(const BfmeElemCD *first, const BfmeElemCD *last,
@@ -49,7 +48,7 @@ void BfmeVecCD::overflow(BfmeElemCD *pos, const BfmeElemCD &value,
 	{
 		unsigned bytes = length * sizeof(BfmeElemCD);
 		if (bytes > 128)
-			newStart = (BfmeElemCD *)bfmeAllocLargeCD(bytes);
+			newStart = (BfmeElemCD *)::operator new(bytes);
 		else
 			newStart = (BfmeElemCD *)bfmeAllocSmallCD(bytes);
 	}

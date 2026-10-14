@@ -98,7 +98,6 @@ public:
 	virtual void bfmeDetachTYB(BfmeThingTYB *p) = 0;
 };
 
-void bfmeFreeTYB(void *p);
 
 class BfmeThingTYB
 {
@@ -124,6 +123,6 @@ void *BfmeThingTYB::bfmeDelTYB(unsigned char flags)
 	if (m_bfmeOwner)
 		m_bfmeOwner->bfmeDetachTYB(this);
 	if (flags & 1)
-		bfmeFreeTYB(this);
+		::operator delete(this);
 	return this;
 }

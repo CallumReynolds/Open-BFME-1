@@ -31,7 +31,6 @@ struct BfmeElemBE
 	void copyFrom(const BfmeElemBE &src);
 };
 
-void *__cdecl bfmeAllocLargeBE(unsigned bytes);
 void *__cdecl bfmeAllocSmallBE(unsigned bytes);
 
 BfmeElemBE *bfmeCopyBE(const BfmeElemBE *first, const BfmeElemBE *last,
@@ -63,7 +62,7 @@ void BfmeVecBE::overflow(BfmeElemBE *pos, const BfmeElemBE &value,
 	{
 		unsigned bytes = length * sizeof(BfmeElemBE);
 		if (bytes > 128)
-			newStart = (BfmeElemBE *)bfmeAllocLargeBE(bytes);
+			newStart = (BfmeElemBE *)::operator new(bytes);
 		else
 			newStart = (BfmeElemBE *)bfmeAllocSmallBE(bytes);
 	}

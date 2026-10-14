@@ -29,7 +29,6 @@
 // body's address and modelled by width, and its copy is pinned per body.
 
 void *__cdecl bfmeNodeAllocSmall( unsigned int size );		// 0x0082E540
-void *__cdecl bfmeNodeAllocLarge( unsigned int size );		// 0x00881F30
 
 struct BfmeValue00064970
 {
@@ -250,7 +249,7 @@ BfmeNode000EFCB0 *__stdcall bfmeCloneNode000EFCB0( const BfmeNode000EFCB0 *sourc
 // ?bfmeCloneNode00136770@@YGPAUBfmeNode00136770@@PBU1@@Z		53B
 BfmeNode00136770 *__stdcall bfmeCloneNode00136770( const BfmeNode00136770 *source )
 {
-	BfmeNode00136770 *node = (BfmeNode00136770 *)bfmeNodeAllocLarge( sizeof( BfmeNode00136770 ) );
+	BfmeNode00136770 *node = (BfmeNode00136770 *)::operator new( sizeof( BfmeNode00136770 ) );
 
 	BfmeCopy00136770( &node->m_bfmeValue, &source->m_bfmeValue );
 

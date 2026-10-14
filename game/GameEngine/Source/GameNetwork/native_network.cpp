@@ -51,7 +51,6 @@ inline void _Construct(T1 *destination, const T2 &value)
 typedef _STL::basic_string<char, _STL::char_traits<char>, _STL::allocator<char> > BFMENetworkString;
 
 class BFMENetworkLock;
-void *BFMENetworkAllocate(unsigned int bytes);
 
 struct BFMENetworkListNode
 {

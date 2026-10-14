@@ -1,6 +1,5 @@
 extern "C" unsigned char bfmeVftVH[];
 
-void bfmeFreeVH(void *what);
 
 class BfmeSubVH
 {
@@ -23,6 +22,6 @@ void *BfmeThingVH::bfmeKillVH(int flags)
 	if (sub != 0)
 		sub->bfmeReleaseVH(1);
 	if ((flags & 1) != 0)
-		bfmeFreeVH(this);
+		::operator delete(this);
 	return this;
 }

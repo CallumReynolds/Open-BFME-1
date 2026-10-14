@@ -1,7 +1,6 @@
 // cl: /O1
 extern "C" unsigned char bfmeVftUF[];
 
-void bfmeFreeUF(void *what);
 
 // The base destructor this deleting destructor calls is at 0x00AB8350, which
 // d3dx9's archive proves is D3DXShader::CShaderProgram::~CShaderProgram
@@ -27,6 +26,6 @@ void *BfmeThingUF::bfmeKillUF(int flags)
 	m_bfmeVft = bfmeVftUF;
 	reinterpret_cast<D3DXShader::CShaderProgram *>(this)->D3DXShader::CShaderProgram::~CShaderProgram();
 	if ((flags & 1) != 0)
-		bfmeFreeUF(this);
+		::operator delete(this);
 	return this;
 }

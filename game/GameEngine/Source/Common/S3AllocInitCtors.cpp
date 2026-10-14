@@ -15,7 +15,6 @@
 typedef bool Bool;
 
 void *bfmeAllocNode(unsigned int bytes);			// retail 0x0082E540
-void *bfmeNewAlloc(unsigned int bytes);				// retail 0x00881F30
 
 
 class Gen_00072B10
@@ -102,7 +101,7 @@ Gen_00072B10::Gen_00072B10(int flags)
 
 	bfmeInit(&ok, 0);
 
-	m_bfmePtr = bfmeNewAlloc(0x110);
+	m_bfmePtr = ::operator new(0x110);
 }
 
 // ??0Gen_00126570@@QAE@H@Z
@@ -112,7 +111,7 @@ Gen_00126570::Gen_00126570(int flags)
 
 	bfmeInit(&ok, 0);
 
-	m_bfmePtr = bfmeNewAlloc(0x84);
+	m_bfmePtr = ::operator new(0x84);
 }
 
 // ??0Gen_00586170@@QAE@H@Z
@@ -152,7 +151,7 @@ Gen_00652C60::Gen_00652C60(int flags)
 
 	bfmeInit(&ok, 0);
 
-	m_bfmePtr = bfmeNewAlloc(0x1d8);
+	m_bfmePtr = ::operator new(0x1d8);
 }
 
 // ??0Gen_00764DA0@@QAE@H@Z

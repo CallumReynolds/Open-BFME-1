@@ -5,13 +5,12 @@
 // The inherited base destructor matches31B at94940; its deleting wrapper
 // is emitted with the same behavior inlined, and receives no byte credit.
 
-void __cdecl bfmeFreeScalar(void *block);
 void __cdecl bfmeDeallocate(void *block, unsigned int bytes);
 
 inline void bfmeRelease(void *block, unsigned int bytes)
 {
 	if (bytes > 0x80)
-		bfmeFreeScalar(block);
+		::operator delete(block);
 	else
 		bfmeDeallocate(block, bytes);
 }

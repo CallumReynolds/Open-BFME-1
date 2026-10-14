@@ -1,6 +1,5 @@
 extern "C" unsigned char bfmeVftVD[];
 
-void bfmeFreeVD(void *what);
 
 class BfmeThingVD
 {
@@ -18,6 +17,6 @@ void *BfmeThingVD::bfmeKillVD(int flags)
 	m_bfmeVft = bfmeVftVD;
 	*slot = what;
 	if ((flags & 1) != 0)
-		bfmeFreeVD(this);
+		::operator delete(this);
 	return this;
 }

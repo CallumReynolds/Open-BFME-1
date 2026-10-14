@@ -76743,9 +76743,6 @@ name,address,notes
 ?bfmeAllocEECb@@YGPAXI@Z,0x0002698B,pin
 ?bfmeAllocEFA@@YAPAXI@Z,0x0082E540,pin
 ?bfmeAllocJX@@YAPAUCodecState@@XZ,0x009A4C20,pin alloc for BfmeConv2080
-?bfmeAllocLarge2E@@YAPAXI@Z,0x00881F30,Open-BFME5 large alloc of 0x008802E0
-?bfmeAllocLargeBE@@YAPAXI@Z,0x00881F30,Open-BFME5 large alloc of 0x0087FBE0
-?bfmeAllocLargeCD@@YAPAXI@Z,0x00881F30,Open-BFME5 large alloc of 0x0087FCD0
 ?bfmeAllocNode@@YAPAXI@Z,0x0082E540,Open-BFME5 the 16-byte allocator the node makers at 0x0046A070 0x0046B1C0 and 0x00927760 call
 ?bfmeAllocPV@@YAPAXHI@Z,0x00030940,pin
 ?bfmeAllocQA@@YAPAXHI@Z,0x00030940,pin
@@ -76762,7 +76759,6 @@ name,address,notes
 ?bfmeAllocSmallCD@@YAPAXI@Z,0x0082E540,Open-BFME5 small alloc of 0x0087FCD0
 ?bfmeAllocUNB@@YAPAXI@Z,0x007F0130,pin
 ?bfmeAllocUQC@@YAPAXI@Z,0x0082E540,pin
-?bfmeAllocate00788290@@YAPAXI@Z,0x00881F30,retail allocation callee for the assigned 0x00788290 factory
 ?bfmeAllocate@BfmeRefRecordVector@@QAEXHABVBfmeRefRecordAllocator@@@Z,0x00035B07,address-derived vector base allocation helper
 ?bfmeAllocate@Gen_007b9e80@@AAE_NHH@Z,0x0003FC7E,Open-BFME5 the allocate the reserve at 0x007B9E80 calls
 ?bfmeAllocate@Gen_009073d0@@AAE_NHH@Z,0x00905DC0,Open-BFME5 the allocate the reserve at 0x009073D0 calls
@@ -78357,7 +78353,6 @@ name,address,notes
 ?bfmeFreeBXD@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeBXE@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeBlock@@YAXPAX@Z,0x00881EF0,Open-BFME5 the free the derived destructors at 0x00924090 and its siblings call
-?bfmeFreeCDE@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeCJD@BfmePoolCJD@@QAEXPAX@Z,0x00035EE5,pin
 ?bfmeFreeDXK@@YAXPAX@Z,0x00881EF0,pin
 ?bfmeFreeEHB@@YAXPAXI@Z,0x0082E5F0,pin
@@ -78368,7 +78363,6 @@ name,address,notes
 ?bfmeFreeOneJT@@YAXPAX@Z,0x009A5980,pin free-one for BfmeConv2079
 ?bfmeFreeRC@@YAXPAX@Z,0x00881EF0,pin
 ?bfmeFreeRecUNA@@YAXPAX@Z,0x00806580,pin
-?bfmeFreeScalar@@YAXPAX@Z,0x00881EB0,Open-BFME5 the scalar free the holding-list clears at 0x0043F5D0 and 0x0043FBB0 call
 ?bfmeFreeSizedVF@@YAXPAXI@Z,0x007F0170,pin
 ?bfmeFreeSizedXC@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeSmall000A1B30@@YAXPAXI@Z,0x0082E5F0,__node_alloc _M_deallocate alias for the 0x000A1B30 destructor
@@ -78381,32 +78375,18 @@ name,address,notes
 ?bfmeFreeTMB@@YAXPAX@Z,0x008068B0,pin
 ?bfmeFreeTQD@@YAXPAXH@Z,0x007F0170,pin
 ?bfmeFreeTRB@BfmePoolTRB@@QAEXPAX@Z,0x008DDA50,pin
-?bfmeFreeTVA@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeTVB@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeTVC@@YAXPAXH@Z,0x007F0170,pin
 ?bfmeFreeTWA@@YAXPAXH@Z,0x007F0170,pin
-?bfmeFreeTWB@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeTWC@@YAXPAXH@Z,0x007F0170,pin
-?bfmeFreeTXA@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeTXB@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeTYA@@YAXPAXH@Z,0x007F0170,pin
-?bfmeFreeTYB@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeTZA@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeTZB@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeUB@@YAXPAX@Z,0x00881EF0,pin
-?bfmeFreeUD@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeUE@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeUF@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeUNA@@YAXPAXH@Z,0x007F0170,pin
 ?bfmeFreeV29@BfmeVecV29@@QAEXXZ,0x00028006,Open-BFME5 vector buffer free for 0x0082F840
 ?bfmeFreeV46@@YAXPAXI@Z,0x000159D8,Open-BFME5 deallocate pin for 0x0082FE50
 ?bfmeFreeV47@BfmeVecV47@@QAEXXZ,0x00028006,Open-BFME5 vector free pin for 0x0082F310
 ?bfmeFreeVA@@YGXPAX@Z,0x009F6C16,pin
 ?bfmeFreeVB@@YGXPAX@Z,0x009F6C16,pin
-?bfmeFreeVC@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeVCC@@YAXPAXH@Z,0x007F0170,pin
-?bfmeFreeVD@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeVH@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeVNC@Rva00800E50Owner@@QAEXPAVRva007E8810Message@@@Z,0x00800CD0,jabba demangler PROB handler alias of 0x800CD0
 ?bfmeFreeVNY@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeVOK@@YAXPAXI@Z,0x0082E5F0,pin
@@ -79059,7 +79039,6 @@ name,address,notes
 ?bfmeNameZR@BfmeOrderZR@@QAE?AVAsciiStringZR@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00675A80 formats
 ?bfmeNameZS@BfmeOrderZS@@QAE?AVAsciiStringZS@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00675D40 formats
 ?bfmeNamedAudio0046F1A0@@YAXPBD@Z,0x00002E0F,"Lead traced168B46F1A0: AudioEvent construction fromchar*, TheAudio slotsAC/44 then destructor; cdecl"
-?bfmeNewAlloc@@YAPAXI@Z,0x00881F30,Open-BFME5 the large-block allocator the allocate-and-copy bodies at 0x000A7820 and its siblings call above 0x80 bytes
 ?bfmeNewTableUPC@@YAPAXPAUBfmeStateUPC@@HH@Z,0x00999610,pin
 ?bfmeNext1016@BfmeIter1016@@QAEGH@Z,0x00835ED0,pin
 ?bfmeNext1087@BfmeP1087@@QAEGPAVParameter@@@Z,0x000230B5,Reviewed matched player-mask resolver34DB40 ushort return Parameter pointer and player iteration DF4A0 mutating ushort mask
@@ -79097,7 +79076,6 @@ name,address,notes
 ?bfmeNextR1110@BfmeR1110@@QAEPAV1@XZ,0x00022A70,pin
 ?bfmeNextTokenVHG@BfmeIniVHG@@QAEPBDPBD@Z,0x00850970,pin
 ?bfmeNextVSG@BfmeCreditsVSG@@QAEXXZ,0x00038C2B,pin
-?bfmeNodeAllocLarge@@YAPAXI@Z,0x00881F30,Open-BFME5 the STLport large-block allocator the 0x84-byte clone-node body calls
 ?bfmeNodeAllocSmall@@YAPAXI@Z,0x0082E540,Open-BFME5 the STLport node allocator the red-black clone-node bodies call
 ?bfmeNodeAllocV46@@YAPAXI@Z,0x0082E540,Open-BFME5 small-alloc pin for 0x0082FE50
 ?bfmeNodeAllocate0048BD60@@YAPAXI@Z,0x0082E540,Rva0048BD60 STLport node allocator

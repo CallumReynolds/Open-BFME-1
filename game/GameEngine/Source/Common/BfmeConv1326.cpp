@@ -5,7 +5,6 @@ extern void *g_bfmeVftTXA[];
 void __stdcall bfmeReleaseATXA(void *p);
 void __stdcall bfmeReleaseBTXA(void *p);
 void bfmeFreeArrayTXA(void *p);
-void bfmeFreeTXA(void *p);
 
 class BfmeThingTXA
 {
@@ -31,7 +30,7 @@ void *BfmeThingTXA::bfmeDelTXA(unsigned char flags)
 	if (m_bfmeBuf)
 		bfmeFreeArrayTXA(m_bfmeBuf);
 	if (flags & 1)
-		bfmeFreeTXA(this);
+		::operator delete(this);
 	return this;
 }
 
@@ -48,7 +47,6 @@ class ArchiveFileSystem;
 extern LocalFileSystem *TheLocalFileSystem;
 extern ArchiveFileSystem *TheArchiveFileSystem;
 
-void bfmeFreeTXB(void *p);
 
 class BfmeThingTXB
 {
@@ -67,6 +65,6 @@ void *BfmeThingTXB::bfmeDelTXB(unsigned char flags)
 		reinterpret_cast<BfmeResTXB *>(TheArchiveFileSystem)->bfmeReleaseTXB(1);
 	TheArchiveFileSystem = 0;
 	if (flags & 1)
-		bfmeFreeTXB(this);
+		::operator delete(this);
 	return this;
 }

@@ -11,13 +11,12 @@
 // that saves are the whole difference between a seventy-six byte body and a
 // seventy-nine byte one.
 
-void *bfmeNewAlloc(unsigned int bytes);				// retail 0x00881F30
 void *bfmeAllocNode(unsigned int bytes);			// retail 0x0082E540
 
 inline void *bfmeAllocate(unsigned int bytes)
 {
 	if (bytes > 0x80)
-		return bfmeNewAlloc(bytes);
+		return ::operator new(bytes);
 
 	return bfmeAllocNode(bytes);
 }

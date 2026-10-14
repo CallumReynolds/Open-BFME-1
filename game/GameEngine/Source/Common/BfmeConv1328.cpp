@@ -23,8 +23,6 @@ public:
 	char m_bfmePad[0x24];
 };
 
-void bfmeFreeTZA(void *p);
-void bfmeFreeTZB(void *p);
 
 class BfmeThingTZA
 {
@@ -47,7 +45,7 @@ void *BfmeThingTZA::bfmeDelTZA(unsigned char flags)
 	m_bfmeOwned = 0;
 	m_bfmeCount = 0;
 	if (flags & 1)
-		bfmeFreeTZA(this);
+		::operator delete(this);
 	return this;
 }
 
@@ -72,6 +70,6 @@ void *BfmeThingTZB::bfmeDelTZB(unsigned char flags)
 	m_bfmeOwned = 0;
 	m_bfmeCount = 0;
 	if (flags & 1)
-		bfmeFreeTZB(this);
+		::operator delete(this);
 	return this;
 }

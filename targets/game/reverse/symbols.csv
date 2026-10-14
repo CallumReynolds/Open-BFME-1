@@ -76719,7 +76719,6 @@ name,address,notes
 ?bfmeAfterEOC@BfmeThingEOC@@QAEXXZ,0x000106AE,pin
 ?bfmeAfterFCB@BfmeOwnFCB@@QAEXXZ,0x000098B8,pin
 ?bfmeAimBX@BfmeOwnerBX@@QAEXPAX@Z,0x0003A1A7
-?bfmeAlloc1037@@YAPAXH@Z,0x00881F30,pin
 ?bfmeAlloc1046@@YAPAXH@Z,0x0082E540,pin
 ?bfmeAlloc1047@@YAPAXH@Z,0x0082E540,pin
 ?bfmeAlloc1051@@YAPAXH@Z,0x0082E540,pin
@@ -77577,7 +77576,6 @@ name,address,notes
 ?bfmeDelArrVGP@@YAXPAX@Z,0x00881EF0,pin
 ?bfmeDelArrVHY@@YAXPAX@Z,0x00881EF0,pin
 ?bfmeDelArrVJS@@YAXPAX@Z,0x00881EF0,pin
-?bfmeDelVGP@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeDelViews@BfmeObjEE@@QAEXXZ,0x0040D970,Open-BFME5 Display deleteViews called from BfmeObjEE destructor
 ?bfmeDelayA@Drawable@@QAEXH@Z,0x0003F288,ILT 0x0003F288 -> 0x00810D30; fire-at producer-shrouded delay
 ?bfmeDelayB@Drawable@@QAEXH@Z,0x00046A1F,ILT 0x00046A1F -> 0x00810D80; fire-at cell-clear delay
@@ -78328,16 +78326,12 @@ name,address,notes
 ?bfmeForwardWideC@BfmeWideForwardC@@QAE?AUBfmeWideResult@@HMHHH@Z,0x009F2960,canonical 57B wrapper at 009F2960 with BFME raw-float call spelling; target and ABI independently decoded
 ?bfmeForwardZX@BfmeSubZX@@QAEXH@Z,0x008F8110
 ?bfmeFourLF@@YAXXZ,0x00039900,pin
-?bfmeFree1026@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFree1040E@@YGXPAX@Z,0x009F6C10,pin
 ?bfmeFree1049@@YAXPAX@Z,0x00012E90,pin
-?bfmeFree1111@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFree1183@BfmeStr1183@@QAEXXZ,0x00887940,pin
-?bfmeFree591560@@YAXPAX@Z,0x00881EB0,scalar delete target called by the 0x00591560 callback
 ?bfmeFree592A10@@YAXPAX@Z,0x00881EB0,scalar delete target called by the 0x00592A10 reset
 ?bfmeFree915A@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFree923F@@YGXPAXH@Z,0x0003F413,pin
-?bfmeFreeAEC@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeArrDLB@@YAXPAX@Z,0x00881EF0,pin
 ?bfmeFreeArrDLC@@YAXPAX@Z,0x00881EF0,pin
 ?bfmeFreeArrDLD@@YAXPAX@Z,0x00881EF0,pin
@@ -78360,44 +78354,18 @@ name,address,notes
 ?bfmeFreeBOF@@YAXPAX@Z,0x00012E90,pin
 ?bfmeFreeBOG@@YAXPAX@Z,0x000126FC,pin
 ?bfmeFreeBQC@@YAXPAXI@Z,0x0082E5F0,pin
-?bfmeFreeBQD@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeBW@@YAXPAX@Z,0x00895320,Open-BFME5 the release the element destructor at 0x00892CD0 makes
 ?bfmeFreeBXD@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeBXE@@YAXPAXI@Z,0x0082E5F0,pin
-?bfmeFreeBigCFA@@YAXPAD@Z,0x00881EB0,pin
-?bfmeFreeBigCFB@@YAXPAD@Z,0x00881EB0,pin
 ?bfmeFreeBlock@@YAXPAX@Z,0x00881EF0,Open-BFME5 the free the derived destructors at 0x00924090 and its siblings call
 ?bfmeFreeCAD@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeCBF@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeCDE@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeCHA@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeCHC@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeCJD@BfmePoolCJD@@QAEXPAX@Z,0x00035EE5,pin
-?bfmeFreeCJH@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLB@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLC@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLD@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLE@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLF@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLG@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLH@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLI@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDLJ@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDMA@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDMB@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDMC@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDMD@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeDME@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeDXK@@YAXPAX@Z,0x00881EF0,pin
 ?bfmeFreeECH@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeEHB@@YAXPAXI@Z,0x0082E5F0,pin
-?bfmeFreeELA@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeELD@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeEXB@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeEYG@@YAXPAXI@Z,0x0082E5F0,pin
-?bfmeFreeLarge000A1B30@@YAXPAX@Z,0x00881EB0,operator delete alias for the 0x000A1B30 destructor
-?bfmeFreeLarge007873C0@@YAXPAX@Z,0x00881EB0,retail large-block deallocator for the assigned 0x007873C0 destructor
-?bfmeFreeLarge007883D0@@YAXPAX@Z,0x00881EB0,retail large-block deallocator for the assigned 0x007883D0 destructor
 ?bfmeFreeNodeVOA@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeNodeVOB@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeOneJT@@YAXPAX@Z,0x009A5980,pin free-one for BfmeConv2079
@@ -78441,9 +78409,7 @@ name,address,notes
 ?bfmeFreeVC@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeVCC@@YAXPAXH@Z,0x007F0170,pin
 ?bfmeFreeVD@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeVG@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeVH@@YAXPAX@Z,0x00881EB0,pin
-?bfmeFreeVMN@@YAXPAX@Z,0x00881EB0,pin
 ?bfmeFreeVNC@Rva00800E50Owner@@QAEXPAVRva007E8810Message@@@Z,0x00800CD0,jabba demangler PROB handler alias of 0x800CD0
 ?bfmeFreeVNY@@YAXPAXI@Z,0x0082E5F0,pin
 ?bfmeFreeVOK@@YAXPAXI@Z,0x0082E5F0,pin
@@ -89976,8 +89942,6 @@ _bfmeFmtStrEAA,0x00C7C7B4,pin
 _bfmeFmtStrEAC,0x00C7C7B4,pin
 _bfmeFnA1033,0x000487C0,pin
 _bfmeFnB1033,0x0001E0B0,pin
-_bfmeFree1280,0x00881EB0,pin
-_bfmeFree1281,0x00881EB0,pin
 _bfmeFreeAYX@4,0x00AFD504
 _bfmeFreeBYX@4,0x00AFD510
 _bfmeGet1252,0x008DB190,pin

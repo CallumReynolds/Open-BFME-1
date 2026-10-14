@@ -77,7 +77,7 @@
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
-#include "W3DDevice/GameClient/W3DTerrainBackground.h"
+#include "../../../Include/W3DDevice/GameClient/W3DTerrainBackground.h"  // BFME 0xC4-byte element (game/ pilot header)
 #include "W3DDevice/GameClient/W3DBibBuffer.h"
 #include "W3DDevice/GameClient/W3DTreeBuffer.h"
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"

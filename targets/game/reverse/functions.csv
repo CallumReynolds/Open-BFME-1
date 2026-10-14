@@ -2232,7 +2232,7 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??0?$vector@_NV?$allocator@_N@_STL@@@_STL@@QAE@I_NABV?$allocator@_N@1@@Z,,0x005276A0,109,game/GameEngine/Source/Common/BitVectorValueConstructor.cpp,matched,STLport 4.5.3 vector<bool> value constructor;calls already pinned _M_initialize
 ??0AABCollisionStruct@@QAE@ABVAABoxClass@@ABVVector3@@01@Z,,0x008D9EC0,95,game/Libraries/Source/WWVegas/WWMath/CollisionMathMovingAABox.cpp,matched,ZH colmathaabox.cpp:439 twin and existing matched native helper/caller layout; canonical ctor already emits exact95B/0relocs including BFME Side0; RET16 at8D9F1C thenCC; identity_evidence/008d9ec0-aab-collision-ctor.md;model=gpt-6-astra;host=steamdeck
 ??0AABTIntersectStruct@@QAE@XZ,,0x008DF400,17,game/Libraries/Source/WWVegas/WWMath/colmathaabtri.cpp,matched,
-??0AABTreeBuilderClass@@QAE@XZ,,0x005CB1B0,22,game/Libraries/Source/WWVegas/WW3D2/aabtreebuilder.cpp,matched,
+??0AABTreeBuilderClass@@QAE@XZ,,0x0096B350,22,game/Libraries/Source/WWVegas/WW3D2/aabtreebuilder.cpp,matched,
 ??0AABTreeClass@@QAE@ABV0@@Z,,0x0096AD60,93,game/Libraries/Source/WWVegas/WW3D2/aabtree.cpp,matched,
 ??0AABTreeClass@@QAE@PAVAABTreeBuilderClass@@@Z,,0x0096ACC0,149,game/Libraries/Source/WWVegas/WW3D2/aabtree.cpp,matched,
 ??0AABTreeClass@@QAE@XZ,,0x0096A8E0,33,game/Libraries/Source/WWVegas/WW3D2/aabtree.cpp,matched,
@@ -50232,7 +50232,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?dup_0096a7f0@@YAXXZ,,0x0096A7F0,10,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,gen-alias;object-symbol=?setValue@Offset24IntegerSetterThunk@@QAEXH@Z;C++ alias
 ?dup_0096a800@@YAXXZ,,0x0096A800,10,game/Libraries/Source/WWVegas/WW3D2/aabtree.cpp,matched,gen-alias;object-symbol=?Set_Back_Child@CullNodeStruct@AABTreeClass@@QAEXK@Z;C++ alias
 ?dup_0096a820@@YAXXZ,,0x0096A820,10,game/Libraries/Source/WWVegas/WW3D2/aabtree.cpp,matched,gen-alias;object-symbol=?Set_Back_Child@CullNodeStruct@AABTreeClass@@QAEXK@Z;C++ alias
-?dup_0096b350@@YAXXZ,,0x0096B350,22,game/GameEngine/Source/Common/System/SubsystemInterface.cpp,matched,gen-alias;object-symbol=??0SubsystemInterfaceList@@QAE@XZ;C++ alias
 ?dup_0096b4d0@@YAXXZ,,0x0096B4D0,18,game/Libraries/Source/WWVegas/WWLib/ini.cpp,matched,gen-alias;object-symbol=??0?$TPoint2D@H@@QAE@HH@Z;C++ alias
 ?dup_0096b4f0@@YAXXZ,,0x0096B4F0,16,game/Libraries/Source/WWVegas/WW3D2/aabtreebuilder.cpp,matched,gen-alias;object-symbol=?Set@AAPlaneClass@@QAEXW4AxisEnum@1@M@Z;C++ alias
 ?dup_0096cb70@@YAXXZ,,0x0096CB70,39,game/Libraries/Source/WWVegas/WW3D2/pointgr.cpp,matched,zh-landmulti exact-multi ZH twin (rel32-all-resolve);object-symbol=?Clear@?$VectorClass@E@@UAEXXZ

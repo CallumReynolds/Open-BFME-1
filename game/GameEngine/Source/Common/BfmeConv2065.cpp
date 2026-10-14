@@ -27,7 +27,8 @@ public:
 	char bfmeCheckGK(BfmeObjGK *o, int a, int b);
 };
 
-extern BfmeMgrGK *g_bfmeMgrGK;
+// Retail 0x0014884F and 0x003A2146 load this pointer from bss VA 0x012F101C.
+BfmeMgrGK *g_bfmeMgrGK;
 extern const float g_rva01075350;
 
 // The range test is not a recovered body: retail reaches it through the ILT

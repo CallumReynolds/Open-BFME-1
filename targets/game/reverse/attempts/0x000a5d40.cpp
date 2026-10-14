@@ -1,5 +1,11 @@
 // ?_bfme_updateOnlinePlayerStats@@YAXPAVPlayer@@@Z
-// partial score=0.730548 date=2026-09-27
+// partial score=0.331 date=2026-10-14
+// re-measured 2026-10-14 (wave 18, agent a6): ours=3976 retail=4133 diffs=2660 first+48 quality=0.2797,
+// normalized shape 0.897 (42 structural diffs). Preamble fixed: the old StringBase<char> explicit
+// specializations now collide with string_base.h (C2908) - str/isEmpty are inlined there already.
+// Extent: entry 0xA5D40 (ILT 0x19F56), last ret at 0xA6D64 -> 4133B; catalog 4125 stops inside the
+// epilogue at pop ebx 0xA6D5D. First structural diff +0x229: retail inlines the slot flag test as
+// cmp word ptr [eax+4],0 where this source calls an out-of-line GameSlot::isOccupied.
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /DBFME_STLP_NODE_ALLOC /Iinputs/reference/shims/gamewindow /Iinputs/reference/shims/stlp_nodealloc /Iinputs/reference/shims/sweep /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
@@ -14,14 +20,6 @@
 #include <algorithm>
 #include "PreRTS.h"
 #include "Common/GameSpyMiscPreferences.h"
-template<> inline bool StringBase<char>::isEmpty()const{return !m_data||m_data->length==0;}
-template<> inline const char *StringBase<char>::str()const{return m_data?m_data->data:"";}
-template<> inline int StringBase<char>::compareNoCase(const char*s)const {
- int len=s?strlen(s):0;
- int myLen=m_data?m_data->length:0;
- const char*data=m_data?m_data->data:"";
- int r=_memicmp(data,s,myLen<len?myLen:len);return r?r:myLen-len;
-}
 typedef std::map<int, unsigned int> PerGeneralMap;
 class PSPlayerStats {
 public:

@@ -57,3 +57,14 @@ void updateOverallStats(void)
 	win = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("WOLWelcomeMenu.wnd:StaticTextGLAToday") );
 	GadgetStaticTextSetText(win, gla);
 }
+
+// Retail 0x0050B8E0 (57 bytes): the Generals WOLWelcomeMenu.cpp entry point
+// (MainMenuUtils.h). Three rep-movsd copies into the statics above, then a
+// tail jump to updateOverallStats.
+void HandleOverallStats( const OverallStats& USA, const OverallStats& China, const OverallStats& GLA )
+{
+	s_statsUSA = USA;
+	s_statsChina = China;
+	s_statsGLA = GLA;
+	updateOverallStats();
+}

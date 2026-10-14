@@ -1,5 +1,5 @@
 // ?addToContainList@SiegeEngineContain@@UAEXPAVObject@@@Z
-// partial score=0.95 date=2026-09-08
+// partial score=0.7052 date=2026-09-08
 // cl: /DNDEBUG /MD /EHs-c-
 // Open-BFME: SiegeEngineContain::addToContainList at retail 0x0022C160.
 // The constructor installs the secondary vtable at 0x010ACE08.  Its slot 35

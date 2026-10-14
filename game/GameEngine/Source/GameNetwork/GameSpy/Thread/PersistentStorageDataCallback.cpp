@@ -197,3 +197,35 @@ void getPersistentDataCallback(int localid, int profileid, persisttype_t type,
 
 	MESSAGE_QUEUEView()->addResponse(resp);
 }
+
+// Retail 0x00654D20 (239 bytes): the save-side twin of the callback above.
+// GameSpy 2004's gpersist.h save callback carries the extra `time_t modified'
+// before the instance pointer, so retail reads seven cdecl arguments; the body
+// is EA's setPersistentDataCallback with BFME's MiscPref path.
+//
+// pref.clear() is spelled through the node_alloc map view that
+// LadderPreferences_write_Bfme.cpp uses for the same clear: retail's inline
+// clear reaches the node_alloc _M_erase at 0x0007D250 (ILT 0x00049E13), whose
+// ledger pin carries the map<NameKeyType,float> spelling because the canonical
+// map<AsciiString,AsciiString> name is pinned to the operator-delete
+// instantiation at 0x00078C70 that UserPreferences.cpp calls. The inline clear
+// emits the same bytes for either key type.
+typedef std::map<NameKeyType, float> PersistentStorageClearMap;
+
+void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, void *instance)
+{
+	PSThreadClass *t = (PSThreadClass *)instance;
+	if (!t)
+		return;
+
+	if (success)
+	{
+		UserPreferences pref;
+		AsciiString userPrefFilename;
+		userPrefFilename.format("LoTRB4MEOnline\\MiscPref%d.ini", profileid);
+		pref.load(userPrefFilename);
+		((PersistentStorageClearMap *)static_cast<PreferenceMap *>(&pref))->clear();
+		pref.write();
+	}
+	t->decrOpCount();
+}

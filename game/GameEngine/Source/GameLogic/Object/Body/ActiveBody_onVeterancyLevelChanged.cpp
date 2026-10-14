@@ -55,7 +55,7 @@ enum
 class AudioEventRTS
 {
 public:
-	AudioEventRTS(const AsciiString &eventName = AsciiString::TheEmptyString, ObjectID ownerID = INVALID_ID);	// ILT 0x00025306
+	AudioEventRTS(const AsciiString &eventName = AsciiString::TheEmptyString, Int timeOfDay = 0);	// ILT 0x00025306 -> 0x000B2CC0, the (AsciiString, int) ctor
 	~AudioEventRTS();					// ILT 0x00026F35
 	AudioEventRTS &operator=(const AudioEventRTS &right);	// ILT 0x0001F753
 

@@ -1,5 +1,9 @@
 // ?evaluateContextCommand@CommandTranslator@@AAE?AW4CommandEvaluateType@@PAVDrawable@@PBVCoord3D@@W42@@Z
-// partial score=0.8894457547169812 date=2026-09-23
+// partial score=0.8917 date=2026-09-23
+// 2026-10-13 re-verify: ours 6776B vs 6784B physical extent (0x5ADE90..0x5AF910, int3 run beyond); 734 non-reloc diffs, first +0x155.
+// First divergence is register rank only: selection list in EBX (retail EDI), iterator in EDI (retail EBX); shape 0.958 with 21 structural diffs, first at +0x524.
+// Compile repair this pass: removed the inline ~AsciiString redefinition; current ascii_string.h defines it empty and StringBase's dtor releases the buffer.
+// Variants tried: iterator declared before selection (neutral), while-loop form (worse, 965 diffs). reloc_names.csv/ghidra say 5859 (FUN_009ade90), not the physical extent.
 // cl: /O2 /Ob2 /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/stringbaseunicode
 // stlport
 // Ported from GeneralsMD/Code/GameEngine/Source/GameClient/MessageStream/CommandXlat.cpp.
@@ -13,7 +17,6 @@
 #include <list>
 #include "ascii_string.h"
 #include "Common/UnicodeString.h"
-inline AsciiString::~AsciiString() { ((StringBase<char>*)this)->releaseBuffer(); }
 inline UnicodeString::~UnicodeString() { ((StringBase<wchar_t>*)this)->releaseBuffer(); }
 class Coord3D { public: float x,y,z; void set(const Coord3D* p) { x=p->x;y=p->y;z=p->z; } };
 struct ICoord2D { int x,y; };

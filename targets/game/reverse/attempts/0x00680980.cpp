@@ -1,5 +1,8 @@
 // ?getCommandList@NetPacket@@QAEPAVNetCommandList@@XZ
-// partial score=0.84 date=2026-09-07
+// partial score=0.0935 date=2026-09-07
+// 2026-10-13 re-verify: ours 1520B (code+table span) vs 1380B retail, 971 non-reloc diffs, shape 0.819, 25 structural diffs.
+// First divergence +0x39..+0x41: new-expression store shape; ours stores retval per-arm then reloads into EDI, retail merges the store after the ctor and keeps it in EAX.
+// Variants tried this pass, all neutral: split declaration/assignment, parenthesized new, header without /EHsc. Real NetPacket.cpp source (init()+newInstance) measures worse: 1556B, 1054 diffs, shape 0.702.
 // cl: /DNDEBUG /MD /EHsc
 // BANK: complete BFME getCommandList parser, RVA 0x00680980, retail1380B.
 // Caller Connection::sendNetCommandMsg at0x006625E5 and relay pass0x0066A8F6

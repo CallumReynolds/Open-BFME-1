@@ -11,17 +11,33 @@ class Object;
 class W3DGhostObject;
 class GhostPrimary { public: virtual ~GhostPrimary(); };
 class GhostSecondary { public: virtual ~GhostSecondary(); };
-// Opaque interface names: only their ABI is known here. The overridden virtual
-// slot makes MSVC reserve the witnessed vtordisp at +0x118, before the virtual
-// base vptr at +0x11c. None of these declarations emits a method body.
-class GhostVirtualBase { public: virtual void virtualBaseSlot(); };
+// Opaque interface name: only its ABI is known here. Its five slots are the
+// vtable 0x00D1CF8C the constructor installs at the virtual base (+0x11c).
+// GhostObject overrides all five (bodies 0x001B3A60, 0x001B3A70, 0x001B3A80,
+// 0x001B3E30, 0x001B3E50, which name the methods); W3DGhostObject does not, so
+// MSVC reserves the vtordisp at +0x118 and emits retail's five vtordisp{-4,0x98}
+// thunks 0x006BCA90..0x006BCB10 into GhostObject's overrides (the virtual base
+// sits at +0x84 in GhostObject and +0x11c here). Only the thunks are bodies.
+class GhostVirtualBase
+{
+public:
+    virtual void *rva001B3A60() const;
+    virtual void *rva001B3A70() const;
+    virtual float rva001B3A80() const;
+    virtual void rva001B3E30(int value);
+    virtual int rva001B3E50() const;
+};
 
 class GhostObject : public GhostPrimary, public GhostSecondary, public virtual GhostVirtualBase
 {
 public:
     GhostObject();
     virtual ~GhostObject();
-    virtual void virtualBaseSlot();
+    virtual void *rva001B3A60() const;
+    virtual void *rva001B3A70() const;
+    virtual float rva001B3A80() const;
+    virtual void rva001B3E30(int value);
+    virtual int rva001B3E50() const;
     Object *m_parentObject;
     char m_basePadding[0x70];
 };
@@ -40,7 +56,6 @@ class W3DGhostObject : public GhostObject
 public:
     W3DGhostObject();
     virtual ~W3DGhostObject();
-    virtual void virtualBaseSlot();
     void *m_parentSnapshots[32];
     GhostDrawableInfo m_drawableInfo;
     W3DGhostObject *m_nextSystem;

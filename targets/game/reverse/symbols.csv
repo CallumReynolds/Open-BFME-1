@@ -12327,8 +12327,6 @@ name,address,notes
 ??_C@_0P@PLDFDIFE@DESTROYED_BACK?$AA@,0x00C746B4,Retail model-condition name table RVA 0x00EA6918 slot 133 points to VA 0x010746B4; full compiler literal DESTROYED_BACK including NUL equals retail
 ??_C@_19DICJPJO@?$AAT?$AAE?$AAS?$AAT?$AA?$AA@,0x00D035F0,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x0050CA80 calls; autopin
 ??_EProxyArrayClass@@UAEPAXI@Z,0x0097C9B0,pinharvest (call-site decode from ??_EProxyArrayClass@@WBA@AEPAXI@Z adjustor thunk at 0x97B7B0; body already matched as gen-dtor ??_GGen_dtor_0097c9b0)
-??_ERTS2DScene@@UAEPAXI@Z,0x00015DC0,"exact retail rel32 target of the byte-verified caller; replaces a harvested pin at 0x0000B9DD, which is the body ?m@Gen_001b3e30@@QAEXH@Z owns"
-??_ERTS3DScene@@UAEPAXI@Z,0x00015DC0,"exact retail rel32 target of the byte-verified caller; replaces a harvested pin at 0x0000B9DD, which is the body ?m@Gen_001b3e30@@QAEXH@Z owns"
 ??_ETexProjectClass@@UAEPAXI@Z,0x00007D88,pinharvest x1 (thunk)
 ??_F?$vector@VAsciiString@@V?$allocator@VAsciiString@@@_STL@@@_STL@@QAEXXZ,0x0003469E,LibraryMapLists temporary vector array constructor iterator
 ??_G?$DynamicVectorClass@UAddInfoStruct@MixFileFactoryClass@@@@UAEPAXI@Z,0x0093FD60,WWLib DynamicVectorClass<MixFileFactoryClass::AddInfoStruct> scalar deleting destructor; matched ctor 0x0093E660 stores vtable 0x0113CE5C whose slot zero is this body
@@ -91202,3 +91200,8 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?shader@StreakCalls005F43B0@@QAEXVShaderClass@@@Z,0x00918DA0,additive: retail call target of the red row ?draw@LightningDraw005F43B0@@QAEHPAX0PAH@Z
 ??0Gen0000D33C@@QAE@PAVGameFont@@MMHHHH@Z,0x004354F0,Address-derived product constructor; retail ILT 0x00026AFD jumps here; complete 517-byte callee consumes font two floats and four ints; evidence=targets/game/reverse/identity_evidence/006ee3f0-descriptor-reset.md
 ??1BfmeObjectIterator@@QAE@XZ,0x00030841,ILT thunk to 0x000C4CF0: retail ??1BfmeWideResult@@QAE@XZ at 0x000C5FC0 (via ILT 0x0002C471) calls ILT 0x00030841 at +0x15 for its payload; the five BfmeWideResult TUs emit that 37-byte body byte-identical with this symbol at the same call
+?rva001B3A60@GhostObject@@UBEPAXXZ,0x001B3A60,GhostObject override of virtual-base slot 0 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCA90 and GhostObject's own thunk 0x001B3DF0 jump here through ILT 0x00015DC0; method name address-derived
+?rva001B3A70@GhostObject@@UBEPAXXZ,0x001B3A70,GhostObject override of virtual-base slot 1 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCAB0 and GhostObject's own thunk 0x001B3E00 jump here through ILT 0x00038BEA; method name address-derived
+?rva001B3A80@GhostObject@@UBEMXZ,0x001B3A80,GhostObject override of virtual-base slot 2 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCAD0 and GhostObject's own thunk 0x001B3E10 jump here through ILT 0x00043635; method name address-derived
+?rva001B3E30@GhostObject@@UAEXH@Z,0x001B3E30,GhostObject override of virtual-base slot 3 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCAF0 and GhostObject's own thunk 0x001B3E20 jump here through ILT 0x0000B9DD; method name address-derived
+?rva001B3E50@GhostObject@@UBEHXZ,0x001B3E50,GhostObject override of virtual-base slot 4 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCB10 and GhostObject's own thunk 0x001B3E40 jump here through ILT 0x000302DD; method name address-derived

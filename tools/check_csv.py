@@ -192,8 +192,16 @@ def check_row_extents(before, after, problems):
     if not row_extent.changed_rows(old, new):
         return
     import build
-    sizes = row_extent.load_ghidra(ROOT / "targets/game/reverse/ghidra_functions.csv")
-    problems.extend(row_extent.check(old, new, sizes, build.read_target_bytes))
+    ghidra = ROOT / "targets/game/reverse/ghidra_functions.csv"
+    sizes = row_extent.load_ghidra(ghidra)
+    try:
+        image, sections = build.exe_image()
+    except OSError:  # check() reports the missing image per row
+        index = row_extent.CallIndex({}, set(), set())
+    else:
+        index = row_extent.load_index(ghidra, image, sections, build.read_target_bytes,
+                                      ROOT / "build/row_extent_index.pkl")
+    problems.extend(row_extent.check(old, new, sizes, build.read_target_bytes, index))
 
 
 def check_functions(raw, problems, sources_ok, deleted=None):

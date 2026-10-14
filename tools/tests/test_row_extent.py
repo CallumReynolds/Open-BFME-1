@@ -22,7 +22,10 @@ def env():
         build.read_target_bytes(0x1000, 1)
     except Exception as error:  # the retail image is a per-host input
         pytest.skip(f"retail image unavailable: {error}")
-    return row_extent.load_ghidra(GHIDRA), build.read_target_bytes
+    image, sections = build.exe_image()
+    index = row_extent.load_index(GHIDRA, image, sections, build.read_target_bytes,
+                                  ROOT / "build/row_extent_index.pkl")
+    return row_extent.load_ghidra(GHIDRA), build.read_target_bytes, index
 
 
 def row(name, rva, size, notes="", status="matched"):
@@ -31,8 +34,8 @@ def row(name, rva, size, notes="", status="matched"):
 
 
 def refusals(env, new):
-    sizes, read = env
-    return row_extent.check([], [new], sizes, read)
+    sizes, read, idx = env
+    return row_extent.check([], [new], sizes, read, idx)
 
 
 def test_handle_request_join_refused(env):
@@ -63,10 +66,10 @@ def test_boundary_aligned_rows_pass(env):
 
 
 def test_start_inside_matched_row_refused(env):
-    sizes, read = env
+    sizes, read, idx = env
     host = row("?host@@YAXXZ", 0x005A56F0, 481)
     found = row_extent.check([host], [host, row("?mid@@YAXXZ", 0x005A5700, 16)],
-                             {}, read)
+                             {}, read, idx)
     assert len(found) == 1 and "matched row ?host@@YAXXZ" in found[0]
 
 
@@ -79,16 +82,16 @@ def test_unverified_funclet_notes_do_not_exempt_thunk_does(env):
 
 
 def test_existing_rows_not_rejudged(env):
-    sizes, read = env
+    sizes, read, idx = env
     bad = row("?handleRequestJoin@LANAPI@@IAEXPAULANMessage@@I@Z", 0x005A565D, 1119)
-    assert row_extent.check([bad], [bad], sizes, read) == []
+    assert row_extent.check([bad], [bad], sizes, read, idx) == []
 
 
 def test_moved_row_is_judged(env):
-    sizes, read = env
+    sizes, read, idx = env
     before = row("?x@@YAXXZ", 0x005A5650, 118)
     after = row("?x@@YAXXZ", 0x005A565D, 1119)
-    assert len(row_extent.check([before], [after], sizes, read)) == 1
+    assert len(row_extent.check([before], [after], sizes, read, idx)) == 1
 
 
 # Adversarial review round 1 (RE-1..RE-6).
@@ -108,19 +111,19 @@ def test_re2_only_real_ilt_thunks_exempt(env):
     assert len(refusals(env, row("?j_probe@@YAXXZ", 0x005A565D, 1119))) == 1
     assert len(refusals(env, row("?j_005A5650@@YAXXZ", 0x005A5650,
                                  0x5A56F0 - 0x5A5650 + 16))) == 1
-    sizes, read = env
+    sizes, read, idx = env
     assert read(0x1005, 1) == b"\xe9"
     assert refusals(env, row("?j_00001005@@YAXXZ", 0x1005, 5)) == []
 
 
 def test_re3_status_or_note_flip_is_rejudged(env):
-    sizes, read = env
+    sizes, read, idx = env
     parked = row("?probe@@YAXXZ", 0x005A565D, 1119, notes="parent=?x@@YAXXZ",
                  status="unmatched")
     live = row("?probe@@YAXXZ", 0x005A565D, 1119)
-    assert len(row_extent.check([parked], [live], sizes, read)) == 1
+    assert len(row_extent.check([parked], [live], sizes, read, idx)) == 1
     renamed = row("?probe@@YAXXZ", 0x005A565D, 1119, notes="parent=?y@@YAXXZ")
-    assert len(row_extent.check([parked], [renamed], sizes, read)) == 1
+    assert len(row_extent.check([parked], [renamed], sizes, read, idx)) == 1
 
 
 def test_re4_split_after_internal_ret_refused(env):
@@ -149,10 +152,10 @@ def test_re6_missing_image_refused_not_crash():
 
 
 def test_span_over_matched_row_refused(env):
-    sizes, read = env
+    sizes, read, idx = env
     host = row("?next@@YAXXZ", 0x005A56F0, 481)
     found = row_extent.check([host], [host, row("?wide@@YAXXZ", 0x005A5650, 0xA4)],
-                             {}, read)
+                             {}, read, idx)
     assert len(found) == 1 and "0x005A56F0" in found[0]
 
 
@@ -169,27 +172,31 @@ def test_r2_forged_exemptions_refused(env, notes):
 
 
 def test_r2_real_parent_but_not_enclosing_refused(env):
-    sizes, read = env
+    sizes, read, idx = env
     parent = row("?load@INI@@QAE_NVBFMERetailAsciiString@@00HH@Z", 0x00853B30, 250)
     bad = row("?x@@YAXXZ", JOIN, 1119, notes=f"parent={parent['name']}")
-    assert len(row_extent.check([parent], [parent, bad], sizes, read)) == 1
+    assert len(row_extent.check([parent], [parent, bad], sizes, read, idx)) == 1
 
 
 def test_r2_verified_funclet_inside_parent_passes(env):
     # Real row: $L414 cleanup Ghidra merged into ?load@INI, right after its ret 14h.
-    sizes, read = env
+    sizes, read, idx = env
     parent = row("?load@INI@@QAE_NVBFMERetailAsciiString@@00HH@Z", 0x00853B30, 250)
     funclet = row("?dup_00853C2A@@YAXXZ", 0x00853C2A, 17,
                   notes=f"object-symbol=$L414;parent={parent['name']}")
-    assert row_extent.check([parent], [parent, funclet], sizes, read) == []
+    assert row_extent.check([parent], [parent, funclet], sizes, read, idx) == []
     plain = row("?dup_00853C2A@@YAXXZ", 0x00853C2A, 17, notes="object-symbol=$L414")
-    assert len(row_extent.check([parent], [parent, plain], sizes, read)) == 1
+    assert len(row_extent.check([parent], [parent, plain], sizes, read, idx)) == 1
 
 
-def test_r2_catch_note_must_be_own_va(env):
-    good = row("?d_0035d611@@YAXXZ", 0x0035D611, 21, notes="gen-dump;ghidra=Catch@0075d611")
-    assert refusals(env, good) == []
-    assert len(refusals(env, {**good, "notes": "gen-dump;ghidra=Catch@0075d612"})) == 1
+def test_catch_note_no_longer_self_certifies(env):
+    # A rethrowing catch (no `mov eax, <va>; ret`) needs its parent= now.
+    sizes, read, idx = env
+    note = row("?d_0035d611@@YAXXZ", 0x0035D611, 21, notes="gen-dump;ghidra=Catch@0075d611")
+    assert len(refusals(env, note)) == 1
+    parent = row("?Rva0035D460@@YAXPAURva00359530Record@@PBU1@@Z", 0x0035D460, 433)
+    child = {**note, "notes": f"ghidra=Catch@0075d611;parent={parent['name']}"}
+    assert row_extent.check([parent], [parent, child], sizes, read, idx) == []
 
 
 @pytest.mark.parametrize("rva,size", [(0x000BB313, 137), (0x001843A3, 281),
@@ -288,3 +295,115 @@ def test_r2_catch_shape_needs_plain_ret():
     # jmp 100A | 1002: mov eax, <va>; ret 4 | 100A: ret
     data = bytes.fromhex("EB08B80A104000C20400C3")
     assert len(judge(data, {0x1000: 11}, row("?x@@YAXXZ", 0x1002, 8))) == 1
+
+
+# 2026-10-14 rule set (review rowcheck RC2A/RC2B).
+
+def test_h2_labelled_row_is_a_known_body(env):
+    sizes, read, idx = env
+    host = row("?Rva00C6AFE0Init@@YAXXZ", 0x00C6AFE0, 36, notes="object-symbol=_$E1")
+    forged = row("?x@@YAXXZ", 0x00C6AFF8, 12)
+    found = row_extent.check([host], [host, forged], sizes, read, idx)
+    assert len(found) == 1 and "matched row ?Rva00C6AFE0Init" in found[0]
+
+
+def test_h2_run_over_labelled_rows_refused(env):
+    sizes, read, idx = env
+    rows = [row("uw_00c55cd5", 0x00C55CD5, 10, notes="object-symbol=__ehhandler$x")]
+    forged = row("?x@@YAXXZ", 0x00C55CCA, 53)
+    found = row_extent.check(rows, rows + [forged], sizes, read, idx)
+    assert len(found) == 1 and "runs over" in found[0]
+
+
+def test_h2_verified_child_inside_matched_row():
+    # 1000: nop; ret | 1002: push ebp; ret  -- a row nested in a matched row
+    read = image(bytes.fromhex("90C355C3"))
+    host = row("?h@@YAXXZ", 0x1000, 4)
+    for notes, refused in (("parent=?h@@YAXXZ", 0), ("object-symbol=$L1", 1),
+                           ("ghidra=Catch@00401002", 1), ("parent=?other@@YAXXZ", 1)):
+        child = row("?f@@YAXXZ", 0x1002, 2, notes=notes)
+        assert len(row_extent.check([host], [host, child], {}, read)) == refused, notes
+        # and the parent re-landed over its verified child
+        moved = {**host, "size": 4, "notes": "x"}
+        found = row_extent.check([child], [moved, child], {}, read)
+        assert len(found) == refused, notes
+
+
+def test_q1_aligned_padding_then_code_refused():
+    # 1000: ret; int3 x15 | 1010: ret  -- the run ends at aligned 0x1010
+    data = bytes.fromhex("C3" + "CC" * 15 + "C3")
+    found = judge(data, {}, row("?x@@YAXXZ", 0x1000, 17))
+    assert len(found) == 1 and "16-byte aligned" in found[0]
+    # padding at the row's end, or an unaligned operand run, passes
+    assert judge(data, {}, row("?x@@YAXXZ", 0x1000, 16)) == []
+    operand = bytes.fromhex("B8CCCCCC00C3")  # mov eax, 0x00CCCCCC; ret
+    assert judge(operand, {}, row("?x@@YAXXZ", 0x1000, 6)) == []
+
+
+def test_q1_tryToRecruit_refused(env):
+    assert len(refusals(env, row("?x@@YAXXZ", 0x0076E90A, 568))) == 1
+
+
+def test_q2_unpadded_prologue_refused():
+    # 1000: ret | 1001: push ebp; mov ebp, esp; ret; a known start at 1001
+    data = bytes.fromhex("C3558BECC3")
+    found = judge(data, {0x1001: 4}, row("?x@@YAXXZ", 0x1000, 5))
+    assert len(found) == 1 and "prologue" in found[0]
+    # not a known start, no prologue, or a branch target: passes
+    assert judge(data, {}, row("?x@@YAXXZ", 0x1000, 5)) == []
+    assert judge(bytes.fromhex("C3908BECC3"), {0x1001: 4}, row("?x@@YAXXZ", 0x1000, 5)) == []
+    branched = bytes.fromhex("7401C3558BECC3")  # je 1003 | ret | 1003: push ebp...
+    assert judge(branched, {0x1003: 4}, row("?x@@YAXXZ", 0x1000, 7)) == []
+
+
+def test_q2_catch_continuation_passes():
+    # 1000: ret | 1001: push ebp; mov ebp,esp; ret | 1005: mov eax, 0x401001; ret
+    data = bytes.fromhex("C3558BECC3B801104000C3")
+    assert judge(data, {0x1001: 4, 0x1005: 6}, row("?x@@YAXXZ", 0x1000, 5)) == []
+    other = bytes.fromhex("C3558BECC3B802104000C3")
+    assert len(judge(other, {0x1001: 4, 0x1005: 6}, row("?x@@YAXXZ", 0x1000, 5))) == 1
+
+
+def test_q2_d3dx_refused(env):
+    found = refusals(env, row("_D3DXVec4Transform@12", 0x009FAA48, 600))
+    assert len(found) == 1 and "0x009FAAED" in found[0]
+
+
+def test_q3_called_start_inside_ghidra_body_passes():
+    # Ghidra merges 1000..1008; 1002 follows a ret with no padding but is called
+    # from the body at 1010.  A jmp from another body does not count.
+    called = bytes.fromhex("90C3558BEC5DC390" + "90" * 8 + "E8EDFFFFFFC3")
+    assert judge(called, {0x1000: 8, 0x1010: 6}, row("?x@@YAXXZ", 0x1002, 5)) == []
+    jumped = bytes.fromhex("90C3558BEC5DC390" + "90" * 8 + "E9EDFFFFFFC3")
+    assert len(judge(jumped, {0x1000: 8, 0x1010: 6}, row("?x@@YAXXZ", 0x1002, 5))) == 1
+    # a call from the enclosing body itself does not count either
+    self_call = bytes.fromhex("90C3558BEC5DC3E8F6FFFFFF")
+    assert len(judge(self_call, {0x1000: 12}, row("?x@@YAXXZ", 0x1002, 5))) == 1
+
+
+def test_q3_ilt_target_passes_but_not_inside_matched_row():
+    data = bytes.fromhex("90C3558BEC5DC390" + "90" * 8 + "E9EDFFFFFF")
+    ghidra = {0x1000: 8, 0x1010: 5}
+    assert judge(data, ghidra, row("?x@@YAXXZ", 0x1002, 5)) == []
+    host = row("?h@@YAXXZ", 0x1000, 8)
+    found = row_extent.check([host], [host, row("?x@@YAXXZ", 0x1002, 5)], ghidra, image(data))
+    assert len(found) == 1
+
+
+def test_q3_heapsort_passes(env):
+    assert refusals(env, row("?x@@YAXXZ", 0x00A6C125, 53)) == []
+
+
+def test_index_cache_keyed_on_inputs(tmp_path):
+    ghidra = tmp_path / "g.csv"
+    ghidra.write_text("rva,size\n0x1000,5\n")
+    data = bytes.fromhex("E9FB0F0000")
+    read = image(data)
+    sections = []
+    cache = tmp_path / "idx.pkl"
+    first = row_extent.load_index(ghidra, data, sections, read, cache)
+    assert first.ilt == {0x2000} and cache.exists()
+    second = row_extent.load_index(ghidra, data, sections, read, cache)
+    assert second.ilt == {0x2000}
+    ghidra.write_text("rva,size\n")
+    assert row_extent.load_index(ghidra, data, sections, read, cache).ilt == set()

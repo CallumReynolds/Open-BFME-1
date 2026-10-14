@@ -37,16 +37,39 @@ instruction-boundary, branch-target and span checks always apply:
   only what the object file called the symbol. It counts together with a
   verified parent=, which is already sufficient (2026-10-13: of 27439
   label-only matched rows none needs a waiver).
-- `ghidra=Catch@<va>`: <va> must be the row's own VA (RVA + 0x400000).
+- `ghidra=Catch@<va>` waives nothing on its own (anyone can write their own
+  VA); only the catch shape below does.
 - catch shape: the row decodes from its start to `mov eax, <VA inside the
   enclosing body>; ret` at its end, with no earlier ret or jmp out of it.
 A waived start must still follow a ret or jmp (no fall-through entry).
 - `?j_XXXXXXXX` ILT thunks whose hex is the row's RVA, 5 B, opening E9.
 A row re-judges whenever its name, extent, status or exemption notes change.
+
+Every matched row is a known body, whatever its notes say (2026-10-14: a label
+used to hide 30,150 rows from these checks). A row may start inside, or run
+over, another matched row only when the inner row's parent= names the outer row
+or the inner row has the catch shape inside it.
+
+Three more rules (review rowcheck 2026-10-13, RC2A/RC2B):
+
+- aligned padding: a run of >=3 int3 that ends 16-byte aligned with more code
+  after it inside the row. Operand CC bytes end unaligned.
+- unpadded prologue: a known start S inside the row (Ghidra start, matched-row
+  start, direct-call or ILT target) that a ret/jmp ends exactly at, with no
+  int3 before it, opening a prologue (55 8B EC, 6A FF 68, 64 A1 00000000,
+  83 EC, 81 EC), that no branch in the row targets and that is no catch
+  continuation (S's VA is the imm32 of no `B8 imm32 C3` in .text).
+- real starts: a start inside a Ghidra body (never inside a matched row) passes
+  the start rule when retail calls it directly (E8 from another body) or a
+  5-byte ILT thunk jumps to it. A Ghidra listing or a jmp/jcc target never
+  counts. The call index is cached under build/ (see load_index).
 """
 import bisect
 import csv
+import hashlib
 import io
+import os
+import pickle
 import re
 
 MIN_PAD_RUN = 3
@@ -58,6 +81,11 @@ CATCH_NOTE = re.compile(r"(?:^|;)\s*ghidra=Catch@([0-9A-Fa-f]+)\s*(?:;|$)")
 COMPILER_LABEL = re.compile(r"(?:^|;)\s*object-symbol=(?:_?\$[A-Za-z]\w*|__ehhandler\$\S*|"
                             r"__unwindfunclet\$\S*|__catch\$\S*|\?\?__[EF]\S*)\s*(?:;|$)")
 ALIGN_NOPS = {"nop", "int3"}
+PROLOGUES = (b"\x55\x8b\xec", b"\x6a\xff\x68", b"\x64\xa1\x00\x00\x00\x00",
+             b"\x83\xec", b"\x81\xec")
+CATCH_RETURN = re.compile(rb"\xb8(....)\xc3", re.S)
+INDEX_FORMAT = 1
+MAX_INDEXED_BODY = 200000
 
 
 class ImageError(Exception):
@@ -78,13 +106,6 @@ def parse_rows(raw):
     return out
 
 
-def note_exempt(row):
-    """Notes that claim an exemption (claims only; check_row verifies them)."""
-    notes = row.get("notes") or ""
-    return bool(PARENT.search(notes) or COMPILER_LABEL.search(notes)
-                or CATCH_NOTE.search(notes))
-
-
 def waived_starts(row, rows_by_name):
     """Body starts whose padding rule the row's verified notes waive."""
     notes = row.get("notes") or ""
@@ -93,9 +114,6 @@ def waived_starts(row, rows_by_name):
     if parent:
         out.update(p["rva"] for p in rows_by_name.get(parent.group(1).strip(), ())
                    if p["rva"] != row["rva"])
-    catch = CATCH_NOTE.search(notes)
-    if catch and int(catch.group(1), 16) == row["rva"] + IMAGE_BASE:
-        out.add(None)  # any enclosing body: Ghidra merged the catch into it
     return out
 
 
@@ -129,29 +147,112 @@ def load_ghidra(path):
     return sizes
 
 
+class CallIndex:
+    """Retail's direct-call and ILT targets, and catch continuation VAs."""
+
+    def __init__(self, calls, ilt, continuations):
+        self.calls = calls  # target rva -> frozenset of calling Ghidra body starts
+        self.ilt = ilt  # targets of 5-byte E9 Ghidra bodies
+        self.continuations = continuations  # VAs returned by `mov eax, imm32; ret`
+        self.targets = sorted(set(calls) | ilt)
+
+    def targets_in(self, low, high):
+        seq = self.targets
+        return seq[bisect.bisect_left(seq, low):bisect.bisect_left(seq, high)]
+
+    def real_start(self, rva, enclosing_start):
+        if rva in self.ilt:
+            return True
+        return any(c not in (enclosing_start, rva) for c in self.calls.get(rva, ()))
+
+
+def build_index(ghidra_sizes, read, text=None):
+    """Decode every Ghidra body for E8 calls and ILT thunks; scan `text` (bytes,
+    rva) for catch returns, or the Ghidra bodies when no .text is given."""
+    calls, ilt, continuations = {}, set(), set()
+    for start, size in ghidra_sizes.items():
+        if size <= 0 or size > MAX_INDEXED_BODY:
+            continue
+        try:
+            body = read(start, size)
+        except (OSError, ValueError):
+            continue
+        if size == 5 and body[:1] == b"\xe9":
+            ilt.add((start + 5 + int.from_bytes(body[1:5], "little", signed=True))
+                    & 0xFFFFFFFF)
+        for insn in disasm().disasm(body, start):
+            if insn.mnemonic == "call" and insn.bytes[0] == 0xE8:
+                calls.setdefault(int(insn.op_str, 16), set()).add(start)
+        if text is None:
+            continuations.update(int.from_bytes(m.group(1), "little")
+                                 for m in CATCH_RETURN.finditer(body))
+    if text is not None:
+        data = text[0]
+        continuations.update(int.from_bytes(data[i + 1:i + 5], "little")
+                             for i in range(len(data) - 5)
+                             if data[i] == 0xB8 and data[i + 5] == 0xC3)
+    return CallIndex({k: frozenset(v) for k, v in calls.items()}, ilt, continuations)
+
+
+def load_index(ghidra_path, image, sections, read, cache_path):
+    """build_index, cached at `cache_path` and keyed on the Ghidra list and the
+    image, so a normal commit does not pay the ~5 s decode."""
+    digest = hashlib.sha256(f"row_extent-index-{INDEX_FORMAT}".encode())
+    digest.update(open(ghidra_path, "rb").read())
+    digest.update(image)
+    digest = digest.hexdigest()
+    try:
+        with open(cache_path, "rb") as handle:
+            cached = pickle.load(handle)
+        if cached.get("key") == digest:
+            return cached["index"]
+    except (OSError, EOFError, pickle.UnpicklingError, AttributeError, KeyError, TypeError):
+        pass
+    text = next((s for s in sections if s["name"] == ".text"), None)
+    text_bytes = None
+    if text is not None:
+        text_bytes = (image[text["raw_pointer"]:text["raw_pointer"] + text["size"]],
+                      text["rva"])
+    index = build_index(load_ghidra(ghidra_path), read, text_bytes)
+    try:
+        os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+        tmp = f"{cache_path}.{os.getpid()}.tmp"
+        with open(tmp, "wb") as handle:
+            pickle.dump({"key": digest, "index": index}, handle)
+        os.replace(tmp, cache_path)
+    except OSError:
+        pass
+    return index
+
+
 class Extents:
     """Known bodies: Ghidra functions plus matched ledger rows."""
 
     def __init__(self, ghidra_sizes, rows):
-        self.bodies = {}  # start -> list of (size, label, is_row)
+        self.bodies = {}  # start -> list of (size, label, matched row or None)
         for start, size in ghidra_sizes.items():
             if size > 0:
                 self.bodies.setdefault(start, []).append(
-                    (size, f"Ghidra function 0x{start:08X}/{size}", False))
+                    (size, f"Ghidra function 0x{start:08X}/{size}", None))
         for r in rows:
-            if r.get("status") == "matched" and r["size"] > 0 and not note_exempt(r):
+            if r.get("status") == "matched" and r["size"] > 0:
                 self.bodies.setdefault(r["rva"], []).append(
-                    (r["size"], f"matched row {r['name']} 0x{r['rva']:08X}/{r['size']}", True))
+                    (r["size"], f"matched row {r['name']} 0x{r['rva']:08X}/{r['size']}", r))
         self.starts = sorted(self.bodies)
-        self.row_starts = sorted(a for a, v in self.bodies.items() if any(x[2] for x in v))
+        self.row_starts = sorted(a for a, v in self.bodies.items()
+                                 if any(x[2] is not None for x in v))
         self.longest = max((x[0] for v in self.bodies.values() for x in v), default=0)
 
-    def enclosing(self, rva):
-        """(start, size, label) of every known body containing `rva` past its start."""
+    def enclosing(self, rva, rows_only=False):
+        """(start, size, label, row) of every known body containing `rva` past its start."""
         low = bisect.bisect_left(self.starts, rva - self.longest)
         high = bisect.bisect_left(self.starts, rva)
-        return [(start, size, label) for start in self.starts[low:high]
-                for size, label, _ in self.bodies[start] if rva < start + size]
+        return [(start, size, label, r) for start in self.starts[low:high]
+                for size, label, r in self.bodies[start]
+                if rva < start + size and (r is not None or not rows_only)]
+
+    def rows_at(self, start):
+        return [x[2] for x in self.bodies.get(start, ()) if x[2] is not None]
 
     def starts_in(self, low, high, rows_only=False):
         """Known starts in [low, high)."""
@@ -248,28 +349,71 @@ def catch_shape(row, start, size, read):
     return True
 
 
-def check_row(row, extents, read, rows_by_name=None):
+def verified_child(child, parent, read):
+    """`child` may sit inside matched row `parent`: its parent= names that row,
+    or it has the catch shape inside it."""
+    named = PARENT.search(child.get("notes") or "")
+    if named and named.group(1).strip() == parent["name"]:
+        return True
+    return catch_shape(child, parent["rva"], parent["size"], read)
+
+
+def unpadded_prologue(row, body, extents, index):
+    """The first known start inside the row that opens an unpadded prologue
+    straight after a ret/jmp, as (start, previous instruction), or None."""
+    rva, size = row["rva"], row["size"]
+    starts = set(extents.starts_in(rva + 1, rva + size))
+    starts.update(index.targets_in(rva + 1, rva + size))
+    if not starts:
+        return None
+    insns = list(disasm().disasm(body, rva))
+    ends = {i.address + i.size: i for i in insns}
+    targets = set()
+    for insn in insns:
+        if insn.mnemonic.startswith(("j", "loop")):
+            try:
+                targets.add(int(insn.op_str, 16))
+            except ValueError:
+                pass
+    for start in sorted(starts):
+        before = ends.get(start)
+        if (before is not None and before.mnemonic in ("ret", "jmp")
+                and body[start - rva - 1] != 0xCC and start not in targets
+                and body[start - rva:].startswith(PROLOGUES)
+                and start + IMAGE_BASE not in index.continuations):
+            return start, before
+    return None
+
+
+def check_row(row, extents, read, rows_by_name=None, index=None):
     """Refusal text for one new row, or None."""
     if row["size"] <= 0:
         return None
+    calls = index or CallIndex({}, set(), set())
     waived = waived_starts(row, rows_by_name or {})
     rva, size = row["rva"], row["size"]
     where = f"{row['name']} @ 0x{rva:08X}/{size}"
     try:
         if ilt_thunk(row, read):
             return None
-        for start, length, label in extents.enclosing(rva):
-            waive = (None in waived or start in waived
-                     or catch_shape(row, start, length, read))
+        for start, length, label, parent in extents.enclosing(rva):
+            if parent is not None:
+                waive = verified_child(row, parent, read)
+            else:
+                waive = start in waived or catch_shape(row, start, length, read)
             why = boundary_reason(start, length, rva, read, waive)
+            if (why and parent is None and not extents.enclosing(rva, rows_only=True)
+                    and calls.real_start(rva, start)):
+                why = None
             if why:
                 return (f"{where} starts inside {label}: {why}. Re-anchor the row "
                         "at the body's real start (tools/boundary_validator.py) or "
                         "cite boundary evidence.")
-        later = extents.starts_in(rva + 1, rva + size, rows_only=True)
-        if later:
-            return (f"{where} runs over the matched row starting at 0x{later[0]:08X}. "
-                    "One row per body.")
+        for later in extents.starts_in(rva + 1, rva + size, rows_only=True):
+            if not all(verified_child(c, row, read)
+                       for c in extents.rows_at(later)):
+                return (f"{where} runs over the matched row starting at 0x{later:08X}. "
+                        "One row per body.")
         body = read(rva, size)
     except ImageError as error:
         return f"{where}: cannot read the retail image to judge its extent ({error})"
@@ -290,7 +434,17 @@ def check_row(row, extents, read, rows_by_name=None):
                         f"0x{rva + index:08X} and the function start at "
                         f"0x{later[0]:08X} ({len(later)} start(s) inside). "
                         "Split it into one row per body.")
+        if end - index >= MIN_PAD_RUN and end < len(body) and (rva + end) % 16 == 0:
+            return (f"{where} contains {end - index} B of int3 padding at "
+                    f"0x{rva + index:08X} that ends 16-byte aligned with code after it. "
+                    "Split it into one row per body.")
         index = end
+    split = unpadded_prologue(row, body, extents, calls)
+    if split:
+        start, before = split
+        return (f"{where} contains the function start 0x{start:08X}: a prologue right "
+                f"after the {before.mnemonic} at 0x{before.address:08X}. "
+                "Split it into one row per body.")
     return None
 
 
@@ -304,14 +458,19 @@ def guarded(read):
     return inner
 
 
-def check(before_rows, after_rows, ghidra_sizes, read):
-    """Refusals for every row `after_rows` adds, moves or re-statuses."""
+def check(before_rows, after_rows, ghidra_sizes, read, index=None):
+    """Refusals for every row `after_rows` adds, moves or re-statuses.
+
+    `index` is a CallIndex (load_index); without one it is built from
+    `ghidra_sizes`, which takes seconds on the retail image."""
     new = changed_rows(before_rows, after_rows)
     if not new:
         return []
+    if index is None:
+        index = build_index(ghidra_sizes, read)
     extents = Extents(ghidra_sizes, after_rows)
     by_name = {}
     for r in after_rows:
         by_name.setdefault(r["name"], []).append(r)
     read = guarded(read)
-    return [msg for msg in (check_row(r, extents, read, by_name) for r in new) if msg]
+    return [msg for msg in (check_row(r, extents, read, by_name, index) for r in new) if msg]

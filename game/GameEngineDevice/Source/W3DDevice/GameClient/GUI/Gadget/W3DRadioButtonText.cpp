@@ -322,11 +322,60 @@ void W3DGadgetRadioButtonDraw( GameWindow *window, WinInstanceData *instData )
 }  // end W3DGadgetRadioButtonDraw
 
 
+class Rva00796710Display { public:
+virtual void slot00();
+virtual void slot01();
+virtual void slot02();
+virtual void slot03();
+virtual void slot04();
+virtual void slot05();
+virtual void slot06();
+virtual void slot07();
+virtual void slot08();
+virtual void slot09();
+virtual void slot10();
+virtual void slot11();
+virtual void slot12();
+virtual void slot13();
+virtual void slot14();
+virtual void slot15();
+virtual void slot16();
+virtual void slot17();
+virtual void slot18();
+virtual void slot19();
+virtual void slot20();
+virtual void slot21();
+virtual void slot22();
+virtual void slot23();
+virtual void slot24();
+virtual void slot25();
+virtual void slot26();
+virtual void slot27();
+virtual void slot28();
+virtual void slot29();
+virtual void slot30();
+virtual void slot31();
+virtual void slot32();
+virtual void slot33();
+virtual void setClipRegion(IRegion2D *);
+virtual void slot35();
+virtual void enableClipping(Bool);
+};
+// Retail inlines the GameWindow image accessors: each is a load from the
+// WinInstanceData embedded at GameWindow+0x30.
+class Rva00796710Window { public:
+	__forceinline const Image *winGetEnabledImage( Int index ) { return instData()->m_enabledDrawData[ index ].image; }
+	__forceinline const Image *winGetDisabledImage( Int index ) { return instData()->m_disabledDrawData[ index ].image; }
+	__forceinline const Image *winGetHiliteImage( Int index ) { return instData()->m_hiliteDrawData[ index ].image; }
+private:
+	__forceinline WinInstanceData *instData( void ) { return reinterpret_cast<WinInstanceData *>( reinterpret_cast<char *>( this ) + 0x30 ); }
+};
+
 void W3DGadgetRadioButtonImageDraw( GameWindow *window, 
 																	WinInstanceData *instData )
 {
 	const Image *leftImage, *rightImage, *centerImage;
-	ICoord2D origin, size, start, end;
+	DefaultConstructed00796480<ICoord2D> origin, size, start, end;
 	Int xOffset, yOffset;
 	Int i;
 
@@ -343,33 +392,33 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 	if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
 	{
 		//backgroundImage	= GadgetRadioGetEnabledCheckedBoxImage( window );
-		leftImage					= GadgetRadioGetSelectedImage( window );
-		centerImage				= GadgetRadioGetSelectedUncheckedBoxImage( window );
-		rightImage				= GadgetRadioGetSelectedCheckedBoxImage( window );
+		leftImage					= ((Rva00796710Window *)window)->winGetHiliteImage( 3 );
+		centerImage				= ((Rva00796710Window *)window)->winGetHiliteImage( 4 );
+		rightImage				= ((Rva00796710Window *)window)->winGetHiliteImage( 5 );
 		
 	}
 	else if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		// disabled background
-		leftImage					= GadgetRadioGetDisabledImage( window );
-		centerImage				= GadgetRadioGetDisabledUncheckedBoxImage( window );
-		rightImage				= GadgetRadioGetDisabledCheckedBoxImage( window );
+		leftImage					= ((Rva00796710Window *)window)->winGetDisabledImage( 0 );
+		centerImage				= ((Rva00796710Window *)window)->winGetDisabledImage( 1 );
+		rightImage				= ((Rva00796710Window *)window)->winGetDisabledImage( 2 );
 		
 	}  // end if
 	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		// hilited background 
-		leftImage					= GadgetRadioGetHiliteImage( window );
-		centerImage				= GadgetRadioGetHiliteUncheckedBoxImage( window );
-		rightImage				= GadgetRadioGetHiliteCheckedBoxImage( window );
+		leftImage					= ((Rva00796710Window *)window)->winGetHiliteImage( 0 );
+		centerImage				= ((Rva00796710Window *)window)->winGetHiliteImage( 1 );
+		rightImage				= ((Rva00796710Window *)window)->winGetHiliteImage( 2 );
 		
 	}  // end else if
 	else
 	{
 		// enabled background 
-		leftImage					= GadgetRadioGetEnabledImage( window );
-		centerImage				= GadgetRadioGetEnabledUncheckedBoxImage( window );
-		rightImage				= GadgetRadioGetEnabledCheckedBoxImage( window );
+		leftImage					= ((Rva00796710Window *)window)->winGetEnabledImage( 0 );
+		centerImage				= ((Rva00796710Window *)window)->winGetEnabledImage( 1 );
+		rightImage				= ((Rva00796710Window *)window)->winGetEnabledImage( 2 );
 		
 	}  // end else
 
@@ -379,14 +428,14 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		return;
 
 	// get image sizes for the ends
-	ICoord2D leftSize, rightSize;
+	DefaultConstructed00796480<ICoord2D> leftSize, rightSize;
 	leftSize.x = leftImage->getImageWidth();
 	leftSize.y = leftImage->getImageHeight();
 	rightSize.x = rightImage->getImageWidth();
 	rightSize.y = rightImage->getImageHeight();
 
 	// get two key points used in the end drawing
-	ICoord2D leftEnd, rightStart;
+	DefaultConstructed00796480<ICoord2D> leftEnd, rightStart;
 	leftEnd.x = origin.x + leftSize.x + xOffset;
 	leftEnd.y = origin.y + size.y + yOffset;
 	rightStart.x = origin.x + size.x - rightSize.x + xOffset;
@@ -414,7 +463,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 	clipLeft.hi.x = rightStart.x	;
 
 
-	TheDisplay->setClipRegion(&clipLeft);
+	((Rva00796710Display *)TheDisplay)->setClipRegion(&clipLeft);
 	
 	for( i = 0; i < pieces; i++ )
 	{
@@ -425,7 +474,7 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 		start.x += centerImage->getImageWidth();
 	}  // end for i
 	
-	TheDisplay->enableClipping(FALSE);	
+	((Rva00796710Display *)TheDisplay)->enableClipping(FALSE);	
 	// draw left end
 	start.x = origin.x + xOffset;
 	start.y = origin.y + yOffset;
@@ -439,8 +488,9 @@ void W3DGadgetRadioButtonImageDraw( GameWindow *window,
 	TheWindowManager->winDrawImage(rightImage, start.x, start.y, end.x, end.y);
 
 	// draw the text
-	if( instData->getTextLength() )
+	if( ((Rva00796480InstanceData *)instData)->getTextLength() )
 		drawRadioButtonText( window, instData );
 
 	
 }  // end W3DGadgetHorizontalSliderImageDraw
+

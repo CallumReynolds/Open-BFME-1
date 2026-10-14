@@ -19978,5 +19978,15 @@
   "after_sha256": "afded5444469de17b1f8abec57429a45ac73ba2a130346ee6547ce19a748de6f",
   "evidence": "targets/game/reverse/re_attempts.log",
   "reason": "Retail 0x004CB3F0 calls the ledger-pinned ?bfmeGo935B@BfmeThing935B (the same host test the matched sibling handlePlayerTemplateSelection path uses) and reads the slot colour at +0x0C through ?at@Rva0068D3E0Arr, so the ZH LANGameSlot/amIHost spellings would bind the wrong offsets and symbols; BfmeColorSlot is a TU-local view of that slot, and LANGameSlot is still used for isLocalPlayer"
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x0036b330.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/Object/Update/AttributeModifierDefinitionStoreConditions.cpp",
+  "old_name": "copyClearMask",
+  "new_name": "rva0036B250ConditionsAt",
+  "before_sha256": "377f92cb4e9669e702ea4ad6b7ec4d7d3f123bf2eba16af7ee0b0f3e14918df6",
+  "after_sha256": "6bf14d796e82a40d1a0a9b7fdbbe95b51f1f21351ac38b154d95893ba66ed1d2",
+  "evidence": "targets/game/reverse/re_attempts.log",
+  "reason": "tools/ilt_oracle.py check ?copyClearMask@AttributeModifierDefinitionStore@@QBE?AV?$BitFlags@$0BEA@@@H@Z 0x0036B330 returns CONTRADICTED (outside every window of slot 19570); the body is the definition+0x44 twin of the address-named 0x0036B250 getter, so it keeps an address-derived name"
  }
 ]

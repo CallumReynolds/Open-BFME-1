@@ -921,7 +921,6 @@ dir32,0x012EF5F0,?RvaObject012EF5F0@@3UGen_001bdc30@@A,"nothing in the ledger ow
 dir32,0x012EF600,?RvaObject012EF600@@3UGen_001bdc10@@A,"nothing in the ledger owns 0x012EF600. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
 dir32,0x012EF610,?RvaObject012EF610@@3UGen_001bdc70@@A,"nothing in the ledger owns 0x012EF610. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
 dir32,0x012EF620,?RvaObject012EF620@@3UGen_001bdc50@@A,"nothing in the ledger owns 0x012EF620. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
-dir32,0x012EF630,?RvaObject012EF630@@3UGen_001bdc90@@A,"nothing in the ledger owns 0x012EF630. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
 dir32,0x012F0054,?$S198@?1??getClassMemoryPool@SpecialAbilityUpdate@@CAPAVMemoryPool@@XZ@4IA,"retail 0x012F0054 is already recorded as ?$S281@?1??getClassMemoryPool@SpecialAbilityUpdate@@CAPAVMemoryPool@@XZ@4IA; reference that name, not a new one"
 dir32,0x012F02D4,?g_Rva012F02D4@@3HA,"retail 0x012F02D4 is already recorded as ?g_012F02D4@@3HA; reference that name, not a new one"
 dir32,0x012F02D8,?g_012F02D8@@3HA,"nothing in the ledger owns 0x012F02D8. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"

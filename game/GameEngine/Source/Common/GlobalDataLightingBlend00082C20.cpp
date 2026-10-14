@@ -1,7 +1,6 @@
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include
 #include <math.h>
 #include "Lib/BaseType.h"
-extern double g_bfmeSubB3;
 
 class BfmeVec3JF
 {
@@ -69,7 +68,7 @@ bool BfmeXfJF::rva00082C20JF(int firstIndex, int secondIndex, float factor)
 		BfmeXfJF &first = *this;
 		BfmeXfJF &second = *this;
 		BfmeXfJF &out = *this;
-		float oneMinusFactor = (float)(g_bfmeSubB3 - factor);
+		float oneMinusFactor = (float)(1.0 - factor);
 
 #define BFME_BLEND(dst, lhs, rhs) \
         { \

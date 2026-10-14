@@ -1,5 +1,4 @@
 // ?clear@Rva008A18C0Holder@@QAEXXZ
-// partial score=0.7578 date=2026-09-29
 // Retail 0x008A18C0 (128 bytes, thiscall): empties an Apt value holder.  For
 // every held value it first winds down the live display nodes -- a type-0x0E
 // value whose +0x50 record has no +0x1C link gets state 1
@@ -24,7 +23,7 @@ public:
 	bool isLive(char type) const
 	{
 		unsigned int bits = m_valueBits;
-		return (char)(bits & 0x3f) == type && !((unsigned char)~(bits >> 15) & 1);
+		return m_type == (unsigned char)type && !((unsigned char)~(bits >> 15) & 1);
 	}
 
 	bool isUndefined() const
@@ -32,7 +31,7 @@ public:
 		return (m_valueBits >> 15 & 1) == 0;
 	}
 
-	unsigned int m_valueBits;
+	union { unsigned int m_valueBits; struct { unsigned m_type:6; unsigned m_bits06:9; unsigned m_valid15:1; }; };
 	char m_pad08[0x48];
 	Info *m_record;
 };

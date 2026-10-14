@@ -38265,7 +38265,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0089edf0@@YAXXZ,,0x0089EDF0,256,game/gen_asm/d_0089a830.asm,matched,gen-dump;ghidra=FUN_00c9edf0
 ?d_0089fda0@@YAXXZ,,0x0089FDA0,466,game/gen_asm/d_0089a830.asm,matched,gen-dump;ghidra=FUN_00c9fda0
 ?d_008a15f0@@YAXXZ,,0x008A15F0,718,game/gen_asm/d_008a0830.asm,matched,gen-dump;ghidra=FUN_00ca15f0
-?d_008a18c0@@YAXXZ,,0x008A18C0,128,game/gen_asm/d_008a0830.asm,matched,gen-dump;ghidra=FUN_00ca18c0
 ?d_008a1c20@@YAXXZ,,0x008A1C20,196,game/gen_asm/d_008a0830.asm,matched,gen-dump;ghidra=FUN_00ca1c20
 ?d_008a1e80@@YAXXZ,,0x008A1E80,483,game/gen_asm/d_008a0830.asm,matched,gen-dump;ghidra=FUN_00ca1e80
 ?d_008a2130@@YAXXZ,,0x008A2130,1092,game/gen_asm/d_0083c710.asm,matched,gen-dump;switch-carved start=int3-aligned end=switch-table+int3 refs=0
@@ -172549,3 +172548,4 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ?W3DGadgetRadioButtonImageDraw@@YAXPAVGameWindow@@PAVWinInstanceData@@@Z,,0x00796710,539,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DRadioButtonText.cpp,matched,real-name actual-RVA ILT confirmed; matched dispatcher007969E0; RET+21A/INT3+21B; canonical coordinate construction and BFME display/text slots; identity_evidence/00796710-radio-image-coordinates.md;model=gpt-6-astra;host=GreatFaram
 ?bfmeStepCBC@BfmeThingCBC@@QAEXH@Z,,0x008D2130,393,game/Libraries/Source/EA/Apt/Rva008D2130.cpp,matched,Native constructor lifetimes; matched counter callbacks prove existing opaque spelling; RET4 at008D22B6 thenINT3; evidence=identity_evidence/008d2130-round57-native-lifetime.md;model=gpt-6-astra;host=GreatFaram
 ?getPath00083DD0@ScreenshotGlobalData@@QBE?AVScreenshotAsciiString@@XZ,,0x00083DD0,401,game/GameEngine/Source/Common/System/ScreenshotGlobalData.cpp,matched,ret4+18E INT3+191; screenshot caller ILT36D9A; evidence 00083dd0-screenshot-path-lifetime.md;model=gpt-6-astra;host=GreatFaram
+?clear@Rva008A18C0Holder@@QAEXXZ,,0x008A18C0,128,game/Libraries/Source/EA/Apt/Rva008A18C0Holder.cpp,matched,Opaque holder retained from bank; matched queue caller and packed six-bit type witness; RET at+7F; native bitfield restores full-width mask;model=gpt-6-astra;host=GreatFaram

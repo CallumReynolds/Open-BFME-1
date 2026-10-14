@@ -77,7 +77,7 @@ public:
     unsigned m_flags;
 
     bool maxRefCountHit() const { return ((m_flags >> 30) & 1) != 0; }
-    bool isUndefined() const { return ((unsigned char)~(m_flags >> 15) & 1) != 0; }
+    bool isUndefined() const { return ((m_flags >> 15) & 1) == 0; }
 };
 
 struct Rva008C3B60Node

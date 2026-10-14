@@ -74,7 +74,7 @@ public:
 
     bool isUndefined() const
     {
-        return ((unsigned char)~(m_flags >> 15) & 1) != 0;
+        return ((m_flags >> 15) & 1) == 0;
     }
 
     bool isString() const

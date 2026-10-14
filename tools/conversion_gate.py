@@ -299,42 +299,59 @@ def header_prelude(rev):
 # Outside headers (approved 2026-10-14, CR2B H1): emit macros and raw emit
 # bodies outside game/ and inputs/reference/shims/ (inputs/vendor/, the
 # vendored EA tree, the rest of inputs/) are never judged where they are
-# written. Three rules close that:
-# - Rule A3 refuses an added #include, in a game/ or shims file, that
-#   resolves to an outside file which contains an emit (a macro whose body
-#   emits, or a literal __emit/_emit outside comments, strings and char
-#   literals) or includes one that does. When a file's `// cl:` line changes,
-#   all of its includes are judged again.
-# - Rule A4 refuses a diff after which an outside file defines an emit macro
-#   name no outside file defined before (the two-commit flip: the pre-commit
-#   hook lets inputs/vendor/ and the EA tree be edited outright).
+# written. An "emit file" is an outside file that defines an emit macro or
+# holds a literal __emit/_emit outside comments, strings and char literals.
+# - Rule A3 refuses an include a game/ or shims file adds (an #include line,
+#   or a `// cl:` /FI) that resolves to an emit file or to an outside file
+#   that includes one. A changed `// cl:` line or an added `// stlport`
+#   line re-judges that file's includes; one that reached the same emit
+#   files before is not blamed again.
+# - Rule A5 refuses a diff after which the emit files reached from the
+#   existing includes of game/ and shims files (R) hold one they did not:
+#   the macro or raw-body flip of an included file, reach growing behind an
+#   existing include, an emit file moved into reach. A vendor import that
+#   nothing in game/ reaches passes.
 # - The #define lines of every outside emit macro (and of outside macros
 #   naming one) join header_prelude, so a NEW use in game/ is emit growth
 #   like any header macro's, while a re-shown or moved use is not.
-# Includes resolve the way cl.exe does: a quoted include first looks next to
-# the including file, then every include (quoted or <angle>) tries the TU's
-# `// cl:` /I dirs in order. A file with no `// cl:` line (headers, and every
-# outside file) falls back to a path-suffix match against the outside tree
-# after the quoted-sibling check. The suffix match is a guess, not a proof:
-# it can send an include to the wrong outside file (the EA debug/_pch.h's
-# "internal.h" once matched profile/internal.h), so it can refuse wrongly
-# as well as miss; a wrong refusal goes on the shrink-only allowlist below.
-# Names are normalised (posixpath.normpath, `\` -> `/`) and compared without
-# case, as on Windows. The outside state is cached under build/ keyed on the
-# tree OIDs of the outside subtrees.
+# Includes resolve the way build.py runs cl.exe: a quoted include first looks
+# next to the including file, then every include tries the `// cl:` /I dirs
+# in order, then INCLUDE (the STLport overlay, stlport and stlport/src for a
+# `// stlport` file, nbench for Benchmark/, then Vc7/include). A header with
+# no `// cl:` line, and every outside file, falls back to a path-suffix match
+# against the outside tree after the quoted-sibling check. The suffix match
+# is a guess, not a proof: it can send an include to the wrong outside file
+# (the EA debug/_pch.h's "internal.h" once matched profile/internal.h), so it
+# can refuse wrongly as well as miss; a wrong refusal goes on the shrink-only
+# allowlist below. Names are normalised (posixpath.normpath, `\` -> `/`) and
+# compared without case, as on Windows. A3 and A5 run only when the diff
+# touches an outside inputs/ path, deletes or renames a game/ or shims file,
+# or changes an #include, `// cl:` or `// stlport` line. The outside scan is
+# cached under build/, keyed on this file's hash and the outside subtree OIDs.
 _OUTSIDE_GLOBS = ("inputs/", ":(exclude)inputs/reference/shims/")
 # Shrink-only: (including file, include name) pairs on master that resolve
 # to an outside emit file. Empty since /I resolution (2026-10-14).
 OUTSIDE_INCLUDE_ALLOW = set()
 _OUTSIDE, _LISTING = {}, {}
 _INCLUDE_RE = re.compile(r'^\s*#\s*include\s*([<"])([^">]+)[">]')
-_OUTSIDE_CACHE_VERSION = "outside-v1"
 _OUTSIDE_CACHE_DIR = Path("build") / "conversion_gate_outside"
+_VC7_INCLUDE = "inputs/toolchains/vs2003/Program Files/Microsoft Visual Studio .NET 2003/Vc7/include"
+_STLPORT, _STLPORT_OVERLAY = "inputs/vendor/stlport", "inputs/reference/shims/stlport_bfme"
+_STLPORT_OPT_OUT = "// stlport-range-errors: vendored"
+_NBENCH = "inputs/vendor/nbench"
+try:
+    import hashlib
+    _GATE_HASH = hashlib.sha1(Path(__file__).read_bytes()).hexdigest()
+except OSError:
+    _GATE_HASH = None
 
 
 def _outside_key(rev):
-    """Cache key: the OIDs of every inputs/ subtree the outside scan reads
-    (all but shims) at rev; ":" uses `git write-tree`. None when unknown."""
+    """Cache key: this file's hash plus the OIDs of every inputs/ subtree the
+    outside scan reads (all but shims) at rev; ":" uses `git write-tree`.
+    None when unknown (no caching)."""
+    if _GATE_HASH is None:
+        return None
     tree = rev
     if rev == ":":
         proc = subprocess.run(["git", "write-tree"], capture_output=True, text=True)
@@ -347,8 +364,7 @@ def _outside_key(rev):
         return None
     rows = sorted(r for r in proc.stdout.splitlines()
                   if not r.endswith(("\tinputs/reference", "\tinputs/reference/shims")))
-    import hashlib
-    return hashlib.sha1("\n".join([_OUTSIDE_CACHE_VERSION] + rows).encode()).hexdigest()
+    return hashlib.sha1("\n".join([_GATE_HASH] + rows).encode()).hexdigest()
 
 
 def _listing(rev):
@@ -361,11 +377,15 @@ def _listing(rev):
                                            text=True).stdout.split("\n") if p]
         by_base = {}
         for p in files:
-            if p.startswith("inputs/") and not p.startswith(SHIMS):
+            if _outside(p):
                 by_base.setdefault(p.rsplit("/", 1)[-1].lower(), []).append(p)
         _LISTING.clear()
         _LISTING[rev] = ({p.lower(): p for p in files}, by_base)
     return _LISTING[rev]
+
+
+def _outside(path):
+    return path.startswith("inputs/") and not path.startswith(SHIMS)
 
 
 def _norm(name):
@@ -373,26 +393,59 @@ def _norm(name):
     return "" if name in (".", "") else name
 
 
+def _cl_args(text):
+    args, found = [], False
+    for line in text.lstrip("﻿").splitlines():
+        if line.startswith("// cl:"):
+            found = True
+            args += line[len("// cl:"):].split()
+    return args if found else None
+
+
+def _flag_values(args, flag):
+    out = []
+    for i, arg in enumerate(args):
+        if arg.upper() in ("/" + flag, "-" + flag) and i + 1 < len(args):
+            out.append(_norm(args[i + 1]))
+        elif arg[:1] in "/-" and arg[1:1 + len(flag)].upper() == flag and len(arg) > len(flag) + 1:
+            out.append(_norm(arg[1 + len(flag):]))
+    return out
+
+
 def cl_include_dirs(text):
     """/I dirs of a file's `// cl:` lines, in order; None without one."""
-    dirs, found = [], False
-    for line in text.lstrip("﻿").splitlines():
-        if not line.startswith("// cl:"):
-            continue
-        found = True
-        args = line[len("// cl:"):].split()
-        for i, arg in enumerate(args):
-            if arg in ("/I", "-I") and i + 1 < len(args):
-                dirs.append(_norm(args[i + 1]))
-            elif arg.startswith(("/I", "-I")) and len(arg) > 2:
-                dirs.append(_norm(arg[2:]))
-    return dirs if found else None
+    args = _cl_args(text)
+    return None if args is None else _flag_values(args, "I")
+
+
+def include_dirs(path, text):
+    """Search dirs after the quoted sibling, as build.py runs cl.exe: the
+    `// cl:` /I dirs, then INCLUDE. None (suffix fallback) for a header or
+    outside file without a `// cl:` line."""
+    cl = cl_include_dirs(text)
+    if cl is None and (_outside(path) or not path.lower().endswith(tuple(CPP_SUFFIXES))):
+        return None
+    extra = []
+    if "// stlport" in text[:8192]:
+        extra += ([] if _STLPORT_OPT_OUT in text[:8192] else [_STLPORT_OVERLAY])
+        extra += [_STLPORT, _STLPORT + "/src"]
+    if path.startswith("game/Libraries/Source/Benchmark/"):
+        extra.append(_NBENCH)
+    return (cl or []) + extra + [_VC7_INCLUDE]
+
+
+def include_entries(text):
+    """[(quoted, name)] for each #include line and `// cl:` /FI ("fi": cl.exe
+    runs from the checkout root, so a /FI path is root-relative first)."""
+    out = [(m.group(1) == '"', m.group(2)) for m in map(_INCLUDE_RE.match, text.splitlines()) if m]
+    args = _cl_args(text)
+    return out + [("fi", n) for n in _flag_values(args or [], "FI")]
 
 
 def resolve_include(rev, includer, name, quoted, dirs):
     """Tracked files an include names, as cl.exe searches: a quoted one
-    next to its includer first, then each /I dir in order (dirs; None for a
-    file without `// cl:`, which falls back to an outside suffix match)."""
+    next to its includer first, then each dir in order (dirs; None for a
+    file that falls back to an outside suffix match)."""
     exact, by_base = _listing(rev)
     name = _norm(name)
     if not name:
@@ -405,7 +458,7 @@ def resolve_include(rev, includer, name, quoted, dirs):
             return [hit]
     if dirs is not None:
         return []
-    tail = name.lower().lstrip("./")
+    tail = name.lower()
     while tail.startswith("../"):
         tail = tail[3:]
     return [p for p in by_base.get(tail.rsplit("/", 1)[-1], ())
@@ -413,11 +466,11 @@ def resolve_include(rev, includer, name, quoted, dirs):
 
 
 def _outside_scan(rev):
-    """{"defs", "names", "reach"} for the outside tree at rev: the #define
-    lines of the outside emit macros (and outside macros naming one,
-    fixpoint over `git grep`), their names, and {outside path: emit file}
-    for every outside file that contains an emit or includes (sibling first,
-    then suffix) one that does."""
+    """{"defs", "names", "seeds", "reach"} for the outside tree at rev: the
+    #define lines of the outside emit macros (and outside macros naming one,
+    fixpoint over `git grep`), their names, the emit files, and {outside
+    path: [emit files it reaches]} through outside includes (sibling first,
+    then suffix)."""
     seen, lines, names, owners = set(), [], set(), []
     first = _grep(rev, ["-E", r"\b__?emit\b"], _OUTSIDE_GLOBS)
     new, raw = list(first), set()
@@ -442,32 +495,56 @@ def _outside_scan(rev):
     names = _emit_macros(_macro_table("\n".join(lines)))
     keep = [l for l in lines if _DEFINE_RE.match(l).group(1) in names]
     seeds = raw | {p for p, l in owners if _DEFINE_RE.match(l).group(1) in names}
-    cmd = ["git", "grep", "-n", "-I"] + (["--cached"] if rev == ":" else [])
-    cmd += ["-E", r'^\s*#\s*include\s*[<"][^">]+[">]'] + ([] if rev == ":" else [rev])
-    out = subprocess.run(cmd + ["--"] + list(_OUTSIDE_GLOBS), capture_output=True,
-                         text=True).stdout
-    edges = []
-    for row in out.splitlines():
-        if rev != ":":
-            row = row.split(":", 1)[1]
-        path, _, line = row.split(":", 2)
-        m = _INCLUDE_RE.match(line)
-        if m:
-            edges.append((path, m.group(2), m.group(1) == '"'))
-    reach = {p: p for p in sorted(seeds)}
-    for _ in range(16):
+    edges = collections.defaultdict(set)
+    for path, quoted, name in _grep_includes(rev, _OUTSIDE_GLOBS):
+        for target in resolve_include(rev, path, name, quoted, None):
+            if target != path:
+                edges[path].add(target)
+    reach = {p: {p} for p in seeds}
+    for _ in range(64):
         grew = False
-        for path, name, quoted in edges:
-            if path in reach:
-                continue
-            for target in resolve_include(rev, path, name, quoted, None):
-                if target in reach:
-                    reach[path] = reach[target]
-                    grew = True
-                    break
+        for path, targets in edges.items():
+            got = set().union(*(reach.get(t, ()) for t in targets))
+            if got - reach.get(path, set()):
+                reach.setdefault(path, set()).update(got)
+                grew = True
         if not grew:
             break
-    return {"defs": "\n".join(keep), "names": sorted(names), "reach": reach}
+    return {"defs": "\n".join(keep), "names": sorted(names), "seeds": sorted(seeds),
+            "reach": {p: sorted(v) for p, v in sorted(reach.items())}}
+
+
+def _grep_includes(rev, globs):
+    """[(path, quoted, name)] for every #include line under globs at rev."""
+    cmd = ["git", "grep", "-n", "-I"] + (["--cached"] if rev == ":" else [])
+    cmd += ["-E", r'^\s*#\s*include\s*[<"][^">]+[">]'] + ([] if rev == ":" else [rev])
+    out = subprocess.run(cmd + ["--"] + list(globs), capture_output=True, text=True).stdout
+    rows = []
+    for row in out.splitlines():
+        parts = row.split(":", 3 if rev != ":" else 2)
+        if len(parts) < (4 if rev != ":" else 3):
+            continue  # not a match row (a grep diagnostic)
+        path, line = parts[-3], parts[-1]
+        m = _INCLUDE_RE.match(line)
+        if m:
+            rows.append((path, m.group(1) == '"', m.group(2)))
+    return rows
+
+
+def _valid_state(state):
+    """A loaded cache entry is used only with the right shape and a
+    non-empty emit-file set (an empty one would silently disable A3/A5)."""
+    try:
+        return (isinstance(state, dict) and isinstance(state["defs"], str)
+                and isinstance(state["names"], list) and isinstance(state["seeds"], list)
+                and isinstance(state["reach"], dict) and bool(state["seeds"])
+                and all(isinstance(n, str) for n in state["names"] + state["seeds"])
+                and all(isinstance(k, str) and isinstance(v, list)
+                        and all(isinstance(x, str) for x in v)
+                        for k, v in state["reach"].items())
+                and set(state["seeds"]) <= set(state["reach"]))
+    except (KeyError, TypeError):
+        return False
 
 
 def outside_state(rev):
@@ -483,9 +560,9 @@ def outside_state(rev):
             state = json.loads(path.read_text())
         except (OSError, ValueError):
             state = None
-    if state is None:
+    if not _valid_state(state):
         state = _outside_scan(rev)
-        if path is not None:
+        if path is not None and state["seeds"]:
             try:
                 path.parent.mkdir(parents=True, exist_ok=True)
                 tmp = path.with_suffix(".tmp%d" % os.getpid())
@@ -503,16 +580,82 @@ def outside_emit_defs(rev):
     return state["defs"], set(state["names"])
 
 
-def new_outside_emit_names(old, new):
-    """Rule A4: outside emit macro names at new that old did not have."""
-    return sorted(outside_emit_defs(new)[1] - outside_emit_defs(old)[1])
+def _reached(rev, path, text, entries=None):
+    """{emit file: include name} the includes (or entries) of a game/ or
+    shims file reach at rev."""
+    dirs, reach, out = include_dirs(path, text), outside_state(rev)["reach"], {}
+    for quoted, name in (include_entries(text) if entries is None else entries):
+        if quoted == "fi":
+            quoted, search = True, [""] + (dirs or [])
+        else:
+            search = dirs
+        for target in resolve_include(rev, path, name, quoted, search):
+            for hit in reach.get(target, ()):
+                out.setdefault(hit, name)
+    return out
+
+
+def outside_work(old, new, lines):
+    """(run A3, run A5) for a diff: A3 when an #include, `// cl:` or
+    `// stlport` line in a game/ or shims file changes; A5 when the diff
+    touches an outside inputs/ path or deletes or renames a game/ or shims
+    file (a deleted sibling can send an existing include elsewhere)."""
+    path, a3 = None, False
+    for line in lines:
+        if line.startswith(("+++ b/", "--- a/")):
+            path = line[6:]
+        elif line.startswith(("---", "+++")):
+            continue
+        elif line[:1] in "+-" and path and path.startswith(("game/", SHIMS)):
+            body = line[1:].lstrip("﻿")
+            if _INCLUDE_RE.match(body) or body.startswith("// cl:") or "// stlport" in body:
+                a3 = True
+                break
+    cmd = ["git", "diff", "--name-status", "--find-renames=50%"]
+    cmd += ["--cached", old] if new == ":" else [old, new]
+    rows = subprocess.run(cmd + ["--", "inputs/", "game/"], capture_output=True,
+                          text=True).stdout.splitlines()
+    a5 = False  # an added include, /I or // stlport change is A3's to judge
+    for row in rows:
+        status, *paths = row.split("\t")
+        if any(_outside(p) for p in paths) or (status[:1] in "DR" and any(
+                p.startswith(("game/", SHIMS)) for p in paths)):
+            a5 = True
+            break
+    return a3, a5
+
+
+def reach_set(rev):
+    """R(rev): the emit files the existing includes of game/ and shims files
+    reach. One grep of their #include, `// cl:` and `// stlport` lines."""
+    cmd = ["git", "grep", "-n", "-I"] + (["--cached"] if rev == ":" else [])
+    cmd += ["-E", r'^\s*#\s*include\s*[<"]|// cl:|// stlport'] + ([] if rev == ":" else [rev])
+    out = subprocess.run(cmd + ["--", "game/", SHIMS, ":(exclude)game/gen_small/"],
+                         capture_output=True, text=True).stdout
+    texts = collections.defaultdict(list)
+    for row in out.splitlines():
+        parts = row.split(":", 3 if rev != ":" else 2)
+        if len(parts) < (4 if rev != ":" else 3):
+            continue  # not a match row (a grep diagnostic)
+        path, line = parts[-3], parts[-1]
+        texts[path].append(line)
+    hits = set()
+    for path, text in texts.items():
+        hits |= set(_reached(rev, path, "\n".join(text)))
+    return hits
+
+
+def reach_growth(old, new):
+    """Rule A5: emit files R(new) holds that R(old) did not."""
+    return sorted(reach_set(new) - reach_set(old))
 
 
 def added_outside_includes(old, new, lines=None):
-    """Rule A3: [(path, include, outside emit file)] for each #include a
-    game/ or shims file adds that resolves to an outside emit file. An
-    include the same diff removes from the same file is a move; a changed
-    `// cl:` line re-judges every include of that file."""
+    """Rule A3: [(path, include, outside emit file)] for each include a
+    game/ or shims file adds that reaches an outside emit file. An include
+    the same diff removes from the same file is a move; a changed `// cl:`
+    or added `// stlport` line re-judges every include of that file, and
+    one that reached the same emit file before is not blamed again."""
     if lines is None:
         lines = collect_diff_lines(old, new)
     added, removed, recl, path = [], collections.Counter(), set(), None
@@ -523,38 +666,34 @@ def added_outside_includes(old, new, lines=None):
             continue
         elif line[:1] in "+-" and path and path.startswith(("game/", SHIMS)) \
                 and not path.startswith("game/gen_small/"):
-            if line[0] == "+" and line[1:].lstrip("﻿").startswith("// cl:"):
+            body = line[1:].lstrip("﻿")
+            if line[0] == "+" and (body.startswith("// cl:") or "// stlport" in body):
                 recl.add(path)
             m = _INCLUDE_RE.match(line[1:])
             if m:
-                key = (path, m.group(1), m.group(2))
+                key = (path, m.group(1) == '"', m.group(2))
                 if line[0] == "-":
                     removed[key] += 1
                 else:
                     added.append(key)
-    texts = {}
     for p in recl:
-        texts[p] = file_text(new, p)
-        for line in texts[p].splitlines():
-            m = _INCLUDE_RE.match(line)
-            if m and (p, m.group(1), m.group(2)) not in added:
-                added.append((p, m.group(1), m.group(2)))
-    bad = []
-    for path, delim, name in added:
-        if removed[(path, delim, name)] and path not in recl:
-            removed[(path, delim, name)] -= 1
+        for quoted, name in include_entries(file_text(new, p)):
+            if (p, quoted, name) not in added:
+                added.append((p, quoted, name))
+    bad, before = [], {}
+    for path, quoted, name in added:
+        if removed[(path, quoted, name)] and path not in recl:
+            removed[(path, quoted, name)] -= 1
             continue
         if (path, name) in OUTSIDE_INCLUDE_ALLOW:
             continue
-        if path not in texts:
-            texts[path] = file_text(new, path)
-        targets = resolve_include(new, path, name, delim == '"', cl_include_dirs(texts[path]))
-        if not targets:
-            continue
-        reach = outside_state(new)["reach"]
-        hit = next((reach[t] for t in targets if t in reach), None)
-        if hit:
-            bad.append((path, name, hit))
+        hits = _reached(new, path, file_text(new, path), [(quoted, name)])
+        if path in recl and hits:
+            if path not in before:
+                before[path] = _reached(old, path, file_text(old, path))
+            hits = {h: n for h, n in hits.items() if h not in before[path]}
+        if hits:
+            bad.append((path, name, sorted(hits)[0]))
     return bad
 
 
@@ -1204,18 +1343,19 @@ def main():
               "produce and moves progress.py C++ exact by +0. Convert to real C++, or\n"
               "leave the .asm dump alone (codegen blockers: game/masm_dumps/*.asm).",
               file=sys.stderr)
-    for path, name, hit in added_outside_includes(old, new, collected):
+    run_a3, run_a5 = outside_work(old, new, collected)
+    for path, name, hit in added_outside_includes(old, new, collected) if run_a3 else ():
         failed = True
-        print("conversion gate: %s adds #include \"%s\", which reaches %s: an emit\n"
-              "macro outside game/ and inputs/reference/shims/ is never judged where it is\n"
-              "defined. Copy what you need into game/ as C++." % (path, name, hit),
+        print("conversion gate: %s adds an include of \"%s\", which reaches %s: an\n"
+              "emit outside game/ and inputs/reference/shims/ is never judged where it is\n"
+              "written. Copy what you need into game/ as C++." % (path, name, hit),
               file=sys.stderr)
-    for name in new_outside_emit_names(old, new):
+    for hit in reach_growth(old, new) if run_a5 else ():
         failed = True
-        print("conversion gate: an outside file now defines emit macro %s, which no file\n"
-              "outside game/ and inputs/reference/shims/ defined before. Emit macros there\n"
-              "are never judged where they are defined; write the code in game/ as C++."
-              % name, file=sys.stderr)
+        print("conversion gate: %s now holds an emit and is reached from the includes of\n"
+              "game/ or inputs/reference/shims/ files, which it was not before. An emit\n"
+              "outside those trees is never judged where it is written; write the code in\n"
+              "game/ as C++." % hit, file=sys.stderr)
     for path, signature in added_asm_only_bodies(old, new, collected):
         failed = True
         print("conversion gate: %s adds a function whose whole body is __asm:\n"

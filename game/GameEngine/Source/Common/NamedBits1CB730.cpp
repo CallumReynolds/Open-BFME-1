@@ -8,10 +8,15 @@
 // stlport
 #include <bitset>
 #include "Libraries/Source/WWVegas/WWLib/ascii_string.h"
-struct XferException { char *text; int tag; };
-extern "C" XferException *__cdecl bfmeFormatText(XferException *,int,const char *,...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *,void *);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 struct __declspec(align(4)) Version1CB730 { unsigned char version,current; };
 class Xfer { public:
  virtual void pad00();
@@ -77,9 +82,7 @@ void NamedBits1CB730::transfer(Xfer *xfer)
    xfer->text(&name);
    int bit=BitFlags<116>::getSingleBitFromName(name.str());
    if (bit<0) {
-    XferException error;
-    bfmeFormatText(&error,0,0);
-    _CxxThrowException(&error,&g_guardTargetTypeThrowInfo);
+    throw XferException(0,0);
    }
    bits._Unchecked_set(bit);
   }

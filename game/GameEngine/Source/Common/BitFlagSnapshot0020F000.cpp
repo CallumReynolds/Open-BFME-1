@@ -15,10 +15,15 @@ struct FlagError0020F000
 #define __PLACEMENT_VEC_NEW_INLINE
 #include "ascii_string.h"
 
-extern "C" FlagError0020F000 *__cdecl bfmeFormatText(
-	FlagError0020F000 *, int, const char *, ...);
-extern "C" char g_rva005c5100ThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class FlagXfer0020F000
 {
@@ -133,9 +138,7 @@ void BitFlagSnapshot0020F000::xfer(FlagXfer0020F000 *xfer)
 			int flag = bfmeLookupC((void*)string.str());
 			if (flag < 0)
 			{
-				FlagError0020F000 error;
-				bfmeFormatText(&error, 0, 0);
-				_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+				throw XferException(0, 0);
 			}
 			bits |= 1 << (flag & 31);
 		}

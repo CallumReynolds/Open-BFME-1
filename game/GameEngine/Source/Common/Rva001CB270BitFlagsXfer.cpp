@@ -17,10 +17,16 @@
 #include <bitset>
 #include "Libraries/Source/WWVegas/WWLib/ascii_string.h"
 
-struct XferException { char *text; int tag; };
-extern "C" XferException *__cdecl bfmeFormatText(XferException *,int,const char *,...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern void __declspec(noreturn) __stdcall _CxxThrowException(void *,void *);
-extern int g_guardTargetTypeThrowInfo;
 extern int __cdecl bfmeLookup_001c62b0(void *);
 
 struct __declspec(align(4)) Version1CB270 { unsigned char version,current; };
@@ -93,9 +99,7 @@ void Rva001CB270BitFlags::xfer(Xfer *xfer)
    xfer->text(&name);
    int bit=bfmeLookup_001c62b0(const_cast<char *>(name.str()));
    if (bit<0) {
-    XferException error;
-    bfmeFormatText(&error,0,0);
-    _CxxThrowException(&error,&g_guardTargetTypeThrowInfo);
+    throw XferException(0,0);
    }
    bits._Unchecked_set(bit);
   }

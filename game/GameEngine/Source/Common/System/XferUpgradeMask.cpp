@@ -13,10 +13,15 @@ union Rva0010CC40XferVersion
     unsigned int m_value;
 };
 
-struct XferException { void *text; int tag; };
-extern "C" XferException *__cdecl bfmeFormatText(XferException *result, int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
-extern int g_rva005c5100ThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 // UpgradeCenter::firstUpgradeTemplate, matched under its generated name at 0x0010A6D0.
 struct Gen_0010a6d0 { int m(); };
@@ -77,9 +82,7 @@ void xferBlob_0010CC40(Xfer *xfer, void *upgradeMaskDataV)
             const UpgradeTemplate *found = TheUpgradeCenter->findUpgrade(upgradeName);
             if (found == 0)
             {
-                XferException error;
-                bfmeFormatText(&error, 0, 0);
-                _CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+                throw XferException(0, 0);
             }
             unsigned int bit = *(unsigned int *)((const char *)found + 0x20);
             upgradeMaskData[bit >> 5] |= 1u << (bit & 0x1f);

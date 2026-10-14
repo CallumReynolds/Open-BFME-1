@@ -81,13 +81,17 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 class Xfer; class MidVirtualSlot90Receiver;
 Xfer & Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *context);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 class BroadcastStealthUpdate
 {
@@ -133,9 +137,7 @@ void BroadcastStealthUpdate::xfer(Xfer *xfer)
 	{
 		if (!m_broadcastObjects.empty())
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(5, 0);
 		}
 
 		xfer->xferInt((int *)&m_broadcastObjectCount);

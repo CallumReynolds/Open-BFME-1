@@ -9,18 +9,16 @@ typedef unsigned int UnsignedInt;
 void *__cdecl operator new[](unsigned int size);
 void __cdecl operator delete[](void *memory);
 
-struct XferException
+class XferException
 {
-	void *text;
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
 	int tag;
 };
 
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-
-extern int g_guardTargetTypeThrowInfo;
 
 extern "C" __declspec(dllimport) void *__cdecl fopen(
 	const char *name, const char *mode);
@@ -79,9 +77,7 @@ static __declspec(noinline) void extractAndSaveMap(AsciiString mapToSave, Xfer *
 	void *fp = fopen(mapToSave.str(), "w+b");
 	if (fp == 0)
 	{
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	xfer->beginBlock("EmbeddedMap");
@@ -90,18 +86,14 @@ static __declspec(noinline) void extractAndSaveMap(AsciiString mapToSave, Xfer *
 	char *buffer = (char *)::operator new[](dataSize);
 	if (buffer == 0)
 	{
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	xfer->xferUser(buffer, dataSize);
 	if (fwrite(buffer, 1, dataSize, fp) != dataSize)
 	{
 		::operator delete[](buffer);
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	fclose(fp);

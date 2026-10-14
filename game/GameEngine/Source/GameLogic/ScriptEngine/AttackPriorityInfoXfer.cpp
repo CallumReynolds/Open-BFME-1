@@ -61,17 +61,15 @@ struct XferVersion
 	UnsignedByte m_pad[2];
 };
 
-struct XferException
+class XferException
 {
-	char *m_text;
-	Int m_tag;
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, Int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 class Snapshot;
 
@@ -179,7 +177,6 @@ void AttackPriorityInfo::xfer(Xfer *xfer)
 	AsciiString thingTemplateName;
 	const ThingTemplate *thingTemplate;
 	Int priority;
-	XferException error;
 	if (xfer->IsStoring())
 	{
 		if (m_priorityMap)
@@ -203,8 +200,7 @@ void AttackPriorityInfo::xfer(Xfer *xfer)
 			thingTemplate = ((BfmeThingFactory *)TheThingFactory)->findTemplate(thingTemplateName);
 			if (thingTemplate == 0)
 			{
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				throw XferException(5, 0);
 			}
 			xfer->xferInt(&priority);
 			setPriority(thingTemplate, priority);

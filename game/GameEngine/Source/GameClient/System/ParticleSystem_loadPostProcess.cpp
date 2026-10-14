@@ -11,11 +11,15 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_rva005c5100ThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 enum ParticleSystemID
 {
@@ -82,18 +86,14 @@ void ParticleSystem::loadPostProcess(void)
 	{
 		if (m_slaveSystem.m_ptr != 0)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+			throw XferException(5, 0);
 		}
 
 		m_slaveSystem = TheParticleSystemManager->findParticleSystemByID(m_slaveSystemID);
 
 		if (m_slaveSystem.m_ptr == 0 || m_slaveSystem->m_isDestroyed == 1)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+			throw XferException(5, 0);
 		}
 	}
 
@@ -101,18 +101,14 @@ void ParticleSystem::loadPostProcess(void)
 	{
 		if (m_masterSystem.m_ptr != 0)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+			throw XferException(5, 0);
 		}
 
 		m_masterSystem = TheParticleSystemManager->findParticleSystemByID(m_masterSystemID);
 
 		if (m_masterSystem.m_ptr == 0 || m_masterSystem->m_isDestroyed == 1)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+			throw XferException(5, 0);
 		}
 	}
 }

@@ -119,11 +119,15 @@ public:
 
 class Xfer; class MidVirtualSlot90Receiver;
 extern Xfer & Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *value);
-extern "C" BfmeXferException *__cdecl bfmeFormatText(
-	BfmeXferException *result, Int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 // Retail TeamInQueue vftable (0x01096940); clearNode stamps it into each node.
 // Named directly, so no stand-in spelling can hide a wrong reference.
 extern "C" void *__identifier("??_7TeamInQueue@@6B@")[];
@@ -265,9 +269,7 @@ void Gen_00168910::bfmeAccept(BfmeSeedTarget *target)
 	{
 		if (m_list04 != 0)
 		{
-			BfmeXferException error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(5, 0);
 		}
 
 		for (UnsignedShort i = 0; i < firstCount; ++i)
@@ -319,9 +321,7 @@ void Gen_00168910::bfmeAccept(BfmeSeedTarget *target)
 	{
 		if (m_list08 != 0)
 		{
-			BfmeXferException error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(5, 0);
 		}
 
 		for (UnsignedShort i = 0; i < secondCount; ++i)
@@ -352,9 +352,7 @@ void Gen_00168910::bfmeAccept(BfmeSeedTarget *target)
 	target->xferUnsignedInt(&contextValue);
 	if (contextValue != m_context0C->m_value24)
 	{
-		BfmeXferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	target->xferBool((Bool *)&m_field10);

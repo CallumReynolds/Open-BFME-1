@@ -1,18 +1,17 @@
 // cl: /DNDEBUG /MD /O2
 #include "../../Common/System/xfer.h"
 
-struct XferException
+class XferException
 {
-	void *text;
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
 class Xfer; class MidVirtualSlot90Receiver;
 Xfer & __cdecl Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *target);
-__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 extern "C" Xfer &__cdecl xferRva003D6CB0(Xfer &xfer, int (&targets)[512])
 {
@@ -21,9 +20,7 @@ extern "C" Xfer &__cdecl xferRva003D6CB0(Xfer &xfer, int (&targets)[512])
 	xfer == version;
 	if (version != 512)
 	{
-		XferException error;
-		bfmeFormatText(&error, 0, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(0, 0);
 	}
 
 	int *target = targets;
@@ -44,9 +41,7 @@ extern "C" Xfer &__cdecl xferRva003D6D40(Xfer &xfer, float (&targets)[64])
 	xfer == version;
 	if (version != 64)
 	{
-		XferException error;
-		bfmeFormatText(&error, 0, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(0, 0);
 	}
 
 	float *target = targets;

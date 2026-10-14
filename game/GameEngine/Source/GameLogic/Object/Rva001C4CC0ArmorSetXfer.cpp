@@ -80,11 +80,16 @@ struct Rva001C4CC0FormattedText
 
 extern unsigned char g_bfmeTableDH[];
 extern int g_bfmeTableDJa[];
-extern "C" Rva001C4CC0FormattedText *__cdecl bfmeFormatText(
-	Rva001C4CC0FormattedText *, int, const char *, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern int __cdecl bfmeLookupA(void *name);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
-extern int g_guardTargetTypeThrowInfo;
 
 // Retail calls BitFlags<N>::xfer through the ILT thunk at RVA 0x42ac3, so the
 // thunk address is what the code actually references.
@@ -158,9 +163,7 @@ void Rva001C4CC0::xfer(Rva001C4CC0XferView *xfer)
 			int flag = bfmeLookupA(lookupName);
 			if (flag < 0)
 			{
-				Rva001C4CC0FormattedText error;
-				bfmeFormatText(&error, 0, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				throw XferException(0, 0);
 			}
 			bits |= 1 << (flag & 31);
 		}

@@ -89,11 +89,15 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class StealthUpdate : public UpdateModule
 {
@@ -146,9 +150,7 @@ void StealthUpdate::xfer(Xfer *xfer)
 			m_disguiseAsTemplate = TheThingFactory->findTemplate(name);
 			if (m_disguiseAsTemplate == 0)
 			{
-				BfmeFormattedText error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				throw XferException(5, 0);
 			}
 		}
 	}

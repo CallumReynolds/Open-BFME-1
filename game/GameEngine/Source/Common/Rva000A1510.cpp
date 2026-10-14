@@ -16,10 +16,15 @@
 class Rva000A1510Version : public Xfer::Version { public:
     Rva000A1510Version() { data[0] = 1; data[1] = 2; }
 };
-struct XferException { char *text; int tag; };
-extern "C" XferException *__cdecl bfmeFormatText(XferException *, int, const char *, ...);
-extern "C" char g_rva005c5100ThrowInfo;
-__declspec(noreturn) void __stdcall _CxxThrowException(void *, void *);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern GameLogic *TheGameLogic;
 class MidVirtualSlot90Receiver;
 Xfer &__cdecl Rva0010C3C0(MidVirtualSlot90Receiver *, void *);
@@ -76,9 +81,7 @@ void Rva000A1510Owner::transfer(Xfer *xfer)
         int saveCount = count;
         *xfer == saveCount;
         if (saveCount != count) {
-            XferException error;
-            bfmeFormatText(&error, 5, 0);
-            _CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+            throw XferException(5, 0);
         }
         for (node = static_cast<Rva000A1510Node *>(header04->_M_left); node != header04;
             node = static_cast<Rva000A1510Node *>(_STL::_Rb_global<bool>::_M_increment(node))) {
@@ -86,9 +89,7 @@ void Rva000A1510Owner::transfer(Xfer *xfer)
             unsigned id = state->id04;
             *xfer == id;
             if (id != state->id04) {
-                XferException error;
-                bfmeFormatText(&error, 5, 0);
-                _CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+                throw XferException(5, 0);
             }
             *xfer == *reinterpret_cast<Snapshot *>(state);
         }
@@ -97,9 +98,7 @@ void Rva000A1510Owner::transfer(Xfer *xfer)
             current1C = reinterpret_cast<Rva000A1510State *>(
                 reinterpret_cast<Rva000A1310StateMachine *>(this)->lookup(default18));
             if (!current1C) {
-                XferException error;
-                bfmeFormatText(&error, 5, 0);
-                _CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+                throw XferException(5, 0);
             }
         }
         *xfer == *reinterpret_cast<Snapshot *>(current1C);

@@ -29,9 +29,15 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(BfmeFormattedText *, int, const char *, ...);
-extern void __stdcall _CxxThrowException(void *, void *);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class BroadcastStealthUpdate : public BfmeA987
 {
@@ -52,9 +58,7 @@ void BroadcastStealthUpdate::loadPostProcess()
 
 	if (!m_objects.empty())
 	{
-		BfmeFormattedText error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 		__assume(0);
 	}
 
@@ -63,9 +67,7 @@ void BroadcastStealthUpdate::loadPostProcess()
 		Object *object = TheGameLogic->findObjectByID(*it);
 		if (object == 0)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(5, 0);
 			__assume(0);
 		}
 		m_objects.push_back(object);

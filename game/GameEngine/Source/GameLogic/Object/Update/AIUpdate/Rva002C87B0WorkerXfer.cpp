@@ -76,10 +76,15 @@ struct BfmeFormattedText
 	int m_tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *, int, const char *, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 class Xfer; class MidVirtualSlot90Receiver;
 extern Xfer & __cdecl Rva0010C3C0(MidVirtualSlot90Receiver *, void *);
 
@@ -146,9 +151,7 @@ void Rva002C87B0Worker::xfer(Xfer *xfer)
 	xfer->xferInt(&numTasks);
 	if (numTasks != 3)
 	{
-		BfmeFormattedText error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	UnsignedInt *taskOrderFrame = &m_task[0].m_taskOrderFrame;
@@ -166,9 +169,7 @@ void Rva002C87B0Worker::xfer(Xfer *xfer)
 	xfer->xferInt(&dockPoints);
 	if (dockPoints != 3)
 	{
-		BfmeFormattedText error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	for (int i = 0; i < 3; ++i)

@@ -88,11 +88,15 @@ private:
 
 extern unsigned char g_bfmeTableDH[];
 extern int __cdecl bfmeLookup_001c6340(void *name);
-extern "C" BfmeSubTwoExceptionBH *__cdecl bfmeFormatText(
-	BfmeSubTwoExceptionBH *exception, int reserved, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *exception, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class BfmeAgentBH
 {
@@ -216,9 +220,7 @@ void BfmeSubTwoBH::bfmeSaveBH(BfmeAgentBH *ag)
 			int bit = bfmeLookup_001c6340(const_cast<char *>(value));
 			if (bit < 0)
 			{
-				BfmeSubTwoExceptionBH exception;
-				bfmeFormatText(&exception, 0, 0);
-				_CxxThrowException(&exception, &g_guardTargetTypeThrowInfo);
+				throw XferException(0, 0);
 			}
 			bits->_Unchecked_set(bit);
 		}

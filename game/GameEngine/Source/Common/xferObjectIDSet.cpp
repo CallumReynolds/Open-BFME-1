@@ -8,12 +8,6 @@ struct XferVersion
 	unsigned char m_currentVersion;
 };
 
-struct XferException
-{
-	char *m_text;
-	int m_tag;
-};
-
 struct BfmeInsertResult
 {
 	void *m_iterator;
@@ -81,9 +75,15 @@ struct _Rb_global
 };
 }
 
-extern "C" XferException *__cdecl bfmeFormatText(XferException *, int, const char *, ...);
-extern "C" int g_guardTargetTypeThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 class Xfer; class MidVirtualSlot90Receiver;
 Xfer & Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *context);
 
@@ -115,9 +115,7 @@ Xfer *xferObjectIDSet(Xfer *xfer, BfmeObjectIDTree *tree)
 	{
 		if (t->m_size != 0)
 		{
-			XferException error;
-			bfmeFormatText(&error, 4, "Set must be empty on load");
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(4, "Set must be empty on load");
 		}
 		while (count)
 		{

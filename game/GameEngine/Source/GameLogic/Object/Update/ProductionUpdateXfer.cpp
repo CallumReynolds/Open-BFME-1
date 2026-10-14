@@ -127,17 +127,15 @@ static __forceinline const UpgradeTemplate *bfmeFindUpgrade(
 	return center->findUpgrade(name);
 }
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern "C" int g_guardTargetTypeThrowInfo;
 extern void *__cdecl operator new(unsigned int size);
 
 class BfmeSeedTarget;
@@ -245,9 +243,7 @@ extern AudioManager *TheAudio;
 
 #define PRODUCTION_UPDATE_XFER_ERROR() \
 	do { \
-		XferException error; \
-		bfmeFormatText(&error, 5, 0); \
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo); \
+		throw XferException(5, 0); \
 	} while (0)
 
 // ?xfer@ProductionUpdate@@MAEXPAVXfer@@@Z

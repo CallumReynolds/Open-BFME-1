@@ -139,7 +139,7 @@ public:
 
 extern ScriptEngine *TheScriptEngine;
 
-struct XferException
+struct XferExceptionStorage
 {
 	char *m_text;
 	int m_tag;
@@ -148,10 +148,18 @@ struct XferException
 union SequentialScriptXferLocal
 {
 	XferVersion version;
-	XferException error;
+	XferExceptionStorage error;
 };
 
-extern "C" XferException *__cdecl bfmeFormatText(XferException *, int, const char *, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
 class Xfer; class MidVirtualSlot90Receiver;
 Xfer & Rva0010C3C0(MidVirtualSlot90Receiver *receiver, void *context);
@@ -192,7 +200,7 @@ void SequentialScript::xfer(Xfer *xfer)
 		m_teamToExecOn = TheTeamFactory->findTeamByID(teamID);
 		if (teamID != 0 && m_teamToExecOn == 0)
 		{
-			bfmeFormatText(&local.error, 5, 0);
+			((XferException *)&local.error)->XferException::XferException(5, 0);
 			_CxxThrowException(&local.error, &g_guardTargetTypeThrowInfo);
 		}
 	}

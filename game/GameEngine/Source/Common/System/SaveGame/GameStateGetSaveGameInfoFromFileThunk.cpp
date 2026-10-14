@@ -230,11 +230,15 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
-extern int g_guardTargetTypeThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern "C" __declspec(dllimport) int __cdecl _strcmpi(
 	const char *left, const char *right);
 
@@ -287,8 +291,7 @@ Bool GameState::getSaveGameInfoFromFile(AsciiString filename,
 				blockInfo = findBlockInfoByToken(token, SNAPSHOT_SAVELOAD);
 				if (blockInfo == 0)
 				{
-					bfmeFormatText(&error, 0, 0);
-					_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+					throw XferException(0, 0);
 				}
 
 				if (_strcmpi(token.str(), "CHUNK_GameState") == 0)

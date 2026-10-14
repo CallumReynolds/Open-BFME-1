@@ -54,19 +54,17 @@ public:
 	virtual Xfer &xferUnsignedShort(UnsignedInt *value);
 };
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
 class Xfer; class MidVirtualSlot90Receiver;
 extern Xfer & __cdecl Rva0010C3C0(MidVirtualSlot90Receiver *xfer, void *value);
-extern int g_guardTargetTypeThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
 
 typedef _STL::pair<AsciiString, int> AsciiStringObjectIDPair;
 typedef _STL::list<AsciiStringObjectIDPair> ListAsciiStringObjectID;
@@ -101,9 +99,7 @@ Xfer *xferListAsciiStringObjectID(
 	{
 		if (!list->empty())
 		{
-			XferException error;
-			bfmeFormatText(&error, 4, "List must be empty on load");
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(4, "List must be empty on load");
 		}
 
 		AsciiStringObjectIDPair newPair;

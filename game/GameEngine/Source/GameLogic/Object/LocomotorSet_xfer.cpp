@@ -6,10 +6,17 @@
 #include "ascii_string.h"
 struct LocomotorVersion001BAAA0 { unsigned char version,current; unsigned char padding[2]; };
 struct LocomotorError001BAAA0 { char *text; int tag; };
-extern "C" LocomotorError001BAAA0 *__cdecl bfmeFormatText(LocomotorError001BAAA0*,int,const char*,...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 // Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
 extern "C" void __stdcall _CxxThrowException(void *, _ThrowInfo *);
-extern "C" char g_rva005c5100ThrowInfo;
 class Xfer
 {
 public:
@@ -97,20 +104,14 @@ void LocomotorSet::xfer(Xfer *xfer) {
         }
     } else {
         if (!m_locomotors.empty()) {
-            LocomotorError001BAAA0 error;
-            bfmeFormatText(&error,4,0);
-            _CxxThrowException(&error,(_ThrowInfo *)&g_rva005c5100ThrowInfo);
-            __assume(0);
+            throw XferException(4,0);
         }
         for (unsigned short i=0;i<count;++i) {
             AsciiString name;
             xfer->xferAsciiString(name);
             const LocomotorTemplate *lt=TheLocomotorStore->findLocomotorTemplate(TheNameKeyGenerator->nameToKey(name.str()));
             if (!lt) {
-                LocomotorError001BAAA0 error;
-                bfmeFormatText(&error,5,0);
-                _CxxThrowException(&error,(_ThrowInfo *)&g_rva005c5100ThrowInfo);
-                __assume(0);
+                throw XferException(5,0);
             }
             Locomotor *loco=TheLocomotorStore->newLocomotor(lt);
             xfer->xferSnapshot(loco);

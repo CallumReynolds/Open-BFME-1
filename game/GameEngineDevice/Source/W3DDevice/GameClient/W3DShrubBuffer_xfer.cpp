@@ -120,9 +120,15 @@ struct BfmeFormattedText
 	Int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(BfmeFormattedText *result, Int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
-extern int g_rva005c5100ThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 struct Rva00720D10Data
 {
@@ -244,9 +250,7 @@ void W3DShrubBuffer::xfer00721380(Xfer *xfer)
 						m_treeTypes[i].m_data = reinterpret_cast<const Rva00721380ModuleDataView *>(moduleData)->slot09();
 				}
 				if (!m_treeTypes[i].m_data) {
-					BfmeFormattedText error;
-					bfmeFormatText(&error, 4, 0);
-					_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+					throw XferException(4, 0);
 				}
 				if (m_treeTypes[i].m_mesh) {
 					m_treeTypes[i].m_mesh->Release_Ref();

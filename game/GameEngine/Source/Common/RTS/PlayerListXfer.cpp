@@ -72,7 +72,15 @@ union PlayerListXferLocal
 	BfmeFormattedText error;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(BfmeFormattedText *, int, const char *, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
 extern int g_guardTargetTypeThrowInfo;
 
@@ -87,7 +95,7 @@ void PlayerList::xfer(Xfer *xfer)
 	xfer->xferInt(&playerCount);
 	if (playerCount != m_playerCount)
 	{
-		bfmeFormatText(&local.error, 5, 0);
+		((XferException *)&local.error)->XferException::XferException(5, 0);
 		_CxxThrowException(&local.error, &g_guardTargetTypeThrowInfo);
 	}
 

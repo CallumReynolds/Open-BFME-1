@@ -14,12 +14,18 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 // Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
 extern "C" void __stdcall _CxxThrowException(
 	void *object, _ThrowInfo *throwInfo);
-extern int g_rva005c5100ThrowInfo;
 
 struct XferVersion : public Xfer::Version
 {
@@ -92,10 +98,7 @@ void Squad::xfer( Xfer *xfer )
 		// the cached objects list should be empty
 		if( m_objectsCached.size() != 0 )
 		{
-			BfmeFormattedText error;
-			bfmeFormatText( &error, 5, 0 );
-			_CxxThrowException( &error, (_ThrowInfo *)&g_rva005c5100ThrowInfo );
-			__assume(0);
+			throw XferException(5, 0);
 		}  // end of
 
 		// read all items

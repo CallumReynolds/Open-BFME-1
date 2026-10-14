@@ -4,16 +4,15 @@
 // keeps RVA 0x0058AD40 because the body has no proven semantic owner.
 #include "xfer.h"
 
-struct XferException
+class XferException
 {
-	void *text;
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
-extern int g_rva005c5100ThrowInfo;
 
 Xfer &__cdecl xferBoolArray12Rva0058AD40(Xfer &xfer, bool *values)
 {
@@ -21,9 +20,7 @@ Xfer &__cdecl xferBoolArray12Rva0058AD40(Xfer &xfer, bool *values)
 	xfer == version;
 	if (version != 12)
 	{
-		XferException error;
-		bfmeFormatText(&error, 0, 0);
-		_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+		throw XferException(0, 0);
 	}
 
 	unsigned int index = 0;

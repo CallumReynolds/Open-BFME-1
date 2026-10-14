@@ -19,17 +19,16 @@ void XferBlockPositionStack::pushPosition(const position_type &position)
 // The constructor at 0x009D8630 installs vtable 0x01144090; its original
 // class spelling is unresolved. This interface names the observed block-writing role.
 
-struct XferException
+class XferException
 {
-	void *text;
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
 // Retail ThrowInfo names XferException and describes its eight-byte value.
-extern "C" unsigned char g_xferExceptionThrowInfo[];
 #pragma intrinsic(_ReadWriteBarrier)
 extern "C" void _ReadWriteBarrier(void);
 
@@ -70,9 +69,7 @@ int Rva009D8630BlockWriter::beginBlock(const char *name)
 	int marker = 0x424c4f4b;
 	if (m_stream->write(&marker, 4) != 4)
 	{
-		XferException error;
-		bfmeFormatText(&error, 1, 0);
-		_CxxThrowException(&error, g_xferExceptionThrowInfo);
+		throw XferException(1, 0);
 	}
 
 	if (m_flag)
@@ -83,9 +80,7 @@ int Rva009D8630BlockWriter::beginBlock(const char *name)
 	{
 		// Preserve retail's position store after the failure check.
 		_ReadWriteBarrier();
-		XferException error;
-		bfmeFormatText(&error, 1, 0);
-		_CxxThrowException(&error, g_xferExceptionThrowInfo);
+		throw XferException(1, 0);
 	}
 
 	int position = streamPosition;
@@ -94,9 +89,7 @@ int Rva009D8630BlockWriter::beginBlock(const char *name)
 	int zero = 0;
 	if (m_stream->write(&zero, 4) != 4)
 	{
-		XferException error;
-		bfmeFormatText(&error, 1, 0);
-		_CxxThrowException(&error, g_xferExceptionThrowInfo);
+		throw XferException(1, 0);
 	}
 
 	return 0;

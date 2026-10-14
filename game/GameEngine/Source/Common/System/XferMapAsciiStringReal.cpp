@@ -88,17 +88,15 @@ public:
 	virtual Xfer &xferUnsignedInt(UnsignedInt *value);
 };
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern int g_guardTargetTypeThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
 
 // ?Rva006B0850XferAsciiStringRealMap@@YAPAVXfer@@PAV1@PAX@Z
 Xfer *Rva006B0850XferAsciiStringRealMap(Xfer *xfer, void *rawMap)
@@ -123,9 +121,7 @@ Xfer *Rva006B0850XferAsciiStringRealMap(Xfer *xfer, void *rawMap)
 	{
 		if (!map->empty())
 		{
-			XferException error;
-			bfmeFormatText(&error, 4, "Map must be empty on load");
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(4, "Map must be empty on load");
 		}
 
 		_STL::pair<AsciiString, Real> entry;

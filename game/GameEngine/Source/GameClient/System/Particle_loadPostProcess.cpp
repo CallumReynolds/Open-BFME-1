@@ -63,11 +63,15 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern "C" unsigned char g_xferExceptionThrowInfo[];
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class Particle
 {
@@ -90,9 +94,7 @@ void Particle::loadPostProcess()
 		m_systemUnderControl = system;
 		if (m_systemUnderControlID == INVALID_PARTICLE_SYSTEM_ID)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, g_xferExceptionThrowInfo);
+			throw XferException(5, 0);
 		}
 	}
 }

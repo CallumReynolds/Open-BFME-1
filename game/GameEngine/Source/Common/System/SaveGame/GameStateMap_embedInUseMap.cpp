@@ -17,17 +17,15 @@ typedef int Int;
 void *__cdecl operator new[](unsigned int size);
 void __cdecl operator delete[](void *memory);
 
-struct XferException
+class XferException
 {
-	void *text;
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 extern __declspec(dllimport) void *__cdecl bfmeFopenVIF(
 	const char *name, const char *mode);
@@ -87,9 +85,7 @@ static __declspec(noinline) void embedInUseMap(AsciiString map, Xfer *xfer)
 	void *fp = bfmeFopenVIF(map.str(), "rb");
 	if (fp == 0)
 	{
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	// how big is the map file
@@ -102,17 +98,13 @@ static __declspec(noinline) void embedInUseMap(AsciiString map, Xfer *xfer)
 	char *buffer = (char *)::operator new[](size);
 	if (buffer == 0)
 	{
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	if (fread(buffer, 1, size, fp) != size)
 	{
 		::operator delete[](buffer);
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	xfer->beginBlock("InUseMap");

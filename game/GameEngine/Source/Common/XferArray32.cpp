@@ -1,12 +1,6 @@
 // cl: /DNDEBUG /MD /O2
 #include "System/xfer.h"
 
-struct XferException
-{
-	void *text;
-	int tag;
-};
-
 struct XferTriple32
 {
 	int a;
@@ -14,12 +8,17 @@ struct XferTriple32
 	int c;
 };
 
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern "C" void __cdecl gen00344750(Xfer *xfer, void *target);
 extern "C" void __cdecl gen000d7010(Xfer *xfer, void *target);
-__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 extern "C" Xfer &__cdecl xferRva00347BB0(Xfer &xfer, int (&targets)[32])
 {
@@ -28,9 +27,7 @@ extern "C" Xfer &__cdecl xferRva00347BB0(Xfer &xfer, int (&targets)[32])
 	xfer == version;
 	if (version != 32)
 	{
-		XferException error;
-		bfmeFormatText(&error, 0, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(0, 0);
 	}
 
 	int *target = targets;
@@ -51,9 +48,7 @@ extern "C" Xfer &__cdecl xferRva00347C40(Xfer &xfer, XferTriple32 (&targets)[32]
 	xfer == version;
 	if (version != 32)
 	{
-		XferException error;
-		bfmeFormatText(&error, 0, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(0, 0);
 	}
 
 	XferTriple32 *target = targets;

@@ -240,9 +240,15 @@ inline UnicodeString::~UnicodeString()
 	((StringBase<unsigned short> *)this)->releaseBuffer();
 }
 struct BfmeXferException { char *text; int tag; };
-extern "C" BfmeXferException *__cdecl bfmeFormatText(BfmeXferException *, int, const char *, ...);
-extern "C" int g_xferExceptionThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 // ?DoXfer@GameClient@@MAEXAAVXfer@@@Z
 void GameClient::DoXfer( Xfer &xfer )
 {
@@ -287,9 +293,7 @@ void GameClient::DoXfer( Xfer &xfer )
 			tocEntry = findTOCEntryByName( retailTemplateName(draw) );
 			if( tocEntry == NULL )
 			{
-				BfmeXferException error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_xferExceptionThrowInfo);
+				throw XferException(5, 0);
 			}
 
 			xfer == tocEntry->id;
@@ -319,9 +323,7 @@ void GameClient::DoXfer( Xfer &xfer )
 			tocEntry = findTOCEntryById( tocID );
 			if( tocEntry == NULL )
 			{
-				BfmeXferException error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_xferExceptionThrowInfo);
+				throw XferException(5, 0);
 			}
 
 			thingTemplate = ((BfmeThingFactory *)TheThingFactory)->findTemplate( tocEntry->name );
@@ -342,17 +344,13 @@ void GameClient::DoXfer( Xfer &xfer )
 
 				if( object == NULL )
 				{
-					BfmeXferException error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_xferExceptionThrowInfo);
+					throw XferException(5, 0);
 				}
 
 				draw = object->getDrawable();
 				if( draw == NULL )
 				{
-					BfmeXferException error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_xferExceptionThrowInfo);
+					throw XferException(5, 0);
 				}
 
 				const ThingTemplate* drawTemplate = retailTemplate(draw);
@@ -370,9 +368,7 @@ void GameClient::DoXfer( Xfer &xfer )
 
 				if( draw == NULL )
 				{
-					BfmeXferException error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_xferExceptionThrowInfo);
+					throw XferException(5, 0);
 				}
 			}
 

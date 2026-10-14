@@ -38,14 +38,21 @@ struct XferVersion
 	UnsignedByte m_currentVersion;
 };
 
-struct XferException
+struct XferExceptionStorage
 {
 	char *text;
 	int tag;
 };
 
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, Int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern void __declspec(noreturn) __stdcall _CxxThrowException(
 	void *object, void *throwInfo);
 extern int g_rva005c5100ThrowInfo;
@@ -140,7 +147,7 @@ struct RadarObjectListXferLocal
 	union
 	{
 		XferVersion version;
-		XferException error;
+		XferExceptionStorage error;
 	};
 };
 
@@ -185,7 +192,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 			{
 				if (!radarObject->friend_getObject()->isDestroyed())
 				{
-					bfmeFormatText( &local.error, 5, NULL );
+					((XferException *)&local.error)->XferException::XferException(5, NULL );
 					_CxxThrowException( &local.error, &g_rva005c5100ThrowInfo );
 				}
 			}
@@ -320,9 +327,7 @@ void Radar::xfer( Xfer *xfer )
 	xfer->xferUnsignedShort( &eventCount );
 	if( eventCount != eventCountVerify )
 	{
-		XferException error;
-		bfmeFormatText( &error, 5, NULL );
-		_CxxThrowException( &error, &g_rva005c5100ThrowInfo );
+		throw XferException(5, NULL);
 	}
 
 	for( UnsignedShort i = 0; i < eventCount; ++i )

@@ -236,10 +236,15 @@ private:
 	void releaseBuffer();
 };
 
-extern "C" BfmeWeaponFormattedText *__cdecl bfmeFormatText(
-	BfmeWeaponFormattedText *, int, const char *, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class BfmeWeaponSetXferView
 {
@@ -394,18 +399,14 @@ void WeaponSet::xfer(Xfer *xfer)
 			}
 			if (thingTemplate == NULL)
 			{
-				BfmeWeaponFormattedText error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				throw XferException(5, 0);
 			}
 
 			weaponSet->templateSet = reinterpret_cast<const WeaponTemplateSet *>(
 				reinterpret_cast<BfmeThingLP *>(const_cast<ThingTemplate *>(thingTemplate))->bfmeTestLP(&flags.bits));
 			if (weaponSet->templateSet == NULL)
 			{
-				BfmeWeaponFormattedText error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				throw XferException(5, 0);
 			}
 		}
 	}
@@ -419,9 +420,7 @@ void WeaponSet::xfer(Xfer *xfer)
 				reinterpret_cast<const BfmeWeaponTemplateSetView *>(weaponSet->templateSet)->thingTemplate;
 			if (thingTemplate == NULL)
 			{
-				BfmeWeaponFormattedText error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				throw XferException(5, 0);
 			}
 			reinterpret_cast<AsciiString &>(templateName) = *reinterpret_cast<const AsciiString *>(
 				reinterpret_cast<const unsigned char *>(thingTemplate) + 0x20);

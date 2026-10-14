@@ -59,9 +59,15 @@ class ParticleSystemTemplate;
 namespace rts { template<class T> struct hash { unsigned int operator()(T value) const; }; }
 typedef _STL::hash_map<AsciiString,ParticleSystemTemplate *,rts::hash<AsciiString>,_STL::equal_to<AsciiString> > Rva005C9FC0TemplateMap;
 struct BfmeFormattedText { char *text; int tag; };
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(BfmeFormattedText *,int,const char *,...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *,void *);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern "C" void __cdecl __identifier("?j_0000240a@@YAXXZ")(Xfer *,void *);
 namespace FXParticleSystem { class ParticleSystemManager {
 public:
@@ -119,15 +125,11 @@ void Rva005C9FC0::method(Xfer &xfer) {
             Rva005C9FC0TemplateMap::const_iterator find=table.find(systemName);
             if(find!=table.end()) systemTemplate=(FXParticleSystem::ParticleSystemTemplate *)find->second;
             if(!systemTemplate) {
-                BfmeFormattedText exception;
-                bfmeFormatText(&exception,5,0);
-                _CxxThrowException(&exception,&g_guardTargetTypeThrowInfo);
+                throw XferException(5,0);
             }
             ParticleSystemHandle system=manager->createParticleSystem(systemTemplate,false);
             if(!system.m_system) {
-                BfmeFormattedText exception;
-                bfmeFormatText(&exception,5,0);
-                _CxxThrowException(&exception,&g_guardTargetTypeThrowInfo);
+                throw XferException(5,0);
             }
             xfer==*(Snapshot *)system.m_system;
         }

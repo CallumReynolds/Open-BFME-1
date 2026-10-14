@@ -57,17 +57,15 @@ public:
 	virtual Xfer &xferAsciiString(AsciiString *value);
 };
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 class LargeGroupAudioKeyMap : public _STL::vector<void *, _STL::allocator<void *> >
 {
@@ -87,9 +85,7 @@ void LargeGroupAudioKeyMap::rva003D47A0Load(Xfer *xfer)
 	xfer->xferVersion(&slot.m_active);
 	if (!xfer->isLoading())
 	{
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	AsciiString value;

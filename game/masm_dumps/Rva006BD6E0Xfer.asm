@@ -42,8 +42,8 @@ EXTERN ?Rva012F8058@@3PAVRva00712F60@@A:BYTE
 EXTERN ?releaseBuffer@?$StringBase@D@@AAEXXZ:NEAR
 EXTERN ?PlayerList005999B0@@3PAUPlayers005999B0@@A:BYTE
 EXTERN ?j_0000914c@@YAXXZ:NEAR
-EXTERN _bfmeFormatText:NEAR
-EXTERN ?g_guardTargetTypeThrowInfo@@3HA:BYTE
+EXTERN ??0XferException@@QAA@HPBDZZ:NEAR
+EXTERN __TI1?AVXferException@@:BYTE
 EXTERN ?ji_009f6d00@@YAXXZ:NEAR
 _TEXT SEGMENT
 ; retail VA 0x00ABD6E0 size 840
@@ -114,15 +114,15 @@ public ?Rva006BD6E0@@YAXXZ
     call ?j_0000914c@@YAXXZ
     db 05Bh, 05Fh, 08Bh, 04Ch, 024h, 030h, 05Eh, 05Dh, 064h, 089h, 00Dh, 000h, 000h, 000h, 000h, 083h
     db 0C4h, 034h, 0C2h, 004h, 000h, 06Ah, 000h, 08Dh, 044h, 024h, 034h, 06Ah, 004h, 050h
-    call _bfmeFormatText
+    call ??0XferException@@QAA@HPBDZZ
     db 083h, 0C4h, 00Ch, 068h
-    dd ?g_guardTargetTypeThrowInfo@@3HA
+    dd __TI1?AVXferException@@
     db 08Dh, 04Ch, 024h, 034h, 051h
     call ?ji_009f6d00@@YAXXZ
     db 06Ah, 000h, 08Dh, 054h, 024h, 034h, 06Ah, 004h, 052h
-    call _bfmeFormatText
+    call ??0XferException@@QAA@HPBDZZ
     db 083h, 0C4h, 00Ch, 068h
-    dd ?g_guardTargetTypeThrowInfo@@3HA
+    dd __TI1?AVXferException@@
     db 08Dh, 044h, 024h, 034h, 050h
     call ?ji_009f6d00@@YAXXZ
 ?Rva006BD6E0@@YAXXZ ENDP

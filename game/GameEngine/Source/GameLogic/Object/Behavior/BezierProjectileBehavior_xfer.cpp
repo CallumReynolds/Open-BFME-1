@@ -7,9 +7,15 @@
 #include "ascii_string.h"
 struct ProjectileVersion001F1860 { unsigned char version,current; unsigned char padding[2]; };
 struct ProjectileError001F1860 { char *text; int tag; };
-extern "C" ProjectileError001F1860 *__cdecl bfmeFormatText(ProjectileError001F1860*,int,const char*,...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void*,void*);
-extern "C" char g_rva005c5100ThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 class Xfer
 {
 public:
@@ -115,9 +121,7 @@ void BezierProjectileBehavior::xfer(Xfer *xfer) {
         else {
             m_at40=TheWeaponStore->findWeaponTemplate(name);
             if (!m_at40) {
-                ProjectileError001F1860 error;
-                bfmeFormatText(&error,5,0);
-                _CxxThrowException(&error,&g_rva005c5100ThrowInfo);
+                throw XferException(5,0);
             }
         }
     }
@@ -129,9 +133,7 @@ void BezierProjectileBehavior::xfer(Xfer *xfer) {
         else {
             m_at3C=TheWeaponStore->findWeaponTemplate(name);
             if (!m_at3C) {
-                ProjectileError001F1860 error;
-                bfmeFormatText(&error,5,0);
-                _CxxThrowException(&error,&g_rva005c5100ThrowInfo);
+                throw XferException(5,0);
             }
         }
     }

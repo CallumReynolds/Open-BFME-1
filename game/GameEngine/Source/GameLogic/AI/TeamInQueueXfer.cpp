@@ -28,7 +28,7 @@ struct XferVersion
 	UnsignedByte m_currentVersion;
 };
 
-struct XferException
+struct XferExceptionStorage
 {
 	char *text;
 	int tag;
@@ -39,13 +39,20 @@ struct TeamInQueueXferLocal
 	union
 	{
 		XferVersion version;
-		XferException error;
+		XferExceptionStorage error;
 	};
 	TeamID teamID;
 };
 
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, Int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern void __declspec(noreturn) __stdcall _CxxThrowException(
 	void *object, void *throwInfo);
 extern int g_guardTargetTypeThrowInfo;
@@ -195,7 +202,7 @@ void TeamInQueue::xfer(Xfer *xfer)
 	{
 		if (m_workOrders != 0)
 		{
-			bfmeFormatText(&local.error, 5, 0);
+			((XferException *)&local.error)->XferException::XferException(5, 0);
 			_CxxThrowException(&local.error, &g_guardTargetTypeThrowInfo);
 		}
 

@@ -69,17 +69,15 @@ public:
 
 extern AI *TheAI;
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern "C" int g_guardTargetTypeThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
 
 class TunnelTracker
 {
@@ -106,9 +104,7 @@ void TunnelTracker::loadPostProcess()
 
 	if (m_containList.size() != 0)
 	{
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 		return;
 	}
 
@@ -117,9 +113,7 @@ void TunnelTracker::loadPostProcess()
 		object = reinterpret_cast<BfmeX1011 *>(TheGameLogic->findObjectByID(*it));
 		if (object == 0)
 		{
-			XferException error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(5, 0);
 			return;
 		}
 

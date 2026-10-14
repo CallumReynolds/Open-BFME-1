@@ -13,12 +13,6 @@ struct XferVersion
 	unsigned char m_currentVersion;
 };
 
-struct XferException
-{
-	char *text;
-	int tag;
-};
-
 class Team
 {
 public:
@@ -37,12 +31,18 @@ public:
 
 extern TeamFactory *TheTeamFactory;
 
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 // Retail 0x009F6D00 is the MSVCR71 _CxxThrowException import thunk.
 extern "C" void __stdcall _CxxThrowException(
 	void *object, _ThrowInfo *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 class Xfer
 {
@@ -132,10 +132,7 @@ void CaveContain::DoXfer(Xfer &xferRef)
 			m_team = TheTeamFactory->findTeamByID(teamID);
 			if (m_team == 0)
 			{
-				XferException error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, (_ThrowInfo *)&g_guardTargetTypeThrowInfo);
-				__assume(0);
+				throw XferException(5, 0);
 			}
 		}
 		else

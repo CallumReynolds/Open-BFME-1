@@ -23,11 +23,17 @@ struct BfmeFormattedText225960
 	int tag;
 };
 
-extern "C" BfmeFormattedText225960 *__cdecl bfmeFormatText(
-	BfmeFormattedText225960 *result, int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 // Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
 extern "C" void __stdcall _CxxThrowException(void *object, _ThrowInfo *throwInfo);
-extern "C" char g_rva005c5100ThrowInfo;
 
 class Rva00225960Owner
 {
@@ -64,20 +70,14 @@ void ContainListRestore0022BFF0::restore()
 	((Rva00225960Owner *)this)->rva00225960();
 
 	if (!m_atE4.empty()) {
-		BfmeFormattedText225960 buf;
-		bfmeFormatText(&buf, 5, 0);
-		_CxxThrowException(&buf, (_ThrowInfo *)&g_rva005c5100ThrowInfo);
-		__assume(0);
+		throw XferException(5, 0);
 	}
 
 	for (_STL::list<ObjectID>::iterator it = m_atFC.begin();
 		it != m_atFC.end(); ++it) {
 		Object *object = TheGameLogic->findObjectByID(*it);
 		if (!object) {
-			BfmeFormattedText225960 buf;
-			bfmeFormatText(&buf, 5, 0);
-			_CxxThrowException(&buf, (_ThrowInfo *)&g_rva005c5100ThrowInfo);
-			__assume(0);
+			throw XferException(5, 0);
 		}
 
 		m_atE4.push_back(object);

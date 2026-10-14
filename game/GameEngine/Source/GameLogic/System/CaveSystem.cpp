@@ -90,11 +90,15 @@ struct BfmeFormattedText
 	char opaque[6];
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, Int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 // ??0CaveSystem@@QAE@XZ present-unmatched
 CaveSystem::CaveSystem()
@@ -216,9 +220,7 @@ void CaveSystem::xfer( Xfer *xfer )
 		// the list must be empty now
 		if( m_tunnelTrackerVector.empty() == FALSE )
 		{
-			BfmeFormattedText error;
-			bfmeFormatText( &error, 5, 0 );
-			_CxxThrowException( &error, &g_guardTargetTypeThrowInfo );
+			throw XferException(5, 0);
 
 		}  // end if
 

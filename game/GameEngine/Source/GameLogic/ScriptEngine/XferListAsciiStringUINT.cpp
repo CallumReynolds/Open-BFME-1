@@ -55,17 +55,15 @@ public:
 	virtual Xfer &xferUnsignedShort(unsigned int *value);
 };
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern int g_guardTargetTypeThrowInfo;
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
 
 typedef _STL::pair<AsciiString, UnsignedInt> PairAsciiStringUINT;
 typedef _STL::list<PairAsciiStringUINT> ListAsciiStringUINT;
@@ -99,9 +97,7 @@ Xfer *xferListAsciiStringUINT(Xfer *xfer, ListAsciiStringUINT *list)
 	{
 		if (!list->empty())
 		{
-			XferException error;
-			bfmeFormatText(&error, 4, "List must be empty on load");
-			_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+			throw XferException(4, "List must be empty on load");
 		}
 
 		PairAsciiStringUINT newPair;

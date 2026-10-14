@@ -57,15 +57,15 @@ public:
 	virtual Rva001DC690XferView &xferUnsignedShort(UnsignedShort *value);
 };
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern int g_guardTargetTypeThrowInfo;
 // Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
 extern "C" void __stdcall _CxxThrowException(void *object, _ThrowInfo *throwInfo);
 
@@ -135,10 +135,7 @@ void ObjectTypes::xfer(Xfer *xfer)
 	{
 		if (!self->objectTypes.empty())
 		{
-			XferException error;
-			bfmeFormatText(&error, 5, 0);
-			_CxxThrowException(&error, (_ThrowInfo *)&g_guardTargetTypeThrowInfo);
-			__assume(0);
+			throw XferException(5, 0);
 		}
 
 		AsciiString typeName;

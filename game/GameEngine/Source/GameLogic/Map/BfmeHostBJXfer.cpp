@@ -23,9 +23,15 @@ struct BfmeFormattedText
 	int m_tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(BfmeFormattedText *, int, const char *, ...);
-extern void __stdcall _CxxThrowException(void *, void *);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class Xfer
 {
@@ -115,10 +121,7 @@ void BfmeHostBJ::xfer(Xfer *x)
 
 	if (versionFrame.count != m_bfmeCountBJ)
 	{
-		BfmeFormattedText error;
-
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 		__assume(0);
 	}
 
@@ -159,10 +162,7 @@ void BfmeHostBJ::xfer(Xfer *x)
 
 mismatch:
 	{
-		BfmeFormattedText error;
-
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 		__assume(0);
 	}
 }

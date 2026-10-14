@@ -11,10 +11,15 @@ class Guard006AA940 { void *handle; char owned; public:
 };
 class BfmeEntryCN;
 BfmeEntryCN *__cdecl bfmeLookup(void*);
-struct XferException { char *text; int tag; };
-extern "C" XferException *__cdecl bfmeFormatText(XferException*,int,const char*,...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void*,void*);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 struct Pair006AA940 : _STL::pair<void*,float> {};
 struct Word006AA940 { int value; };
 class ResolveAudioPointers006AA940 {
@@ -34,8 +39,7 @@ void ResolveAudioPointers006AA940::resolve() {
     for(Pair006AA940 *p=vector_ae0.begin();p!=vector_ae0.end();++p) {
         Pair006AA940 value; value.second=p->second; value.first=bfmeLookup(p->first);
         if(!value.first) {
-            XferException error; bfmeFormatText(&error,5,0);
-            _CxxThrowException(&error,&g_guardTargetTypeThrowInfo);
+            throw XferException(5,0);
         }
         vector_ad4.push_back(value);
     }

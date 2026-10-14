@@ -28,10 +28,15 @@ private:
 	void releaseBuffer();
 };
 
-extern "C" BfmeWeaponFormattedText *__cdecl bfmeFormatText(
-	BfmeWeaponFormattedText *, int, const char *, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *, void *);
-extern int g_guardTargetTypeThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 class BfmeWeaponSetXferView
 {
@@ -159,9 +164,7 @@ void BfmeWeaponSetFlags::xfer(BfmeWeaponSetXferView *xfer)
 			int flag = bfmeLookupB(lookupName);
 			if (flag < 0)
 			{
-				BfmeWeaponFormattedText error;
-				bfmeFormatText(&error, 0, 0);
-				_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+				throw XferException(0, 0);
 			}
 			bits |= 1 << (flag & 31);
 		}

@@ -28,10 +28,16 @@ struct BfmeFormattedText225960
 	int tag;
 };
 
-extern "C" BfmeFormattedText225960 *__cdecl bfmeFormatText(
-	BfmeFormattedText225960 *result, int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern void __declspec(noreturn) __stdcall _CxxThrowException(void *object, void *throwInfo);
-extern "C" char g_rva005c5100ThrowInfo;
 
 class BfmeA987
 {
@@ -68,18 +74,14 @@ void Rva00225960Owner::rva00225960()
 	((BfmeA987 *)this)->bfmeBase987();
 
 	if (!m_activeList.empty()) {
-		BfmeFormattedText225960 buf;
-		bfmeFormatText(&buf, 5, 0);
-		_CxxThrowException(&buf, &g_rva005c5100ThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	for (_STL::list<ObjectID>::iterator it = m_pendingList.begin();
 		it != m_pendingList.end(); ++it) {
 		Object *object = TheGameLogic->findObjectByID(*it);
 		if (!object) {
-			BfmeFormattedText225960 buf;
-			bfmeFormatText(&buf, 5, 0);
-			_CxxThrowException(&buf, &g_rva005c5100ThrowInfo);
+			throw XferException(5, 0);
 		}
 
 		m_activeList.push_back(object);

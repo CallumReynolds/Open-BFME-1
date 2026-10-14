@@ -98,17 +98,15 @@ public:
 	virtual void xferBool(UnsignedInt *value) = 0;
 };
 
-struct XferException
+class XferException
 {
-	void *text;
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
 	int tag;
 };
-
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_guardTargetTypeThrowInfo;
 
 #include "texture.h"
 
@@ -353,17 +351,13 @@ void WaterRenderObjClass::xfer(Xfer *xfer)
 	Int cellsX = m_gridCellsX;
 	xfer->xferInt(&cellsX);
 	if (cellsX != m_gridCellsX) {
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	Int cellsY = m_gridCellsY;
 	xfer->xferInt(&cellsY);
 	if (cellsY != m_gridCellsY) {
-		XferException error;
-		bfmeFormatText(&error, 5, 0);
-		_CxxThrowException(&error, &g_guardTargetTypeThrowInfo);
+		throw XferException(5, 0);
 	}
 
 	for (Int i = 0; i < m_meshDataSize; ++i) {

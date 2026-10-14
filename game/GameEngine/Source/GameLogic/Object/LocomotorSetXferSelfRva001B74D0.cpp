@@ -53,16 +53,15 @@ public:
 
 };
 
-struct XferException
+class XferException
 {
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
 	char *text;
 	int tag;
 };
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
-extern void __declspec(noreturn) __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern "C" char g_rva005c5100ThrowInfo;
 
 class Rva001B6070Owner
 {
@@ -116,9 +115,7 @@ void Rva001B74D0Owner::xferSelfAndCurLocoPtr(Xfer *xfer, void **output)
 				}
 			}
 			{
-				XferException error;
-				bfmeFormatText(&error, 5, 0);
-				_CxxThrowException(&error, &g_rva005c5100ThrowInfo);
+				throw XferException(5, 0);
 			}
 		}
 	}

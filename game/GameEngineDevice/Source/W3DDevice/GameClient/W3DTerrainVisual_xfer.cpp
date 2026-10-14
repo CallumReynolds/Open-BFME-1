@@ -14,11 +14,15 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(
-	void *object, void *throwInfo);
-extern int g_rva005c5100ThrowInfo;
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 // The water render object is xferred through a Snapshot at offset 0.
 struct XferVersion : public Xfer::Version
@@ -111,9 +115,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 	*xfer == gridEnabled;
 	if( gridEnabled != m_isWaterGridRenderingEnabled )
 	{
-		BfmeFormattedText error;
-		bfmeFormatText( &error, 5, 0 );
-		_CxxThrowException( &error, &g_rva005c5100ThrowInfo );
+		throw XferException(5, 0);
 	}
 
 	// xfer grid data if enabled

@@ -47,14 +47,21 @@ public:
 	virtual void xferUnsignedShort(UnsignedShort *value);
 };
 
-struct XferException
+struct XferExceptionStorage
 {
 	char *text;
 	int tag;
 };
 
-extern "C" XferException *__cdecl bfmeFormatText(
-	XferException *result, int tag, const char *format, ...);
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 extern void __declspec(noreturn) __stdcall _CxxThrowException(
 	void *object, void *throwInfo);
 extern int g_rva005c5100ThrowInfo;
@@ -91,7 +98,7 @@ private:
 union XferLocal
 {
 	XferVersion version;
-	XferException error;
+	XferExceptionStorage error;
 };
 
 // ?xfer@PropagandaTowerBehavior@@MAEXPAVXfer@@@Z
@@ -123,7 +130,7 @@ void PropagandaTowerBehavior::xfer(Xfer *xfer)
 	{
 		if (m_insideList != 0)
 		{
-			bfmeFormatText(&local.error, 5, 0);
+			((XferException *)&local.error)->XferException::XferException(5, 0);
 			_CxxThrowException(&local.error, &g_rva005c5100ThrowInfo);
 		}
 

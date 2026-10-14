@@ -14,10 +14,15 @@ struct BfmeFormattedText
 	int tag;
 };
 
-extern "C" BfmeFormattedText *__cdecl bfmeFormatText(
-	BfmeFormattedText *result, int tag, const char *format, ...);
-__declspec(noreturn) void __stdcall _CxxThrowException(void *object, void *throwInfo);
-extern "C" unsigned char g_rva005c5100ThrowInfo[];
+class XferException
+{
+public:
+	XferException(int tag, const char *format, ...);
+	XferException(const XferException &that);
+	~XferException(void);
+	char *text;
+	int tag;
+};
 
 // ?rva009D86E0@Rva009D8630BlockWriter@@QAEXPBD@Z
 class BfmeByteStream
@@ -83,9 +88,7 @@ void Rva009D8630BlockWriter::rva009D86E0(const char *name)
 		unsigned char marker = 0;
 		if (m_stream->write(&marker, 1) != 1)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 1, 0);
-			_CxxThrowException(&error, g_rva005c5100ThrowInfo);
+			throw XferException(1, 0);
 		}
 		return;
 	}
@@ -99,16 +102,12 @@ void Rva009D8630BlockWriter::rva009D86E0(const char *name)
 		unsigned char marker = 0xff;
 		if (m_stream->write(&marker, 1) != 1)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 1, 0);
-			_CxxThrowException(&error, g_rva005c5100ThrowInfo);
+			throw XferException(1, 0);
 		}
 
 		if (m_stream->write(&found->_M_val.second, 4) != 4)
 		{
-			BfmeFormattedText error;
-			bfmeFormatText(&error, 1, 0);
-			_CxxThrowException(&error, g_rva005c5100ThrowInfo);
+			throw XferException(1, 0);
 		}
 		return;
 	}
@@ -119,16 +118,12 @@ void Rva009D8630BlockWriter::rva009D86E0(const char *name)
 
 	if (m_stream->write(&length, 1) != 1)
 	{
-		BfmeFormattedText error;
-		bfmeFormatText(&error, 1, 0);
-		_CxxThrowException(&error, g_rva005c5100ThrowInfo);
+		throw XferException(1, 0);
 	}
 	if (m_stream->write(name, static_cast<int>(length)) !=
 		static_cast<int>(length))
 	{
-		BfmeFormattedText error;
-		bfmeFormatText(&error, 1, 0);
-		_CxxThrowException(&error, g_rva005c5100ThrowInfo);
+		throw XferException(1, 0);
 	}
 
 	{

@@ -76,8 +76,11 @@
 
 // W3DGadgetProgressBarDraw ===================================================
 /** Draw colored Progress Bar using standard graphics */
+// ZH body kept under a local name: retail's W3DGadgetProgressBarDraw is in
+// W3DGadgetProgressBarDraw.cpp. This copy still emits the getter COMDATs the
+// rows of this file verify.
 //=============================================================================
-void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
+void W3DGadgetProgressBarDrawLocalCopy( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, start, end;
 	Color backColor, backBorder, barColor, barBorder;
@@ -182,7 +185,7 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 
   
 
-}  // end W3DGadgetProgressBarDraw
+}  // end W3DGadgetProgressBarDrawLocalCopy
 
 // The five enabled-image reads inside W3DGadgetProgressBarImageDrawA below use
 // independently decoded BFME offsets, not the inherited ZH accessors: the ZH

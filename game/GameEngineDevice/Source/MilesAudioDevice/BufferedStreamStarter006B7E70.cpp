@@ -62,7 +62,7 @@ public:
  bool start(PlayingRef006B7E70 *ref,unsigned sample);
  void close(StreamSlot006B7E70 *s) { typedef void (BufferedStreamStarter006B7E70::*Fn)(StreamSlot006B7E70*); (this->*member006B7E70<Fn>(j_0003b741))(s); }
  Coord3D *position(Coord3D *out,Event006B7E70 *e,bool *valid) { typedef Coord3D* (BufferedStreamStarter006B7E70::*Fn)(Coord3D*,Event006B7E70*,bool*); return (this->*member006B7E70<Fn>(j_00001ece))(out,e,valid); }
- void attach(StreamSlot006B7E70 *s,FileRef006B7E70 *f,int mode) { typedef void (BufferedStreamStarter006B7E70::*Fn)(StreamSlot006B7E70*,FileRef006B7E70*,int); (this->*member006B7E70<Fn>(j_0001dff2))(s,f,mode); }
+ void attach(StreamSlot006B7E70 *s,FileRef006B7E70 *f,int mode); // matched body: BufferedStreamAttach006B5900.cpp
  void fill(StreamSlot006B7E70 *s,unsigned end) { typedef void (BufferedStreamStarter006B7E70::*Fn)(StreamSlot006B7E70*,unsigned); (this->*member006B7E70<Fn>(j_00029910))(s,end); }
  void configure(PlayingRef006B7E70 *r,const Coord3D *p) { typedef void (BufferedStreamStarter006B7E70::*Fn)(PlayingRef006B7E70*,const Coord3D*); (this->*member006B7E70<Fn>(j_00047519))(r,p); }
  void resume(PlayingRef006B7E70 *r) { typedef void (BufferedStreamStarter006B7E70::*Fn)(PlayingRef006B7E70*); (this->*member006B7E70<Fn>(j_0002e668))(r); }

@@ -3961,8 +3961,6 @@ name,address,notes
 ??0StringBaseNarrowZO@@IAE@PBD@Z,0x00888BC0,pin
 ??0StringBaseNarrowZP@@IAE@ABV0@@Z,0x00887B60,pin
 ??0StringBaseNarrowZP@@IAE@PBD@Z,0x00888BC0,pin
-??0StringBaseNarrowZQ@@IAE@ABV0@@Z,0x00887B60,pin
-??0StringBaseNarrowZQ@@IAE@PBD@Z,0x00888BC0,pin
 ??0StringBaseNarrowZR@@IAE@ABV0@@Z,0x00887B60,pin
 ??0StringBaseNarrowZR@@IAE@PBD@Z,0x00888BC0,pin
 ??0StringBaseNarrowZS@@IAE@ABV0@@Z,0x00887B60,pin
@@ -9823,7 +9821,6 @@ name,address,notes
 ??1StringBaseNarrowZN@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZO@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZP@@IAE@XZ,0x00887940,pin
-??1StringBaseNarrowZQ@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZR@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZS@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZT@@IAE@XZ,0x00887940,pin
@@ -79031,7 +79028,6 @@ name,address,notes
 ?bfmeNameZN@BfmeOrderZN@@QAE?AVAsciiStringZN@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00674FF0 formats
 ?bfmeNameZO@BfmeOrderZO@@QAE?AVAsciiStringZO@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x006756E0 formats
 ?bfmeNameZP@BfmeOrderZP@@QAE?AVAsciiStringZP@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x006757D0 formats
-?bfmeNameZQ@BfmeOrderZQ@@QAE?AVAsciiStringZQ@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x006758C0 formats
 ?bfmeNameZR@BfmeOrderZR@@QAE?AVAsciiStringZR@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00675A80 formats
 ?bfmeNameZS@BfmeOrderZS@@QAE?AVAsciiStringZS@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00675D40 formats
 ?bfmeNamedAudio0046F1A0@@YAXPBD@Z,0x00002E0F,"Lead traced168B46F1A0: AudioEvent construction fromchar*, TheAudio slotsAC/44 then destructor; cdecl"
@@ -82309,7 +82305,6 @@ name,address,notes
 ?format@StringBaseNarrowZN@@QAAXVAsciiStringZN@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZO@@QAAXVAsciiStringZO@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZP@@QAAXVAsciiStringZP@@ZZ,0x00888FF0,pin
-?format@StringBaseNarrowZQ@@QAAXVAsciiStringZQ@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZR@@QAAXVAsciiStringZR@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZS@@QAAXVAsciiStringZS@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZT@@QAAXVAsciiStringZT@@ZZ,0x00888FF0,pin
@@ -91056,7 +91051,6 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ??1BfmeWordEL@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C06E00 of matched parent ?bfmeMakePairEL@@YA?AUBfmePairEL@@ABVBfmeWordEL@@0@Z (0x193520) state action jumps through this thunk; label proven by state index via handler stub 0xc06e08
 ??1ArgBox@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C3731B of matched parent ?bfmeCallDUL@@YG?AVRva0058C2B0RefPtr@@PBD@Z (0x58c2b0) state action jumps through this thunk; label proven by state index via handler stub 0xc3734d
 ??1AsciiStringAI@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C357D8 of matched parent ?bfmeLookupAI@BfmeTableAI@@QAE?AVAsciiStringAI@@V2@@Z (0x572a60) state action jumps through this thunk; label proven by state index via handler stub 0xc357f1
-??1AsciiStringZQ@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C45400 of matched parent ?bfmeDescribeZQ@BfmeOrderZQ@@QAE?AVAsciiStringZQ@@XZ (0x6758c0) state action jumps through this thunk; label proven by state index via handler stub 0xc45419
 ??1AsciiStringZS@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C45500 of matched parent ?bfmeDescribeZS@BfmeOrderZS@@QAE?AVAsciiStringZS@@XZ (0x675d40) state action jumps through this thunk; label proven by state index via handler stub 0xc45519
 ??1BfmeEntryWR@@QAE@XZ,0x0001DB56,ILT thunk ?j_0001db56 (target=releaseBuffer, as ??1Gen_uw_0001db56): retail unwind funclet of matched ?bfmeEntryWR jumps here to destroy the by-value BfmeEntryWR return
 ??1BfmeEntryWS@@QAE@XZ,0x0001DB56,ILT thunk ?j_0001db56 (target=releaseBuffer, as ??1Gen_uw_0001db56): retail unwind funclet of matched ?bfmeEntryWS jumps here to destroy the by-value BfmeEntryWS return

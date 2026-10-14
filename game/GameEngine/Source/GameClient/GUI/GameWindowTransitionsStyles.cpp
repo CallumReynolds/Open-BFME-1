@@ -84,7 +84,6 @@ public:
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-void drawTypeText( GameWindow *window, DisplayString *str);
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -1358,15 +1357,7 @@ void TextTypeTransition::reverse( void )
 	m_partialText = m_fullText;
 }
 
-// ?draw@TextTypeTransition@@UAEXXZ present-unmatched
-void TextTypeTransition::draw( void )
-{
-	if(m_drawState > TEXTTYPETRANSITION_START && m_drawState < m_frameLength)
-	{
-		m_dStr->setText(m_partialText);
-		drawTypeText(m_win, m_dStr);
-	}
-}
+// TextTypeTransition::draw: retail body in TextTypeTransitionDraw.cpp.
 	
 // ?skip@TextTypeTransition@@UAEXXZ present-unmatched
 void TextTypeTransition::skip( void )
@@ -2033,70 +2024,5 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 	
 }
 
-static void drawTypeText( GameWindow *window, DisplayString *str)
-{
-	TextData *tData = (TextData *)window->winGetUserData();
-	Int textColor = window->winGetEnabledTextColor();
-	Int textDropColor = window->winGetEnabledTextBorderColor();
-	Int textWidth, textHeight, wordWrap;
-	DisplayString *text = tData->text;
-	ICoord2D origin, size, textPos;
-	IRegion2D clipRegion;
-	// sanity
-	if( text == NULL || text->getTextLength() == 0 )
-		return;
-	GameFont *font = text->getFont();
-	
-	str->setFont(font);
-
-	// get window position and size
-	window->winGetScreenPosition( &origin.x, &origin.y );
-	window->winGetSize( &size.x, &size.y );
-	
-	// Set the text Wrap width
-	wordWrap = size.x - 10;
-	text->setWordWrap(wordWrap);	
-	str->setWordWrap(wordWrap);
-	if( BitTest(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
-	{
-		str->setWordWrapCentered(TRUE);
-		text->setWordWrapCentered(TRUE);
-	}
-	else
-	{
-		text->setWordWrapCentered(FALSE);
-		str->setWordWrapCentered(FALSE);
-
-	}
-
-
-	// how much space will this text take up
-	text->getSize( &textWidth, &textHeight );
-		
-	//Init the clip region
-	clipRegion.lo.x = origin.x ;
-	clipRegion.lo.y = origin.y ;
-	clipRegion.hi.x = origin.x + size.x ;
-	clipRegion.hi.y = origin.y + size.y;
-	
-	if( tData->centered )
-	{
-
-		textPos.x = origin.x + (size.x / 2) - (textWidth / 2);
-		textPos.y = origin.y + (size.y / 2) - (textHeight / 2);
-		str->setClipRegion(&clipRegion);
-		str->draw( textPos.x, textPos.y, textColor, textDropColor );
-	}  // end if
-	else
-	{
-
-		// draw the text
-		textPos.x = origin.x + 7;
-		textPos.y = origin.y + (size.y / 2) - (textHeight / 2);
-		str->setClipRegion(&clipRegion);
-		str->draw( textPos.x, textPos.y, textColor, textDropColor );
-
-	}  // end else
-
-
-}  // end drawStaticTextText
+// drawTypeText (retail 0x005A0450) lives with its only caller,
+// TextTypeTransition::draw, in TextTypeTransitionDraw.cpp.

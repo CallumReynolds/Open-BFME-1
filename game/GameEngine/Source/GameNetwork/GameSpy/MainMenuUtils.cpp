@@ -965,7 +965,6 @@ static __forceinline const char *patchReverseFind(const AsciiString &string, cha
  return 0;
 }
 
-// ?Rva0062FA20@@YAXHVAsciiString@@@Z present-unmatched
 // Open BFME 2: Code/GameEngine/Source/GameNetwork/GameSpy/MainMenuUtils.cpp.
 static void Rva0062FA20(int mandatory,AsciiString downloadURL){
  BfmeErasedValue_00627200 q;bool success=true;

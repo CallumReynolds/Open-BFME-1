@@ -1,5 +1,5 @@
 // ?queueSupplyTruck@AIPlayer@@IAEXXZ
-// partial score=0.9957136733819117 date=2026-09-26
+// partial score=0.9957 date=2026-09-26
 // cl: /DNDEBUG /DWIN32 /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/objectdlink /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include
 // stlport
 // AIPlayer::queueSupplyTruck, retail RVA 0x00165D50, complete extent 2333B.

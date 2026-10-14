@@ -10062,7 +10062,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??D@YG?AVF32vec4@@ABV0@0@Z,,0x00A9D1F4,33,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\skinning.obj
 ??DCoord2D@@QBEMABUCoord3DBase@@@Z,0x0000DAF8,0x007E5AC0,19,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,dot product with Coord3DBase x/y
 ??DCoord2D@@QBEMABV0@@Z,0x0004A4BC,0x007E5A40,19,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,dot product with Coord2D
-??DCoord3D@@QBEMABUCoord3DBase@@@Z,0x00011F09,0x0018F1C0,27,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,dot product with Coord3DBase
 ??DCoord3D@@QBEMABVCoord2D@@@Z,0x00044FE4,0x007E5CF0,19,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,dot product with Coord2D
 ??DD3DXQUATERNION@@QBE?AU0@ABU0@@Z,,0x009FE730,39,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\d3dxmath.obj
 ??DD3DXQUATERNION@@QBE?AU0@M@Z,,0x00A2CE5C,44,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\d3dxmath.obj
@@ -10284,7 +10283,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??YWSYS_String@@QAEABV0@PBD@Z,,0x0010A3A0,167,game/GameEngine/Source/Common/System/String.cpp,matched,
 ??ZCoord2D@@QAEAAV0@ABUCoord3DBase@@@Z,0x0003F7BF,0x007E5AA0,24,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,subtracts Coord3DBase x/y
 ??ZCoord2D@@QAEAAV0@ABV0@@Z,0x00045002,0x002320E0,24,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,subtracts Coord2D
-??ZCoord3D@@QAEAAV0@ABUCoord3DBase@@@Z,0x000126B6,0x0016A240,33,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts Coord3DBase
 ??ZCoord3D@@QAEAAV0@ABVCoord2D@@@Z,0x000296FE,0x007E5CD0,24,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts Coord2D x/y
 ??ZD3DXVECTOR3@@QAEAAU0@ABU0@@Z,,0x00A05018,33,inputs/vendor/d3dx9/d3dx9.lib,matched,vendored=d3dx9-summer2003;member=obj\i386\loadxh.obj
 ??ZMatrix4D@@QAEAAV0@ABV0@@Z,0x000480B8,0x007E6620,150,game/Libraries/Source/WWVegas/WWMath/matrix4d.cpp,matched,subtracts matrix values in place
@@ -13156,7 +13154,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Add@Coord2D@@QAEAAV1@ABUCoord3DBase@@@Z,0x00016EEB,0x007E5AE0,24,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,adds Coord3DBase x/y
 ?Add@Coord2D@@QAEAAV1@ABV1@@Z,0x0000FA2E,0x0022F7C0,24,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,adds Coord2D
 ?Add@Coord3D@@QAEAAV1@ABUCoord3DBase@@0@Z,0x00021DC3,0x007E5D10,37,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,adds two Coord3DBase values
-?Add@Coord3D@@QAEAAV1@ABUCoord3DBase@@@Z,0x0002F66C,0x000EC6F0,33,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,adds Coord3DBase
 ?Add@Coord3D@@QAEAAV1@ABUCoord3DBase@@ABVCoord2D@@@Z,0x0001AE3D,0x007E5F20,34,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,adds Coord3DBase and Coord2D
 ?Add@Coord3D@@QAEAAV1@ABVCoord2D@@@Z,0x00023452,0x007E5EB0,24,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,adds Coord2D x/y
 ?Add@Coord3D@@QAEAAV1@ABVCoord2D@@ABUCoord3DBase@@@Z,0x0001F802,0x007E5EF0,34,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,adds Coord2D and Coord3DBase
@@ -15841,11 +15838,9 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?GetKey@FXParticleSystem@@YAPBDW4ModuleCategory@1@@Z,0x0000971E,0x005D4520,12,game/GameEngine/Source/GameClient/System/FXParticleSystem/fx_particle_system.cpp,matched,lookup category key string
 ?GetLength2D@Coord3D@@QBEMXZ,0x00036D95,0x001A5D70,22,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,returns x/y vector length
 ?GetLength@Coord2D@@QBEMXZ,0x00022FA2,0x0016E3A0,22,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,returns vector length
-?GetLength@Coord3D@@QBEMXZ,0x0002EF14,0x000FE9B0,33,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,returns vector length
 ?GetLengthEstimate2D@Coord3D@@QBEMXZ,0x00043464,0x000C3D10,31,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,returns approximate x/y length
 ?GetLengthEstimate@Coord2D@@QBEMXZ,0x0002DC72,0x0043A590,31,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,returns approximate length
 ?GetLengthEstimate@Coord3D@@QBEMXZ,0x00036AA2,0x0015B830,121,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,returns approximate 3D length
-?GetLengthSqrd2D@Coord3D@@QBEMXZ,0x000185D9,0x001DD2C0,20,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,returns squared x/y length
 ?GetLengthSqrd@Coord2D@@QBEMXZ,0x00013976,0x00233D00,20,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,returns squared x/y length
 ?GetLengthSqrd@Coord3D@@QBEMXZ,0x0002E339,0x0015BEF0,31,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,returns squared x/y/z length
 ?GetLocalChatConnectionAddress@@YA_NVAsciiString@@GAAI@Z,,0x00639E50,1100,game/GameEngine/Source/GameNetwork/GameSpy/GetLocalChatConnectionAddress.cpp,matched,BFME GetLocalChatConnectionAddress (ZH GameSpyGameInfo.cpp): inetmib1.dll and snmpapi.dll LoadLibrary plus SnmpExtensionInit/Query and SnmpUtilMemAlloc/Free GetProcAddress literals and the tcpConnTable walk into a vector<tConnInfoStruct> (push_back 0x00639DF0); 1078 B code + 2 B pad + 5-entry switch table at +0x438; standalone TU for the 8-byte BFME AsciiString header; vector dtor via ILT 0x00007BDF to 0x00638F30 also the EH state-1 unwind target at 0x00C416A8
@@ -17457,7 +17452,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Normalize2D@Coord3D@@QAEMXZ,0x0001C661,0x007E7990,42,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,normalizes x/y and returns 2D length
 ?Normalize@@YAMMMM@Z,,0x0045B2E0,19,game/GameEngine/Source/Common/System/statistics.cpp,matched,
 ?Normalize@Coord2D@@QAEMXZ,0x0002C548,0x003A4140,42,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,normalizes vector and returns length; clean C++; x87 load order retained by scalar locals;model=inclusionai/ling-3.1-flash-free;host=archlinux
-?Normalize@Coord3D@@QAEMXZ,0x0001E0BA,0x000FE9E0,61,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,normalizes and returns length
 ?Normalize@Quaternion@@QAEXXZ,,0x008DB660,109,game/Libraries/Source/WWVegas/WWMath/quat.cpp,matched,
 ?Normalize@Vector2@@QAEXXZ,,0x0043CD60,71,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DRoadBuffer.cpp,matched,
 ?Normalize@Vector3@@QAEXXZ,,0x00132850,90,game/Libraries/Source/WWVegas/WWMath/colmathobbobb.cpp,matched,
@@ -24225,7 +24219,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Scale@AABTreeClass@@QAEXM@Z,,0x0096AA80,100,game/Libraries/Source/WWVegas/WW3D2/aabtree.cpp,matched,
 ?Scale@Coord2D@@QAEAAV1@M@Z,0x000444EF,0x0014FFB0,23,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,scales x/y in place
 ?Scale@Coord3D@@QAEAAV1@ABUCoord3DBase@@M@Z,0x00034C98,0x007E5D70,37,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,scales Coord3DBase
-?Scale@Coord3D@@QAEAAV1@M@Z,0x0000E1C4,0x0014FFD0,33,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,scales x/y/z in place
 ?Scale@HLodClass@@UAEXM@Z,,0x0097A790,233,game/Libraries/Source/WWVegas/WW3D2/hlod.cpp,matched,BFME RenderObjClass Scale slot +0x16c; TU-local vtable view
 ?Scale@HLodClass@@UAEXMMM@Z,,0x006CF660,3,game/Libraries/Source/WWVegas/WW3D2/hlod.cpp,matched,icf-owner=?Scale@RenderObjClass@@UAEXMMM@Z
 ?Scale@HTreeClass@@QAEXM@Z,,0x009529B0,132,game/Libraries/Source/WWVegas/WW3D2/htree.cpp,matched,
@@ -24907,8 +24900,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Sub2D@Coord3D@@QAEAAV1@ABUCoord3DBase@@@Z,0x0004651A,0x007E5E10,24,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts Coord3DBase x/y
 ?Sub@Coord2D@@QAEAAV1@ABUCoord3DBase@@@Z,0x0002DEB6,0x007E5B00,24,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,subtracts Coord3DBase x/y
 ?Sub@Coord2D@@QAEAAV1@ABV1@@Z,0x0001777E,0x0018F1A0,24,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,subtracts Coord2D
-?Sub@Coord3D@@QAEAAV1@ABUCoord3DBase@@0@Z,0x000375D8,0x007E5D40,37,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts two Coord3DBase values
-?Sub@Coord3D@@QAEAAV1@ABUCoord3DBase@@@Z,0x000179EF,0x000C3D40,33,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts Coord3DBase
 ?Sub@Coord3D@@QAEAAV1@ABUCoord3DBase@@ABVCoord2D@@@Z,0x00031D36,0x007E5F80,34,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts Coord2D from Coord3DBase
 ?Sub@Coord3D@@QAEAAV1@ABVCoord2D@@@Z,0x00036881,0x007E5ED0,24,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts Coord2D x/y
 ?Sub@Coord3D@@QAEAAV1@ABVCoord2D@@ABUCoord3DBase@@@Z,0x0003595E,0x007E5F50,36,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,subtracts Coord3DBase from Coord2D
@@ -51703,7 +51694,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?equal_range@?$hash_map@HUGen_t_000774f0_p12cd@@U?$hash@H@_STL@@U?$equal_to@H@3@V?$allocator@U?$pair@$$CBHUGen_t_000774f0_p12cd@@@_STL@@@3@@_STL@@QAE?AU?$pair@U?$_Ht_iterator@U?$pair@$$CBHUGen_t_000774f0_p12cd@@@_STL@@U?$_Nonconst_traits@U?$pair@$$CBHUGen_t_000774f0_p12cd@@@_STL@@@2@HU?$hash@H@2@U?$_Select1st@U?$pair@$$CBHUGen_t_000774f0_p12cd@@@_STL@@@2@U?$equal_to@H@2@V?$allocator@U?$pair@$$CBHUGen_t_000774f0_p12cd@@@_STL@@@2@@_STL@@U12@@2@ABH@Z,,0x000774F0,22,game/gen_small/tgrid_127.cpp,matched,gen-tgrid;template=hash_int_p12cd
 ?equal_range@?$hash_map@HUGen_t_00077510_p12cd@@U?$hash@H@_STL@@U?$equal_to@H@3@V?$allocator@U?$pair@$$CBHUGen_t_00077510_p12cd@@@_STL@@@3@@_STL@@QAE?AU?$pair@U?$_Ht_iterator@U?$pair@$$CBHUGen_t_00077510_p12cd@@@_STL@@U?$_Nonconst_traits@U?$pair@$$CBHUGen_t_00077510_p12cd@@@_STL@@@2@HU?$hash@H@2@U?$_Select1st@U?$pair@$$CBHUGen_t_00077510_p12cd@@@_STL@@@2@U?$equal_to@H@2@V?$allocator@U?$pair@$$CBHUGen_t_00077510_p12cd@@@_STL@@@2@@_STL@@U12@@2@ABH@Z,,0x00077510,22,game/gen_small/tgrid_127.cpp,matched,gen-tgrid;template=hash_int_p12cd
 ?equals@Coord3D@@QAE_NABU1@@Z,,0x00131C40,60,game/GameEngineDevice/Source/W3DDevice/GameClient/W3dWaypointBuffer.cpp,matched,
-?equals@Coord3D@@QBE_NABUCoord3DBase@@@Z,0x00001334,0x0016A110,60,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,compares x/y/z with Coord3DBase
 ?equals@Rva0013ABC0Table@@QAEDPAV1@@Z,,0x0013ABC0,88,game/GameEngine/Source/Common/Rva0013ABC0TableEquals.cpp,matched,element-wise _mbscmp equality over two same-sized tables; identity unrecovered
 ?equals@Rva001C03D0Array@@QBE_NABV1@@Z,,0x001C03D0,44,game/GameEngine/Source/Common/Rva002E4D20ArrayEqualsHelpers.cpp,matched,ten-element array equality shape matches the retail loop and address-derived identity preserves the unproven owner
 ?equals@Rva002857B0Object@@QAE_NH@Z,,0x002857B0,24,game/GameEngine/Source/Common/Rva002857B0VirtualCompare.cpp,matched,reconstructed virtual integer comparison; target=+0x18 slot=0x18
@@ -126812,7 +126802,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?normAngle@@YIXAAM@Z,,0x0073A900,134,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DView.cpp,matched,Full 134B ECX-reference normalizer; explicit global fastcall preserves the complete prior static body and eight float relocations while exposing one external provider; plain RET and unchanged EDX proven from retail; model=unknown (runtime model identifier unavailable)
 ?normalize@@YAXPAUInternalFPF@@@Z,,0x008797A0,43,game/Libraries/Source/Benchmark/emfloat.cpp,matched,BYTEmark 2.1 (pre-Dierks) emfloat helper
 ?normalize@Coord2D@@QAEXXZ,0x0000650F,0x0014FF40,60,game/Libraries/Source/WWVegas/WWMath/coord2d.cpp,matched,normalizes vector in place with zero check
-?normalize@Coord3D@@QAEXXZ,0x0002BD82,0x000FB930,79,game/Libraries/Source/WWVegas/WWMath/coord3d.cpp,matched,normalizes 3D vector in place with zero check
 ?normalizeAngle@@YAMM@Z,,0x001056F0,69,game/GameEngine/Source/Common/System/GameCommon.cpp,matched,exact
 ?notBit0@Rva009A2F10@@QBEIXZ,,0x009A2F10,9,game/GameEngine/Source/Common/UnclaimedSmallLeaves02.cpp,matched,inverted bit 0 of +0xC; 16-aligned start after int3 pad; terminal then int3 pad; no refs; address-derived name;model=claude-opus
 ?notEquals@Rva001C2920Vec3@@QBE_NPBU1@@Z,,0x001C2920,62,game/GameEngine/Source/Common/Rva001C2920Vec3NotEquals.cpp,matched,
@@ -172549,3 +172538,14 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ??4Coord3DBase@@QAEAAU0@ABU0@@Z,0x00010FD2,0x007E5960,29,game/GameEngine/Source/Common/System/BuildAssistant_buildTiledLocations.cpp,matched,copies x/y/z from Coord3DBase; inline header member emitted as pick-any COMDAT (9 TUs); exclusive copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
 ?Get_Head@?$MultiListClass@VDX8PolygonRendererClass@@@@QAEPAVDX8PolygonRendererClass@@XZ,,0x0092D680,17,game/Libraries/Source/WWVegas/WW3D2/MeshModelReplaceTexture.cpp,matched,model=claude-opus-5-5;host=GreatFaram
 ?dup_00944e00@@YAXXZ,,0x00944E00,17,game/Libraries/Source/WWVegas/WW3D2/MeshModelReplaceTexture.cpp,matched,gen-alias;object-symbol=?Get_Head@?$MultiListClass@VDX8PolygonRendererClass@@@@QAEPAVDX8PolygonRendererClass@@XZ;C++ alias;model=claude-opus-5-5;host=GreatFaram
+??DCoord3D@@QBEMABUCoord3DBase@@@Z,0x00011F09,0x0018F1C0,27,game/GameEngine/Source/GameLogic/Map/TerrainLogicRva001A8170BeaconPathPoint.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+??ZCoord3D@@QAEAAV0@ABUCoord3DBase@@@Z,0x000126B6,0x0016A240,33,game/GameEngine/Source/GameLogic/Map/TerrainLogicRva001A8170BeaconPathPoint.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?Add@Coord3D@@QAEAAV1@ABUCoord3DBase@@@Z,0x0002F66C,0x000EC6F0,33,game/GameEngine/Source/GameLogic/AI/AIFearState_onEnter.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?GetLength@Coord3D@@QBEMXZ,0x0002EF14,0x000FE9B0,33,game/GameEngine/Source/GameLogic/Map/TerrainLogicRva001A8170BeaconPathPoint.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?GetLengthSqrd2D@Coord3D@@QBEMXZ,0x000185D9,0x001DD2C0,20,game/GameEngine/Source/GameLogic/Map/TerrainLogicRva001A8170BeaconPathPoint.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?Normalize@Coord3D@@QAEMXZ,0x0001E0BA,0x000FE9E0,61,game/GameEngine/Source/GameLogic/Map/TerrainLogicRva001A8170BeaconPathPoint.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?Scale@Coord3D@@QAEAAV1@M@Z,0x0000E1C4,0x0014FFD0,33,game/GameEngine/Source/GameLogic/AI/AIFearState_onEnter.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?Sub@Coord3D@@QAEAAV1@ABUCoord3DBase@@0@Z,0x000375D8,0x007E5D40,37,game/GameEngine/Source/GameLogic/AI/AIFearState_onEnter.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?Sub@Coord3D@@QAEAAV1@ABUCoord3DBase@@@Z,0x000179EF,0x000C3D40,33,game/GameEngine/Source/GameLogic/Object/LocomotorHeightStateRva001B95B0.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?equals@Coord3D@@QBE_NABUCoord3DBase@@@Z,0x00001334,0x0016A110,60,game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions_doTeamGiveNearestTeamUpgrade002FE270.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
+?normalize@Coord3D@@QAEXXZ,0x0002BD82,0x000FB930,79,game/GameEngine/Source/Common/System/BuildAssistant_buildTiledLocations.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram

@@ -7,7 +7,11 @@
 // Coord3DBase::operator= (0x007E5960, 29 bytes) is an inline header member in
 // retail: nine TUs emit it as a pick-any COMDAT.  An out-of-line copy here was
 // an exclusive duplicate; its row lives with an inline emitter
-// (Common/System/BuildAssistant_buildTiledLocations.cpp).
+// (Common/System/BuildAssistant_buildTiledLocations.cpp).  The same holds for
+// eleven Coord3D members (operator*, operator-=, Add, GetLength,
+// GetLengthSqrd2D, Normalize, normalize, Scale, both Sub, equals): each row
+// lives with a retail-verified inline COMDAT emitter.  GetLength2D stays here
+// as an inline definition (Normalize2D inlines it).
 
 Coord3D::Coord3D(const Coord2D &that)
 {
@@ -64,11 +68,6 @@ float Coord3D::operator*(const Coord2D &that) const
     return x * that.x + y * that.y;
 }
 
-float Coord3D::operator*(const Coord3DBase &that) const
-{
-    return x * that.x + y * that.y + z * that.z;
-}
-
 Coord3D &Coord3D::operator*=(float scale)
 {
     x *= scale;
@@ -108,14 +107,6 @@ Coord3D &Coord3D::operator-=(const Coord2D &that)
     return *this;
 }
 
-Coord3D &Coord3D::operator-=(const Coord3DBase &that)
-{
-    x -= that.x;
-    y -= that.y;
-    z -= that.z;
-    return *this;
-}
-
 Coord3D &Coord3D::Add(const Coord2D &that)
 {
     x += that.x;
@@ -128,14 +119,6 @@ Coord3D &Coord3D::Add(const Coord2D &left, const Coord3DBase &right)
     x = left.x + right.x;
     y = left.y + right.y;
     z = right.z;
-    return *this;
-}
-
-Coord3D &Coord3D::Add(const Coord3DBase &that)
-{
-    x += that.x;
-    y += that.y;
-    z += that.z;
     return *this;
 }
 
@@ -169,21 +152,9 @@ Coord3D &Coord3D::Add2D(const Coord3DBase &left, const Coord3DBase &right)
     return *this;
 }
 
-bool Coord3D::equals(const Coord3DBase &that) const
-{
-    return x == that.x && y == that.y && z == that.z;
-}
-
-float Coord3D::GetLength() const
-{
-    float x_value = x;
-    float y_value = y;
-    float z_value = z;
-
-    return (float)sqrt(x_value * x_value + y_value * y_value + z_value * z_value);
-}
-
-float Coord3D::GetLength2D() const
+// Inline here so Normalize2D inlines it as retail does; the row stays here
+// as a pick-any COMDAT, which this TU still emits.
+inline float Coord3D::GetLength2D() const
 {
     float x_value = x;
     float y_value = y;
@@ -194,27 +165,6 @@ float Coord3D::GetLength2D() const
 static const float length_estimate_factor = 0.25f;
 static const float one = 1.0f;
 static const float zero_value = 0.0f;
-
-void Coord3D::normalize()
-{
-    float len = (float)sqrt(x * x + y * y + z * z);
-    if (len != zero_value) {
-        float scale = one / len;
-        x *= scale;
-        y *= scale;
-        z *= scale;
-    }
-}
-
-float Coord3D::Normalize()
-{
-    float len = GetLength();
-    float scale = one / len;
-    x *= scale;
-    y *= scale;
-    z *= scale;
-    return len;
-}
 
 float Coord3D::Normalize2D()
 {
@@ -272,14 +222,6 @@ float Coord3D::GetLengthSqrd() const
     return x_value * x_value + y_value * y_value + z_value * z_value;
 }
 
-float Coord3D::GetLengthSqrd2D() const
-{
-    float x_value = x;
-    float y_value = y;
-
-    return x_value * x_value + y_value * y_value;
-}
-
 bool Coord3D::IsExactlyEqualTo(const Coord3D &that) const
 {
     return x == that.x && y == that.y && z == that.z;
@@ -290,14 +232,6 @@ Coord3D &Coord3D::Negate()
     x = -x;
     y = -y;
     z = -z;
-    return *this;
-}
-
-Coord3D &Coord3D::Scale(float scale)
-{
-    x *= scale;
-    y *= scale;
-    z *= scale;
     return *this;
 }
 
@@ -440,27 +374,11 @@ Coord3D &Coord3D::Sub(const Coord2D &left, const Coord3DBase &right)
     return *this;
 }
 
-Coord3D &Coord3D::Sub(const Coord3DBase &that)
-{
-    x -= that.x;
-    y -= that.y;
-    z -= that.z;
-    return *this;
-}
-
 Coord3D &Coord3D::Sub(const Coord3DBase &left, const Coord2D &right)
 {
     x = left.x - right.x;
     y = left.y - right.y;
     z = left.z;
-    return *this;
-}
-
-Coord3D &Coord3D::Sub(const Coord3DBase &left, const Coord3DBase &right)
-{
-    x = left.x - right.x;
-    y = left.y - right.y;
-    z = left.z - right.z;
     return *this;
 }
 

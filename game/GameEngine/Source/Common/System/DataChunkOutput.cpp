@@ -25,7 +25,7 @@ class StringBase
 private:
     StringBase(const StringBase<T> &);
     StringBase(const T *);
-    ~StringBase();
+    void releaseBuffer();	// 0x00887940: retail's string release; ~StringBase's 0x0005E490 stub is never called here
     void concat(const T *, int);
     BfmeStringData *m_data;
 };
@@ -36,7 +36,7 @@ class AsciiString : private StringBase<char>
 public:
     AsciiString(const char *text) : StringBase<char>(text) {}
     AsciiString(const AsciiString &other) : StringBase<char>(other) {}
-    ~AsciiString() {}
+    ~AsciiString() { releaseBuffer(); }
     void concat(const char *text, int length) { StringBase<char>::concat(text, length); }
     Int getLength() const { return m_data ? m_data->m_len : 0; }
     const char *str() const { return m_data ? reinterpret_cast<const char *>(m_data + 1) : ""; }

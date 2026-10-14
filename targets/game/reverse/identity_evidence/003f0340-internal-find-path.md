@@ -55,3 +55,46 @@ Rejected experiments include the two-element radius-frame generator choice, both
 `csv-check.log`, `pin-check.log` and `class-check.log` pass on the tested checkout. `decl-check.log` refuses the scratch trial because it owns zero ledger rows, as expected for an unlanded candidate. No whitelist or policy change was made. `baseline-buildpy-gate.log` passes the unchanged assembly row's scoped gate, including body guard. `baseline-scoped-gate.log` records that build.cmd's py launcher could not locate Python in this sandbox; invoking the same tools/build.py through the available Python interpreter completed the check. No shared header or ledger source was changed, so no full gate is claimed or required for this bank.
 
 Remaining identity limits are the inherited cell-info field labels, the opaque getter and helper meanings, and the exact source spelling of the profile bytes. The old footprint pin's ICoord2D-only declaration is not validated by this work. The bank uses a complete address-derived query-record declaration. These limits must be reviewed before any eventual exact landing, even if a later compiler shape closes the byte differences.
+
+## Wave 20 (2026-10-15, agent D): definitive retail slot table (delta-index method)
+
+Method: index-align our 733-instr /FAs stream vs retail at RVA 0x003F0340 (both 733
+instrs), annotate our instructions with symbol+slot from build/exp0340/bank.asm,
+retail slot = ours slot + (retail [esp+X] - ours [esp+X]) for rows reading the same
+variable. Votes = number of agreeing rows.
+
+| symbol | ours | retail | votes | symbol | ours | retail | votes |
+|---|---|---|---|---|---|---|---|
+| centerInCell | -136 | -136 | 7 ok | layer | -100 | -112 | 1 |
+| isComputer | -132 | -132 | ok | cells/vars at -128 | -128 | -128 | ok |
+| zone1 | -128 | -128 | 4 ok | blocker | -120 | -112 | 1 |
+| cellCount | -128 | -128 | 3 ok | cell | -100 | -112 | 6 |
+| templateLayer | -128 | -128 | 1 ok | radius | -116 | -120 | 5 |
+| pos2d | -128 | -128 | 4 ok | zone2 | -120 | -116 | 2 |
+| profile | -92 | -92 | 7 ok | adjustTo | -112 | -104 | 13 |
+| isHuman | -80 | -80 | 3 ok | clipFrom | -76 | -76 | 7 |
+| destinationLayer | -64 | -64 | 1 ok | startCellNdx | -60 | -60 | 2 |
+| info | -52 | -52 | 9 ok | | | | |
+
+Disputed window [-120..-92] (28 B):
+- ours:   zone2+blocker(4) @-120, radius(4) @-116, adjustTo(12) @-112, cell/layer(8) @-100
+- retail: radius(4) @-120, zone2(4) @-116, cell/blocker/layer(8) @-112, adjustTo(12) @-104
+
+Same six objects, same 28 bytes; only the pack order differs (retail sizes run
+4,4,8,12 vs ours 4,4,12,8). Everything outside the window matches.
+
+Wave-20 experiments (46 new variants, fast frame oracle build/exp0340/frame_table.py):
+- declaration order permutations (incl. radius-first, zone2-first, cell-before-adj):
+  inert. Scope moves (cell/blocker posY7/Y9/V17/V19): inert. Init-splits for zone1,
+  zone2, layer, destinationLayer, cellCount, templateLayer, isHuman, centerInCell:
+  inert. adjustTo single struct copy: inert. Int/unsigned/typedef spellings: inert.
+- Only sensitivities found: (1) `int radius;` without initializer -> radius -104,
+  adjustTo -116 (V25); (2) __declspec(align(8/16)) on radius -> radius -120 but the
+  deep region shifts (isComputer -140/-144, zone1 -132/-136, zone2 -124/-128);
+  (3) blocker/cell at function scope -> whole frame +4 (blocker -64/-68, everything
+  else -4); (4) profile-early -> cell/layer -88; zone-early -> centerInCell/isComputer
+  swap. No variant exceeded 9/14 target slots.
+- Consequence: the window assignment is not reachable by source-level spellings tried;
+  it is driven by the allocator's IR-level pack order (first-definition timing /
+  hidden temp). Next wave should perturb def timing or look for a missing local, not
+  declaration order.

@@ -1,18 +1,30 @@
-struct BfmeArgFHA
+// Retail 0x003CAE00: a LivingWorldRegionManager member that never reads
+// `this'. Its only caller, Rva003A4FD0State::update (0x003A4FD0), loads ECX
+// with the manager before the call, so it is __thiscall rather than the
+// __stdcall free function this row used to be spelled as (the bytes are the
+// same: ret 4, ECX untouched). Address-derived name.
+class LivingWorldRegion
 {
+public:
 	unsigned char m_bfmeHeadA[0xa8];
 	char m_bfmeFlag;
 	unsigned char m_bfmeHeadB[0xb];
 	void *m_bfmeP;
 };
 
+class LivingWorldRegionManager
+{
+public:
+	bool rva003CAE00(LivingWorldRegion *region);
+};
+
 int __cdecl bfmeCallFHA(void *a, void *b);
 
-bool __stdcall bfmeGoFHA(BfmeArgFHA *a)
+bool LivingWorldRegionManager::rva003CAE00(LivingWorldRegion *region)
 {
-	if (a->m_bfmeFlag)
+	if (region->m_bfmeFlag)
 	{
-		void *p = a->m_bfmeP;
+		void *p = region->m_bfmeP;
 		if (bfmeCallFHA(p, p) != 1)
 			return true;
 	}

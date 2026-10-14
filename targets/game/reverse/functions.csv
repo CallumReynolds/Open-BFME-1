@@ -30845,7 +30845,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?bfmeGoFGF@BfmeThingFGF@@QAEXPAUBfmeSinkFGF@@@Z,,0x003BB890,38,game/GameEngine/Source/Common/BfmeConv896.cpp,matched,
 ?bfmeGoFGG@@YAPAUBfmeSinkFGF@@PAU1@PAD@Z,,0x003BC960,38,game/GameEngine/Source/Common/BfmeConv896.cpp,matched,
 ?bfmeGoFH@BfmeThingFH@@QAEXHH@Z,,0x00271890,64,game/GameEngine/Source/Common/BfmeOneHundredNinetySix.cpp,matched,
-?bfmeGoFHA@@YG_NPAUBfmeArgFHA@@@Z,,0x003CAE00,45,game/GameEngine/Source/Common/BfmeConv897.cpp,matched,
 ?bfmeGoFHC@BfmeThingFHC@@QAE_NPAX00@Z,,0x00413460,39,game/GameEngine/Source/Common/BfmeConv897.cpp,matched,
 ?bfmeGoFHD@BfmeThingFHD@@QAEXXZ,,0x004149A0,40,game/GameEngine/Source/Common/BfmeConv897.cpp,matched,
 ?bfmeGoFHG@@YGXPAX000@Z,,0x0042A240,36,game/GameEngine/Source/Common/BfmeConv897.cpp,matched,
@@ -172549,3 +172548,4 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ?drawTypeText@@YAXPAVGameWindow@@PAVDisplayString@@@Z,,0x005A0450,363,game/GameEngine/Source/GameClient/GUI/TextTypeTransitionDraw.cpp,matched,ZH GameWindowTransitionsStyles.cpp static drawTypeText with BFME DisplayString slots; private EAX window / EDI string convention from its only caller TextTypeTransition::draw in the same TU;model=claude-opus-5-5;host=vm
 ?draw@TextTypeTransition@@UAEXXZ,,0x005A0A00,57,game/GameEngine/Source/GameClient/GUI/TextTypeTransitionDraw.cpp,matched,ZH TextTypeTransition::draw (ilt_oracle CONFIRMED): setText(m_partialText) then the static drawTypeText;model=claude-opus-5-5;host=vm
 ?rva0045C2F0@View@@UAEXPAUCoord3D@@000M@Z,,0x0045C2F0,229,game/GameEngine/Source/GameClient/ViewRva0045C2F0.cpp,matched,View corner projection virtual (ZH getScreenCornerWorldPointsAtZ body; that name is ILT-contradicted here so address-derived); getOrigin +0x4C and screenToWorldAtZ +0x168 BFME slots;model=claude-opus-5-5;host=vm
+?rva003CAE00@LivingWorldRegionManager@@QAE_NPAVLivingWorldRegion@@@Z,,0x003CAE00,45,game/GameEngine/Source/Common/BfmeConv897.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/003CAE00-region-manager-thiscall.md;region-manager member that ignores this; only caller 0x003A4FD0 loads ECX=manager (thiscall) via ILT 0x00003611;model=claude-opus-5-5;host=vm

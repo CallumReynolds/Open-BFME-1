@@ -44,7 +44,7 @@ class GameWindow
 public:
 	Int winGetScreenPosition(Int *x, Int *y);
 	Int winGetSize(Int *width, Int *height);
-	UnsignedInt winGetStatus(void) const;
+	UnsignedInt winGetStatus(void);
 
 	const Image *winGetEnabledImage(Int index) const
 	{

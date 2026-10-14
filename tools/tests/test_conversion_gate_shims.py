@@ -137,3 +137,22 @@ def test_r3_emit_outside_string_is_an_emit_macro():
     hdr = {SHIM: '#define NOTE "uses" __emit 0x90\n'}
     assert run(INC + "const char *h() { return 0; }\n",
                INC + "const char *h() { return NOTE; }\n", hdr) != []
+
+
+# --- Round-2 review: a char literal '"' cannot open a fake string ---
+def test_char_literal_quote_in_header_macro_refused():
+    hdr = {SHIM: "#define RAWS __asm mov al,'\"' __emit 0xC3 __asm mov al,'\"'\n"}
+    assert run(INC + F(""), INC + F("\tRAWS\n"), hdr) != []
+
+
+def test_char_literal_quote_in_game_body_refused():
+    b = {"game/G/a.cpp": "void f()\n{\n  int a=1;\n}\n"}
+    a = {"game/G/a.cpp": "void f()\n{\n  int a=1;\n"
+                         "  char c='\"'; __asm _emit 0xC3 __asm _emit 0x90 char d='\"';\n}\n"}
+    assert _gate(b, a) != []
+
+
+def test_real_string_with_emit_still_not_an_emit_macro():
+    hdr = {SHIM: "#define NOTE \"it's __emit\"\n"}
+    assert run(INC + "const char *h() { return 0; }\n",
+               INC + "const char *h() { return NOTE; }\n", hdr) == []

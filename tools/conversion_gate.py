@@ -360,7 +360,8 @@ def _macro_defs(text):
     return defs
 
 
-_STRING_RE = re.compile(r'"(?:\\.|[^"\\\n])*"')
+# Char literals are skipped in the same pass so '"' cannot open a fake string.
+_STRING_RE = re.compile(r"'(?:\\.|[^'\\\n])*'" r'|"(?:\\.|[^"\\\n])*"')
 
 
 def _emits(body):
@@ -502,7 +503,8 @@ def emit_bytes_by_function(text, prelude=""):
     owned by the header's own check."""
     text = _strip_comments(text)
     if prelude not in _PARSED:
-        _PARSED.clear()
+        if len(_PARSED) >= 4:
+            _PARSED.clear()
         _PARSED[prelude] = (_constants(prelude), _macro_defs(prelude))
     pre_consts, pre_defs = _PARSED[prelude]
     consts = {k: list(v) for k, v in pre_consts.items()}
@@ -536,7 +538,7 @@ def emit_bytes_by_function(text, prelude=""):
             owners.setdefault(key, collections.Counter()).update(found)
         return " "
     text = re.sub(r"(?m)^[ \t]*#(?:[^\n]*\\\n)*[^\n]*", directive, text)
-    text = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', text)
+    text = _STRING_RE.sub('""', text)
     depth, func, func_depth, header = 0, None, None, []
     scopes = []  # (depth at open, normalized container header)
     pos, skip = 0, 0

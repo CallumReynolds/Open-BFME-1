@@ -9,24 +9,28 @@
 // DEBUG_CRASH string already in the ZH reference
 // (GeneralsMD/Code/GameEngine/Source/GameLogic/Object/Update/BoneFXUpdate.cpp:105),
 // whose real body has since been rewritten in BFME to the same
-// MemoryPoolFactory::findMemoryPool + BFX_Member::bind + throw INIException
+// NameKeyGenerator::nameToKey + Object::findModule + throw INIException
 // shape as its BoneFXDamage sibling, member at the same +0x08 offset.
 
-class MemoryPool;
+enum NameKeyType;
+class Module;
 
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GameMemory.h
-class MemoryPoolFactory
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/NameKeyGenerator.h
+// Retail ILT 0x0003ADD7 -> NameKeyGenerator::nameToKey 0x0008FFC0; global VA 0x012ED600.
+class NameKeyGenerator
 {
 public:
-    MemoryPool *findMemoryPool(const char *name);
+    NameKeyType nameToKey(const char *name);
 };
 
-extern MemoryPoolFactory *TheMemoryPoolFactory;
+extern NameKeyGenerator *TheNameKeyGenerator;
 
-class BFX_Member
+// Retail ILT 0x0002AE23 -> Object::findModule 0x001BEE60 (protected member).
+class Object
 {
-public:
-    int bind(MemoryPool *pool);
+protected:
+    Module *findModule(NameKeyType key) const;
+    friend class BoneFXUpdate;
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/INIException.h
@@ -58,14 +62,14 @@ protected:
     virtual void onObjectCreated();
 
 private:
-    BFX_Member *m_member;
+    Object *m_object;
 };
 
 // ?onObjectCreated@BoneFXUpdate@@MAEXXZ
 void BoneFXUpdate::onObjectCreated()
 {
-    static MemoryPool *pool = TheMemoryPoolFactory->findMemoryPool("BoneFXDamage");
-    if (!m_member->bind(pool)) {
+    static NameKeyType key = TheNameKeyGenerator->nameToKey("BoneFXDamage");
+    if (!m_object->findModule(key)) {
         throw INIException(3, "BoneFXUpdate requires BoneFXDamage");
     }
 }

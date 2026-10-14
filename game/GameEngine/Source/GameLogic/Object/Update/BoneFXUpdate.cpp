@@ -80,18 +80,7 @@ BoneFXUpdate::BoneFXUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 }
 
 //-------------------------------------------------------------------------------------------------
-// ?onObjectCreated@BoneFXUpdate@@ present-unmatched
-void BoneFXUpdate::onObjectCreated()
-{
-	static NameKeyType key_BoneFXDamage = NAMEKEY("BoneFXDamage");
-	BoneFXDamage* bfxd = (BoneFXDamage*)getObject()->findDamageModule(key_BoneFXDamage);
-	if (bfxd == NULL)
-	{
-		DEBUG_CRASH(("BoneFXUpdate requires BoneFXDamage"));
-		throw INI_INVALID_DATA;
-	}
-}
-
+// BoneFXUpdate::onObjectCreated: retail body 0x00287A50 lives in BoneFXUpdate_onObjectCreated_Thunk.cpp
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 // byte-exact reconstruction: game/GameEngine/Source/GameLogic/Object/Update/BoneFXUpdateCtorModuleFactoryBody.cpp

@@ -3949,8 +3949,6 @@ name,address,notes
 ??0StringBaseNarrowZG@@IAE@PBD@Z,0x00888BC0,pin
 ??0StringBaseNarrowZH@@IAE@ABV0@@Z,0x00887B60,pin
 ??0StringBaseNarrowZH@@IAE@PBD@Z,0x00888BC0,pin
-??0StringBaseNarrowZI@@IAE@ABV0@@Z,0x00887B60,pin
-??0StringBaseNarrowZI@@IAE@PBD@Z,0x00888BC0,pin
 ??0StringBaseNarrowZJ@@IAE@ABV0@@Z,0x00887B60,pin
 ??0StringBaseNarrowZJ@@IAE@PBD@Z,0x00888BC0,pin
 ??0StringBaseNarrowZK@@IAE@ABV0@@Z,0x00887B60,pin
@@ -9819,7 +9817,6 @@ name,address,notes
 ??1StringBaseNarrowZF@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZG@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZH@@IAE@XZ,0x00887940,pin
-??1StringBaseNarrowZI@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZJ@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZK@@IAE@XZ,0x00887940,pin
 ??1StringBaseNarrowZM@@IAE@XZ,0x00887940,pin
@@ -79029,7 +79026,6 @@ name,address,notes
 ?bfmeNameToKeyERP@BfmeKeyGenERP@@QAEHPBD@Z,0x0003ADD7,pin
 ?bfmeNameToKeyERQ@BfmeKeyGenERQ@@QAEIPBD@Z,0x0003ADD7,pin
 ?bfmeNameZH@BfmeOrderZH@@QAE?AVAsciiStringZH@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00674C30 formats
-?bfmeNameZI@BfmeOrderZI@@QAE?AVAsciiStringZI@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00674D20 formats
 ?bfmeNameZJ@BfmeOrderZJ@@QAE?AVAsciiStringZJ@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00674E10 formats
 ?bfmeNameZM@BfmeOrderZM@@QAE?AVAsciiStringZM@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00674F00 formats
 ?bfmeNameZN@BfmeOrderZN@@QAE?AVAsciiStringZN@@XZ,0x0002D204,Open-BFME5 the order name the description at 0x00674FF0 formats
@@ -82307,7 +82303,6 @@ name,address,notes
 ?format@StringBaseNarrowZF@@QAAXVAsciiStringZF@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZG@@QAAXVAsciiStringZG@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZH@@QAAXVAsciiStringZH@@ZZ,0x00888FF0,pin
-?format@StringBaseNarrowZI@@QAAXVAsciiStringZI@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZJ@@QAAXVAsciiStringZJ@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZK@@QAAXVAsciiStringZK@@ZZ,0x00888FF0,pin
 ?format@StringBaseNarrowZM@@QAAXVAsciiStringZM@@ZZ,0x00888FF0,pin
@@ -91058,7 +91053,6 @@ rva00618600Names,0x012AA020,name table indexed by Rva00618600Poly constructor
 rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?doDamageFX@Rva00066780DamageFX@@QBE_NW4DamageType@@MPBVObject@@1@Z,0x0001F65E,ILT jmp to 0x00066780 (ledger DamageFX::doDamageFX whose decoration ilt_oracle contradicts); Rva0020F240Body::doDamageFX 0x0020F240+0x4E calls it with type amount source and owner as Zero Hour ActiveBody::doDamageFX does
 ?lookup@Rva00065F10Table@@QBEPAXHH@Z,0x000046F1,ILT jmp to 0x00065F10 the matched per-type throttle lookup; Rva0020F240Body::doDamageFX 0x0020F240+0x62 calls it on the current DamageFX with type and source where Zero Hour calls getDamageFXThrottleTime
-??1AsciiStringZI@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C45120 of matched ?bfmeDescribeZI (0x00674D20) state action jmps here to destroy the AsciiStringZI return value
 ??1BfmeWordEL@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C06E00 of matched parent ?bfmeMakePairEL@@YA?AUBfmePairEL@@ABVBfmeWordEL@@0@Z (0x193520) state action jumps through this thunk; label proven by state index via handler stub 0xc06e08
 ??1ArgBox@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C3731B of matched parent ?bfmeCallDUL@@YG?AVRva0058C2B0RefPtr@@PBD@Z (0x58c2b0) state action jumps through this thunk; label proven by state index via handler stub 0xc3734d
 ??1AsciiStringAI@@QAE@XZ,0x0000D828,ILT thunk to the string releaseBuffer body 0x00887940 (as ??1BFMERetailAsciiString); retail unwind funclet 0x00C357D8 of matched parent ?bfmeLookupAI@BfmeTableAI@@QAE?AVAsciiStringAI@@V2@@Z (0x572a60) state action jumps through this thunk; label proven by state index via handler stub 0xc357f1

@@ -4,6 +4,7 @@ class CMainFrame : public CFrameWnd
 {
 protected:
     void OnViewBrushfeedback();
+    void OnUpdateViewBrushfeedback(CCmdUI *pCmdUI);
 };
 
 // The donor's inline accessors would be authored definitions here; the
@@ -25,4 +26,9 @@ void CMainFrame::OnViewBrushfeedback()
         DrawObject::m_disableFeedback = false;
         ::AfxGetApp()->WriteProfileInt("MainFrame", "ShowBrushFeedback", 1);
     }
+}
+
+void CMainFrame::OnUpdateViewBrushfeedback(CCmdUI *pCmdUI)
+{
+    pCmdUI->SetCheck(!DrawObject::m_disableFeedback ? 1 : 0);
 }

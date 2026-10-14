@@ -32,8 +32,9 @@ def test_shims_emit_macro_reshown_use_passes():
     assert run("int y;\n" + INC + F("\tRAWS\n"), INC + F("\tRAWS\n"), hdr) == []
 
 
-def test_vendored_ea_macro_not_followed():
-    assert run(INC + F(""), INC + F("\tRAWS\n"), {EA: "#define RAWS __emit 0xC3\n"}) == []
+def test_vendored_ea_macro_new_use_refused():
+    # Since 2026-10-14 (CR2B H1) a new use of an outside emit macro is growth.
+    assert run(INC + F(""), INC + F("\tRAWS\n"), {EA: "#define RAWS __emit 0xC3\n"}) != []
 
 
 def test_shims_constant_resolves():

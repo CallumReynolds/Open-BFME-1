@@ -102,6 +102,8 @@ def added_lift_lines(old, new, lines=None):
     # for growth even when no added line names __emit. Macros defined in a
     # header are not followed (a gap that predates 47cf6cb).
     _PRELUDE.clear()  # per run: ":" and revs mean a different tree per call
+    _OUTSIDE.clear()
+    _LISTING.clear()
     _CHANGED.clear()
     removed, added, path, touched = collections.Counter(), [], None, []
     for line in lines:
@@ -284,8 +286,184 @@ def header_prelude(rev):
             break
         names |= more
         new = _grep(rev, _words(more), _HEADER_GLOBS)
+    out_text, out_names = outside_emit_defs(rev)
+    if out_text:
+        texts.append(out_text)
+        names |= out_names
     _PRELUDE[rev] = ("\n".join(texts), names)
     return _PRELUDE[rev]
+
+
+# Outside headers (approved 2026-10-14, CR2B H1): emit macros defined outside
+# game/ and inputs/reference/shims/ (inputs/vendor/, the vendored EA tree, the
+# rest of inputs/) are never judged where they are defined. Two rules close
+# that: Rule A3 refuses an added #include, in a game/ or shims file, of an
+# outside file that defines an emit macro or includes one that does; and the
+# #define lines of every outside emit macro (and of outside macros naming one)
+# join header_prelude, so a NEW use in game/ is emit growth like any header
+# macro's, while a re-shown or moved use is not. Includes are matched by path
+# suffix, not by each TU's include dirs: the dirs live in per-file `// cl:`
+# flags and build scripts, and a suffix match can only over-refuse (fail
+# closed); a false hit goes on the shrink-only allowlist below.
+_OUTSIDE_GLOBS = ("inputs/", ":(exclude)inputs/reference/shims/")
+# A quoted include that names a tracked file next to the including file is
+# that file (the compiler searches there first), never an outside one.
+# Shrink-only: the (including file, include name) pairs on master
+# (2026-10-14) that a suffix match sends outside. These three reach their
+# _pch.h through /I flags (shims/sweep), but the suffix also matches the EA
+# debug/_pch.h and profile/_pch.h, which include profile/internal.h (ts_lock).
+OUTSIDE_INCLUDE_ALLOW = {
+    ("game/Libraries/Source/debug/DebugIOConConstructor.cpp", "_pch.h"),
+    ("game/Libraries/Source/debug/debug_io_con.cpp", "_pch.h"),
+    ("game/Libraries/Source/debug/debug_io_ods.cpp", "_pch.h"),
+}
+_OUTSIDE, _INCLUDE_RE = {}, re.compile(r'^\s*#\s*include\s*[<"]([^">]+)[">]')
+
+
+def outside_emit_defs(rev):
+    """(#define lines, names) of the outside emit macros and the outside
+    macros that name one (fixpoint over `git grep`), at rev; cached."""
+    if rev in _OUTSIDE:
+        return _OUTSIDE[rev]
+    seen, lines, names, owners = set(), [], set(), []
+    new = _grep(rev, ["-E", r"\b__?emit\b"], _OUTSIDE_GLOBS)
+    for _ in range(8):
+        new = [p for p in new if p not in seen]
+        if not new:
+            break
+        for path in new:
+            seen.add(path)
+            text = _strip_comments(file_text(rev, path))
+            found = [m.group(0) for m in _DEFINE_RE.finditer(text)]
+            lines += found
+            owners += [(path, m) for m in found]
+        more = _emit_macros(_macro_table("\n".join(lines))) - names
+        if not more:
+            break
+        names |= more
+        new = _grep(rev, _words(more), _OUTSIDE_GLOBS)
+    table = _macro_table("\n".join(lines))
+    names = _emit_macros(table)
+    keep = [l for l in lines if _DEFINE_RE.match(l).group(1) in names]
+    files = {p for p, l in owners if _DEFINE_RE.match(l).group(1) in names}
+    _OUTSIDE[rev] = ("\n".join(keep), names)
+    _OUTSIDE[(rev, "files")] = _include_closure(rev, files)
+    return _OUTSIDE[rev]
+
+
+def _include_closure(rev, files):
+    """{outside path: emit file it reaches}: the files defining an emit
+    macro plus every outside file whose #include (suffix match) reaches one,
+    by reverse fixpoint over `git grep` for the reached files' basenames."""
+    reach = {p: p for p in files}
+    new = set(files)
+    for _ in range(8):
+        if not new:
+            break
+        bases = sorted({p.rsplit("/", 1)[-1] for p in new})
+        pat = r'^\s*#\s*include\s*[<"]([^">]*[/\\])?(%s)[">]' % "|".join(map(re.escape, bases))
+        cmd = ["git", "grep", "-n", "-I"] + (["--cached"] if rev == ":" else []) + ["-E", pat]
+        cmd += [] if rev == ":" else [rev]
+        out = subprocess.run(cmd + ["--"] + list(_OUTSIDE_GLOBS), capture_output=True,
+                             text=True).stdout
+        found = set()
+        for row in out.splitlines():
+            if rev != ":":
+                row = row.split(":", 1)[1]
+            path, _, line = row.split(":", 2)
+            m = _INCLUDE_RE.match(line)
+            if not m or path in reach:
+                continue
+            for target in _outside_matches(rev, m.group(1)):
+                if target in reach:
+                    reach[path] = reach[target]
+                    found.add(path)
+                    break
+        new = found
+    return reach
+
+
+_LISTING = {}
+
+
+def _outside_matches(rev, name):
+    """Tracked outside files whose path ends with include name `name`."""
+    if rev not in _LISTING:
+        cmd = (["git", "ls-files", "--cached"] if rev == ":"
+               else ["git", "ls-tree", "-r", "--name-only", rev])
+        files = subprocess.run(cmd + ["--", "inputs/"], capture_output=True,
+                               text=True).stdout.split("\n")
+        by_base = {}
+        for p in files:
+            if p and not p.startswith(SHIMS):
+                by_base.setdefault(p.rsplit("/", 1)[-1], []).append(p)
+        _LISTING.clear()
+        _LISTING[rev] = by_base
+    name = name.replace("\\", "/")
+    while name.startswith(("./", "../")):
+        name = name.split("/", 1)[1]
+    return [p for p in _LISTING[rev].get(name.rsplit("/", 1)[-1], ())
+            if p == name or p.endswith("/" + name)]
+
+
+def _emitting_include(rev, name):
+    """The outside emit file include `name` reaches (directly or through
+    other outside includes), or None."""
+    outside_emit_defs(rev)
+    reach = _OUTSIDE[(rev, "files")]
+    for path in _outside_matches(rev, name):
+        if path in reach:
+            return reach[path]
+    return None
+
+
+def _sibling(rev, path, name):
+    """True when a quoted include resolves next to the including file, as the
+    compiler searches that directory first: it is not an outside header."""
+    base = path.rsplit("/", 1)[0]
+    parts = [] if not base else base.split("/")
+    for part in name.replace("\\", "/").split("/"):
+        if part == "..":
+            if not parts:
+                return False
+            parts.pop()
+        elif part not in ("", "."):
+            parts.append(part)
+    target = "/".join(parts)
+    return target.startswith(("game/", SHIMS)) and blob(rev, target) is not None
+
+
+def added_outside_includes(old, new, lines=None):
+    """Rule A3: [(path, include, outside emit file)] for each #include a
+    game/ or shims file adds of an outside file that defines an emit macro.
+    An include the same diff removes from the same file is a move."""
+    if lines is None:
+        lines = collect_diff_lines(old, new)
+    added, removed, path = [], collections.Counter(), None
+    for line in lines:
+        if line.startswith("+++ b/"):
+            path = line[6:]
+        elif line.startswith(("---", "+++")):
+            continue
+        elif line[:1] in "+-" and path and path.startswith(("game/", SHIMS)) \
+                and not path.startswith("game/gen_small/"):
+            m = _INCLUDE_RE.match(line[1:])
+            if m:
+                if line[0] == "-":
+                    removed[(path, m.group(1))] += 1
+                else:
+                    added.append((path, m.group(1)))
+    bad = []
+    for path, name in added:
+        if removed[(path, name)]:
+            removed[(path, name)] -= 1
+            continue
+        if (path, name) in OUTSIDE_INCLUDE_ALLOW or _sibling(new, path, name):
+            continue
+        hit = _emitting_include(new, name)
+        if hit:
+            bad.append((path, name, hit))
+    return bad
 
 
 def _constants(text):
@@ -933,6 +1111,12 @@ def main():
         print("A lift is not a conversion: it deletes the C++ this project exists to\n"
               "produce and moves progress.py C++ exact by +0. Convert to real C++, or\n"
               "leave the .asm dump alone (codegen blockers: game/masm_dumps/*.asm).",
+              file=sys.stderr)
+    for path, name, hit in added_outside_includes(old, new, collected):
+        failed = True
+        print("conversion gate: %s adds #include \"%s\", which reaches %s: an emit\n"
+              "macro outside game/ and inputs/reference/shims/ is never judged where it is\n"
+              "defined. Copy what you need into game/ as C++." % (path, name, hit),
               file=sys.stderr)
     for path, signature in added_asm_only_bodies(old, new, collected):
         failed = True

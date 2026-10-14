@@ -1094,8 +1094,18 @@ void W3DShadowGeometryMesh::deleteNeighbors( void )
 // the highest point of the object is extruded long enough to hit some ground.
 // This is a very slow operation so only do once for static non-moving objects.
 // ============================================================================
-// ?updateOptimalExtrusionPadding@W3DVolumetricShadow@@IAEXXZ present-unmatched
-void W3DVolumetricShadow::updateOptimalExtrusionPadding(void)
+// ?updateOptimalExtrusionPadding@W3DVolumetricShadow@@IAEXXZ is defined once, by the matched
+// W3DVolumetricShadowUpdateOptimalExtrusionPadding.cpp. The ZH body stays here under a
+// TU-local derived name so the helper COMDATs it emits keep their matched rows,
+// without a second definition of the retail symbol (link queue #29).
+class W3DVolumetricShadowZHCopy : public W3DVolumetricShadow
+{
+public:
+	void updateOptimalExtrusionPaddingZHCopy(void);
+};
+
+// ?updateOptimalExtrusionPaddingZHCopy@W3DVolumetricShadowZHCopy@@QAEXXZ present-unmatched
+void W3DVolumetricShadowZHCopy::updateOptimalExtrusionPaddingZHCopy(void)
 {
 	if (m_robj)
 	{

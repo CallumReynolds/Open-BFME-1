@@ -26,9 +26,7 @@ public:
 };
 class BfmeStrVKI {
 public:
-    // The const-char constructor's retail body is the bfmeSetVKI body at
-    // 0x0089E680 (symbols.csv alias pin): declare only, emit no COMDAT here.
-    BfmeStrVKI(const char *text);
+    BfmeStrVKI(const char *text) { bfmeSetVKI(text); }
     ~BfmeStrVKI() {
         BfmeStringData3AF0 *old = m_data;
         if (--old->m_refCount == 0) g_rva01337A30AllocPair->free(old);

@@ -29,7 +29,8 @@ struct Rva008A99D0Block
 class BfmeStrVKI
 {
 public:
-	BfmeStrVKI(const char *text);
+	BfmeStrVKI(const char *text) { bfmeSetVKI(text); }
+	void bfmeSetVKI(const char *text);
 	__forceinline ~BfmeStrVKI()
 	{
 		Rva008A99D0Block *block = m_block;

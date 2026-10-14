@@ -2683,7 +2683,6 @@ name,address,notes
 ??0BfmeStrERD@@QAE@PBD@Z,0x00888BC0,pin
 ??0BfmeStrETA@@QAE@ABVBfmeUniETA@@@Z,0x00889090,pin
 ??0BfmeStrFM@@QAE@ABV0@@Z,0x00887B60,address-derived BfmeHostFM result copy constructor; retail uses the established narrow StringBase sharing body
-??0BfmeStrVKI@@QAE@PBD@Z,0x0089E680,alias of landed ?bfmeSetVKI@BfmeStrVKI@@QAEXPBD@Z; same thiscall const-char body used as BfmeStrVKI constructor
 ??0BfmeStrVSY@@QAE@ABV0@@Z,0x0001AB86,pin
 ??0BfmeStrVTA@@QAE@ABV0@@Z,0x00887B60,pin
 ??0BfmeStrVTB@@QAE@ABV0@@Z,0x00887B60,pin

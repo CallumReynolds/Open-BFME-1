@@ -8,9 +8,7 @@ extern BfmeStringPool3AF0 *g_rva01337A30AllocPair;
 class BfmeStrVKI {
 public:
  void bfmeSetVKI(const char *);
- // The const-char constructor's retail body is the bfmeSetVKI body at
- // 0x0089E680 (symbols.csv alias pin): declare only, emit no COMDAT here.
- BfmeStrVKI(const char *s);
+ BfmeStrVKI(const char *s) { bfmeSetVKI(s); }
  ~BfmeStrVKI() { BfmeHdrVKI *p=m_bfme00; --p->m_bfme00; if(p->m_bfme00==0) reinterpret_cast<void (__cdecl **)(void *)>(g_rva01337A30AllocPair)[1](p); }
  BfmeHdrVKI *m_bfme00;
 };

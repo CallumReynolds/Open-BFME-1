@@ -77,12 +77,14 @@ def run(*argv):
 
 def added_lift_lines(old, new, lines=None):
     if lines is None:
-        lines = diff_lines(old, new, "Code/", "game/", ":(exclude)game/gen_small/")
+        lines = diff_lines(old, new, "Code/", "game/", SHIMS, ":(exclude)game/gen_small/")
     # Authored code only. A ledger row may name a file in the vendored
     # inputs/reference/ tree, and those rows sit outside this scan on purpose: nobody
     # authors that tree, nine of its files already contain __emit upstream, and
     # scanning it would fire on the next re-vendor rather than on a regression.
     # Rule B below reads whatever path a row names, so it covers them.
+    # inputs/reference/shims/ is authored (and followed for macros), so its
+    # diff is judged like a game/ header's (approved 2026-10-14).
     # A naked declarator the same diff removes from the same file is a retyped
     # existing lift, not a new one: re_attempts 59794 added a tick parameter to
     # the unchanged naked CommUdpProcess so its C caller could pass it, and was
@@ -108,7 +110,7 @@ def added_lift_lines(old, new, lines=None):
         elif line.startswith("---") or line.startswith("+++"):
             continue
         elif line[:1] in "+-":
-            if path is None or not path.startswith("game/") \
+            if path is None or not path.startswith(("game/", SHIMS)) \
                     or path.startswith("game/gen_small/"):
                 continue
             if line[0] == "+" and path not in touched:
@@ -140,7 +142,8 @@ def added_lift_lines(old, new, lines=None):
         if path not in touched:
             touched.append(path)
     for path in touched:
-        if path in bad or not path.endswith(tuple(CPP_SUFFIXES) + (".h", ".hpp", ".inl")):
+        if path in bad or not (path.endswith(tuple(CPP_SUFFIXES) + (".h", ".hpp", ".inl"))
+                               or path.startswith(SHIMS)):
             continue
         if path not in grown:
             new_text = file_text(new, path)
@@ -165,11 +168,13 @@ def added_lift_lines(old, new, lines=None):
 # its body names __emit/_emit or another emit macro, and a function-like one
 # has its arguments substituted, so `EB(0x90)` -> `EB(0xC3)` is a new byte.
 # Emit macros and constants are also collected from every tracked game/ header
-# (outside game/gen_small/) and inputs/reference/shims/ header (authored, edited
-# often) that defines one, at the revision being compared; the rest of
-# inputs/reference/ (the vendored EA tree, nine files with __emit upstream) is
-# not followed, and a commit that only edits a shims header does not re-judge
-# unchanged game/ users of it (documented limits).
+# (outside game/gen_small/) and every tracked file under inputs/reference/shims/
+# (authored, edited often; any extension) that defines one, at the revision
+# being compared; the rest of inputs/reference/ (the vendored EA tree, nine
+# files with __emit upstream) is not followed. A name defined more than once
+# is an emit macro if ANY definition emits (fail closed: the gate cannot tell
+# which header or #ifdef branch a TU sees), and identical duplicate constant
+# definitions count once.
 # A renamed function's emits count as new (conservative: the gate cannot tell
 # a rename from a move, G2 note 8).
 EMIT_OPERAND = r"\b__?emit\b\s*(\(?\s*[\w$]+\s*\)?|[^\s;{}]+)?"
@@ -179,9 +184,8 @@ _DEFINE_RE = re.compile(
     r"(?m)^[ \t]*#\s*define\s+(\w+)(\([^)\n]*\))?[ \t]*((?:[^\n]*\\\n)*[^\n]*)")
 _CONST_RE = re.compile(
     r"\bconst\b[^;=(){}#\n]*?\b(\w+)\s*=\s*([^;,{}\n]+)\s*[;,]")
-_HEADER_GLOBS = ("game/*.h", "game/*.hpp", "game/*.inl", ":(exclude)game/gen_small/",
-                 "inputs/reference/shims/*.h", "inputs/reference/shims/*.hpp",
-                 "inputs/reference/shims/*.inl")
+SHIMS = "inputs/reference/shims/"
+_HEADER_GLOBS = ("game/*.h", "game/*.hpp", "game/*.inl", ":(exclude)game/gen_small/", SHIMS)
 _SOURCE_GLOBS = ("game/", ":(exclude)game/gen_small/", ":(exclude)game/gen_asm/")
 
 
@@ -195,8 +199,8 @@ def _definitions(text):
     """{name: definitions} of every constant and macro a text defines."""
     text = _strip_comments(text)
     defs = {k: tuple(v) for k, v in _constants(text).items()}
-    for name, value in _macro_table(text).items():
-        defs[name] = defs.get(name, ()) + (value,)
+    for name, values in _macro_defs(text).items():
+        defs[name] = defs.get(name, ()) + tuple(values)
     return defs
 
 
@@ -222,7 +226,7 @@ def users_of_changed_names(old, new, lines):
     paths = {line[6:] for line in lines if line.startswith(("+++ b/", "--- a/"))}
     changed = set()
     for path in paths:
-        if not path.startswith("game/") or path.startswith("game/gen_small/"):
+        if not path.startswith(("game/", SHIMS)) or path.startswith("game/gen_small/"):
             continue
         before, after = _definitions(file_text(old, path)), _definitions(file_text(new, path))
         changed |= {n for n in set(before) | set(after) if before.get(n) != after.get(n)}
@@ -333,7 +337,7 @@ def _operand_key(op, consts, seen=()):
     if lit:
         return _emit_value(lit.group(1))
     name = op.strip("() \t")
-    defs = consts.get(name)
+    defs = list(dict.fromkeys(consts.get(name) or ()))  # identical copies count once
     if defs and len(defs) == 1 and name not in seen:
         d = defs[0]
         lit = _LITERAL_RE.match(d)
@@ -344,15 +348,51 @@ def _operand_key(op, consts, seen=()):
     return "sym:%s=%s" % (op, "|".join(defs) if defs else "?")
 
 
-def _macro_table(text):
-    """{name: (params or None, body)}; the last definition wins."""
-    table = {}
+def _macro_defs(text):
+    """{name: [(params or None, body)]}: every definition, in text order."""
+    defs = {}
     for m in _DEFINE_RE.finditer(text):
         params = None
         if m.group(2):
             params = [p.strip() for p in m.group(2)[1:-1].split(",") if p.strip()]
-        table[m.group(1)] = (params, " ".join(m.group(3).replace("\\\n", " ").split()))
+        defs.setdefault(m.group(1), []).append(
+            (params, " ".join(m.group(3).replace("\\\n", " ").split())))
+    return defs
+
+
+_STRING_RE = re.compile(r'"(?:\\.|[^"\\\n])*"')
+
+
+def _emits(body):
+    """True when a macro body names __emit/_emit outside a string literal."""
+    return bool(LIFT_RE.search(_STRING_RE.sub('""', body)))
+
+
+def _choose(defs):
+    """{name: (params, body)} from _macro_defs: the last definition, except
+    that a name with any emitting definition (directly or through another
+    such name, fixpoint) keeps its last emitting one. The gate cannot tell
+    which header, #undef or #ifdef branch a TU sees, so it fails closed."""
+    emit = {n for n, ds in defs.items() if any(_emits(b) for _, b in ds)}
+    while emit:
+        names = re.compile(r"\b(?:%s)\b" % "|".join(map(re.escape, sorted(emit))))
+        more = {n for n, ds in defs.items()
+                if n not in emit and any(names.search(b) for _, b in ds)}
+        if not more:
+            break
+        emit |= more
+    table = {}
+    names = emit and re.compile(r"\b(?:%s)\b" % "|".join(map(re.escape, sorted(emit))))
+    for n, ds in defs.items():
+        if n in emit:
+            ds = [d for d in ds if _emits(d[1]) or names.search(d[1])] or ds
+        table[n] = ds[-1]
     return table
+
+
+def _macro_table(text):
+    """{name: (params or None, body)}; see _choose for which definition wins."""
+    return _choose(_macro_defs(text))
 
 
 def _emit_macros(table):
@@ -360,7 +400,7 @@ def _emit_macros(table):
     macro (`##`) is not one by itself: each use of it is expanded with its
     arguments pasted and rescanned (emit_bytes_by_function), so
     `CAT(__em,it)` counts and `BFME_VIRTUAL_SLOT(n)` (491e03cf7c) does not."""
-    emit = {n for n, (_, body) in table.items() if LIFT_RE.search(body)}
+    emit = {n for n, (_, body) in table.items() if _emits(body)}
     while emit:
         names = re.compile(r"\b(?:%s)\b" % "|".join(map(re.escape, sorted(emit))))
         more = {n for n, (_, body) in table.items() if n not in emit and names.search(body)}
@@ -463,13 +503,15 @@ def emit_bytes_by_function(text, prelude=""):
     text = _strip_comments(text)
     if prelude not in _PARSED:
         _PARSED.clear()
-        _PARSED[prelude] = (_constants(prelude), _macro_table(prelude))
-    pre_consts, pre_table = _PARSED[prelude]
+        _PARSED[prelude] = (_constants(prelude), _macro_defs(prelude))
+    pre_consts, pre_defs = _PARSED[prelude]
     consts = {k: list(v) for k, v in pre_consts.items()}
     for k, v in _constants(text).items():
         consts.setdefault(k, []).extend(v)
-    table = dict(pre_table)
-    table.update(_macro_table(text))
+    defs = {k: list(v) for k, v in pre_defs.items()}
+    for k, v in _macro_defs(text).items():
+        defs.setdefault(k, []).extend(v)
+    table = _choose(defs)
     emit = _emit_macros(table)
     expandable = emit | _paste_macros(table)
     owners = {}
@@ -629,7 +671,7 @@ def diff_lines(old, new, *paths):
 
 def collect_diff_lines(old, new):
     """Collect the shared game/ledger diff used by Rules A and C."""
-    return diff_lines(old, new, "Code/", "game/", layout_history.OLD_LEDGER, LEDGER)
+    return diff_lines(old, new, "Code/", "game/", SHIMS, layout_history.OLD_LEDGER, LEDGER)
 
 
 def gen_asm_offences(old, new, lines=None):

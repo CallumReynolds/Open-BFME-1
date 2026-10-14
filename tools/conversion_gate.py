@@ -165,8 +165,11 @@ def added_lift_lines(old, new, lines=None):
 # its body names __emit/_emit or another emit macro, and a function-like one
 # has its arguments substituted, so `EB(0x90)` -> `EB(0xC3)` is a new byte.
 # Emit macros and constants are also collected from every tracked game/ header
-# (outside game/gen_small/) that defines one, at the revision being compared;
-# the vendored inputs/reference/ tree is not followed (documented limit).
+# (outside game/gen_small/) and inputs/reference/shims/ header (authored, edited
+# often) that defines one, at the revision being compared; the rest of
+# inputs/reference/ (the vendored EA tree, nine files with __emit upstream) is
+# not followed, and a commit that only edits a shims header does not re-judge
+# unchanged game/ users of it (documented limits).
 # A renamed function's emits count as new (conservative: the gate cannot tell
 # a rename from a move, G2 note 8).
 EMIT_OPERAND = r"\b__?emit\b\s*(\(?\s*[\w$]+\s*\)?|[^\s;{}]+)?"
@@ -176,7 +179,9 @@ _DEFINE_RE = re.compile(
     r"(?m)^[ \t]*#\s*define\s+(\w+)(\([^)\n]*\))?[ \t]*((?:[^\n]*\\\n)*[^\n]*)")
 _CONST_RE = re.compile(
     r"\bconst\b[^;=(){}#\n]*?\b(\w+)\s*=\s*([^;,{}\n]+)\s*[;,]")
-_HEADER_GLOBS = ("game/*.h", "game/*.hpp", "game/*.inl", ":(exclude)game/gen_small/")
+_HEADER_GLOBS = ("game/*.h", "game/*.hpp", "game/*.inl", ":(exclude)game/gen_small/",
+                 "inputs/reference/shims/*.h", "inputs/reference/shims/*.hpp",
+                 "inputs/reference/shims/*.inl")
 _SOURCE_GLOBS = ("game/", ":(exclude)game/gen_small/", ":(exclude)game/gen_asm/")
 
 

@@ -70,7 +70,7 @@ public:
 // Retail ILT targets identify these exact public clear() instantiations.
 // Declare them without the inline list implementation so calls remain calls.
 struct Z1Elem0013BF00;
-struct Z1Elem0056D960;
+struct AvailableGameInfo;
 struct Z1Elem0076AE50;
 namespace _STL
 {
@@ -128,7 +128,7 @@ private:
 
 Q2_NODE_POOL_RELEASE( Gen0013BF00Owner, Rva0013C080, 0x2C, (reinterpret_cast<_STL::_List_base<Z1Elem0013BF00, _STL::allocator<Z1Elem0013BF00> > *>(this)->clear()) )
 Q2_NODE_POOL_RELEASE( Gen0013BF00Owner, Rva0013C110, 0x2C, (reinterpret_cast<_STL::_List_base<Z1Elem0013BF00, _STL::allocator<Z1Elem0013BF00> > *>(this)->clear()) )
-Q2_NODE_POOL_RELEASE( Gen0056D960Owner, Rva0056DE10, 0x44, (reinterpret_cast<_STL::_List_base<Z1Elem0056D960, _STL::allocator<Z1Elem0056D960> > *>(this)->clear()) )
+Q2_NODE_POOL_RELEASE( Gen0056D960Owner, Rva0056DE10, 0x44, (reinterpret_cast<_STL::_List_base<AvailableGameInfo, _STL::allocator<AvailableGameInfo> > *>(this)->clear()) )
 Q2_NODE_POOL_RELEASE( Gen00627270Owner, Rva00627340, 0x24, cleanup() )
 Q2_NODE_POOL_RELEASE( Gen00627270Owner, Rva00627590, 0x24, cleanup() )
 Q2_NODE_POOL_RELEASE( Gen0076AE50Owner, Rva0076D530, 0x1C, (reinterpret_cast<_STL::_List_base<Z1Elem0076AE50, _STL::allocator<Z1Elem0076AE50> > *>(this)->clear()) )

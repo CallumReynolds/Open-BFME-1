@@ -10084,7 +10084,6 @@ name,address,notes
 ??1XferException@@QAE@XZ,0x00065C70,XferException destructor; ThrowInfo VA 0x011DFE5C unwind ILT 0x00040804 resolves here; full 10-byte array-delete cleanup
 ??1Z1Elem00129220@@QAE@XZ,0x001266B0,Z1 lane: element destructor of a list<T>::clear() instantiation; address read from the retail REL32 at the clear() call site
 ??1Z1Elem0013BF00@@QAE@XZ,0x0013AD00,Z1 lane: element destructor of a list<T>::clear() instantiation; address read from the retail REL32 at the clear() call site
-??1Z1Elem0056D960@@QAE@XZ,0x0010DAE0,Z1 lane: element destructor of a list<T>::clear() instantiation; address read from the retail REL32 at the clear() call site
 ??1Z1Elem0076AE50@@QAE@XZ,0x00762EC0,Z1 lane: element destructor of a list<T>::clear() instantiation; address read from the retail REL32 at the clear() call site
 ??1ZigZagLinearOffsetTextureMapperClass@@UAE@XZ,0x00967110,constructor 0x00965350 installs vtable 0x0113E4C0 whose slot 1 (+4) is deleting wrapper 0x009670F0; that wrapper directly calls this scalar body
 ??1_ENUM_VALUE@EnumParameterClass@@QAE@XZ,0x000470F5,ENUM_VALUE dtor thunk from matched VectorClass ctor 0x0093DBB0 vecctor slot
@@ -87425,7 +87424,6 @@ name,address,notes
 ?removeNamedMapReveal@ScriptEngine@@QAEXABVAsciiString@@@Z,0x00022610,ILT thunk; real body 0x74D440
 ?removeNamedTimer@InGameUI@@QAEXABVAsciiString@@@Z,0x00046F42,addNamedTimer retail call site; ILT thunk to body 0x0044A1B0
 ?removeObject@Squad@@QAEXPAVObject@@@Z,0x000292EE,Open-BFME5 ILT; called by ?removeObjectFromHotkeySquad@Player@@QAEXPAVObject@@@Z at 0x000C9BE0
-?removeObjectBuilt@ScoreKeeper@@QAEXPBVObject@@@Z,0x000016CC,pinharvest x2 (thunk)
 ?removeObjectFromGarrisonPoint@GarrisonContain@@IAEXPAVObject@@H@Z,0x0003F675,GarrisonContain remove point ILT
 ?removeObjectFromLookupTable@GameLogic@@QAEXPAVObject@@@Z,0x00388A90,Open-BFME5 callee of ?setID@Object@@IAEXW4ObjectID@@@Z at 0x001BEC70 via ILT 0x00031656; body erases the m_id key from the GameLogic+0xb0 lookup map
 ?removeObjectFromPathfindMap@Pathfinder@@QAEXPAVObject@@@Z,0x00006D7F,Open-BFME5 retail pathfinder removal thunk
@@ -91206,3 +91204,4 @@ rva00618600Vft,0x01116D64,vtable installed by Rva00618600Poly constructor
 ?rva001B3A80@GhostObject@@UBEMXZ,0x001B3A80,GhostObject override of virtual-base slot 2 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCAD0 and GhostObject's own thunk 0x001B3E10 jump here through ILT 0x00043635; method name address-derived
 ?rva001B3E30@GhostObject@@UAEXH@Z,0x001B3E30,GhostObject override of virtual-base slot 3 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCAF0 and GhostObject's own thunk 0x001B3E20 jump here through ILT 0x0000B9DD; method name address-derived
 ?rva001B3E50@GhostObject@@UBEHXZ,0x001B3E50,GhostObject override of virtual-base slot 4 of vtable 0x00D1CF8C; W3DGhostObject's vtordisp{-4,0x98} thunk 0x006BCB10 and GhostObject's own thunk 0x001B3E40 jump here through ILT 0x000302DD; method name address-derived
+??1?$list@UAvailableGameInfo@@V?$allocator@UAvailableGameInfo@@@_STL@@@_STL@@QAE@XZ,0x000016CC,route=0x0056E160; ILT jmp to the matched list<AvailableGameInfo> ~_List_base; BfmeAptScreenSaveLoad unwind funclet 0x00C35468 destroys its +0x284 member through it

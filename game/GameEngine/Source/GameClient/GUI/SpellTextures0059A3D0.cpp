@@ -36,7 +36,8 @@ public:
  bool changed;
 };
 void Rva009EBAC0(int);
-extern void *AssetSubsystem0059A3D0;
+class Rva009EB960;
+extern Rva009EB960 *Rva0134FAA0; // retail 0x0059A510 cmp [0x0134FAA0]
 static const char *TextureExtensions0059A3D0[2] = { "dds", "tga" };
 void preloadSpellTextures0059A3D0()
 {
@@ -53,7 +54,7 @@ void preloadSpellTextures0059A3D0()
   ((ShroudTexture*)&texture)->getFilter()->field_10=1;
   ((ShroudTexture*)&texture)->getFilter()->field_c=1;
   ((Gen_0090E810*)&texture)->bfmeSetFlag(1);
-  if(AssetSubsystem0059A3D0) {
+  if(Rva0134FAA0) {
    AssetList0059A3D0 assets;
    assets.insert(name);
    Rva009EBAC0((int)&assets);

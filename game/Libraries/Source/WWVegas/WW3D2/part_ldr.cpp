@@ -446,79 +446,9 @@ ParticleEmitterDefClass::Initialize_To_Ver2 (void)
 //
 //	Convert_To_Ver2
 //
-void
-// ?ParticleEmitterDefClass::Convert_To_Ver2 present-unmatched
-ParticleEmitterDefClass::Convert_To_Ver2 (void)
-{
-	if (m_Version < 0x00020000) {		
-		m_InfoV2.BurstSize = 1;
-		m_InfoV2.OutwardVel = 0;
-		m_InfoV2.VelInherit = 0;		
-
-		//
-		//	Determine which shader to use...
-		//
-		ShaderClass shader = ShaderClass::_PresetAdditiveSpriteShader;
-		TextureClass *ptexture = WW3DAssetManager::Get_Instance ()->Get_Texture (m_Info.TextureFilename);
-		if (ptexture != NULL) {
-			// If texture has an alpha channel do alpha blending instead of additive
-			// (which is the default for point groups):
-//			SurfaceClass::SurfaceDescription surf_desc;
-//			::ZeroMemory(&surf_desc, sizeof(SurfaceClass::SurfaceDescription));
-//			ptexture->Get_Level_Description(surf_desc);
-//			if (Has_Alpha(surf_desc.Format)) {
-			if (Has_Alpha(ptexture->Get_Texture_Format())) {
-				shader = ShaderClass::_PresetAlphaSpriteShader;
-			}
-			ptexture->Release_Ref();
-		}
-		W3dUtilityClass::Convert_Shader (shader, &m_InfoV2.Shader);
-
-				
-		//
-		//	Convert the randomziers
-		//
-		m_InfoV2.CreationVolume.ClassID = Vector3Randomizer::CLASSID_SOLIDBOX;
-		m_InfoV2.CreationVolume.Value1 = m_Info.PositionRandom / 1000.0f;
-		m_InfoV2.CreationVolume.Value2 = m_Info.PositionRandom / 1000.0f;
-		m_InfoV2.CreationVolume.Value3 = m_Info.PositionRandom / 1000.0f;
-
-		m_InfoV2.VelRandom.ClassID = Vector3Randomizer::CLASSID_SOLIDBOX;
-		m_InfoV2.VelRandom.Value1 = m_Info.VelocityRandom;
-		m_InfoV2.VelRandom.Value2 = m_Info.VelocityRandom;
-		m_InfoV2.VelRandom.Value3 = m_Info.VelocityRandom;
-
-		//
-		//	Recreate the randomizers
-		//
-		SAFE_DELETE (m_pCreationVolume);
-		SAFE_DELETE (m_pVelocityRandomizer);
-		m_pCreationVolume = Create_Randomizer (m_InfoV2.CreationVolume);
-		m_pVelocityRandomizer = Create_Randomizer (m_InfoV2.VelRandom);
-
-		//
-		//	Convert the colors, opacities, and sizes
-		//		
-		Free_Props ();
-		m_ColorKeyframes.Start = RGBA_TO_VECTOR3 (m_Info.StartColor);
-		m_ColorKeyframes.Rand = Vector3 (0, 0, 0);
-		m_ColorKeyframes.NumKeyFrames = 1;
-		m_ColorKeyframes.KeyTimes = W3DNEW float(m_Info.FadeTime);
-		m_ColorKeyframes.Values = W3DNEW Vector3(RGBA_TO_VECTOR3 (m_Info.EndColor));
-
-		m_OpacityKeyframes.Start = ((float)(m_Info.StartColor.A)) / 255;
-		m_OpacityKeyframes.Rand = 0;
-		m_OpacityKeyframes.NumKeyFrames = 1;
-		m_OpacityKeyframes.KeyTimes = W3DNEW float(m_Info.FadeTime);
-		m_OpacityKeyframes.Values = W3DNEW float(((float)(m_Info.EndColor.A)) / 255);
-
-		m_SizeKeyframes.Start = m_Info.StartSize;
-		m_SizeKeyframes.Rand = 0;
-		m_SizeKeyframes.NumKeyFrames = 0;
-	}
-
-	return ;
-}
+// ?Convert_To_Ver2@ParticleEmitterDefClass@@MAEXXZ: the ZH body was removed. It defined a
+// second, non-retail 696-byte copy beside the matched 729-byte body in
+// ParticleEmitterDefClassConvertToVer2.cpp (link queue #35).
 
 
 ///////////////////////////////////////////////////////////////////////////////////

@@ -11,53 +11,24 @@ public:
 	virtual AsciiString getContentsAsAsciiString();
 };
 
-// Keep this row's return type while using the canonical string lifecycle.
-class AsciiStringZS
-{
-public:
-	AsciiStringZS(void)
-	{
-	}
-
-	AsciiStringZS(const char *text) : m_bfmeNarrowZS(text)
-	{
-	}
-
-	AsciiStringZS(const AsciiStringZS &other) : m_bfmeNarrowZS(other.m_bfmeNarrowZS)
-	{
-	}
-
-	~AsciiStringZS(void)
-	{
-	}
-
-	const char *bfmeTextZS(void) const
-	{
-		return m_bfmeNarrowZS.str();
-	}
-
-private:
-	AsciiString m_bfmeNarrowZS;
-};
-
 class BfmeOrderZS
 {
 public:
-	AsciiStringZS bfmeDescribeZS(void);
+	AsciiString bfmeDescribeZS(void);
 
 	char m_bfmePadZS[0x1c];
-	AsciiStringZS m_bfmeAuthKeyZS;
-	AsciiStringZS m_bfmeAuthTokenZS;
+	AsciiString m_bfmeAuthKeyZS;
+	AsciiString m_bfmeAuthTokenZS;
 };
 
-AsciiStringZS BfmeOrderZS::bfmeDescribeZS(void)
+AsciiString BfmeOrderZS::bfmeDescribeZS(void)
 {
-	AsciiStringZS text;
+	AsciiString text;
 
-	((AsciiString &)text).format(AsciiString("%s, authToken=%s, authKey=%s"),
+	text.format(AsciiString("%s, authToken=%s, authKey=%s"),
 			((NetCommandMsg *)this)->NetCommandMsg::getContentsAsAsciiString().str(),
-			m_bfmeAuthTokenZS.bfmeTextZS(),
-			m_bfmeAuthKeyZS.bfmeTextZS());
+			m_bfmeAuthTokenZS.str(),
+			m_bfmeAuthKeyZS.str());
 
 	return text;
 }

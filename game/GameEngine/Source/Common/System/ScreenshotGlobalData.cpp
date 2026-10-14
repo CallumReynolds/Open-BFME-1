@@ -1,9 +1,11 @@
-// ?getPath_UserData@ScreenshotGlobalData@@QBE?AVScreenshotAsciiString@@XZ
-// partial score=0.72 date=2026-09-28
+// ?getPath00083DD0@ScreenshotGlobalData@@QBE?AVScreenshotAsciiString@@XZ
+// Retail RVA 0x00083DD0, 401 bytes.
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 //
-// The pinned ILT at 0x00036D9A and the call in W3DDisplay::saveScreenShot
-// identify this body as ScreenshotGlobalData::getPath_UserData.
+// W3DDisplay::saveScreenShot reaches this body through the ILT at 0x00036D9A.
+// Its real name is unproven: GlobalData::getPath_UserData is the separate
+// matched body at 0x00083D70, and retail's thunk order contradicts that
+// spelling here, so the method keeps an address-derived name.
 // The method creates the screenshot path when GlobalData+0x1284 is empty.
 // GlobalDataParseDefinition.cpp declares and clears m_userDataDirLegacy at
 // this offset. The current retail baseline stores APPDATA:PictureFolder at
@@ -74,28 +76,25 @@ public:
 	unsigned char m_pad[0x1284];
 	ScreenshotAsciiString m_userDataDirLegacy;
 
-	ScreenshotAsciiString getPath_UserData(void) const;
+	ScreenshotAsciiString getPath00083DD0(void) const;
 };
 
-ScreenshotAsciiString ScreenshotGlobalData::getPath_UserData(void) const
+ScreenshotAsciiString ScreenshotGlobalData::getPath00083DD0(void) const
 {
-	// Retail loads the buffer pointer directly into EAX, then computes this
-	// field's address in ESI. This source uses a raw view at the same offset.
+	// Retail reads the header before retaining the member address for the return.
 	const char *dataPtr = *(const char *const *)((const char *)this + 0x1284);
-	bool needsPath = dataPtr == 0 ||
-		*(const unsigned short *)(dataPtr + 4) == 0;
-	const ScreenshotAsciiString * volatile userDataDir = 0;
-	userDataDir = &m_userDataDirLegacy;
-	if (needsPath && TheGameText)
+	if ((dataPtr == 0 || *(const unsigned short *)(dataPtr + 4) == 0) && TheGameText)
 	{
 		char temp[MAX_PATH];
 		if (SHGetSpecialFolderPathA(0, temp, 0x27, TRUE))
 		{
+			// Retail constructs and translates the leaf before inspecting the separator.
+			AsciiString leaf;
+			leaf.translate(TheGameText->fetch("APPDATA:PictureFolder"));
+
 			if (temp[strlen(temp) - 1] != '\\')
 				strcat(temp, "\\");
 
-			AsciiString leaf;
-			leaf.translate(TheGameText->fetch("APPDATA:PictureFolder"));
 			strcat(temp, leaf.str());
 			strcat(temp, "\\");
 
@@ -103,5 +102,5 @@ ScreenshotAsciiString ScreenshotGlobalData::getPath_UserData(void) const
 			TheWritableGlobalData->m_userDataDirLegacy = temp;
 		}
 	}
-	return *userDataDir;
+	return m_userDataDirLegacy;
 }

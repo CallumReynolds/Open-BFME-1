@@ -1,5 +1,6 @@
-// cl: /DNDEBUG /DWIN32 /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
+// cl: /DNDEBUG /DWIN32 /MD /EHsc /Iinputs/reference/shims/stringbaseascii /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
+#define __PLACEMENT_VEC_NEW_INLINE
 #define Matrix4x4 Matrix4  // BFME renamed it
 /*
 **	Command & Conquer Generals Zero Hour(tm)
@@ -259,6 +260,58 @@ void W3DPowerDraw( GameWindow *window, WinInstanceData *instData )
 	TheWindowManager->winDrawImage(slider, posXstart, pos.y + size.y - slider->getImageHeight(), posXend, pos.y + size.y);
 }
 
+// Partial BFME views, backed by this body and GlobalData's FieldParse table.
+struct EnergyView0079AEC0 {
+ void *field00; int m_energyProduction, m_energyConsumption;
+ int getConsumption() const { return m_energyConsumption; }
+ int getProduction() const { return m_energyProduction; }
+};
+struct PowerGlobals0079AEC0 {
+ char pad0000[0xC5C]; int m_powerBarBase; float m_powerBarIntervals; int m_powerBarYellowRange;
+};
+
+class Rva00589320Player;
+class Rva002EE330PlayerList { public: Rva00589320Player *getLocalPlayer(); };
+class DisplayView0079AEC0 { public:
+virtual void slot00();
+virtual void slot01();
+virtual void slot02();
+virtual void slot03();
+virtual void slot04();
+virtual void slot05();
+virtual void slot06();
+virtual void slot07();
+virtual void slot08();
+virtual void slot09();
+virtual void slot0A();
+virtual void slot0B();
+virtual void slot0C();
+virtual void slot0D();
+virtual void slot0E();
+virtual void slot0F();
+virtual void slot10();
+virtual void slot11();
+virtual void slot12();
+virtual void slot13();
+virtual void slot14();
+virtual void slot15();
+virtual void slot16();
+virtual void slot17();
+virtual void slot18();
+virtual void slot19();
+virtual void slot1A();
+virtual void slot1B();
+virtual void slot1C();
+virtual void slot1D();
+virtual void slot1E();
+virtual void slot1F();
+virtual void slot20();
+virtual void slot21();
+virtual void setClipRegion(IRegion2D *);
+virtual void slot8C();
+virtual void enableClipping(Bool);
+};
+struct Rva0079AEC0Coord : ICoord2D { Rva0079AEC0Coord() {} };
 void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 {
 	static const Image *endBarYellow = TheMappedImageCollection->findImageByName("PowerBarYellowEndR");
@@ -274,31 +327,24 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	const Image *beginBar = NULL;
 	const Image *centerBar = NULL;
 	static const Image *slider = TheMappedImageCollection->findImageByName("PowerBarSlider");
-	Player *player = NULL;
-	if(TheControlBar->isObserverControlBarOn())
-	{
-		player = TheControlBar->getObserverLookAtPlayer();
-	}
-	else
-		player = ThePlayerList->getLocalPlayer();
-	
-
+	Player *player = (Player *)((Rva002EE330PlayerList *)ThePlayerList)->getLocalPlayer();
 
 	if(!player || !TheGlobalData)
 		return;
-	Energy *energy = player->getEnergy();
+	EnergyView0079AEC0 *energy = (EnergyView0079AEC0 *)((char *)player + 0xA4);
 	if( energy == NULL )
 		return;
 
 	Int consumption = energy->getConsumption();
 	Int production = energy->getProduction();	
 
-	ICoord2D pos, size;
+	Int range;
+	Rva0079AEC0Coord pos; ICoord2D size;
 	window->winGetScreenPosition( &pos.x, &pos.y );
 	window->winGetSize( &size.x, &size.y );
 
-	static Real pixelsPerInterval = size.x / TheGlobalData->m_powerBarIntervals;
-	Int delta = TheGlobalData->m_powerBarYellowRange;
+	static Real pixelsPerInterval = size.x / ((const PowerGlobals0079AEC0 *)TheGlobalData)->m_powerBarIntervals;
+	Int delta = ((const PowerGlobals0079AEC0 *)TheGlobalData)->m_powerBarYellowRange;
 	
 	if((consumption > energy->getProduction() - delta) && (consumption <= energy->getProduction()))
 	{
@@ -323,8 +369,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	if( !slider || !endBar || !beginBar || !centerBar)
 		return;
 
-	Int range;
-	range = logN(production, TheGlobalData->m_powerBarBase) * (size.x / TheGlobalData->m_powerBarIntervals);
+	range = logN(production, ((const PowerGlobals0079AEC0 *)TheGlobalData)->m_powerBarBase) * (size.x / ((const PowerGlobals0079AEC0 *)TheGlobalData)->m_powerBarIntervals);
 	if(range >= size.x)
 		range = size.x;
 	if(range < endBar->getImageWidth() + beginBar->getImageWidth())
@@ -343,7 +388,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	ICoord2D leftEnd, rightStart;
 	leftEnd.x = pos.x + leftSize.x;
 	leftEnd.y = pos.y + size.y;
-	rightStart.x = pos.x + range - rightSize.x;
+	rightStart.x = pos.x + (range - rightSize.x);
 	rightStart.y = pos.y;
 
 	// draw the center repeating bar
@@ -398,12 +443,12 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 		centerWidth = rightStart.x - start.x;
 		if( centerWidth > 0)
 		{
-			TheDisplay->setClipRegion(&reg);
+			((DisplayView0079AEC0 *)TheDisplay)->setClipRegion(&reg);
 			end.x = start.x + centerBar->getImageWidth();
 			TheWindowManager->winDrawImage( centerBar,
 																			start.x, start.y,
 																			end.x, end.y );
-			TheDisplay->enableClipping(FALSE);
+			((DisplayView0079AEC0 *)TheDisplay)->enableClipping(FALSE);
 		}
 
 		// draw left end
@@ -421,16 +466,16 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 	Int posXstart;
 	Int posXend;
 	Real consumptionForNeedle = (consumption == 1) ? 1.5f : INT_TO_REAL(consumption);//Log(1) == 0, but we need to show something for 1 power used.
-	range = logN(consumptionForNeedle, TheGlobalData->m_powerBarBase) * (size.x / TheGlobalData->m_powerBarIntervals);
+	range = logN(consumptionForNeedle, ((const PowerGlobals0079AEC0 *)TheGlobalData)->m_powerBarBase) * (size.x / ((const PowerGlobals0079AEC0 *)TheGlobalData)->m_powerBarIntervals);
 	if(range >= size.x)
 	{
-		posXstart = pos.x + size.x - slider->getImageWidth();
+		posXstart = pos.x + (size.x - slider->getImageWidth());
 		posXend = pos.x + size.x;
 	}
 	else
 	{
-		posXstart = pos.x + range - slider->getImageWidth()/2;
-		posXend = pos.x + range + slider->getImageWidth()/2;
+		posXstart = pos.x + (range - slider->getImageWidth()/2);
+		posXend = pos.x + (range + slider->getImageWidth()/2);
 	}
 	if(posXstart <=pos.x)
 	{

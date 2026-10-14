@@ -2160,7 +2160,6 @@ emit	game/GameEngine/Source/GameNetwork/native_network_interface.cpp	*	113
 emit	game/GameEngineDevice/Source/W3DDevice/Common/System/W3DRadar_drawEvents_Thunk.cpp	*	729
 emit	game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDrawDestructorThunk.cpp	*	682
 emit	game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDraw_updateBonesForClientParticleSystemsMethodThunk.cpp	*	590
-emit	game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DPowerDrawAThunk.cpp	*	1853
 emit	game/GameEngineDevice/Source/W3DDevice/GameClient/MapObjectCtorThunk.cpp	*	386
 emit	game/GameEngineDevice/Source/W3DDevice/GameClient/RoadSegment_updateSegLightingMethodThunk.cpp	*	161
 emit	game/GameEngineDevice/Source/W3DDevice/GameClient/Shadow/W3DVolumetricShadow_UpdateMethodThunk.cpp	*	758
@@ -17794,7 +17793,6 @@ object_symbol	targets/game/reverse/functions.csv	0x00799660	1
 object_symbol	targets/game/reverse/functions.csv	0x00799670	1
 object_symbol	targets/game/reverse/functions.csv	0x00799680	1
 object_symbol	targets/game/reverse/functions.csv	0x00799690	1
-object_symbol	targets/game/reverse/functions.csv	0x0079AEC0	1
 object_symbol	targets/game/reverse/functions.csv	0x0079D1D0	1
 object_symbol	targets/game/reverse/functions.csv	0x0079E420	1
 object_symbol	targets/game/reverse/functions.csv	0x0079E430	1

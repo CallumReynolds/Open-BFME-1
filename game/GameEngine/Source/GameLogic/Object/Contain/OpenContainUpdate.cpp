@@ -32,15 +32,12 @@ public:
 		if (m_conditionFlags & setFlags)
 			return;
 	set_flags:
-		// MSVC 7.1 does not emit the retail EDX allocation here. Retail writes
-		// both values after it computes the cleared and set masks.
-		__asm {
-			mov edx, [ecx+0x110]
-			and edx, 0xffdfffff
-			mov eax, edx
-			or eax, 0x00400000
-			mov [ecx+0x110], edx
-			mov [ecx+0x110], eax
+		{
+			// Clearing through a pointer and setting through the member keeps
+			// retail's reload and both stores; one lvalue folds them into one.
+			UnsignedInt *flags = &m_conditionFlags;
+			*flags &= ~clearFlags;
+			m_conditionFlags |= setFlags;
 		}
 		// Retail calls this through the ILT thunk at 0x2191D.
 		typedef void (Object::*Fn)();

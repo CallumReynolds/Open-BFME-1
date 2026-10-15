@@ -1,12 +1,6 @@
 // ?rva0071DF10@W3DShrubBuffer@@QAEXPAX@Z
-// partial score=0.6401785714285714 date=2026-09-26
+// partial score=0.6503 date=2026-10-15
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/shims/sweep
-// Native shrub vertex/index loader at RVA 0x0071DF10; target size 2239.
-// See targets/game/reverse/identity_evidence/0071df10.md for independent
-// boundary, layout, callee contracts, corrected behavior and remaining residue.
-// This bank emits 2240 bytes and is NOT a matched conversion.
-// Keep the opaque method spelling: the matched renderer proves its owner,
-// while no independently named caller proves an original method spelling.
 #include "dx8indexbuffer.h"
 #include "dx8vertexbuffer.h"
 #include "matrix3d.h"
@@ -163,10 +157,11 @@ public:
   virtual bool slot28(void);
   virtual void slot2c(void);
   virtual void slot30(void);
-  virtual void slot34(Vector3 *value);
+  virtual void *slot34(void *value);
 };
 
-extern Rva0071DF10GlobCC0 *g_bfmeGlobCC0;
+class BfmeGlobCC0;
+extern BfmeGlobCC0 *g_bfmeGlobCC0;
 
 class W3DShrubBuffer {
 public:
@@ -201,6 +196,12 @@ private:
   Int m_globalBufferCount;
 };
 
+//=============================================================================
+// W3DTreeBuffer::loadTreesInVertexAndIndexBuffers
+//=============================================================================
+/** Loads the trees into the vertex buffer for drawing. */
+//=============================================================================
+// ?rva0071DF10@W3DShrubBuffer@@QAEXPAX@Z
 void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
   if (!m_indexTree[0] || !m_vertexTree[0] || !m_initialized)
     return;
@@ -215,11 +216,11 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
     lightingScale *= globalData->field1220;
   }
 
-  Rva0071DF10GlobCC0 *globCC0 = g_bfmeGlobCC0;
+  Rva0071DF10GlobCC0 *globCC0 = reinterpret_cast<Rva0071DF10GlobCC0 *>(g_bfmeGlobCC0);
   if (globCC0 != 0 && globCC0->slot28()) {
     Vector3 value;
-    (g_bfmeGlobCC0)->slot34(&value);
-    lightingScale *= g_bfmeDefaultBU - value.X;
+    reinterpret_cast<Rva0071DF10GlobCC0 *>(g_bfmeGlobCC0)->slot34(&value);
+    lightingScale *= 1.0f - value.X;
   }
 
   Int curTree = 0;
@@ -234,18 +235,23 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
 
     VertexFormatXYZNDUV1 *vb;
     UnsignedShort *ib;
+    // Lock the buffers.
     IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexTree[bNdx], 0);
     VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexTree[bNdx], 0);
     vb = (VertexFormatXYZNDUV1 *)lockVtxBuffer.Get_Vertex_Array();
     ib = lockIdxBuffer.Get_Index_Array();
 
+    // Add to the index buffer & vertex buffer.
     Vector2 lookAtVector(m_cameraLookAtVector.X, m_cameraLookAtVector.Y);
     lookAtVector.Normalize();
+    // We draw from back to front, so we put the indexes in the buffer 
+    // from back to front.
     UnsignedShort *curIb = ib;
     VertexFormatXYZNDUV1 *curVb = vb;
 
     for (; curTree < m_numTrees; curTree += m_globalBufferCount) {
       Int type = m_trees[curTree].m_type;
+      // Deleted tree. [6/9/2003]
       if (type < 0 || !m_trees[curTree].m_visible ||
           m_trees[curTree].m_state88 != 0 || m_trees[curTree].m_stateA0 >= 4 ||
           m_trees[curTree].m_stateA0 <= 0)
@@ -257,6 +263,20 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
         continue;
 
       bool doVertexLighting = true;
+
+	#if 0 // no dynamic lighting.
+			for (pDynamicLightsIterator->First(); !pDynamicLightsIterator->Is_Done(); pDynamicLightsIterator->Next())
+			{		
+				W3DDynamicLight *pLight = (W3DDynamicLight*)pDynamicLightsIterator->Peek_Obj();
+				if (!pLight->isEnabled()) {
+					continue; // he is turned off.
+				}
+				if (CollisionMath::Overlap_Test(m_trees[curTree].bounds, pLight->Get_Bounding_Sphere()) == CollisionMath::OUTSIDE) {
+					continue; // this tree is outside of the light's influence.
+				}
+				doVertexLighting = true;
+			}
+	#endif
       Vector3 emissive(0.0f, 0.0f, 0.0f);
       MaterialInfoClass *matInfo =
           m_treeTypes[type].m_mesh->Get_Material_Info();
@@ -278,6 +298,7 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
           m_treeTypes[type].m_mesh->Peek_Model()->Get_Vertex_Count();
       Vector3 *pVert =
           m_treeTypes[type].m_mesh->Peek_Model()->Get_Vertex_Array();
+      // If we happen to have too many trees, stop.
       if (numVertex + m_curNumTreeVertices[bNdx] + 2 >= 0x7530)
         break;
 
@@ -303,6 +324,73 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
                              lightingScale);
       }
 
+	/*
+	 *	
+			// If we are doing reduced resolution terrain, do reduced
+			// poly trees.
+			Bool doPanel = (TheGlobalData->m_useHalfHeightMap || TheGlobalData->m_stretchTerrain);
+
+			if (doPanel) {
+				if (m_trees[curTree].rotates) {
+					theSin = -lookAtVector.X;
+					theCos = lookAtVector.Y;
+				}
+				// panel start is index offset, there are 3 index per triangle.
+				if (m_trees[curTree].panelStart/3 + 2 > numIndex) {
+					continue; // not enought polygons for the offset.  jba.
+				}
+				for (j=0; j<6; j++) {
+					i = ((Int *)pPoly)[j+m_trees[curTree].panelStart];
+					if (m_curNumTreeVertices >= MAX_TREE_VERTEX) 
+						break;
+
+					// Update the uv values.  The W3D models each have their own texture, and 
+					// we use one texture with all images in one, so we have to change the uvs to 
+					// match.
+					Real U, V;
+					if (type==SHRUB) {
+						// shrub texture is tucked in the corner
+						U = ((512-64)+uvs[i].U*64.0f)/512.0f;
+						V = ((256-64)+uvs[i].V*64.0f)/256.0f;
+					} else if (type==FENCE) {
+						U = uvs[i].U*0.5f; 
+						V = 1.0f + uvs[i].V;		
+					} else {
+						U = typeOffset+uvs[i].U*0.5f; 
+						V = uvs[i].V;		
+					}
+
+					curVb->u1 = U;
+					curVb->v1 = V/2.0;
+					Vector3 vLoc;
+					vLoc.X = pVert[i].X*scale*theCos - pVert[i].Y*scale*theSin;
+					vLoc.Y = pVert[i].Y*scale*theCos + pVert[i].X*scale*theSin;
+
+					vLoc.X += loc.X;
+					vLoc.Y += loc.Y;
+					vLoc.Z = loc.Z + pVert[i].Z*scale; 
+
+					curVb->x = vLoc.X;
+					curVb->y = vLoc.Y;
+					curVb->z = vLoc.Z;	 
+					if (doVertexLighting) {
+						curVb->diffuse = doLighting(&vLoc, shadeR, shadeG, shadeB, m_trees[curTree].bounds, pDynamicLightsIterator);
+					} else {
+						curVb->diffuse = diffuse;
+					}
+					curVb++;
+					m_curNumTreeVertices++;
+				}
+
+				for (i=0; i<6; i++) {
+					if (m_curNumTreeIndices+4 > MAX_TREE_INDEX) 
+						break;
+					curIb--;
+					*curIb = startVertex + i;
+					m_curNumTreeIndices++;
+				}
+			} else {
+	 */
       Int i;
       Real Uscale = m_treeTypes[type].m_uScale;
       Real Vscale = m_treeTypes[type].m_vScale;
@@ -312,6 +400,9 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
         if (m_curNumTreeVertices[bNdx] >= 0x7530)
           break;
 
+        // Update the uv values.  The W3D models each have their own texture, and 
+        // we use one texture with all images in one, so we have to change the uvs to 
+        // match.
         Real U = uvs[i].U;
         Real V = uvs[i].V;
         if (U > 1.0f)
@@ -326,9 +417,7 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
         curVb->v1 = V * Vscale + VOffset;
 
         Vector3 offsetVertex = pVert[i];
-        offsetVertex.X += m_treeTypes[type].m_offset.X;
-        offsetVertex.Y += m_treeTypes[type].m_offset.Y;
-        offsetVertex.Z += m_treeTypes[type].m_offset.Z;
+        offsetVertex += m_treeTypes[type].m_offset;
         Vector3 vLoc;
         Matrix3D::Transform_Vector(m_trees[curTree].m_matrix, offsetVertex,
                                    &vLoc);
@@ -357,7 +446,7 @@ void W3DShrubBuffer::rva0071DF10(void *pDynamicLightsIterator) {
         curVb->ny = *(Real *)((char *)m_treeTypes[type].m_data + 0x1c) *
                     m_trees[curTree].m_pushAside;
         curVb->nz = loc.Z;
-        curVb->ny = g_bfmeDefaultBU - curVb->ny;
+        curVb->ny = 1.0f - curVb->ny;
 
         if (doVertexLighting) {
           Vector3 normal;

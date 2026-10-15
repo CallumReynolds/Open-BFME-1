@@ -131,12 +131,15 @@ TurretStateMachine::TurretStateMachine( TurretAI* tai, Object *obj, AsciiString 
 	};
 
 	// order matters: first state is the default state.
-	defineState( TURRETAI_IDLE,					newInstance(TurretAIIdleState)( this ), TURRETAI_IDLE, TURRETAI_IDLESCAN );
-	defineState( TURRETAI_IDLESCAN,			newInstance(TurretAIIdleScanState)( this ), TURRETAI_HOLD, TURRETAI_HOLD );
-	defineState( TURRETAI_AIM,					newInstance(TurretAIAimTurretState)( this ), TURRETAI_FIRE, TURRETAI_HOLD );
-	defineState( TURRETAI_FIRE,					newInstance(AIAttackFireWeaponState)( this, tai ), TURRETAI_AIM, TURRETAI_AIM, fireConditions );
-	defineState( TURRETAI_RECENTER,			newInstance(TurretAIRecenterTurretState)( this ), TURRETAI_IDLE, TURRETAI_IDLE );
-	defineState( TURRETAI_HOLD,					newInstance(TurretAIHoldTurretState)( this ), TURRETAI_RECENTER, TURRETAI_RECENTER );
+	// Retail's unwind actions for these six allocations (0x00C06A90..0x00C06AC7)
+	// free through ::operator delete (0x00881EB0) with one argument, not the
+	// per-class MagicEnum delete, so the states are built with the global new.
+	defineState( TURRETAI_IDLE,					::new TurretAIIdleState( this ), TURRETAI_IDLE, TURRETAI_IDLESCAN );
+	defineState( TURRETAI_IDLESCAN,			::new TurretAIIdleScanState( this ), TURRETAI_HOLD, TURRETAI_HOLD );
+	defineState( TURRETAI_AIM,					::new TurretAIAimTurretState( this ), TURRETAI_FIRE, TURRETAI_HOLD );
+	defineState( TURRETAI_FIRE,					::new AIAttackFireWeaponState( this, tai ), TURRETAI_AIM, TURRETAI_AIM, fireConditions );
+	defineState( TURRETAI_RECENTER,			::new TurretAIRecenterTurretState( this ), TURRETAI_IDLE, TURRETAI_IDLE );
+	defineState( TURRETAI_HOLD,					::new TurretAIHoldTurretState( this ), TURRETAI_RECENTER, TURRETAI_RECENTER );
 }
 
 //----------------------------------------------------------------------------------------------------------

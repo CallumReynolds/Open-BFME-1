@@ -1,5 +1,4 @@
 // ?rva0023a550@Rva0023A550HordeContain@@QAE_NPAUCoord3D@@@Z
-// partial score=0.7467 date=2026-10-09
 // cl: /DNDEBUG /DWIN32 /MD /D_STLP_USE_STATIC_LIB /EHsc /Igame/GameEngine/Source /Igame/Libraries/Include/Lib
 // stlport
 // HordeContain secondary-interface slot 128; semantic method name is unknown.
@@ -49,11 +48,11 @@ private:
 // ?rva0023a550@Rva0023A550HordeContain@@QAE_NPAUCoord3D@@@Z
 bool Rva0023A550HordeContain::rva0023a550(Coord3D *position)
 {
+    float count = 0.0f;
     position->x = 0.0f;
     position->y = 0.0f;
     position->z = 0.0f;
     _STL::list<Object *>::iterator node = memberList().begin();
-    float count = 0.0f;
     while (node != memberList().end())
     {
         Object *object = *node;

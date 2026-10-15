@@ -139,7 +139,6 @@ void SlavedUpdate::startSlavedEffects(const Object *slaver)
 void SlavedUpdate::stopSlavedEffects()
 {
 	m_slaver = 0;
-	__asm { }
 	m_guardPointOffset.zero();
 	m_object->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNSELECTABLE));
 	m_object->clearDisabled(DISABLED_HELD);

@@ -36,7 +36,6 @@ public:
 	BitFlags(InitType, Int bit, const void *anchor)
 	{
 		m_bits.set(bit);
-		__asm { }
 	}
 
 	void set(Int bit)

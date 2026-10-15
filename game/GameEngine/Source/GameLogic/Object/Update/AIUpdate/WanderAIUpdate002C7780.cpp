@@ -1,5 +1,4 @@
-// ?update@Rva002C7780Owner@@UAE?AW4UpdateSleepTime@@XZ
-// partial score=0.6543 date=2026-10-09
+// ?update@WanderAIUpdate@@UAE?AW4UpdateSleepTime@@XZ
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Include/Lib /Igame/GameEngine/Source/GameLogic/Object /Igame/GameEngine/Source/GameLogic
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
@@ -18,7 +17,8 @@ typedef BitFlags<320> ModelConditionFlags;
 enum UpdateSleepTime { UPDATE_SLEEP_NONE = 1 };
 #define BFME_HAVE_COORD3D 1
 #define THING_TU_MEMBERS const Coord3D *getPosition() const { return &m_cachedPos; }
-#define OBJECT_TU_MEMBERS void setStatusBit(int bit, bool set); float getVisionRange() const;
+// ?statusAt002C7780@Object@@QBE_NH@Z absent-from-retail
+#define OBJECT_TU_MEMBERS void setStatusBit(int bit, bool set); float getVisionRange() const; bool statusAt002C7780(int bit) const { return reinterpret_cast<const BitFlags<86> *>(m_status)->test(bit); }
 #include "object.h"
 class AICommandInterface {
 public:
@@ -56,9 +56,10 @@ public:
     class Player *m_player;
     unsigned char m_match;
 };
-class Rva002C74F0 : public PartitionFilter {
+extern int g_target_002C74F0;
+class __declspec(novtable) Rva002C74F0 : public PartitionFilter {
 public:
-    Rva002C74F0() {}
+    Rva002C74F0() { *reinterpret_cast<const void **>(this) = &g_target_002C74F0; }
     virtual ~Rva002C74F0() {}
     virtual bool allow(Object *);
 };
@@ -75,7 +76,7 @@ public:
     Object *getClosestObject(const Coord3D *, float, int, PartitionFilter *);
 };
 extern PartitionManager *ThePartitionManager;
-int GetGameLogicRandomValue(int, int, const char *, int);
+int GetGameLogicRandomValue(int, int, char *, int);
 struct Rva002C7780ModuleData {
     unsigned char m_before64[0x64];
     bool m_64;
@@ -192,13 +193,14 @@ public:
     unsigned char m_04[12];
 };
 // The base call has a conflicting ledger identity; this view keeps its retail address.
-class Rva0027E5A0UpdateReceiver : public Rva002C7780Primary, public Rva002C7780UpdateInterface, public AICommandInterface {
+class AIUpdateInterface : public Rva002C7780Primary, public Rva002C7780UpdateInterface, public AICommandInterface {
 public:
     virtual UpdateSleepTime update();
     Object *getObject() { return m_object; }
     const Rva002C7780ModuleData *getData() const { return m_data; }
 };
-class Rva002C7780Owner : public Rva0027E5A0UpdateReceiver {
+typedef AIUpdateInterface Rva0027E5A0UpdateReceiver;
+class WanderAIUpdate : public Rva0027E5A0UpdateReceiver {
 public:
     virtual UpdateSleepTime update();
 };
@@ -211,14 +213,16 @@ static __forceinline void copyCoordAt002C7780(Coord3D &destination, const Coord3
     destination.z = source->z;
 }
 
-// ?update@Rva002C7780Owner@@UAE?AW4UpdateSleepTime@@XZ
-UpdateSleepTime Rva002C7780Owner::update()
+// ?update@WanderAIUpdate@@UAE?AW4UpdateSleepTime@@XZ
+UpdateSleepTime WanderAIUpdate::update()
 {
     Object *object = getObject();
     const Rva002C7780ModuleData *data = getData();
-    Rva0027E5A0UpdateReceiver::update();
+    // extend
+    /*UpdateSleepTime ret =*/ Rva0027E5A0UpdateReceiver::update();
+    // If I'm standing still, move somewhere
     if (data->m_68 != -1 && object->m_modelConditionFlags.test(data->m_68) && isIdle()) {
-        if (data->m_6c && !(object->m_status[0] & 8))
+        if (data->m_6c && !object->statusAt002C7780(3))
             object->setStatusBit(3, true);
         if (data->m_64) {
             Coord3D position = *object->getPosition();
@@ -246,5 +250,7 @@ UpdateSleepTime Rva002C7780Owner::update()
             aiMoveToPosition(&destination, CMD_FROM_AI);
         }
     }
+    //return (mine < ret) ? mine : ret;
+    /// @todo srj -- someday, make sleepy. for now, must not sleep.
     return UPDATE_SLEEP_NONE;
-}
+}  // end update

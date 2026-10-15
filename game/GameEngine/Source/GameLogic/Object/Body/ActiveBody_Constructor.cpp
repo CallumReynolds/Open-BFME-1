@@ -16,7 +16,7 @@ class DamageInfoInput { public:
  __forceinline DamageInfoInput(){field04=0;field08=0;field0C=22;field10=15;field14=0;field18=0;field1C=false;field1D=true;field20=0;field24=0;field28=0;field2C.zero();field38=0;field3C=0;field40=0;field44=1.0f;}
 };
 class DamageInfoOutput { public:virtual void xfer();float actual,clipped;bool noEffect;__forceinline DamageInfoOutput():actual(0),clipped(0),noEffect(false){} };
-class DamageInfo { public:__forceinline DamageInfo(){} virtual void xfer();DamageInfoInput in;DamageInfoOutput out; };
+class DamageInfo { public:__declspec(dllimport) __forceinline DamageInfo(){} virtual void xfer();DamageInfoInput in;DamageInfoOutput out; };
 struct CtorCapacity00211A50 { CtorCapacity00211A50():value(0){} void *value; };
 class CtorVector0020F660 { public:CtorVector0020F660():begin(0),end(0),capacity(){}~CtorVector0020F660();CtorVector0020F660& operator=(const CtorVector0020F660&);void *begin,*end;CtorCapacity00211A50 capacity; };
 struct ActiveData00211A50 { char prefix[8];float maxHealth,initialHealth,maxDamaged,maxReallyDamaged;char gap18[0x10];bool defaults;char gap29[0x27];CtorVector0020F660 vector; };

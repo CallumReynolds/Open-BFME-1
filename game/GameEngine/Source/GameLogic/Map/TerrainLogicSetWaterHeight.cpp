@@ -156,7 +156,8 @@ struct DamageInfoOutput
 };
 struct DamageInfo
 {
-    __forceinline DamageInfo() {}
+    // Retain inline code without emitting another DamageInfo constructor copy.
+    __declspec(dllimport) __forceinline DamageInfo() {}
     virtual void xfer(Xfer *);
     DamageInfoInput in;
     DamageInfoOutput out;

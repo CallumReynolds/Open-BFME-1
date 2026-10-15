@@ -176,7 +176,8 @@ public:
 class DamageInfo : public Snapshot
 {
 public:
-	__forceinline DamageInfo() {}
+	// Retain inline code without emitting another DamageInfo constructor copy.
+	__declspec(dllimport) __forceinline DamageInfo() {}
 
 	DamageInfoInput in;						// +0x04
 	DamageInfoOutput out;					// +0x4C

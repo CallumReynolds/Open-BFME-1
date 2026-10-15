@@ -202,16 +202,11 @@ functions	0x00065A60	?xferAsciiStringVector@@YAPAVXfer@@PAV1@PAV?$vector@VAsciiS
 functions	0x00065E10	?_M_do_reset@?$_Base_bitset@$03@_STL@@QAEXXZ
 functions	0x00065E10	?clear@?$BitFlags@$0IA@@@QAEXXZ
 functions	0x00066500	?__copy_trivial_backward@_STL@@YAPAXPBX0PAX@Z
-functions	0x00066530	??$fill@PAHH@_STL@@YAXPAH0ABH@Z
-functions	0x00066530	??$fill@PAPAVDrawable@@PAV1@@_STL@@YAXPAPAVDrawable@@0ABQAV1@@Z
-functions	0x00066530	??$fill@PAW4ObjectID@@W41@@_STL@@YAXPAW4ObjectID@@0ABW41@@Z
 functions	0x00066600	?isLevelSpecific@AudioEventInfo@@UBE_NXZ
 functions	0x000666E0	?__copy_trivial@_STL@@YAPAXPBX0PAX@Z
 functions	0x00066780	?doDamageFX@DamageFX@@QBE_NW4DamageType@@MPBVObject@@1@Z
 functions	0x00066DD0	?_M_delete_node@?$hashtable@U?$pair@QBVGameWindow@@PAVWindowVideo@@@_STL@@PBVGameWindow@@UhashConstGameWindowPtr@WindowVideoManager@@U?$_Select1st@U?$pair@QBVGameWindow@@PAVWindowVideo@@@_STL@@@2@U?$equal_to@PBVGameWindow@@@2@V?$allocator@U?$pair@QBVGameWindow@@PAVWindowVideo@@@_STL@@@2@@_STL@@AAEXPAU?$_Hashtable_node@U?$pair@QBVGameWindow@@PAVWindowVideo@@@_STL@@@2@@Z
 functions	0x000670B0	?_M_next_size@?$hashtable@U?$pair@$$CBVAsciiString@@PAUAudioEventInfo@@@_STL@@VAsciiString@@U?$hash@VAsciiString@@@rts@@U?$_Select1st@U?$pair@$$CBVAsciiString@@PAUAudioEventInfo@@@_STL@@@2@U?$equal_to@VAsciiString@@@5@V?$allocator@U?$pair@$$CBVAsciiString@@PAUAudioEventInfo@@@_STL@@@2@@_STL@@ABEII@Z
-functions	0x00067740	?_M_fill_insert@?$vector@HV?$allocator@H@_STL@@@_STL@@QAEXPAHIABH@Z
-functions	0x00067740	?_M_fill_insert@?$vector@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@QAEXPAPAVDrawable@@IABQAV3@@Z
 functions	0x00068A60	?capacity@?$vector@UCoord3D@@V?$allocator@UCoord3D@@@_STL@@@_STL@@QBEIXZ
 functions	0x00068A80	??$__copy@PBUCoord3D@@PAU1@H@_STL@@YAPAUCoord3D@@PBU1@0PAU1@ABUrandom_access_iterator_tag@0@PAH@Z
 functions	0x00068C20	??$__copy_ptrs@PBUCoord3D@@PAU1@@_STL@@YAPAUCoord3D@@PBU1@0PAU1@ABU__false_type@0@@Z
@@ -3493,8 +3488,6 @@ functions	0x003D2D00	??1LargeGroupAudioMap@@UAE@XZ
 functions	0x003D2F10	??_GLargeGroupAudioMap@@UAEPAXI@Z
 functions	0x003D3930	?xfer@LargeGroupAudioKeyMap@@QAEXPAVXfer@@@Z
 functions	0x003D3BB0	??0LargeGroupAudioKeyMap@@QAE@ABV0@@Z
-functions	0x003D3D50	?_M_fill_insert@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QAEXPAPAXIABQAX@Z
-functions	0x003D4210	?resize@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QAEXIPAX@Z
 functions	0x003D4490	??1LGA_MemberObj@@QAE@XZ
 functions	0x003D4540	??4LargeGroupAudioKeyMap@@QAEAAV0@ABV0@@Z
 functions	0x003D4A60	?getGoalUnit@PathfindCell@@QBE?AW4ObjectID@@XZ
@@ -6331,7 +6324,6 @@ pins	0x00009C5A	??1ModelArrayClass@HLodClass@@UAE@XZ
 pins	0x00009D04	?snapPosition@Pathfinder@@QAEXPAVObject@@PAUCoord3D@@@Z
 pins	0x00009E8A	?_M_clear@?$vector@UEvaMessageInfo@@V?$allocator@UEvaMessageInfo@@@_STL@@@_STL@@IAEXXZ
 pins	0x00009F6B	??1FXListAtBonePosFXNugget@@MAE@XZ
-pins	0x0000A060	??$fill@PAPAXPAX@_STL@@YAXPAPAX0ABQAX@Z
 pins	0x0000A114	?drawImage@Display@@QAEXPBVImage@@MMMMHH@Z
 pins	0x0000A1B9	??0GameSpyPeerMessageQueueInterface@@QAE@XZ
 pins	0x0000A277	??1?$pair@$$CBVAsciiString@@UAptTextRecord@@@_STL@@QAE@XZ
@@ -7070,7 +7062,6 @@ pins	0x0001CB9D	?_M_insert_overflow@?$vector@UCoord2D@@V?$allocator@UCoord2D@@@_
 pins	0x0001CBF7	?findGoodBuildOrRepairPosition@WorkerAIUpdate@@IAE_NPBVObject@@0AAUCoord3D@@@Z
 pins	0x0001CBFC	?_M_insert_overflow@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEXPAHABHABU__true_type@2@I_N@Z
 pins	0x0001CBFC	?_M_insert_overflow@?$vector@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@IAEXPAPAVDrawable@@ABQAV3@ABU__true_type@2@I_N@Z
-pins	0x0001CBFC	?_M_insert_overflow@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@IAEXPAPAXABQAXABU__true_type@2@I_N@Z
 pins	0x0001CDB9	?GetPurchaseScienceStatus@ControlBar@@QAEXPAVPlayer@@HPAPBVCommandButton@@PA_N22@Z
 pins	0x0001CDFF	??_GAIExitState@@MAEPAXI@Z
 pins	0x0001CE31	?getValue@AttributeModifierDefinitionStore@@QBE_NHHPAM@Z

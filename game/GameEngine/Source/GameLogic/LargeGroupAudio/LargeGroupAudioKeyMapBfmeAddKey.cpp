@@ -53,8 +53,12 @@ typedef _STL::_Rb_tree<AsciiString, Rva003D3F90Pair,
 extern Rva003D3F90Tree g_lgaKeyRecords;
 extern unsigned int g_lgaNextKey;
 
+// Word element of the resize at 0x003D4210 (see Rva003D3D50VectorFillInsert.cpp);
+// four-byte and trivially assignable, real type unproven.
+struct Rva003D3D50Elem;
+
 class LargeGroupAudioKeyMap :
-	public _STL::vector<void *, _STL::allocator<void *> >
+	public _STL::vector<Rva003D3D50Elem *, _STL::allocator<Rva003D3D50Elem *> >
 {
 public:
 	void bfmeAddKey(const AsciiString &name);

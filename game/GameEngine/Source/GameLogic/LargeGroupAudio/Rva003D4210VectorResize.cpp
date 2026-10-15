@@ -1,6 +1,7 @@
 // cl: /DNDEBUG /MD /EHsc
 
-// Open-BFME5: STLport vector<void *>::resize, retail 0x003D4210.
+// STLport vector<T>::resize, retail 0x003D4210, for the LargeGroupAudioKeyMap
+// word vector (callers: bfmeMerge 0x003D4580, bfmeAddKey 0x003D46A0).
 //
 // Same body as vector<int> at 0x001DC360 -- byte for byte, outside the one
 // relocation -- because both element types are four-byte and trivially
@@ -9,12 +10,13 @@
 // [esp+0x10]`, the address of its own parameter slot), which the vendored
 // STLport header cannot express, so the class is spelled locally.
 //
-// The element type is pinned by the callee, not by the shape: the grow arm's
-// rel32 resolves to the ILT thunk 0x0002570C, which jumps to 0x003D3D50, and
-// the ledger already holds that as
-// ?_M_fill_insert@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QAEXPAPAXIABQAX@Z
-// in ParticleSys.cpp -- the same TU this body sits in, 0x4C0 bytes below it.
-// Any four-byte POD would mask to these same bytes otherwise.
+// The element is not void*: the grow arm's rel32 resolves to ILT 0x0002570C ->
+// 0x003D3D50, while vector<void*>::_M_fill_insert is 0x00067740 (called by the
+// hashtable bucket code) and retail has no identical-COMDAT folding.  The real
+// element type is unproven, so it is the address-named opaque
+// Rva003D3D50Elem*, shared with Rva003D3D50VectorFillInsert.cpp.
+
+struct Rva003D3D50Elem;
 
 typedef unsigned int size_t_;
 
@@ -63,7 +65,7 @@ public:
 
 	void resize(unsigned int newSize, Type value);
 
-	// ?_M_fill_insert@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QAEXPAPAXIABQAX@Z
+	// ?_M_fill_insert@?$vector@PAURva003D3D50Elem@@V?$allocator@PAURva003D3D50Elem@@@_STL@@@_STL@@QAEXPAPAURva003D3D50Elem@@IABQAU3@@Z
 	void _M_fill_insert(Type *pos, unsigned int n, const Type &value);
 
 private:
@@ -81,5 +83,5 @@ void vector<Type, Allocator>::resize(unsigned int newSize, Type value)
 		_M_fill_insert(end(), newSize - size(), value);
 }
 
-template void vector<void *, allocator<void *> >::resize(unsigned int, void *);
+template void vector<Rva003D3D50Elem *, allocator<Rva003D3D50Elem *> >::resize(unsigned int, Rva003D3D50Elem *);
 }

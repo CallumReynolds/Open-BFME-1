@@ -36,7 +36,7 @@ multi_name.different = 0
 size_outlier.indicted = 1
 ctor_vtable.contradicted = 20
 ctor_vtable.unreadable = 0
-one_identity.surplus = 2140
+one_identity.surplus = 2137
 # Retail registration proves DynamicPortalBehaviour owns ctor 001F8B80 and factory 001156B0; four false aliases retired.
 # fcf825b4f7 retired the false FXNugget zero-store claim; the body still has aliases.
 # 4c8346b3c9 retired the GDIFileStream ctor over-claim at 0x00087A50 (a zero-store body).
@@ -186,11 +186,6 @@ null_reloc.max_unreadable = 1000
 @ one_identity.surplus 0x00062ED0 ??M@YA_NABV?$StringBase@D@@0@Z
 @ one_identity.surplus 0x00065E10 ?_M_do_reset@?$_Base_bitset@$03@_STL@@QAEXXZ
 @ one_identity.surplus 0x00065E10 ?clear@?$BitFlags@$0IA@@@QAEXXZ
-@ one_identity.surplus 0x00066530 ??$fill@PAHH@_STL@@YAXPAH0ABH@Z
-@ one_identity.surplus 0x00066530 ??$fill@PAPAVDrawable@@PAV1@@_STL@@YAXPAPAVDrawable@@0ABQAV1@@Z
-@ one_identity.surplus 0x00066530 ??$fill@PAW4ObjectID@@W41@@_STL@@YAXPAW4ObjectID@@0ABW41@@Z
-@ one_identity.surplus 0x00067740 ?_M_fill_insert@?$vector@HV?$allocator@H@_STL@@@_STL@@QAEXPAHIABH@Z
-@ one_identity.surplus 0x00067740 ?_M_fill_insert@?$vector@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@QAEXPAPAVDrawable@@IABQAV3@@Z
 @ one_identity.surplus 0x00068C20 ??$__copy_ptrs@PAUHorzLine@@PAU1@@_STL@@YAPAUHorzLine@@PAU1@00ABU__false_type@0@@Z
 @ one_identity.surplus 0x00068C20 ??$__copy_ptrs@PBUCoord3D@@PAU1@@_STL@@YAPAUCoord3D@@PBU1@0PAU1@ABU__false_type@0@@Z
 @ one_identity.surplus 0x00069200 ?push_back@?$vector@UHorzLine@@V?$allocator@UHorzLine@@@_STL@@@_STL@@QAEXABUHorzLine@@@Z

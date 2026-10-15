@@ -758,18 +758,27 @@ StateReturnType AIDockMoveToDockState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-// ?update@AIDockMoveToDockState@@ present-unmatched
+// Retail 0x0014ED60 is slot 6 (+0x18) of table 0x01095D38, the table the
+// AIDockMoveToDockState-named constructor at 0x0014F590 installs (slot 5 is
+// this class's onExit at 0x0014EDC0). BFME null-checks the dock and refreshes
+// the docking position every frame before continuing the move.
 StateReturnType AIDockMoveToDockState::update( void )
 {
 	Object *goalObject = bfmeRetailMachine( this )->getGoalObject();
 
+	DockUpdateInterface *dock = NULL;
+	if( goalObject )
+		dock = goalObject->getDockUpdateInterface();
+
 	// if we have nothing to dock with, fail
-	if (goalObject == NULL)
+	if (dock == NULL)
 		return STATE_FAILURE;
 
-	DockUpdateInterface *dock = goalObject->getDockUpdateInterface();
 	if( dock->isDockOpen() == FALSE )
 		return STATE_FAILURE;
+
+	// the dock may have moved its docking point
+	dock->getDockPosition( bfmeRetailMachineOwner( this ), &m_goalPosition );
 
 	// this behavior is an extention of basic MoveTo
 	return AIInternalMoveToState::update();

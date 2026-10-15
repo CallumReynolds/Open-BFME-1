@@ -1,20 +1,6 @@
 // ?writeCacheINI@MapCache@@AAEX_N@Z
-// partial score=0.82 date=2026-09-24
+// partial score=0.9135 date=2026-10-15
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/vendor/stlport /Igame/Libraries/Source/WWVegas/WWLib
-// readable body of ?writeCacheINI@MapCache@@AAEX_N@Z: Code/GameEngine/Source/GameClient/MapUtil.cpp
-//
-// Retail 0x004550C0, 1814 bytes. BFME extends ZH's writer: isScenarioMP,
-// Unicode displayName/description (quoted-printable), and eight PlayerPosition
-// blocks (Human/Computer/LoadAIScripts/ForcePlayerTeam/AllowedFactions).
-// MapMetaData special members stay out of line -- retail ctor/assign/dtor.
-//
-// Probe 2026-09-17: ours 1798B vs retail 1814B, frame sub esp,0x138 exact,
-// and the STLport map/set callee inventory matches the retail contract. The
-// first non-relocation divergence is +0x110: the cleanup branch is 16 bytes
-// short, then retail spills the map-key reference after the directory-length
-// materialization. The MapMetaData 0xFC layout and PlayerPosition set are
-// witnessed by the BFME ctor/assignment bodies. Do not compile MapUtil.cpp
-// (its operator-new rows are unrelated to this isolated body).
 
 #include <stdio.h>
 #include <string.h>
@@ -26,7 +12,7 @@
 typedef int Int;
 typedef unsigned int UnsignedInt;
 typedef unsigned short UnsignedShort;
-typedef unsigned char Bool;
+typedef bool Bool;
 typedef float Real;
 
 template <typename T>
@@ -35,11 +21,18 @@ class StringBase
 	friend class AsciiString;
 	friend class UnicodeString;
 
+public:
+	void set(const StringBase<T> &other);
+	void concat(const T *text, Int len);
+	void toLower();
+	bool startsWithNoCase(const T *text, Int len) const;
+
 private:
 	StringBase() : m_data(0) {}
 	StringBase(const T *text);
 	StringBase(const StringBase<T> &other);
-	~StringBase();
+	~StringBase() { releaseBuffer(); }
+	void releaseBuffer();
 
 	struct Data
 	{
@@ -51,7 +44,7 @@ private:
 	Data *m_data;
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/AsciiString.h
 class AsciiString : private StringBase<char>
 {
 public:
@@ -60,19 +53,31 @@ public:
 	AsciiString(const AsciiString &other) : StringBase<char>(other) {}
 	~AsciiString() {}
 
-	void set(const AsciiString &other);
-	void concat(const char *text, Int len);
+	void set(const AsciiString &other) { StringBase<char>::set(other); }
+	void concat(const char *text, Int len) { StringBase<char>::concat(text, len); }
 	void concat(const char c) { concat(&c, 1); }
-	void toLower();
-	bool startsWithNoCase(const char *text, Int len) const;
+	void toLower() { StringBase<char>::toLower(); }
+	bool startsWithNoCase(const char *text, Int len) const { return StringBase<char>::startsWithNoCase(text, len); }
+
+	Int compare(const AsciiString &other) const
+	{
+		const Int thatLen = other.m_data ? other.m_data->m_length : 0;
+		const char *thatData = other.m_data ? other.m_data->m_text : "";
+		const Int thisLen = m_data ? m_data->m_length : 0;
+		const char *thisData = m_data ? m_data->m_text : "";
+		const Int result = memcmp(thisData, thatData, thisLen < thatLen ? thisLen : thatLen);
+		if (result != 0) return result;
+		return thisLen - thatLen;
+	}
+
 
 	const char *str() const { return m_data ? m_data->m_text : ""; }
 };
 
 bool operator<(const AsciiString &left, const AsciiString &right);
-bool operator==(const AsciiString &left, const AsciiString &right);
+inline bool operator==(const AsciiString &left, const AsciiString &right) { return left.compare(right) == 0; }
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/UnicodeString.h
 class UnicodeString : private StringBase<UnsignedShort>
 {
 public:
@@ -141,7 +146,7 @@ public:
 	unsigned char m_tail[8];
 };
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GlobalData.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GlobalData.h
 class GlobalData
 {
 public:
@@ -162,7 +167,7 @@ extern FileSystem *TheFileSystem;
 AsciiString AsciiStringToQuotedPrintable(AsciiString original);
 AsciiString UnicodeStringToQuotedPrintable(UnicodeString original);
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/MapUtil.h
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameClient/MapUtil.h
 class MapCache : public std::map<AsciiString, MapMetaData>
 {
 public:
@@ -210,7 +215,10 @@ void MapCache::writeCacheINI(bool userDir)
 		if (mapName->startsWithNoCase(dir, dirLen))
 		{
 		md = it->second;
-		fprintf(fp, "\nMapCache %s\n", AsciiStringToQuotedPrintable(mapName->str()).str());
+		{
+			AsciiString encodedText = AsciiStringToQuotedPrintable(mapName->str());
+			fprintf(fp, "\nMapCache %s\n", encodedText.str());
+		}
 		fprintf(fp, "  fileSize = %u\n", md.m_filesize);
 		fprintf(fp, "  fileCRC = %u\n", md.m_CRC);
 		fprintf(fp, "  timestampLo = %d\n", md.m_timestamp.m_lowTimeStamp);
@@ -221,6 +229,8 @@ void MapCache::writeCacheINI(bool userDir)
 		fprintf(fp, "  numPlayers = %d\n", md.m_numPlayers);
 		fprintf(fp, "  extentMin = X:%2.2f Y:%2.2f Z:%2.2f\n", md.m_extent.lo.x, md.m_extent.lo.y, md.m_extent.lo.z);
 		fprintf(fp, "  extentMax = X:%2.2f Y:%2.2f Z:%2.2f\n", md.m_extent.hi.x, md.m_extent.hi.y, md.m_extent.hi.z);
+// BAD AND NOW UNUSED:  the mapcache.ini should not contain localized data... using the lookup tag instead
+//			fprintf(fp, "  displayName = %s\n", UnicodeStringToQuotedPrintable(md.m_displayName).str());
 		fprintf(fp, "  displayName = %s\n", UnicodeStringToQuotedPrintable(md.m_displayName).str());
 		fprintf(fp, "  description = %s\n", UnicodeStringToQuotedPrintable(md.m_description).str());
 
@@ -274,6 +284,10 @@ void MapCache::writeCacheINI(bool userDir)
 			fprintf(fp, "  END\n");
 		}
 		fprintf(fp, "END\n\n");
+		}
+		else
+		{
+			//DEBUG_LOG(("%s does not start %s\n", mapDir.str(), it->first.str()));
 		}
 		++it;
 	}

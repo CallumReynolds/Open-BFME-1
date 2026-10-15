@@ -18,9 +18,10 @@
 // so they are typed Int and named by position. The two functions keep their
 // address-derived ledger names for the same reason.
 //
-// The register assignment differs between the two and is retail's, not a
-// choice: 0x001072A0 caches a1/a3/a2 into ebx/esi/edi and 0x001072F0 caches
-// a3/a2/a1, yet both push a1, a2, a3 in that order at both call sites.
+// The register assignment differs between the two: 0x001072A0 caches
+// a1/a3/a2 into ebx/esi/edi and 0x001072F0 caches a3/a2/a1, yet both push a1,
+// a2, a3 in that order at both call sites. The second's third argument is a
+// byte (see below), which is what moves its assignment.
 
 typedef int Int;
 
@@ -98,7 +99,7 @@ public:
 	virtual void slot10c( Int a1, Int a2, Int a3 ) = 0;		///< +0x10C
 	virtual void slot110() = 0;
 	virtual void slot114() = 0;
-	virtual void slot118( Int a1, Int a2, Int a3 ) = 0;		///< +0x118
+	virtual void slot118( Int a1, Int a2, unsigned char a3 ) = 0;		///< +0x118
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/Radar.h
@@ -116,7 +117,7 @@ public:
 	virtual void slot020() = 0;
 	virtual void slot024( Int a1, Int a2, Int a3 ) = 0;		///< +0x024
 	virtual void slot028() = 0;
-	virtual void slot02c( Int a1, Int a2, Int a3 ) = 0;		///< +0x02C
+	virtual void slot02c( Int a1, Int a2, unsigned char a3 ) = 0;		///< +0x02C
 };
 
 extern Display *TheDisplay;
@@ -132,13 +133,13 @@ void d_001072a0( Int a1, Int a2, Int a3 )
 		TheRadar->slot024( a1, a2, a3 );
 }
 
-// 0x001072F0 is not landed. Its body is this one with two slot numbers changed
-// and one thing that is not a source difference: retail caches a3/a2/a1 into
-// ebx/esi/edi there where it caches a1/a3/a2 here, though both push a1, a2, a3
-// in that order at both call sites. Identical C++ produces the ordering below
-// for both, and swapping the two definitions in this TU does not move it.
-// ?d_001072f0@@YAXHHH@Z present-unmatched
-void d_001072f0( Int a1, Int a2, Int a3 )
+// 0x001072F0 forwards a byte as its third argument: W3DRadar's slot +0x2C
+// (0x006C2710, ?rva006C2710@W3DRadar@@UAEXHHE@Z) takes an unsigned char there,
+// and retail pushes the parameter dword unwidened to the display slot as well,
+// so that slot takes a byte too (an int there costs a movzx). Typing the third
+// parameter unsigned char is also what gives retail's register assignment
+// (a3/a2/a1 in ebx/esi/edi); every Int spelling kept the sibling's.
+void d_001072f0( Int a1, Int a2, unsigned char a3 )
 {
 	if (TheDisplay)
 		TheDisplay->slot118( a1, a2, a3 );

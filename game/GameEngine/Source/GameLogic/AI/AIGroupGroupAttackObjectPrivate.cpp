@@ -1,29 +1,25 @@
-// ?attack@AIGroupGroupAttackObjectPrivateShim@@QAEX_NPAVObject@@HW4CommandSourceType@@@Z
-// partial score=0.8 date=2026-09-09
+// ?attack00155DA0@AIGroupGroupAttackObjectPrivateShim@@QAEX_NPAVObject@@HW4CommandSourceType@@@Z
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
 #include <list>
+#include <bitset>
 
 typedef float Real;
 typedef bool Bool;
 typedef int Int;
+typedef unsigned int UnsignedInt;
 typedef unsigned int size_t;
 
 void *__cdecl operator new(size_t);
 void __cdecl operator delete(void *);
 
-struct Coord3D
-{
-    Real x;
-    Real y;
-    Real z;
-};
+#include "../../../../Libraries/Include/Lib/Coord3D.h"
 
 class Object;
-enum CommandSourceType
-{
-};
+#include "../command_source_type.h"
+
+enum DisabledType { DISABLED_HELD = 3 };
 
 enum AbleToAttackType
 {
@@ -119,51 +115,38 @@ class AICommandInterface
 public:
     void aiAttackObject(Object *, Int, CommandSourceType);
     void aiForceAttackObject(Object *, Int, CommandSourceType);
-    void aiBfmeAttackObject(Object *, CommandSourceType);
-    void aiForceAttackObjectB(Object *, Int, CommandSourceType);
-    void aiAttackObjectB(Object *, Int, CommandSourceType);
-    void aiAttackObjectGarrison(Object *, Int, CommandSourceType);
+    void aiBfmeCommand39(Object *, CommandSourceType);
+    // ?aiBfmeAttackObject@AICommandInterface@@QAEXPAVObject@@W4CommandSourceType@@@Z absent-from-retail
+    void aiBfmeAttackObject(Object *victim, CommandSourceType source) { aiBfmeCommand39(victim, source); }
 };
 
-class AIUpdatePrefix
+class AIUpdateModuleData
 {
 public:
-    char m_unmodelled[0x20];
+    char m_unreconstructed_000[0x20];
+    UnsignedInt m_autoAcquireEnemiesWhenIdle;
 };
 
-class AIUpdateInterface : public AIUpdatePrefix, public AICommandInterface
-{
-protected:
-    virtual void privateMoveToPosition();
-    virtual void privateAttackObject();
-    virtual void privateForceAttackObject();
-
-public:
-    virtual AIUpdateInterface *getAIUpdateInterface();
-};
-
-class Object
+class AIUpdateInterface
 {
 public:
-    const Coord3D *getPosition() const { return &m_position; }
-    ContainModuleInterface *getContain() const { return m_contain; }
-    SpawnBehaviorInterface *getSpawnBehaviorInterface() const;
-    AIUpdateInterface *getAI() const { return m_ai; }
-    AIUpdateInterface *getAIUpdateInterface() const { return m_ai; }
-    CanAttackResult getAbleToAttackSpecificObject(AbleToAttackType,
-        const Object *, CommandSourceType) const;
-    Bool bfmeIsGiantBird() const;
-
-private:
-    char m_unmodelled_000[0x38];
-    Coord3D m_position;
-    char m_unmodelled_044[0x160];
-    Int m_disabledMask;
-    char m_unmodelled_1a8[0x54];
-    ContainModuleInterface *m_contain;
-    char m_unmodelled_200[0x04];
-    AIUpdateInterface *m_ai;
+    char m_unreconstructed_000[4];
+    AIUpdateModuleData *m_moduleData;
+    char m_unreconstructed_008[0x20 - 0x08];
+    AICommandInterface m_commands;
 };
+
+// Use STLport's bit access on the canonical mask word.
+#define BFME_HAVE_COORD3D
+#define OBJECT_TU_MEMBERS Bool isDisabledByType(DisabledType type) const { return reinterpret_cast<const std::bitset<sizeof(m_disabledMask) * 8> *>(&m_disabledMask)->test(type); } \
+    const Coord3D *getPosition() const { return &m_cachedPos; } \
+    ContainModuleInterface *getContain() const { return m_contain; } \
+    SpawnBehaviorInterface *getSpawnBehaviorInterface() const; \
+    AIUpdateInterface *getAI() const { return m_ai; } \
+    AIUpdateInterface *getAIUpdateInterface() const { return m_ai; } \
+    CanAttackResult getAbleToAttackSpecificObject(AbleToAttackType, const Object *, CommandSourceType) const; \
+    int bfmeIsGiantBird() const;
+#include "../Object/object.h"
 
 class ActionManager
 {
@@ -174,27 +157,30 @@ public:
 
 extern ActionManager *TheActionManager;
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AI.h
 class AIGroupGroupAttackObjectPrivateShim
 {
 public:
-    void attack(bool forced, Object *target, int maxShots, CommandSourceType source);
+    void attack00155DA0(Bool forced, Object *victim,
+        Int maxShotsToFire, CommandSourceType cmdSource);
 
 private:
     char m_unmodelled_000[4];
     std::list<Object *> m_memberList;
 };
 
-void AIGroupGroupAttackObjectPrivateShim::attack(bool forced, Object *victim,
-    int maxShotsToFire, CommandSourceType cmdSource)
+// ?attack00155DA0@AIGroupGroupAttackObjectPrivateShim@@QAEX_NPAVObject@@HW4CommandSourceType@@@Z
+void AIGroupGroupAttackObjectPrivateShim::attack00155DA0(Bool forced, Object *victim,
+    Int maxShotsToFire, CommandSourceType cmdSource)
 {
-    if (!victim)
+    if (!victim) {
+        // Hard to kill em if they're already dead.  jba
         return;
+    }
 
     Coord3D victimPos;
     victimPos.x = victim->getPosition()->x;
     victimPos.y = victim->getPosition()->y;
-    SimpleObjectIterator *iter = new(SimpleObjectIterator::SIMPLE_OBJECT_ITERATOR_GLUE_NOT_IMPLEMENTED) SimpleObjectIterator;
+    SimpleObjectIterator *iter = ::new SimpleObjectIterator;
 
     std::list<Object *>::iterator i;
     for (i = m_memberList.begin(); i != m_memberList.end(); ++i) {
@@ -202,38 +188,36 @@ void AIGroupGroupAttackObjectPrivateShim::attack(bool forced, Object *victim,
         Coord3D unitPos;
         unitPos.x = (*i)->getPosition()->x;
         unitPos.y = (*i)->getPosition()->y;
-        if ((*(const unsigned char *)((const char *)(*i) + 0x1a4) & 0x08) != 0)
-            continue;
+        if ((*i)->isDisabledByType(DISABLED_HELD))
+            continue; // don't bother telling the occupants to move.
         dx = unitPos.x - victimPos.x;
         dy = unitPos.y - victimPos.y;
         iter->insert((*i), dx * dx + dy * dy);
     }
 
     iter->sort(ITER_SORTED_NEAR_TO_FAR);
+    // Works better if you let the near units get the first paths... jba.
     Object *theUnit;
     for (theUnit = iter->first(); theUnit; theUnit = iter->next()) {
+        //Determine if this object is a garrisoned container capable of firing!
+        //If so, order everyone inside to attack as well!
         ContainModuleInterface *contain = theUnit->getContain();
         if (contain && contain->isPassengerAllowedToFire()) {
+            //Loop through each member and order them to attack the same target (if possible)
             const std::list<Object *> *items = contain->getContainedItemsList();
             if (items) {
                 std::list<Object *>::const_iterator it;
                 for (it = items->begin(); it != items->end(); ++it) {
                     Object *garrisonedMember = *it;
-                    const AbleToAttackType attackType =
-                        forced ? ATTACK_NEW_TARGET_FORCED : ATTACK_NEW_TARGET;
-                    CanAttackResult result =
-                        garrisonedMember->getAbleToAttackSpecificObject(
-                            attackType, victim, cmdSource);
+                    CanAttackResult result = garrisonedMember->getAbleToAttackSpecificObject(forced ? ATTACK_NEW_TARGET_FORCED : ATTACK_NEW_TARGET, victim, cmdSource);
                     if (result == ATTACKRESULT_POSSIBLE ||
                         result == ATTACKRESULT_POSSIBLE_AFTER_MOVING) {
                         AIUpdateInterface *memberAI = garrisonedMember->getAI();
                         if (memberAI) {
                             if (forced) {
-                                memberAI->aiForceAttackObject(victim, maxShotsToFire,
-                                    cmdSource);
+                                memberAI->m_commands.aiForceAttackObject(victim, maxShotsToFire, cmdSource);
                             } else {
-                                memberAI->aiAttackObjectGarrison(victim, maxShotsToFire,
-                                    cmdSource);
+                                memberAI->m_commands.aiAttackObject(victim, maxShotsToFire, cmdSource);
                             }
                         }
                     }
@@ -241,22 +225,23 @@ void AIGroupGroupAttackObjectPrivateShim::attack(bool forced, Object *victim,
             }
         }
 
+        //Do a check to see if we have a hive object that has slaved objects.
         SpawnBehaviorInterface *spawnInterface = theUnit->getSpawnBehaviorInterface();
         if (spawnInterface)
             spawnInterface->orderSlavesToAttackTarget(victim, maxShotsToFire, cmdSource);
 
+        //Order the specific group object to attack!
         AIUpdateInterface *ai = theUnit->getAIUpdateInterface();
         if (ai && theUnit != victim) {
-            if (theUnit->bfmeIsGiantBird()) {
-                CanAttackResult result = TheActionManager->getCanAttackObject(
-                    theUnit, victim, cmdSource, ATTACK_NEW_TARGET);
+            if ((unsigned char)theUnit->bfmeIsGiantBird()) {
+                CanAttackResult result = TheActionManager->getCanAttackObject(theUnit, victim, cmdSource, ATTACK_NEW_TARGET);
                 if (result == ATTACKRESULT_POSSIBLE ||
                     result == ATTACKRESULT_POSSIBLE_AFTER_MOVING)
-                    ai->aiBfmeAttackObject(victim, cmdSource);
+                    ai->m_commands.aiBfmeAttackObject(victim, cmdSource);
             } else if (forced) {
-                ai->aiForceAttackObjectB(victim, maxShotsToFire, cmdSource);
+                ai->m_commands.aiForceAttackObject(victim, maxShotsToFire, cmdSource);
             } else {
-                ai->aiAttackObjectB(victim, maxShotsToFire, cmdSource);
+                ai->m_commands.aiAttackObject(victim, maxShotsToFire, cmdSource);
             }
         }
     }

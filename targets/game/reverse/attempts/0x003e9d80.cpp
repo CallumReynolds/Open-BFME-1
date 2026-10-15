@@ -1,17 +1,7 @@
 // ?updatePos@Pathfinder@@QAE_NPAVObject@@PBUCoord3D@@@Z
-// partial score=0.88 date=2026-09-28
-// cl: /DNDEBUG /MD /EHsc
-// readable body of ?updatePos@Pathfinder@@QAEXPAVObject@@PBUCoord3D@@@Z: game/GameEngine/Source/GameLogic/AI/AIPathfind.cpp
-//
-// Retail 0x003E9D80: Pathfinder::updatePos (1213 bytes through ret 8).
-// Identity: the ILT 0x00013647 is called by the matched Object::setLayer,
-// OpenContain::exitObjectViaDoor, OpenContain::exitObjectInAHurry and
-// AIUpdateInterface::loadPostProcess; the body is the Zero Hour updatePos
-// (same radius/centre, cell-flip and old/new cell sweeps) forked for BFME.
-// BFME returns a Bool (every exit loads al), keeps the current pathfind cell
-// on the Object (+0xA4/+0xA8) instead of the AI module, and adds a dead-object
-// layer repair at the top. Layouts follow the landed siblings
-// PathfinderRemoveGoal003E3D20.cpp and PathfinderGetLayer.cpp.
+// partial score=0.932 date=2026-10-15
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Include
+// Evidence: targets/game/reverse/identity_evidence/003e9d80-claim-value-temporary.md
 
 typedef int Int;
 typedef float Real;
@@ -23,10 +13,7 @@ struct ICoord2D
 	Int x, y;
 };
 
-struct Coord3D
-{
-	Real x, y, z;
-};
+#include "Lib/Coord3D.h"
 
 enum PathfindLayerEnum
 {
@@ -169,14 +156,15 @@ public:
 		return info ? info->m_posUnitID : 0;
 	}
 
-	// BFME-only claim test (unit 0x003E9D80): the cell takes a position unit
-	// when it has no info, no position unit, or the goal unit is the caller.
-	Bool rva003E9D80CanTakePos(ObjectID unitID) const
+	// The decoded claim guard writes the cached ID if the position is vacant
+	// or the goal belongs to the object current ID.
+	void rva003E9D80CanTakePos(Object *object, ObjectID unitID, const ICoord2D &cellPosition)
 	{
 		PathfindCellInfo *info = (PathfindCellInfo *)m_info;
-		if (info == 0 || info->m_posUnitID == 0)
-			return true;
-		return info->m_goalUnitID == unitID;
+		ObjectID positionUnit = info ? info->m_posUnitID : 0;
+		if (positionUnit == 0)
+			{ setPosUnit(unitID, cellPosition); return; }
+		if (info->m_goalUnitID == object->getID()) setPosUnit(unitID, cellPosition);
 	}
 
 	Int getType(void) const { return m_packed & 0x7; }
@@ -218,6 +206,9 @@ protected:
 	Int m_extentHiY;
 };
 
+/**
+ * Updates the position cell for an ai unit.
+ */
 Bool Pathfinder::updatePos(Object *obj, const Coord3D *newPos)
 {
 	if (obj->isEffectivelyDead())
@@ -239,14 +230,17 @@ Bool Pathfinder::updatePos(Object *obj, const Coord3D *newPos)
 	if (kindTemplate && kindTemplate->m_override)
 		kindTemplate = kindTemplate->getFinalOverride();
 	if (kindTemplate->m_flagsC8 & 4)
+	{
+		// Only consider mobile.
 		return false;
+	}
 	if (!m_isMapReady)
 		return false;
 
 	ObjectID objID = obj->getID();
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
 	if (ai == 0)
-		return false;
+		return false; // only consider ai objects.
 
 	ICoord2D curCell = *obj->getCurPathfindCell();
 	if (!ai->groundMovementNotSlot1F0_003E9D80())
@@ -287,13 +281,13 @@ Bool Pathfinder::updatePos(Object *obj, const Coord3D *newPos)
 		Int cellLayer = cell->getLayer();
 		if (layer != cellLayer && cell->getType() == 0)
 			obj->setLayer((PathfindLayerEnum)cellLayer);
-		doGround = true;
+		doGround = true;	// just have to do ground
 	}
 	else
 	{
-		doLayer = true;
+		doLayer = true; // have to do the layer
 		if (TheTerrainLogic->objectInteractsWithBridgeEnd(obj, layer))
-			doGround = true;
+			doGround = true; // In this case, have to both layer & ground, as they overlap here.
 	}
 
 	obj->setCurPathfindCell(newCell);
@@ -302,6 +296,7 @@ Bool Pathfinder::updatePos(Object *obj, const Coord3D *newPos)
 
 	Int i, j;
 	ICoord2D cellNdx;
+	//DEBUG_LOG(("Updating unit pos at cell %d, %d\n", newCell.x, newCell.y));
 	if (curCell.x >= 0 && curCell.y >= 0)
 	{
 		for (i = curCell.x - radius; i < curCell.x + numCellsAbove; i++)
@@ -315,6 +310,7 @@ Bool Pathfinder::updatePos(Object *obj, const Coord3D *newPos)
 					cell->setPosUnit(0, cellNdx);
 				if (layer != LAYER_GROUND && layer < 16)
 				{
+					// Remove from the ground, if present.
 					cell = getGroundCell(i, j);
 					if (cell && cell->getPosUnit() == objID)
 						cell->setPosUnit(0, cellNdx);
@@ -332,27 +328,24 @@ Bool Pathfinder::updatePos(Object *obj, const Coord3D *newPos)
 			if (doLayer)
 			{
 				cell = getCell(layer, i, j);
-				if (cell && cell->rva003E9D80CanTakePos(obj->getID()))
-					cell->setPosUnit(objID, cellNdx);
+				if (cell) cell->rva003E9D80CanTakePos(obj, objID, cellNdx);
 			}
 			if (doGround)
 			{
 				cell = getGroundCell(i, j);
-				if (cell && cell->rva003E9D80CanTakePos(obj->getID()))
-					cell->setPosUnit(objID, cellNdx);
+				if (cell) cell->rva003E9D80CanTakePos(obj, objID, cellNdx);
 			}
 		}
 	}
 	return true;
 }
 
-// Helper retained from PathfindGetRadiusAndCenterE30.cpp (the claimed body);
-// its visible noinline definition lets VC7.1 see that the radius and centre
-// outputs do not escape, as in PathfinderRemoveGoal003E3D20.cpp.
+// The existing radius helper stays visible without adding a strong definition.
+// Its output pointers do not escape the independently matched body.
 extern "C" __declspec(dllimport) double __cdecl floor(double);
 #undef REAL_TO_INT_FLOOR
 #define REAL_TO_INT_FLOOR(x) (fast_float2long_round((Real)floor((double)(x))))
-__declspec(noinline) void Pathfinder::getRadiusAndCenter(
+inline __declspec(noinline) void Pathfinder::getRadiusAndCenter(
 	const Object *object, Int &radius, Bool &centerInCell )
 {
 	Real diameter;

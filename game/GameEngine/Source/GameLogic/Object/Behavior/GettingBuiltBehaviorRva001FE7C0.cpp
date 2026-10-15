@@ -1,11 +1,22 @@
-// ?d_001fe7c0@@YAXXZ
-// partial score=0.85 date=2026-09-12
+// ?rva001FE7C0@GettingBuiltBehavior@@UAE_NXZ
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 //
 // Retail 0x001FE7C0, 178 bytes.  Slot 7 of GettingBuiltBehavior's secondary
 // vftable 0x010A45E0 (ILT 0x00022C19).  Same secondary this as
 // GettingBuiltBehaviorCostForDamage: ModuleData at this-0x1C, Object at
-// this-0x18.  Slot 5 of this vtable is rva001FE4A0.
+// this-0x18.  Slot 5 of this vtable is the byte getter at 0x001FE4A0.
+//
+// Unless slot 5 reports true, the structure counts as ready when its module
+// field +0x20 is negative, nothing damaged it within the GlobalData window
+// (+0xB50 seconds) and body slot 5 is below the shared constant at VA
+// 0x01075334; otherwise when its body is rubble.  A ready structure still
+// fails while its castle member behavior has a live pending object
+// (CastleBehavior::isPendingObjectUnavailable).  The method name is unproven.
+//
+// Spellings the bytes decide: the ready tests and the castle test are one
+// boolean expression each, so MSVC returns them as 0/1 in EAX while the
+// slot-5 early-out returns `false` in AL and sits last; the rubble test is a
+// Bool assignment (sete/test).
 
 typedef int Int;
 typedef bool Bool;
@@ -69,8 +80,9 @@ public:
 
 extern GlobalData *TheWritableGlobalData;
 
-#define BfmeZeroRange (*(const Real *)0x01075350)
-#define g_bfmeDefaultBU (*(const Real *)0x01075334)
+extern const Real g_rva01075350;
+extern Real g_bfmeDefaultBU;
+#define BfmeZeroRange g_rva01075350		// VA 0x01075350, 0.0f
 
 class GettingBuiltBehaviorPrimary
 {
@@ -115,48 +127,39 @@ public:
 	virtual Bool rva001FE7C0();
 };
 
-class BfmeItemE63
+class CastleBehavior
 {
 public:
-	unsigned char m_pad00[0x14];
+	Bool isPendingObjectUnavailable() const;		///< 0x00372090
+
+	unsigned char m_unreconstructed_00[0x14];
 	void *m_field14;
-	unsigned char m_pad18[0x24 - 0x18];
+	unsigned char m_unreconstructed_18[0x24 - 0x18];
 	unsigned char m_field24;
-	Bool checkValid();
 };
 
 Module *__cdecl rva0036BB10FindCastleMemberBehavior(const Object *object);
 
-#pragma comment(linker, "/alternatename:?bfmeGetRecentDamageSource@Object@@QBE_NPAII@Z=?j_000402d2@@YAXXZ")
-#pragma comment(linker, "/alternatename:?checkValid@BfmeItemE63@@QAE_NXZ=?j_0004b015@@YAXXZ")
-#pragma comment(linker, "/alternatename:?rva0036BB10FindCastleMemberBehavior@@YAPAVModule@@PBVObject@@@Z=?j_0000e6e7@@YAXXZ")
 
 // ?rva001FE7C0@GettingBuiltBehavior@@UAE_NXZ
 Bool GettingBuiltBehavior::rva001FE7C0()
 {
-	if (rva001FE4A0())
-		return false;
-
-	const GettingBuiltBehaviorModuleData *data = getModuleData();
-	Object *object = getObject();
-	BodyModuleInterface *body = object->getBodyModule();
-
-	if (data->m_field20 < BfmeZeroRange)
+	if (!rva001FE4A0())
 	{
-		ObjectID source = 0;
-		if (object->bfmeGetRecentDamageSource(&source, TheWritableGlobalData->m_recentDamageSeconds))
-			return false;
-		if (!(body->slot14() < g_bfmeDefaultBU))
-			return false;
+		const GettingBuiltBehaviorModuleData *data = getModuleData();
+		Object *object = getObject();
+		BodyModuleInterface *body = object->getBodyModule();
+		Bool ready;
+		if (data->m_field20 < BfmeZeroRange)
+		{
+			ObjectID source = 0;
+			ready = !object->bfmeGetRecentDamageSource(&source, TheWritableGlobalData->m_recentDamageSeconds)
+				&& body->slot14() < g_bfmeDefaultBU;
+		}
+		else
+			ready = body->getDamageState() == BODY_RUBBLE;
+		CastleBehavior *item;
+		return ready && ((item = (CastleBehavior *)rva0036BB10FindCastleMemberBehavior(getObject())) == 0 || item->m_field14 == 0 || item->m_field24 || !item->isPendingObjectUnavailable());
 	}
-	else if (body->getDamageState() != BODY_RUBBLE)
-	{
-		return false;
-	}
-
-	object = getObject();
-	BfmeItemE63 *item = (BfmeItemE63 *)rva0036BB10FindCastleMemberBehavior(object);
-	if (item != 0 && item->m_field14 != 0 && !item->m_field24 && item->checkValid())
-		return false;
-	return true;
+	return false;
 }

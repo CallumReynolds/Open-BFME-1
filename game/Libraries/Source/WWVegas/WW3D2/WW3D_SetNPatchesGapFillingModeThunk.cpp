@@ -18,7 +18,7 @@ public:
 };
 
 extern DX8MeshRendererClass *TheDX8MeshRenderer;
-extern unsigned NPatchesGapFillingMode;
+unsigned NPatchesGapFillingMode = 1;	// 0x012D6D88, WW3D::NPatchesGapFillingMode (NPATCHES_GAP_FILLING_ENABLED)
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2/ww3d.h
 class WW3D

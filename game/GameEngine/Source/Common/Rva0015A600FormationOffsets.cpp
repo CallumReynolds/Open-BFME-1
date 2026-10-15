@@ -1,5 +1,5 @@
 // ?apply@Rva0015A600Bucket@@QAEHPBUCoord2D@@H@Z
-// partial score=0.9545 date=2026-10-09
+// Formation coordinate assignment for the address-derived fixed bucket.
 // cl: /I.
 
 typedef float Real;
@@ -10,12 +10,16 @@ typedef int Int;
 class Overridable
 {
 public:
+    virtual ~Overridable();
     const Overridable *getFinalOverride() const;
-    Overridable *&m_nextOverride() { return *(Overridable **)((char *)this + 4); }
+    Overridable *&m_nextOverride() const { return *(Overridable **)((char *)this + 4); }
     Int &m_field74() { return *(Int *)((char *)this + 0x74); }
     Int &m_field43C() { return *(Int *)((char *)this + 0x43C); }
     Int &m_field440() { return *(Int *)((char *)this + 0x440); }
 };
+
+// Template pointer view used by the canonical Thing declaration.
+class ThingTemplate : public Overridable {};
 
 class Locomotor
 {
@@ -32,6 +36,7 @@ public:
 	Locomotor *m_currentLocomotor;
 };
 
+#define THING_TU_MEMBERS const ThingTemplate *getTemplate(void) const;
 #define OBJECT_TU_MEMBERS \
     Int &m_formationID() { return *(Int *)((char *)this + 0x31C); } \
     Real &m_formationOffsetX() { return *(Real *)((char *)this + 0x320); } \
@@ -40,6 +45,20 @@ public:
     void setFormationOffset(const Coord2D &offset) { *(Coord2D *)&m_formationOffsetX() = offset; }
 #include "game/GameEngine/Source/GameLogic/Object/object.h"
 #undef OBJECT_TU_MEMBERS
+#undef THING_TU_MEMBERS
+
+// ?getTemplate@Thing@@QBEPBVThingTemplate@@XZ present-unmatched
+inline const ThingTemplate *Thing::getTemplate(void) const
+{
+    const ThingTemplate *tmpl = m_template;
+    if (tmpl == 0)
+        return 0;
+    if (tmpl->m_nextOverride())
+        tmpl = (const ThingTemplate *)tmpl->m_nextOverride()->getFinalOverride();
+    return tmpl;
+}
+
+
 
 class TAiData
 {
@@ -57,7 +76,6 @@ public:
 };
 
 extern AI *TheAI;
-extern Real g_bfmeADL;
 
 class Rva0015A600Bucket
 {
@@ -72,7 +90,7 @@ Int Rva0015A600Bucket::apply(const Coord2D *start, Int formationID)
 {
 	Int total;
 	Int index;
-	total = index = 0;
+	index = total = 0;
 	if (m_count > 0)
 	{
 		Object **item = m_items;
@@ -80,17 +98,13 @@ Int Rva0015A600Bucket::apply(const Coord2D *start, Int formationID)
 		{
 			Coord2D offset = *start;
 			Object *object = *item;
-			Overridable *objectTemplate = (Overridable *)object->m_template;
-			if (objectTemplate && objectTemplate->m_nextOverride())
-				objectTemplate = (Overridable *)objectTemplate->m_nextOverride()->getFinalOverride();
+			Overridable *objectTemplate = (Overridable *)object->getTemplate();
 			Int value = objectTemplate->m_field440();
 			TAiData *data = TheAI->m_aiData;
 
 			offset.y = (value * 0.5f + total) * data->m_formationWidth + offset.y;
 
-			objectTemplate = (Overridable *)object->m_template;
-			if (objectTemplate && objectTemplate->m_nextOverride())
-				objectTemplate = (Overridable *)objectTemplate->m_nextOverride()->getFinalOverride();
+			objectTemplate = (Overridable *)object->getTemplate();
 
 			offset.x = offset.x - objectTemplate->m_field43C() * data->m_formationHeight * 0.5f;
 

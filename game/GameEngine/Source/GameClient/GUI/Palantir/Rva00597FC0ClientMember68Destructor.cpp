@@ -1,35 +1,31 @@
-// ?d_00591640@@YAXXZ
-// partial score=0.84 date=2026-09-18
-// ??1Rva00591640GameClient68@@QAE@XZ
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/stringinline /D_STLP_USE_STATIC_LIB
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
+//
+// Retail 0x00591640 (322 bytes): destructor of the Rva00597FC0Client member at
+// +0x68.  Rva00597FC0Client's destructor (GameClientDestructor.cpp, 0x00596500)
+// calls it through ILT 0x0003760A, and an unwind funclet uses the same ILT as
+// a destructor.  It removes the six Palantir/<layout>/ Apt objects and their
+// Timer twins, then the inline base destructor clears the active flag.
+//
+// SHAPE.  Retail spills `this` and runs the loop under EH state 0, dropping to
+// -1 just before the active-flag test: the flag handling is an inlined base
+// (or leading member) destructor, not the body's tail.  The '/' separator is a
+// two-byte buffer at the bottom of its stack dword, as AsciiString::concat(char)
+// would build it.
 
 #include <hash_map>
 
-template <typename T> class StringBase
+#include "../../../../../Libraries/Source/WWVegas/WWLib/ascii_string.h"
+
+// Retail expands concat(char) here: the character goes into a two-byte buffer
+// at the bottom of its stack dword and the length-1 concat is called.
+template <>
+inline void StringBase<char>::concat(char c)
 {
-	friend class AsciiString;
-
-public:
-	void concat(const T *text, int length);
-
-private:
-	StringBase() : m_data(0) {}
-	StringBase(const T *text);
-	StringBase(const StringBase<T> &other);
-	~StringBase();
-
-	void *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-	AsciiString(const char *text) : StringBase<char>(text) {}
-	AsciiString(const AsciiString &other) : StringBase<char>(other) {}
-	~AsciiString() {}
-};
+	char text[2];
+	text[0] = c;
+	concat(text, 1);
+}
 
 struct Rva0046AF20Mapped
 {
@@ -92,17 +88,30 @@ static __forceinline void callWindowManagerString(
 	(manager->*cast.member)(name);
 }
 
-class Rva00591640GameClient68
+class Rva00591640ActiveBase
 {
 public:
-	~Rva00591640GameClient68();
+	~Rva00591640ActiveBase()
+	{
+		if (m_active)
+		{
+			j_00001f32();
+			m_active = false;
+		}
+	}
 
-private:
+protected:
 	unsigned char m_padding[8];
 	bool m_active;
 };
 
-Rva00591640GameClient68::~Rva00591640GameClient68()
+class Rva00597FC0ClientMember68 : public Rva00591640ActiveBase
+{
+public:
+	~Rva00597FC0ClientMember68();
+};
+
+Rva00597FC0ClientMember68::~Rva00597FC0ClientMember68()
 {
 	int index;
 
@@ -113,25 +122,15 @@ Rva00591640GameClient68::~Rva00591640GameClient68()
 			g_theWindowManager->removeAptObject(name);
 		}
 
-		index = 0;
-		do
+		for (index = 0; index < 6; ++index)
 		{
 			AsciiString name;
-			char separator;
 			bfmeGoVHH((char)index, (BfmeLayoutVHH *)&name);
-			separator = '/';
-			((StringBase<char> *)&name)->concat(&separator, 1);
+			name.concat('/');
 			g_theWindowManager->removeAptObject(
 				AsciiString("Palantir/") + name);
-			((StringBase<char> *)&name)->concat("Timer", 5);
+			name.StringBase<char>::concat("Timer", 5);
 			callWindowManagerString(g_theWindowManager, j_0003d54b, &name);
-			++index;
-		} while (index < 6);
-	}
-
-	if (m_active)
-	{
-		j_00001f32();
-		m_active = false;
+		}
 	}
 }

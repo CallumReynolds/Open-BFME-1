@@ -1,3 +1,6 @@
+// stlport
+#include "../GameClient/FXListRetail.h"
+
 // A clearing destructor over two bases.
 //
 // The body is one statement: clear the list the first base keeps. Everything
@@ -20,18 +23,8 @@ struct BfmeClearNodeB
 class BfmeClearListB;
 
 // The list nodes come from the STLport node pool: 0x0082E5F0 is the private
-// static _STL::__node_alloc<true, 0>::_M_deallocate, so the list reaches it
-// under that real name instead of an invented free function.
-namespace _STL
-{
-template <bool __threads, int __inst>
-class __node_alloc
-{
-	friend class ::BfmeClearListB;
-	static void __cdecl _M_deallocate(void *__p, unsigned int __n);
-};
-}
-
+// static _STL::__node_alloc<true, 0>::_M_deallocate. The public deallocate
+// wrapper folds its size check for these 12-byte nodes and reaches that body.
 class BfmeClearListB
 {
 public:
@@ -45,7 +38,7 @@ public:
 
 			node = node->m_bfmeNext;
 
-			_STL::__node_alloc<true, 0>::_M_deallocate(current, sizeof(BfmeClearNodeB));
+			_STL::__node_alloc<true, 0>::deallocate(current, sizeof(BfmeClearNodeB));
 		}
 
 		m_bfmeNode->m_bfmeNext = m_bfmeNode;
@@ -55,10 +48,12 @@ public:
 	BfmeClearNodeB *m_bfmeNode;				// +0x00
 };
 
-class BfmeDBaseA
+class __declspec(novtable) BfmeDBaseA
 {
 public:
-	virtual ~BfmeDBaseA(void);				// retail 0x00033F6E
+	// Preserve the derived vtable spelling while forwarding this lifetime view
+	// to the shared FXList destructor (ILT 0x00033F6E -> 0x0042B5D0).
+	__forceinline virtual ~BfmeDBaseA(void) { ((FXList *)this)->FXList::~FXList(); }
 
 	BfmeClearListB m_bfmeList;				// +0x04
 	char m_bfmePad[0x1C];					// +0x08

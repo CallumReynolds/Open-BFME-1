@@ -19,7 +19,8 @@ struct Rva00891B80Block
 	unsigned short m_ref;
 };
 
-extern Rva00891B80Block g_default012D5298;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
 
 class Rva008A9B00Base
 {
@@ -62,8 +63,8 @@ class Rva008A9B00String
 public:
 	Rva008A9B00String()
 	{
-		m_block = &g_default012D5298;
-		++g_default012D5298.m_ref;
+		m_block = (Rva00891B80Block *)&g_rva012D5298Empty;
+		++(*(Rva00891B80Block *)&g_rva012D5298Empty).m_ref;
 	}
 
 private:

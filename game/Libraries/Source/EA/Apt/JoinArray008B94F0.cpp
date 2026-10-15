@@ -5,7 +5,8 @@ struct Rva00891B80Block
 	unsigned short m_ref;
 };
 
-extern Rva00891B80Block g_default012D5298;
+class EAStringC { public: class StringDataC; };
+extern EAStringC::StringDataC g_rva012D5298Empty;	// shared empty string block 0x012D5298
 
 struct Rva00891B80Pool
 {
@@ -22,8 +23,8 @@ class BfmeUtf8String008A01F0
 public:
 	BfmeUtf8String008A01F0()
 	{
-		m_block = &g_default012D5298;
-		++g_default012D5298.m_ref;
+		m_block = (Rva00891B80Block *)&g_rva012D5298Empty;
+		++(*(Rva00891B80Block *)&g_rva012D5298Empty).m_ref;
 	}
 
 	~BfmeUtf8String008A01F0()
@@ -141,7 +142,7 @@ void *joinArray008B94F0(Value008B94F0 *src, int count)
         if (obj) {
             rva01338478FreeHead() = obj->m_next;
             ((BfmeRegistryKind1 *)g_rva01337810GcRoots)->addOrClear(obj);
-            if (obj->m_block != &g_default012D5298)
+            if (obj->m_block != (Rva00891B80Block *)&g_rva012D5298Empty)
                 ((BfmeStrVKK *)&obj->m_block)->bfmeTruncVKK(0);
         } else {
             Rva008A9B00 *fresh = new Rva008A9B00();

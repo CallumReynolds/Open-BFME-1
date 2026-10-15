@@ -14,7 +14,7 @@ extern Waypoint *g_waypointListHead;
 class Bridge
 {
 public:
-	virtual void destroy(int flag);
+	virtual ~Bridge();
 	Bridge *m_next;
 };
 
@@ -117,8 +117,8 @@ void TerrainLogic::reset()
 	while (bridge)
 	{
 		Bridge *next = bridge->m_next;
-		__asm mov dword ptr [eax+4], ebp
-		bridge->destroy(1);
+		bridge->m_next = 0;
+		delete bridge;
 		bridge = next;
 	}
 	*(Bridge **)((char *)first + 0x34) = 0;

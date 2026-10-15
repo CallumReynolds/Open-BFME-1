@@ -37713,7 +37713,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0056c670@@YAXXZ,,0x0056C670,219,game/gen_asm/d_0056a2f0.asm,matched,gen-dump;ghidra=FUN_0096c670
 ?d_0056c7a0@@YAXXZ,,0x0056C7A0,220,game/gen_asm/d_0056a2f0.asm,matched,gen-dump;ghidra=FUN_0096c7a0
 ?d_0056db70@@YAXXZ,,0x0056DB70,467,game/gen_asm/d_0056a2f0.asm,matched,gen-dump;ghidra=FUN_0096db70
-?d_0056e980@@YAXXZ,,0x0056E980,1719,game/gen_asm/d_0056a2f0.asm,matched,gen-dump;ghidra=FUN_0096e980
 ?d_0056f1f0@@YAXXZ,,0x0056F1F0,2286,game/gen_asm/d_00499050.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_0096f1f0
 ?d_00570300@@YAXXZ,,0x00570300,116,game/gen_asm/d_0056a2f0.asm,matched,gen-dump;ghidra=FUN_00970300
 ?d_00572400@@YAXXZ,,0x00572400,1,game/GameEngine/Source/Common/Rva00572400Noop.cpp,matched,opaque address-derived body with proven ret boundary
@@ -172555,3 +172554,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?Rva00C5FEA9Cleanup@@YAXXZ,,0x00C5FEA9,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27745;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state34 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
 ?Rva00BFC450Cleanup@@YAXXZ,,0x00BFC450,11,game/GameEngine/Source/Common/System/BuildAssistant_buildTiledLocations.cpp,matched,gen-funclet;object-symbol=$L1660;parent=?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBVCoord3D@@1MHPAVObject@@@Z;retail 000FC010 -> handler 00BFC45B -> FuncInfo 00DE9998 state0 judged by eh_state_pins;model=claude-opus-5-5;host=app
 ?Rva00C0B0B0Cleanup@@YAXXZ,,0x00C0B0B0,22,game/GameEngine/Source/GameLogic/Object/Behavior/DynamicPortalBehaviourRva001F96E0.cpp,matched,gen-funclet;object-symbol=$L6808;parent=?createWaypoints@DynamicPortalBehaviour@@QAEXXZ;retail 001F96E0 -> handler 00C0B10B -> FuncInfo 00DF9A40 state0 judged by eh_state_pins;model=claude-opus-5-5;host=app
+??0BfmeAptScreenSaveLoad@@QAE@PAX@Z,,0x0056E980,1719,game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/BfmeAptScreenSaveLoadConstructor.cpp,matched,SaveLoad constructor; factory at 0x00104DC0 and vtable pair identify owner; native callback argument conversion and hook pointer record recover frame; evidence=targets/game/reverse/identity_evidence/0056e980-exact-constructor.md;model=gpt-6.1-sol;host=fleet

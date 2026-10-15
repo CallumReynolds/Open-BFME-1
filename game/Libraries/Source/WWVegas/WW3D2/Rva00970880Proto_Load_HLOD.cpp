@@ -20,7 +20,7 @@ private:
 	char *m_buffer;
 };
 
-extern "C" const char Rva011139E4_W3D_Extension[];
+extern "C" const char Rva011139E4_W3D_Extension[] = ".w3d";
 
 class BFMEChunkInput
 {

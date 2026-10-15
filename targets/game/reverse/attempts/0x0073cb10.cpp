@@ -1,22 +1,6 @@
 // ?moveAlongWaypointPath@W3DView@@AAEXH@Z
-// partial score=0.78 date=2026-09-28
+// partial score=0.9721 date=2026-10-16
 // cl: /DNDEBUG /MD /EHs-c- /Igame/Libraries/Source/WWVegas/WWLib
-// BFME W3DView::moveAlongWaypointPath, retail 0x0073CB10.
-//
-// The owner is proved by the named updateCameraMovements caller, the adjacent
-// W3DView camera bodies, and the primary vftable installed by 0x00745B10.
-// The path records and their 20-byte stride are the witnessed
-// Rva00740AE0-derived layout used by the matched BFME camera-path methods.
-//
-// 2026-09-28 rewrite (333 of 1540 bytes differ, was 1142): ZH division by
-// totalTime (MSVC turns the pair into one reciprocal), the first ease result kept
-// as a local because BFME lerps the ground level by it, WWMath::Lerp for the
-// angle / time multiplier / ground level, a file-static normAngle so EDX stays
-// live across the calls, inline updateMinMax for the early-exit clamp, and the
-// GlobalData view declared as a struct to match the pinned mangled name.
-// Remaining: before the factor<0.5 branch retail hoists this+curSeg*20 into ECX
-// (both arms start with identical lea pairs); ours builds it in EAX per arm, so
-// the arms and tail differ by an EAX/ECX swap and 6 bytes.
 
 typedef float Real;
 typedef int Int;
@@ -80,6 +64,14 @@ struct Rva00740AE0Elem
 	Coord3D position;
 	char name[4];
 	Int unknown10;
+};
+
+// Projects the four records read from this + curSegment * 20.
+// Its member offsets follow the decoded W3DView accesses.
+struct Rva0073CB10Window
+{
+	char padding0000[0x298];
+	Rva00740AE0Elem waypoints[4];
 };
 
 class Rva00740AE0Base
@@ -162,7 +154,7 @@ namespace WWMath
 
 // Normalizes angle to +- PI (the W3DView.cpp file-static helper; retail calls it
 // with the angle in ECX and keeps EDX live across it).
-static void normAngle(Real &angle)
+static void __fastcall normAngle(Real &angle)
 {
 	if (angle < -10*PI) {
 		angle = 0;
@@ -241,6 +233,9 @@ private:
 
 #undef BFME_W3D_SLOT
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ?moveAlongWaypointPath@W3DView@@AAEXH@Z
 void W3DView::moveAlongWaypointPath(Int milliseconds)
 {
 	cameraPath.elapsedTimeMilliseconds += milliseconds;
@@ -257,12 +252,15 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 		freezeTimeForCameraMovement = false;
 		angle = cameraPath.cameraAngles[cameraPath.numWaypoints];
 		groundLevel = cameraPath.groundEnd;
+		/////////////////////m_cameraOffset.z = m_groundLevel+TheGlobalData->m_cameraHeight;
 		cameraLimits.rva006DF110(&cameraOffset, 0);
 		cameraOffset.x *= scale;
 		cameraOffset.y *= scale;
 		Coord3D pos = cameraPath.waypoints[cameraPath.numWaypoints].position;
 		pos.z = 0;
 		setPosition(&pos);
+		// Note - assuming that the scripter knows what he is doing, we adjust the constraints so that
+	// the scripted action can occur.
 		updateMinMax(&cameraConstraint.lo.x, pos.x, &cameraConstraint.hi.x);
 		updateMinMax(&cameraConstraint.lo.y, pos.y, &cameraConstraint.hi.y);
 		return;
@@ -275,11 +273,12 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 	cameraPath.currentDistance += deltaTime * cameraPath.totalDistance;
 	while (cameraPath.currentDistance - cameraPath.segmentStartDistance >=
 		cameraPath.waySegmentLengths[cameraPath.curSegment]) {
+		//WWDEBUG_SAY(( "MBL TEST: Camera waypoint along path reached!\n" ));
 		setInt23BC(cameraPath.waypoints[cameraPath.curSegment].unknown10);
 		cameraPath.segmentStartDistance += cameraPath.waySegmentLengths[cameraPath.curSegment];
 		cameraPath.curSegment++;
 		if (cameraPath.curSegment >= cameraPath.numWaypoints) {
-			cameraPath.totalTimeMilliseconds = 0;
+			cameraPath.totalTimeMilliseconds = 0; // Will end following next frame.
 			return;
 		}
 	}
@@ -289,6 +288,7 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 	if (cameraPath.curSegment == cameraPath.numWaypoints - 1) {
 		avgFactor = avgFactor + (1.0f - avgFactor) * factor;
 	}
+	//factor1 = makeQuadraticS(factor1);
 	Real angle1 = cameraPath.cameraAngles[cameraPath.curSegment];
 	Real angle2 = cameraPath.cameraAngles[cameraPath.curSegment + 1];
 	if (angle2 - angle1 > PI) angle1 += 2*PI;
@@ -304,34 +304,37 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 		cameraPath.timeMultiplier[cameraPath.curSegment + 1], factor);
 	timeMultiplierValue = REAL_TO_INT_FLOOR(timeMultiplier + 0.5f);
 	groundLevel = WWMath::Lerp(cameraPath.groundStart, cameraPath.groundEnd, easedTime);
+	//////////////m_cameraOffset.z = m_groundLevel+TheGlobalData->m_cameraHeight;
 	cameraLimits.rva006DF110(&cameraOffset, 0);
 	cameraOffset.x *= scale;
-	cameraOffset.y *= scale;
+	Real &offsetY = cameraOffset.y;
+	offsetY *= scale;
 
+	const Rva0073CB10Window *window = reinterpret_cast<const Rva0073CB10Window *>(reinterpret_cast<const char *>(this) + cameraPath.curSegment * Int(sizeof(Rva00740AE0Elem)));
 	Coord3D start, mid, end;
 	if (factor < 0.5f) {
-		start = cameraPath.waypoints[cameraPath.curSegment - 1].position;
-		start.x += cameraPath.waypoints[cameraPath.curSegment].position.x;
-		start.y += cameraPath.waypoints[cameraPath.curSegment].position.y;
+		start = window->waypoints[0].position;
+		start.x += window->waypoints[1].position.x;
+		start.y += window->waypoints[1].position.y;
 		start.x /= 2;
 		start.y /= 2;
-		mid = cameraPath.waypoints[cameraPath.curSegment].position;
-		end = cameraPath.waypoints[cameraPath.curSegment].position;
-		end.x += cameraPath.waypoints[cameraPath.curSegment + 1].position.x;
-		end.y += cameraPath.waypoints[cameraPath.curSegment + 1].position.y;
+		mid = window->waypoints[1].position;
+		end = window->waypoints[1].position;
+		end.x += window->waypoints[2].position.x;
+		end.y += window->waypoints[2].position.y;
 		end.x /= 2;
 		end.y /= 2;
 		factor += 0.5f;
 	} else {
-		start = cameraPath.waypoints[cameraPath.curSegment].position;
-		start.x += cameraPath.waypoints[cameraPath.curSegment + 1].position.x;
-		start.y += cameraPath.waypoints[cameraPath.curSegment + 1].position.y;
+		start = window->waypoints[1].position;
+		start.x += window->waypoints[2].position.x;
+		start.y += window->waypoints[2].position.y;
 		start.x /= 2;
 		start.y /= 2;
-		mid = cameraPath.waypoints[cameraPath.curSegment + 1].position;
-		end = cameraPath.waypoints[cameraPath.curSegment + 1].position;
-		end.x += cameraPath.waypoints[cameraPath.curSegment + 2].position.x;
-		end.y += cameraPath.waypoints[cameraPath.curSegment + 2].position.y;
+		mid = window->waypoints[2].position;
+		end = window->waypoints[2].position;
+		end.x += window->waypoints[3].position.x;
+		end.y += window->waypoints[3].position.y;
 		end.x /= 2;
 		end.y /= 2;
 		factor -= 0.5f;
@@ -343,7 +346,14 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 	result.x += (mid.x - end.x + mid.x - start.x) * (1 - factor) * factor;
 	result.y += (mid.y - end.y + mid.y - start.y) * (1 - factor) * factor;
 	result.z = 0;
+/*
+	static Real prevGround = 0;
+	DEBUG_LOG(("Dx %.2f, dy %.2f, DeltaANgle = %.2f, %.2f DeltaGround %.2f\n", m_pos.x-result.x, m_pos.y-result.y, deltaAngle, m_groundLevel, m_groundLevel-prevGround));
+	prevGround = m_groundLevel;
+*/
 	setPosition(&result);
+	// Note - assuming that the scripter knows what he is doing, we adjust the constraints so that
+	// the scripted action can occur.
 	updateMinMax(&cameraConstraint.lo.x, result.x, &cameraConstraint.hi.x);
 	updateMinMax(&cameraConstraint.lo.y, result.y, &cameraConstraint.hi.y);
 }

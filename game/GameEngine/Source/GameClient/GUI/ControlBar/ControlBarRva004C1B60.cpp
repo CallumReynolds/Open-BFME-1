@@ -9,17 +9,27 @@
 class GameWindow { public: unsigned winGetStyle(); };
 void *GadgetButtonGetData(GameWindow *);
 struct BfmeMsgDN;
-// The non-destructor slots are placeholders in this partial ABI view. This
-// TU never calls them; their retail targets are 4C1AE0, 4C1160, 4C1C30,
+// The non-destructor slots are placeholders in this partial ABI view; only
+// slot 1 is defined here. Their retail targets are 4C1AE0, 4C1160, 4C1C30,
 // 4C1180 and 4C1240, in order. No semantic method identities are claimed.
+class Rva004C1510Handle;
 class Rva004C1150AdapterBase {
 public:
  virtual ~Rva004C1150AdapterBase() {}
- virtual void slot04() = 0;
+ virtual Rva004C1510Handle slot04() = 0;
  virtual void slot08() = 0;
  virtual void slot0C() = 0;
  virtual void slot10() = 0;
  virtual void slot14() = 0;
+};
+class Rva004C1510Handle {
+public:
+ Rva004C1510Handle(Rva004C1150AdapterBase *p):m_ptr(p) {}
+ Rva004C1510Handle(Rva004C1510Handle &other):m_ptr(other.release()) {}
+ ~Rva004C1510Handle() { delete m_ptr; }
+ Rva004C1150AdapterBase *release() { Rva004C1150AdapterBase *p=m_ptr;m_ptr=0;return p; }
+private:
+ Rva004C1150AdapterBase *m_ptr;
 };
 class ControlBar;
 class Rva004C1B60Adapter:public Rva004C1150AdapterBase {
@@ -27,7 +37,7 @@ public:
  Rva004C1B60Adapter(ControlBar *owner,GameWindow *window,void *data)
   :m_owner(owner),m_window(window),m_data(data) {}
  virtual ~Rva004C1B60Adapter() {}
- virtual void slot04();
+ virtual Rva004C1510Handle slot04();
  virtual void slot08();
  virtual void slot0C();
  virtual void slot10();
@@ -56,4 +66,11 @@ void ControlBar::rva004C1B60(GameWindow *window,void *data)
  }
  Rva004C1B60Adapter adapter(this,window,data);
  bfmeShowDN((BfmeMsgDN *)&adapter);
+}
+// Slot 1 (4C1AE0): heap copy of the adapter handed back as the owning
+// handle that caller 4C15D0 steals (see ControlBarRva004C1510Handle.cpp).
+Rva004C1510Handle Rva004C1B60Adapter::slot04()
+{
+ Rva004C1510Handle h(new Rva004C1B60Adapter(*this));
+ return h;
 }

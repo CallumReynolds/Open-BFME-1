@@ -37651,7 +37651,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_004b25d0@@YAXXZ,,0x004B25D0,1365,game/gen_asm/d_004b2470.asm,matched,gen-dump;ghidra=FUN_008b25d0
 ?d_004be210@@YAXXZ,,0x004BE210,242,game/gen_asm/d_004b2470.asm,matched,gen-dump;ghidra=FUN_008be210
 ?d_004c15d0@@YAXXZ,,0x004C15D0,678,game/gen_asm/d_004b2470.asm,matched,gen-dump;ghidra=FUN_008c15d0
-?d_004c1ae0@@YAXXZ,,0x004C1AE0,101,game/gen_asm/d_004b2470.asm,matched,gen-dump;ghidra=FUN_008c1ae0
 ?d_004c1c30@@YAXXZ,,0x004C1C30,4289,game/gen_asm/d_004ad980.asm,matched,gen-dump;bounds=high
 ?d_004c6a70@@YAXXZ,,0x004C6A70,37,game/gen_asm/d_004c3de0.asm,matched,gen-dump;ghidra=FUN_008c6a70
 ?d_004cc660@@YAXXZ,,0x004CC660,468,game/GameEngine/Source/GameClient/GUI/GUICallbacks/Menus/LanGameOptionsMenu.cpp,matched,caller ILT 0x0001C9D6 proves address; BFME ABI views exact probe;model=gpt-5.6-luna
@@ -172548,3 +172547,4 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 eh_00c51029,,0x00C51029,10,game/GameEngine/Source/Common/Rva00789220DualHashConstructor.cpp,matched,native-eh;object-symbol=__ehhandler$??0Rva00789220Holder@@QAE@PAX@Z;parent=??0Rva00789220Holder@@QAE@PAX@Z;FuncInfo 0x00E4071C;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ?Rva00C42D50Cleanup@@YAXXZ,,0x00C42D50,8,game/Libraries/Source/WWVegas/WWLib/stlport_narrow_string_substr.cpp,matched,authored C++ cleanup;gen-funclet;object-symbol=$L560;parent=?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;retail parent 0x006550F0 -> handler 0x00C42D58 -> FuncInfo 0x00E32800 state0 toState-1;destroys the result string base via [ebp+4] and ILT 0x00016DE7;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 eh_00c42d58,,0x00C42D58,10,game/Libraries/Source/WWVegas/WWLib/stlport_narrow_string_substr.cpp,matched,native-eh;object-symbol=__ehhandler$?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;parent=?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;FuncInfo 0x00E32800;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?slot04@Rva004C1B60Adapter@@UAE?AVRva004C1510Handle@@XZ,,0x004C1AE0,101,game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarRva004C1B60.cpp,matched,adapter vtable CFD964 slot1 per 4C1B60 TU; heap copy of the three-dword adapter returned via owning handle stolen by caller 4C15D0; placeholder slot name kept;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr

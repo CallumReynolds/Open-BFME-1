@@ -29,9 +29,9 @@
 // 0x00881EB0 with the pointer alone.  No single _STLP_USE_NEWALLOC setting
 // reproduces that pair: measured over ObjectCreationList.cpp, node_alloc fixes
 // these four constructors and reddens thirteen destructors, and __new_alloc
-// does the reverse.  BFME evidently shipped an STLport whose
-// __new_alloc::allocate was re-pointed at the node allocator and left
-// out of line, which inputs/vendor/stlport/stl/_alloc.h defines inline
+// does the reverse.  The allocating side calls
+// __node_alloc<true,0>::_M_allocate (0x0082E540) directly, while STLport's
+// __new_alloc::allocate is inline in inputs/vendor/stlport/stl/_alloc.h
 // (`{ return __stl_new(__n); }`) and so folds to ::operator new.
 //
 // Until that becomes a shim header, the allocating side lives here, compiled

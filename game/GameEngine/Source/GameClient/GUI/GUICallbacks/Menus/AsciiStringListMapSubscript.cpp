@@ -21,7 +21,7 @@
 //
 // _STLP_DEFAULT_CONSTRUCTOR_BUG stays undefined: the workaround would turn the
 // mapped-type default construction into a by-value __default_constructed()
-// call, while retail inlines it (12-byte __new_alloc::allocate, self-linked
+// call, while retail inlines it (12-byte __node_alloc<true,0>::_M_allocate, self-linked
 // sentinel, stored straight into the temporary).
 
 #include <stl/_config.h>

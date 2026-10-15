@@ -19,7 +19,7 @@
 */
 
 // The two ShellMenuScheme constructors — carried here, not in ShellMenuScheme.cpp, purely for the STLport link mode.
-// Retail calls __new_alloc::allocate directly (it linked the STLport static
+// Retail calls the STLport node allocator (0x0082E540) directly (it linked the STLport static
 // library); ShellMenuScheme.cpp compiles without /D_STLP_USE_STATIC_LIB, so STLport
 // declares that allocator dllimport and the constructor's node allocation comes
 // out as `call [__imp_...]` instead of `call`. Changing that TU's flags would

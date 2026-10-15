@@ -18,7 +18,7 @@
 //   - sub esp,0x14 / push esi / push edi frame; a 12-byte default-empty
 //     vector<Object*> temporary is materialised at [esp+0x10] by three inline
 //     null stores, a 0x14-byte node is allocated through the matched
-//     __new_alloc::allocate (0x0082E540), the payload is copy-constructed at
+//     __node_alloc<true,0>::_M_allocate (0x0082E540), the payload is copy-constructed at
 //     node+8 through the matched vector copy ctor (ILT 0x000494AE ->
 //     0x00753C60), and the four link stores follow, ending with the node
 //     written through the hidden return slot.

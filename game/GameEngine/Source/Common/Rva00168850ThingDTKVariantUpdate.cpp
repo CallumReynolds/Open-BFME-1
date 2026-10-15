@@ -9,6 +9,15 @@
 // which BfmeThingDTK::update does not have), and the periodic-countdown
 // reload constant is 10, not 25. Real class name not recovered.
 
+// BFME2 Rva004EF4C1Pace.cpp resolves this same-this tail through AIPlayer.
+// BFME1 independently calls ILT 0x0001C75B -> queueUnits at 0x00167E80.
+class AIPlayer
+{
+	friend class Rva00168850DTK;
+protected:
+	void queueUnits();
+};
+
 struct Rva00168850Config
 {
 	unsigned char m_pad0[ 0x294 ];
@@ -35,7 +44,6 @@ public:
 
 	// ?updateVariant@Rva00168850DTK@@QAEXXZ
 	void updateVariant( void );
-	void bfmeTailDTK( void );
 
 private:
 	unsigned char m_pad4[ 8 ];
@@ -65,7 +73,7 @@ void Rva00168850DTK::updateVariant( void )
 
 	if ( --m_periodicCountdown < 1 )
 	{
-		bfmeTailDTK();
+		((AIPlayer *)this)->queueUnits();
 		if ( m_active )
 			slot68();
 		m_periodicCountdown = 10;

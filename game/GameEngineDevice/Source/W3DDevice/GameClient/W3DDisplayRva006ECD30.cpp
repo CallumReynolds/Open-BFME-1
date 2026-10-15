@@ -6,7 +6,7 @@ typedef unsigned long UnsignedInt;
 
 extern Real g_bfmeDefaultBU;
 
-extern const Real BfmeZeroRange;
+extern const Real g_rva01075350;
 extern "C" Real g_bfmeUint32Scale;
 
 #include "texture.h"
@@ -171,7 +171,7 @@ void W3DDisplay::rva006ECD30(Image *image, Real x0, Real y0,
 	RectClass uv(textureScale, textureScale,
 		(image->slot18() ?
 			(Real)(UnsignedInt)image->m_0c /
-				(Real)(UnsignedInt)image->m_14 : BfmeZeroRange) -
+				(Real)(UnsignedInt)image->m_14 : g_rva01075350) -
 			textureScale,
 		imageRatio - textureScale);
 

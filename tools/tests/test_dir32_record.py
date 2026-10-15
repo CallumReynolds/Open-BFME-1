@@ -191,6 +191,7 @@ def make_pe():
         image[at + 36:at + 40] = flags.to_bytes(4, "little")
     image[0x1010] = 0xE9
     image[0x1011:0x1015] = (0x1100 - 0x1015).to_bytes(4, "little", signed=True)
+    image[0x1600:0x1606] = bytes([0xC7, 0x00]) + (0x402000).to_bytes(4, "little")  # ctor: mov [eax], table
     image[0x2000:0x2004] = (0x401010).to_bytes(4, "little")
     image[0x2004:0x2008] = (0x401300).to_bytes(4, "little")
     return bytes(image)
@@ -320,7 +321,7 @@ def test_vtable_name_at_wrong_address_refused(tmp_path, monkeypatch, capsys):
     repo = make_code_repo(tmp_path, [DTOR_ROW])
     # the function line's VA is code, not Foo's table
     assert retire(monkeypatch, repo, FN_OLD, VT_NEW) == 1
-    assert "does not reach" in capsys.readouterr().err
+    assert "not a vtable start" in capsys.readouterr().err
 
 
 def test_vtable_new_recorded_elsewhere_refused(tmp_path, monkeypatch, capsys):
@@ -460,3 +461,29 @@ def test_reviewer_counterexamples_on_real_ledger(monkeypatch, old, new, why):
     problem = guard.retire_problem(old, recorded[old], new, recorded, after)
     guard._IMAGE.clear()
     assert problem and why in problem
+
+
+# --- round-2 review ---
+
+def test_mid_table_va_is_not_a_vtable_start(tmp_path, monkeypatch, capsys):
+    # Foo's dtor sits in slot 1 (0x401300); OLD recorded at table+4, which no code stores.
+    repo = make_code_repo(tmp_path, ["??_GFoo@@UAEPAXI@Z,,0x00001300,30,game/b.cpp,matched,x"])
+    rec = repo / guard.REL
+    rec.write_text(rec.read_text() + "?g_Va00402004@@3PAXA,0x00402004\n")
+    git(repo, "add", "-A")
+    assert retire(monkeypatch, repo, "?g_Va00402004@@3PAXA", VT_NEW) == 1
+    assert "not a vtable start" in capsys.readouterr().err
+
+
+def test_import_and_constant_names_have_no_identifier():
+    for name in ("__imp__strcmpi", "__imp_?f@@YAXXZ", "__real@41200000"):
+        assert guard.bare_identifier(name) is None, name
+    assert guard.bare_identifier("__bfmeDynBufXZ") == "_bfmeDynBufXZ"
+
+
+def test_old_name_in_other_built_source_refused(tmp_path, monkeypatch, capsys):
+    lib = "inputs/toolchains/vc/lib/libc.lib"
+    repo = make_code_repo(tmp_path, [FN_ROW, f"_crt,,0x00001700,8,{lib},matched,x"],
+                          {"game/b.cpp": "int x;\n", lib: f"\0{FN_OLD}\0"})
+    assert retire(monkeypatch, repo, FN_OLD, FN_NEW) == 1
+    assert lib in capsys.readouterr().err

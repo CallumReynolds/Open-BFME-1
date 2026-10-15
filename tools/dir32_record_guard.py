@@ -86,7 +86,12 @@ def bare_identifier(name):
     elif name.startswith("?"):
         head = name[1:].split("@", 1)[0]
     elif name.startswith("__"):
-        head = name[1:]  # __real@41200000 and other compiler names: no identifier
+        # __imp__strcmpi (an import slot; source spells strcmpi) and
+        # __real@41200000 have no identifier a word search could find. A C
+        # name like __bfmeDynBufXZ is source identifier _bfmeDynBufXZ.
+        if name.startswith("__imp_"):
+            return None
+        head = name[1:]
     elif name.startswith("_"):
         head = re.sub(r"@\d+$", "", name[1:])  # _Foo@8: __stdcall C name
     else:
@@ -235,6 +240,10 @@ def function_owner_problem(name, va, tree=":", old_name=None, recorded=None, row
     match = VTABLE_RE.match(name)
     if match:
         cls = match.group(1)
+        # Every retail table start is stored by a ctor/dtor (`mov [reg], imm32`);
+        # the walk stops at the next such address. Same invariant, both ends.
+        if not code_references(va):
+            return f"no retail code references 0x{va:08X}, so it is not a vtable start"
         if old_name and SECONDARY_VTABLE_RE.match(old_name):
             return f"{old_name} names a secondary (multiple-inheritance) table, {name} a primary one"
         dtors = {r for n, r, src, st, notes in rows
@@ -304,13 +313,17 @@ def row_sources(tree=":"):
 
 
 def source_mentions(name):
-    """Indexed paths under game/ or the shims that spell NAME, decorated or bare."""
+    """Indexed paths that spell NAME: game/ and the shims (decorated or bare), the
+    vendored libraries (decorated), and every other file a functions.csv row
+    builds from (toolchain CRT libraries, reference sources; both spellings)."""
     hits = set()
+    built = sorted(src for src in row_sources()
+                   if src and not src.startswith(SOURCE_ROOTS + VENDOR_ROOTS))
     for needle, word in ((name, False), (bare_identifier(name), True)):
         if not needle:
             continue
         cmd = ["git", "grep", "--cached", "-l", "-F"] + (["-w"] if word else []) + ["-e", needle]
-        roots = SOURCE_ROOTS + (() if word else VENDOR_ROOTS)
+        roots = SOURCE_ROOTS + (() if word else VENDOR_ROOTS) + tuple(built)
         got = subprocess.run(cmd + ["--", *roots], cwd=root(), capture_output=True, text=True)
         hits.update(p for p in got.stdout.splitlines() if p)
     # A generated dump no functions.csv row builds is never compiled, linked or

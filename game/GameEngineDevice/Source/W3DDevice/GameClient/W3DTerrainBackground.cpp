@@ -103,6 +103,15 @@ struct BFMETerrainBgSetFlipLayout {
 	Bool initialized;                       // 0x50
 };
 
+// Retail 0x00729F00 calls the three-argument setFlipRecursive through the
+// five-byte incremental-link thunk at 0x0001B5F9 (?j_0001b5f9), whose target
+// body is the gen_asm dump ?d_00729700 at 0x00729700 and has no C++ source
+// yet. Reference that thunk by name (the WeaponSet.cpp recipe) instead of the
+// header's member declaration, which no object defines: the member-pointer
+// union reproduces the thiscall push/ecx shape retail emits while the
+// relocation names ?j_0001b5f9@@YAXXZ, which thunks_012.cpp defines.
+extern void j_0001b5f9();
+
 void W3DTerrainBackground::setFlip(WorldHeightMap *htMap)
 {
 	BFMETerrainBgSetFlipLayout *self = (BFMETerrainBgSetFlipLayout *)this;
@@ -114,7 +123,9 @@ void W3DTerrainBackground::setFlip(WorldHeightMap *htMap)
 		return;
 	}
 
-	setFlipRecursive(0, 0, self->width);
+	typedef void (W3DTerrainBackground::*BfmeSetFlipRecursiveFn)(Int, Int, Int);
+	union { void (*fn)(); BfmeSetFlipRecursiveFn call; } setFlipRecursive = { j_0001b5f9 };
+	(this->*setFlipRecursive.call)(0, 0, self->width);
 
 
 }

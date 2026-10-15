@@ -24,7 +24,8 @@ extern BfmeStringData3AF0 *g_stringBlock01338724;
 class Rva8CD130String
 {
 public:
-    Rva8CD130String()
+    // Retain inline code without emitting another shared constructor copy.
+    __declspec(dllimport) __forceinline Rva8CD130String()
     {
         m_data = sharedEmptyString012D5298();
         ++m_data->m_refCount;

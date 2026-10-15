@@ -49,7 +49,8 @@ public:
 class Rva8CD130String
 {
 public:
-	Rva8CD130String()
+	// Retain inline code without emitting another shared constructor copy.
+	__declspec(dllimport) __forceinline Rva8CD130String()
 	{
 		Rva8CBB80StringData *block = (Rva8CBB80StringData *)&g_rva012D5298Empty;
 		++block->m_refCount;

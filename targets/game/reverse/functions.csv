@@ -37829,7 +37829,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00692780@@YAXXZ,,0x00692780,180,game/gen_asm/d_00689170.asm,matched,gen-dump;ghidra=FUN_00a92780
 ?d_00693b90@@YAXXZ,,0x00693B90,525,game/gen_asm/d_00689170.asm,matched,gen-dump;ghidra=FUN_00a93b90
 ?d_00693ec0@@YAXXZ,,0x00693EC0,191,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a93ec0
-?d_00694230@@YAXXZ,,0x00694230,654,game/gen_asm/d_00693e20.asm,matched,gen-dump;ghidra=FUN_00a94230
 ?d_00695640@@YAXXZ,,0x00695640,8,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,object-symbol=?invokeOne@VirtualSlot9CallThunk@@QAEXXZ;Open-BFME5 clean C++ virtual slot 9 call
 ?d_00696f80@@YAXXZ,,0x00696F80,1,game/GameEngine/Source/Common/Rva00696F80Empty.cpp,matched,carved boundary contains only ret; no semantic identity evidence
 ?d_006971B0@@YAXXZ,,0x006971B0,1,game/GameEngine/Source/Common/Rva006971B0.cpp,matched,opaque address-derived body with proven ret boundary
@@ -172555,3 +172554,4 @@ dup_69ec0,,0x00069EC0,45,game/Libraries/Source/WWVegas/WWLib/Rva00069C80PointerV
 ?Rva00C37620Cleanup@@YAXXZ,,0x00C37620,25,game/GameEngine/Source/GameClient/GUI/Palantir/Palantir_rva005900C0.cpp,matched,gen-funclet;object-symbol=$L1810;parent=?rva005900C0@Rva00593E60State@@QAEXPAVRva0058BE30FourString@@@Z;retail 005900C0 -> handler 00C37639 -> FuncInfo 00E26AD0 state4 native label of the matched parent;model=claude-opus-5-5;host=app
 ?Rva00C31A80Cleanup@@YAXXZ,,0x00C31A80,34,game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/OnlineCustomMatchRva0053E870.cpp,matched,gen-funclet;object-symbol=$L11319;parent=?rva0053E870@BfmeAptScreenOnlineCustomMatch@@QAEXXZ;retail 0053E870 -> handler 00C31AEF -> FuncInfo 00E219F0 state1 native label of the matched parent;model=claude-opus-5-5;host=app
 ?Rva003C5270Find@@YGHPAVRva003C5820Owner@@PAVRva003C5820Key@@@Z,,0x003C5270,181,game/GameEngine/Source/Common/Rva003C5820AppendMatch.cpp,matched,address-derived; sole caller Rva003C5820Owner::appendMatch 0x003C5820 via ILT 0x0002FA1D (stdcall owner/key); owner is the STLport vector<Item*> loop re-testing size();model=claude-opus-5.5;host=GreatFaram
+?Rva00694230@Gen0002857EOwner@@QAEXPAVGen0002857E@@@Z,,0x00694230,654,game/GameEngineDevice/Source/MilesAudioDevice/MilesAudioCacheReadAudioFile00694230.cpp,matched,AudioFileCache readAudioFile semantic pairing; complete caller and helper ABI; native AsciiString set; compression-before-size statement order; identity=targets/game/reverse/identity_evidence/00694230-statement-order.md;model=gpt-6.1-sol;host=fleet

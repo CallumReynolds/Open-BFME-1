@@ -1,14 +1,18 @@
 // ?Rva00694230@Gen0002857EOwner@@QAEXPAVGen0002857E@@@Z
-// partial score=0.8456 date=2026-10-09
 // cl: /O2 /Ob2 /EHsc /DNDEBUG /DWIN32 /D_WINDOWS /MD /D_STLP_USE_STATIC_LIB /Iinputs/vendor/stlport /Igame/Libraries/Source/WWVegas/WWLib /I.
 // stlport
-// ?Rva00694230@Gen0002857EOwner@@QAEXPAVGen0002857E@@@Z
 #define _STLP_NO_EXCEPTIONS 1
+#define _BFME_RETAIL_TREE_INSERT_LAYOUT
 #include <stl/_alloc.h>
-#define private public
-#include <set>
-#undef private
+#include <functional>
 #include "game/Libraries/Source/WWVegas/WWLib/ascii_string.h"
+namespace _STL {
+template <> struct less<AsciiString> {
+ bool operator()(const AsciiString &left, const AsciiString &right) const { return left.compare(right) < 0; }
+};
+}
+#include <set>
+typedef _STL::_Rb_tree<AsciiString, AsciiString, _STL::_Identity<AsciiString>, _STL::less<AsciiString>, _STL::allocator<AsciiString> > Rva000BFCC0Tree;
 namespace _STL {
 template <> inline __declspec(noinline) pair<set<AsciiString>::iterator, bool> set<AsciiString>::insert(const AsciiString &value)
 {
@@ -58,20 +62,25 @@ public:
 extern DebugView00409E20 *DebugGlobal00409E20;
 bool _bfme_debugReportingEnabled();
 void _bfme_debugRecordCallsite(int);
-class Rva006915E0 {
+class ScopedMutex {
 public:
- Rva006915E0() : m_owned(0), m_enabled(0) {}
- ~Rva006915E0() { release(); }
+ // ??0ScopedMutex@@QAE@XZ absent-from-retail
+ ScopedMutex() : m_owned(0), m_enabled(0) {}
+ // ??1ScopedMutex@@QAE@XZ
+ ~ScopedMutex() { release(); }
+ // ?acquire@ScopedMutex@@QAEKPAX@Z absent-from-retail
  unsigned long acquire(void *h) {
   m_owned = h;
   unsigned long status = WaitForSingleObject(h, 500);
   if (status != 0x102) m_enabled = 1;
   return status;
  }
+ // ?release@ScopedMutex@@QAEXXZ absent-from-retail
  void release() { if(m_enabled) { ReleaseMutex(m_owned); m_enabled = 0; } }
  void *m_owned;
  char m_enabled;
 };
+typedef ScopedMutex Rva006915E0;
 class Gen0002857E {
 public:
  AsciiString m_name;
@@ -88,6 +97,9 @@ public:
  char m_stop;
  void *m_mutex;
 };
+// Boundary, ABI, and dependency evidence: targets/game/reverse/identity_evidence/00694230-statement-order.md
+// ?Rva00694230@Gen0002857EOwner@@QAEXPAVGen0002857E@@@Z
+//-------------------------------------------------------------------------------------------------
 void Gen0002857EOwner::Rva00694230(Gen0002857E *value)
 {
  File *file = TheFileSystem->openFile(value->m_name.str(), 0x41);
@@ -101,7 +113,7 @@ void Gen0002857EOwner::Rva00694230(Gen0002857E *value)
   if (mut.acquire(m_mutex) == 0x102) continue;
   if (failed) {
    reinterpret_cast<Rva006BA120ResetFlags *>(value)->reset();
-   m_failed._M_t.insert_unique(value->m_name);
+   reinterpret_cast<Rva000BFCC0Tree *>(&m_failed)->insert_unique(value->m_name);
    mut.release();
    if (_bfme_debugReportingEnabled()) {
     _bfme_debugRecordCallsite(1);
@@ -118,14 +130,14 @@ void Gen0002857EOwner::Rva00694230(Gen0002857E *value)
    void *decompressFileBuffer;
    unsigned long newFileSize;
    AIL_decompress_ADPCM(&soundInfo, &decompressFileBuffer, &newFileSize);
-   size = newFileSize;
    compressed = true;
+   size = newFileSize;
    delete [] buffer;
    buffer = static_cast<char *>(decompressFileBuffer);
    AIL_WAV_info(buffer, &soundInfo);
   } else if (soundInfo.format == 1) {
-   size = fileSize;
    compressed = false;
+   size = fileSize;
   } else {
    reinterpret_cast<Rva006BA120ResetFlags *>(value)->reset();
    m_failed.insert(value->m_name);
@@ -135,12 +147,16 @@ void Gen0002857EOwner::Rva00694230(Gen0002857E *value)
     DebugGlobal00409E20->Begin_Report();
     ((DebugGlobal00409E20->Get_Stream(0,0) << "Unexpected compression type in '") << value->m_name << "'\n").finish(2);
    }
+   // prevent leaks
    delete [] buffer;
    return;
   }
   reinterpret_cast<BfmeAudioYE *>(value)->bfmeSetYE(reinterpret_cast<int>(buffer), &soundInfo, size, compressed);
   m_accountingTotal += size;
-  if (m_accountingTotal > m_limit) Rva00693FB0();
+  if (m_accountingTotal > m_limit) {
+   // We need to free some samples, or we're not going to be able to play this sound.
+   Rva00693FB0();
+  }
   return;
  }
 }

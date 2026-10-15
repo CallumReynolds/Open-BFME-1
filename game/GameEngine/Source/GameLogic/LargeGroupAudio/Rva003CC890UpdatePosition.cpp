@@ -1,8 +1,28 @@
 // ?updatePosition@Rva003CC890@@QAEXXZ
-// partial score=0.985 date=2026-10-09
 // cl: /DNDEBUG /MD /Igame/Libraries/Include
+// Evidence: targets/game/reverse/identity_evidence/003ccb70-split-coordinate-copy.md
 #include "Lib/Coord3D.h"
 #include <math.h>
+#include <string.h>
+
+struct Rva003CC940Point {
+    float m_at00, m_at04, m_at08;
+    // ??0Rva003CC940Point@@QAE@XZ absent-from-retail
+    Rva003CC940Point() {}
+    // ??0Rva003CC940Point@@QAE@ABU0@@Z absent-from-retail
+    Rva003CC940Point(const Rva003CC940Point &other)
+        : m_at00(other.m_at00), m_at04(other.m_at04), m_at08(other.m_at08) {}
+};
+
+class Rva003CC940 { public: Rva003CC940Point method(); };
+
+// ?copyPosition003CCB70@@YAXPAUCoord3D@@PBU1@@Z absent-from-retail
+// Copy X before the remaining two coordinate words.
+static __forceinline void copyPosition003CCB70(Coord3D *destination, const Coord3D *source)
+{
+    memcpy(destination, source, sizeof(float));
+    memcpy((char *)destination + sizeof(float), (const char *)source + sizeof(float), 2 * sizeof(float));
+}
 
 class AudioEventRTS
 {
@@ -67,14 +87,14 @@ void Rva003CC890::updatePosition()
 {
     if (m_event)
     {
-        Coord3D target;
-        position(&target);
+        Rva003CC940Point targetPoint = ((Rva003CC940 *)this)->method();
+        const Coord3D &target = *(const Coord3D *)&targetPoint;
         Coord3D current;
         bool found;
         m_event->m_event.resolveOwnerPosition(&current, &found);
         float step = m_data->m_step;
         if (!found)
-            current = target;
+            copyPosition003CCB70(&current, &target);
         Coord3D result;
         int frames = m_flag;
         if (frames > 0)
@@ -92,7 +112,7 @@ void Rva003CC890::updatePosition()
             delta.z = target.z - current.z;
             float distanceSqr = delta.x * delta.x + delta.y * delta.y + delta.z * delta.z;
             if (distanceSqr <= step * step)
-                result = target;
+                copyPosition003CCB70(&result, &target);
             else
             {
                 double scale = step / sqrt(distanceSqr);

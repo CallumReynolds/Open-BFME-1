@@ -37237,7 +37237,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_003caeb0@@YAXXZ,,0x003CAEB0,782,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007caeb0
 ?d_003cb640@@YAXXZ,,0x003CB640,248,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_007cb640
 ?d_003cc460@@YAXXZ,,0x003CC460,1,game/GameEngine/Source/Common/Rva003BTinyBodies.cpp,matched,opaque address-derived body with proven ret boundary
-?d_003ccb70@@YAXXZ,,0x003CCB70,400,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007ccb70
 ?d_003cdb10@@YAXXZ,,0x003CDB10,1,game/GameEngine/Source/Common/Rva003CDB10Noop.cpp,matched,opaque address identity retained; carved boundary and one-byte ret are exact
 ?d_003ced50@@YAXXZ,,0x003CED50,290,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007ced50
 ?d_003d01f0@@YAXXZ,,0x003D01F0,237,game/gen_asm/d_003ca7c0.asm,matched,gen-dump;ghidra=FUN_007d01f0
@@ -172555,3 +172554,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?Rva00BFC450Cleanup@@YAXXZ,,0x00BFC450,11,game/GameEngine/Source/Common/System/BuildAssistant_buildTiledLocations.cpp,matched,gen-funclet;object-symbol=$L1660;parent=?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBVCoord3D@@1MHPAVObject@@@Z;retail 000FC010 -> handler 00BFC45B -> FuncInfo 00DE9998 state0 judged by eh_state_pins;model=claude-opus-5-5;host=app
 ?Rva00C0B0B0Cleanup@@YAXXZ,,0x00C0B0B0,22,game/GameEngine/Source/GameLogic/Object/Behavior/DynamicPortalBehaviourRva001F96E0.cpp,matched,gen-funclet;object-symbol=$L6808;parent=?createWaypoints@DynamicPortalBehaviour@@QAEXXZ;retail 001F96E0 -> handler 00C0B10B -> FuncInfo 00DF9A40 state0 judged by eh_state_pins;model=claude-opus-5-5;host=app
 ??0BfmeAptScreenSaveLoad@@QAE@PAX@Z,,0x0056E980,1719,game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/BfmeAptScreenSaveLoadConstructor.cpp,matched,SaveLoad constructor; factory at 0x00104DC0 and vtable pair identify owner; native callback argument conversion and hook pointer record recover frame; evidence=targets/game/reverse/identity_evidence/0056e980-exact-constructor.md;model=gpt-6.1-sol;host=fleet
+?updatePosition@Rva003CC890@@QAEXXZ,,0x003CCB70,400,game/GameEngine/Source/GameLogic/LargeGroupAudio/Rva003CC890UpdatePosition.cpp,matched,Exact C++; split coordinate representation copy; identity evidence=targets/game/reverse/identity_evidence/003ccb70-split-coordinate-copy.md;model=gpt-6.1-sol;host=fleet

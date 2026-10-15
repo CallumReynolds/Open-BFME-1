@@ -8,9 +8,16 @@ struct BfmeSubCBD
 class BfmeThingCBD
 {
 public:
-	void bfmeStepCBD(int value);
 	unsigned char m_bfmeHead[0x50];
 	BfmeSubCBD *m_bfmeSub;
+};
+
+// BFME-2 Rva006EE1B0Cluster.cpp uses the same previous-frame/stop
+// sequence. BFME-1's decoded call reaches the authored counter worker.
+class BfmeThingCBC
+{
+public:
+ void bfmeStepCBC(int value);
 };
 
 // 0x013379BC: the Apt undefined-value sentinel, defined as AptValue* in
@@ -21,7 +28,7 @@ extern AptValue *g_bfmeFallbackDB;
 
 int bfmeGoCBD(BfmeThingCBD *what)
 {
-	what->bfmeStepCBD(what->m_bfmeSub->m_bfmeVal - 1);
+	reinterpret_cast<BfmeThingCBC *>(what)->bfmeStepCBC(what->m_bfmeSub->m_bfmeVal - 1);
 	what->m_bfmeSub->m_bfmeFlags &= 0xFDFFFFFFu;
 	return reinterpret_cast<int>(g_bfmeFallbackDB);
 }

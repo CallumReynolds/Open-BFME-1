@@ -58,3 +58,12 @@ type unproven, address-named.
 `?dup_0082ea80@@YAXXZ` (object-symbol vector<int>(n)) calls ILT 0x00026085 -> 0x00066A90, proven
 `_Vector_base<void*>(n, a)` (00066eb0-vector-voidptr-fill-ctor.md). No folding, so the counted ctor that
 builds that base is vector<void*>'s. No rel32 caller reaches 0x0082EA80.
+
+## 0x000670F0 is vector<void*>::_M_insert_overflow (true_type)
+
+ILT 0x0001F4FB (jmp 0x000670F0) is the overflow call of the proven vector<void*>::_M_fill_insert 0x00067740
+(its only other callers are the /Od placeholders 0x0082F580 and 0x0082F610). The gen-shim row
+`Gen_f265_b7a8aa_000670f0` (object-symbol on a gen placeholder type) takes the real name, sourced from
+ParticleSys.cpp, which emits the void* overflow next to its _M_fill_insert (probe EXACT, 265 bytes).
+The five gen-shim rows whose object-symbol also spells the void* overflow (0x000BBFC0, 0x00201270,
+0x002013C0, 0x003A0960, 0x003CF220) are other instantiations; their aliases are left for a follow-up.

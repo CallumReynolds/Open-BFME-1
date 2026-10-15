@@ -407,14 +407,6 @@ bool DX8Wrapper::Init(void *hwnd, bool lite)
 	BFME_RVA_G32(g_bfmeEventVHM) = (unsigned)CreateMutexA(0, 0, 0);
 	W3DRadarResetLock();
 
-	memset(g_0133F4A8, 0, 0x40);
-	memset(g_0133F548, 0, 0x40);
-	// Retail loads the count and destination before seven scalar stores, then runs rep stosd after them.
-	// The measured C++ variants kept the clear setup beside rep stosd, so this block splits those instructions.
-	__asm {
-		mov ecx, 16
-		mov edi, offset g_0133F500
-	}
 	CurRenderDevice = -1;
 	ResolutionWidth = 640;
 	ResolutionHeight = 480;
@@ -422,7 +414,9 @@ bool DX8Wrapper::Init(void *hwnd, bool lite)
 	IsWindowed = false;
 	DX8Wrapper_IsWindowed = false;
 	*(unsigned *)CurrentDX8LightEnables = 0;
-	__asm rep stosd
+	memset(g_0133F4A8, 0, 0x40);
+	memset(g_0133F548, 0, 0x40);
+	memset(g_0133F500, 0, 0x40);
 	BFME_RVA_G32(D3DInterface) = 0;
 	BFME_RVA_G32(D3DDevice) = 0;
 	BFME_RVA_G32(matrix_changes) = 0;

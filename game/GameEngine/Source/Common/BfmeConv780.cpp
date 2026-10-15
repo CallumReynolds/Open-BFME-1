@@ -1,5 +1,6 @@
 // BFME2 BfmeConv780.cpp resolves this dispatcher through AIPlayer::queueUnits.
-// BFME1 tail branch independently routes ILT 0x0001C75B to 0x00167E80.
+// BFME1 has two separate 22-byte callers; both independently tail-branch
+// through ILT 0x0001C75B to 0x00167E80.
 class AIPlayer
 {
 	friend class BfmeThingDTK;
@@ -35,7 +36,6 @@ public:
 	virtual bool bfmeAskDTK();
 	void bfmeGoDTK();
 	void bfmeGoDTL();
-	void bfmeTailDTL();
 };
 
 void BfmeThingDTK::bfmeGoDTK()
@@ -47,5 +47,5 @@ void BfmeThingDTK::bfmeGoDTK()
 void BfmeThingDTK::bfmeGoDTL()
 {
 	if (bfmeAskDTK())
-		bfmeTailDTL();
+		((AIPlayer *)this)->queueUnits();
 }

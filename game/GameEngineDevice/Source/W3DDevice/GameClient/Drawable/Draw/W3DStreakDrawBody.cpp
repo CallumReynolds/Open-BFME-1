@@ -118,14 +118,7 @@ void W3DStreakDraw::streakBody0077D6B0()
 				const float x = position->X - point.x;
 				const float y = position->Y - point.y;
 				const float z = position->Z - point.z;
-				volatile float square;
-				volatile float distance;
-				square = x * x + y * y + z * z;
-				__asm {
-					fld square
-					fsqrt
-					fstp distance
-				}
+				const float distance = WWMath::Sqrt(x * x + y * y + z * z);
 				pointWidth.value = distance + pointWidth.value;
 				reinterpret_cast<Bitmap2DObjClass *>(m_streak)->Add_Point(*position, pointWidth.value);
 			}
@@ -138,14 +131,7 @@ void W3DStreakDraw::streakBody0077D6B0()
 				const float x = position->X - point.x;
 				const float y = position->Y - point.y;
 				const float z = position->Z - point.z;
-				volatile float distance;
-				volatile float square;
-				square = x * x + y * y + z * z;
-				__asm {
-					fld square
-					fsqrt
-					fstp distance
-				}
+				const float distance = WWMath::Sqrt(x * x + y * y + z * z);
 				pointWidth.value = distance + pointWidth.value;
 
 				m_streak->bfmeSetWG(

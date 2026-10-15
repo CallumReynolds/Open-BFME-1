@@ -6,7 +6,8 @@
 // throttled, the next frame wins only while it is still behind the clock.
 
 extern "C" __declspec(dllimport) unsigned long __stdcall timeGetTime(void);
-extern unsigned char g_01309838;
+// Byte flag read by 0x007E4820 and 0x007E4B80 (VA 0x01309838); zero-filled in retail.
+unsigned char g_01309838;
 
 class Rva007E4820FrameClock
 {

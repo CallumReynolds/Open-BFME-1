@@ -1,5 +1,5 @@
 // ?method@Rva0027C250@@QAEHXZ
-// partial score=0.6092 date=2026-10-09
+// partial score=0.7437 date=2026-10-15
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Include/Lib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/GameLogic/Object
 #include <math.h>
 #include "Coord3D.h"
@@ -8,6 +8,7 @@ struct Rva0027C250CoordCopy : Coord3D {
  Rva0027C250CoordCopy() {}
  void set(float ax,float ay,float az) { x=ax; y=ay; z=az; }
  void scale(float value) { x*=value; y*=value; z*=value; }
+ void sub(const Coord3D *value) { x-=value->x; y-=value->y; z-=value->z; }
  void add(const Coord3D *value) { x+=value->x; y+=value->y; z+=value->z; }
  void set(const Coord3D *value) { x=value->x; y=value->y; z=value->z; }
 };
@@ -365,7 +366,7 @@ public:
  virtual void slot208() = 0;
  virtual void slot20c() = 0;
  virtual void slot210() = 0;
- virtual void slot214() = 0;
+ virtual int slot214() = 0;
  int method();
  char m_pad004[4];
  Rva0027C250ObjectView *m_object;
@@ -389,7 +390,7 @@ public:
  virtual void slot04() = 0;
  virtual void slot08() = 0;
  virtual void slot0c() = 0;
- virtual void slot10() = 0;
+ virtual int slot10() = 0;
 };
 static __forceinline Pathfinder *pathfinder() { return *(Pathfinder **)((char *)TheAI+0xc); }
 static __forceinline Thing *thing(Rva0027C250ObjectView *obj) { return (Thing *)obj; }
@@ -511,17 +512,19 @@ int Rva0027C250::method() {
   }
  } else {
   Matrix3D matrix(true);
-  Real angle=obj->m_cachedAngle+thing(obj)->bfmeRelativeAngleTo(&m_locomotorGoalData);
+  Real initialAngle=obj->m_cachedAngle;
+  Real angle=initialAngle+thing(obj)->bfmeRelativeAngleTo(&m_locomotorGoalData);
   if (thing(obj)->isKindOf((KindOfType)9)) {
    Real relative=thing(obj)->bfmeRelativeAngleTo(&m_locomotorGoalData);
-   Real dx=obj->m_cachedPos.x-m_locomotorGoalData.x;
-   Real dy=obj->m_cachedPos.y-m_locomotorGoalData.y;
+   Rva0027C250CoordCopy offset; offset.set(&obj->m_cachedPos);
+   offset.sub(&m_locomotorGoalData);
+   Real dx=offset.x; Real dy=offset.y;
    Real factor=(Real)sqrt(dx*dx+dy*dy)*0.05f;
    if (factor<1.0f) angle=obj->m_cachedAngle+factor*relative;
   }
   if (obj->m_modelConditionFlags[4]&0x40000) {
    Object *goal=((StateMachine *)((Rva0027C250 *)obj->m_containedBy->m_ai)->m_stateMachine)->getGoalObject();
-   if (goal) angle=obj->m_cachedAngle+thing(obj)->bfmeRelativeAngleTo(&((Rva0027C250ObjectView *)goal)->m_cachedPos);
+   if (goal) { Real initialAngle=obj->m_cachedAngle; angle=initialAngle+thing(obj)->bfmeRelativeAngleTo(&((Rva0027C250ObjectView *)goal)->m_cachedPos); }
    else angle+=3.1415927410125732421875f;
   }
   matrix.Rotate_Z(angle);

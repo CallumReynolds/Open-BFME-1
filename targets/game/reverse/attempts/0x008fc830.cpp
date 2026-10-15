@@ -1,15 +1,6 @@
 // ?clear@W3DRadarResetSurface@@QAEXI@Z
-// partial score=0.96 date=2026-09-27
+// partial score=0.8248 date=2026-10-15
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-// ?clear@W3DRadarResetSurface@@QAEXI@Z
-// BFME W3DRadarResetSurface::clear body at retail RVA 0x008FC830 (508 bytes).
-// Identity: the matched W3DRadar::reset and W3DRadar::clearShroud callers
-// call this symbol.  The one-pointer surface ABI, SurfaceClass descriptor
-// query, ECX-based SurfaceDescription pixel-size helper (0x008FC4F0) and the
-// BFME DX8 error stream follow the matched SurfaceClass bodies in
-// Code/Libraries/Source/WWVegas/WW3D2/surfaceclass.cpp.  DXT surfaces are
-// filled a block row at a time: a black fill clears pitch bytes per block row,
-// a white fill writes one 8-byte block and replicates it along the row.
 
 #include <string.h>
 
@@ -25,10 +16,16 @@ struct BfmeLockedRect
 	void *bits;
 };
 
+struct SurfaceHResult008FC830
+{
+    long value;
+    __forceinline explicit SurfaceHResult008FC830(long result) : value(result) {}
+};
+
 class BFMEIndexBufferDebugStream
 {
 public:
-	virtual BFMEIndexBufferDebugStream *Put_Unsigned(unsigned value);
+	virtual BFMEIndexBufferDebugStream *Put_Unsigned(SurfaceHResult008FC830 value);
 	virtual void Slot04();
 	virtual void Slot08();
 	virtual void Slot0C();
@@ -47,7 +44,7 @@ public:
 	virtual void Slot40();
 	virtual void Slot44();
 	virtual void Slot48();
-	virtual BFMEIndexBufferDebugStream *Finish(int report);
+	virtual bool Finish(bool report);
 };
 
 class BFMEIndexBufferDebugClass
@@ -77,10 +74,10 @@ public:
 	virtual void Slot54();
 	virtual void Slot58();
 	virtual void Slot5C();
-	virtual void Begin_Report();
+	virtual bool Begin_Report();
 	virtual void Slot64();
 	virtual void Slot68();
-	virtual BFMEIndexBufferDebugStream *Get_Stream(void *owner, void *context);
+	virtual BFMEIndexBufferDebugStream *Get_Stream(const char *owner, int context);
 };
 
 class BfmeSurfaceResource
@@ -114,11 +111,11 @@ static __forceinline void BFME_Surface_ErrorCode(unsigned result)
 		g_BFMEIndexBufferDebug->Begin_Report();
 		BFMEIndexBufferDebugStream *stream =
 			g_BFMEIndexBufferDebug->Get_Stream(0, 0);
-		stream->Put_String("DX8 error ")->Put_Unsigned(result)->Finish(1);
+		stream->Put_String("DX8 error ")->Put_Unsigned(SurfaceHResult008FC830(result))->Finish(1);
 	}
 }
 
-// upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2/surfaceclass.h
+// class-gate: allow SurfaceClass Retail uses a resource at offset zero; the shared header has a refcount base.
 class SurfaceClass
 {
 public:
@@ -142,6 +139,7 @@ private:
 	void *m_surface;
 };
 
+// ?clear@W3DRadarResetSurface@@QAEXI@Z
 void W3DRadarResetSurface::clear(UnsignedInt color)
 {
 	if (m_surface)
@@ -154,7 +152,7 @@ void W3DRadarResetSurface::clear(UnsignedInt color)
 		::memset(&locked, 0, sizeof(locked));
 		BFME_Surface_ErrorCode(reinterpret_cast<BfmeSurfaceResource *>(m_surface)->LockRect(&locked, NULL, 0));
 
-		bool colorByte = static_cast<UnsignedByte>(color) != 0;
+		UnsignedByte colorByte = static_cast<UnsignedByte>(color);
 		UnsignedInt fill = colorByte ? 0xff : 0;
 		unsigned char *memory = static_cast<unsigned char *>(locked.bits);
 		UnsignedInt i;
@@ -165,22 +163,27 @@ void W3DRadarResetSurface::clear(UnsignedInt color)
 			description.Format == static_cast<WW3DFormat>(0x35545844)))
 		{
 			size = locked.pitch;
-			i = description.Height >> 2;
+			description.Height >>= 2;
+			i = description.Height;
 			if (colorByte)
 			{
-				char pattern[8];
+				struct ClearBlock008FC830 { char first[4]; char second[4]; };
+				ClearBlock008FC830 pattern;
 				Int copy_count = size >> 3;
-				pattern[0] = -1;
-				pattern[1] = -2;
-				pattern[2] = -1;
-				pattern[3] = -1;
-				pattern[4] = 0x55;
-				pattern[5] = 0x55;
-				pattern[6] = 0x55;
-				pattern[7] = 0x55;
+				pattern.first[0] = -1;
+				pattern.first[1] = -2;
+				pattern.first[2] = -1;
+				pattern.first[3] = -1;
+				pattern.second[0] = 0x55;
+				pattern.second[1] = 0x55;
+				pattern.second[2] = 0x55;
+				pattern.second[3] = 0x55;
 				for (; i > 0; --i)
 				{
-for (int j=0;j<copy_count;++j) { ((unsigned __int64 *)memory)[j]=*((unsigned __int64 *)pattern); }
+					for (int j = 0; j < copy_count; ++j)
+					{
+						reinterpret_cast<ClearBlock008FC830 *>(memory)[j] = pattern;
+					}
 					memory += locked.pitch;
 				}
 				goto unlock;

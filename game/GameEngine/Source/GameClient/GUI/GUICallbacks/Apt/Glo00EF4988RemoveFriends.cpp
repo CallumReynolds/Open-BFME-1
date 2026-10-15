@@ -261,10 +261,14 @@ public:
 };
 extern GameSpyInfo *TheGameSpyInfo;
 
+// Complete 285-byte acceptance helper at 0x004EF980 (ILT 0x0001E73B).
+void Rva004EF980AcceptBuddyRequest(Int profileID);
+
 class Glo00EF4988
 {
 public:
     void h00514560();
+    void h005143D0();
 
 private:
     unsigned char m_unmodelled000[0x250];
@@ -303,6 +307,40 @@ void Glo00EF4988::h00514560()
         if (it != end) {
             do {
                 TheGameSpyInfo->bfmeSlot72(*it);
+                ++it;
+            } while (it != end);
+        }
+    }
+}
+
+// Sibling of h00514560: same flag/button reset and selected-friend walk, but
+// each selected profile goes to the buddy-request acceptance helper. Reached
+// from the guarded tail-jump at 0x00514D60 (OnBttnAddFriend's accept callback,
+// ILT 0x00028E25). Passing m_window straight into the helper call (no local
+// copy) gives retail's ECX/EAX roles for the list and the vector address.
+// ?h005143D0@Glo00EF4988@@QAEXXZ
+void Glo00EF4988::h005143D0()
+{
+    Rva00514560IntVector values;
+
+    if (m_addDirty || m_addEnabled) {
+        m_addDirty = false;
+        m_addEnabled = false;
+        Rva00579160TheManager->fire(m_target, "DisableAddButton", 0, 0, 0, 0, 0, 0);
+    }
+
+    if (m_removeDirty || m_removeEnabled) {
+        m_removeDirty = false;
+        m_removeEnabled = false;
+        Rva00579160TheManager->fire(m_target, "DisableRemoveButton", 0, 0, 0, 0, 0, 0);
+    }
+
+    if (((BfmeAptScreenInGameChat *)this)->rva00513BF0(m_window, &values, 7, true) > 0) {
+        int *it = values.begin();
+        int *end = values.end();
+        if (it != end) {
+            do {
+                Rva004EF980AcceptBuddyRequest(*it);
                 ++it;
             } while (it != end);
         }

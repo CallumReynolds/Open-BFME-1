@@ -23,7 +23,9 @@ public:
 };
 extern unsigned char g_Va0130A58D;
 extern unsigned char g_Va0130A58C;
-extern int vftable_01129CB4;
+// BFME2 identifies singleton teardown table storage; BFME1's complete
+// destructor already emits the table at VA 0x01129CB4 under this name.
+extern "C" const void *__identifier("??_7Rva007EB2C0Object@@6B@")[];
 
 void Rva007EB830Release(void);
 void Rva007F0060();
@@ -31,7 +33,7 @@ void __cdecl operator delete(void *block);
 
 void *Rva007EB310Owner::destroy(unsigned int flags)
 {
-	*(int *)this = (int)&vftable_01129CB4;
+	*(int *)this = (int)__identifier("??_7Rva007EB2C0Object@@6B@");
 	T_007ea120 *p = reinterpret_cast<T_007ea120 *>(ServiceHubImpl::gInstance);
 	if (p)
 	{

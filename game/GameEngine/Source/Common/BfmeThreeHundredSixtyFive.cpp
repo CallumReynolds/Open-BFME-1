@@ -12,12 +12,12 @@ class BfmeThingVH
 public:
 	void *bfmeKillVH(int flags);
 	void *m_bfmeVft;
-	BfmeSubVH *m_bfmeSub;
+	BfmeSubVH *m_nextStatus;
 };
 
 void *BfmeThingVH::bfmeKillVH(int flags)
 {
-	BfmeSubVH *sub = m_bfmeSub;
+	BfmeSubVH *sub = m_nextStatus;
 	m_bfmeVft = bfmeVftVH;
 	if (sub != 0)
 		sub->bfmeReleaseVH(1);

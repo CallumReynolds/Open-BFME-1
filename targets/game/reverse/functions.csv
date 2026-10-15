@@ -36916,7 +36916,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_002298b0@@YAXXZ,,0x002298B0,1397,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_006298b0
 ?d_0022a860@@YAXXZ,,0x0022A860,739,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_0062a860
 ?d_0022ac00@@YAXXZ,,0x0022AC00,808,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062ac00
-?d_0022c160@@YAXXZ,,0x0022C160,251,game/gen_asm/d_00218ee0.asm,matched,gen-dump;bounds=high
 ?d_0022c560@@YAXXZ,,0x0022C560,1253,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062c560
 ?d_0022dd10@@YAXXZ,,0x0022DD10,865,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062dd10
 ?d_0022ed10@@YAXXZ,,0x0022ED10,268,game/gen_asm/d_00226cf0.asm,matched,gen-dump;ghidra=FUN_0062ed10
@@ -172549,3 +172548,4 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ?xfer@Rva001A78B0Record@@QAEXPAVXfer@@@Z,,0x001A78B0,329,game/GameEngine/Source/Common/Rva001A78B0RecordXfer.cpp,matched,snapshot xfer: version 1/2; Coord3D; enum via Rva0010C3E0; ThingTemplate by name via findTemplate; owner unproven (address name);model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ??0Rva005EA080@@QAE@PAVOwnerY005E7940@@@Z,,0x006009B0,440,game/GameEngine/Source/GameClient/System/FXParticleSystem/Rva005EA080OwnerCtor.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/006009b0-rva005ea080-owner-ctor.md;model=claude-sonnet-5-5;host=MacBook-Air-M2
 ??0Rva005ECFA0@@QAE@PAX0@Z,,0x00600BE0,440,game/GameEngine/Source/GameClient/System/FXParticleSystem/Rva005ECFA0TwoArgCtor.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/00600be0-rva005ecfa0-two-arg-ctor.md;model=claude-sonnet-5-5;host=MacBook-Air-M2
+?addToContainList@SiegeEngineContain@@UAEXPAVObject@@@Z,,0x0022C160,251,game/GameEngine/Source/GameLogic/Object/Contain/SiegeEngineContainAddToContainList.cpp,matched,secondary vtable 0x010ACE08 slot 35 via ILT 0x0003BF16 from ctor 0x0022BC50; slot 33 is matched isValidContainerFor; tail call kept by inline-defined out-of-line STLport-shape push_back 0x000CFFE0;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr

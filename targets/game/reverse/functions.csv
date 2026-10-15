@@ -38416,7 +38416,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00bf4181@@YAXXZ,,0x00BF4181,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff4181
 ?d_00bf41b4@@YAXXZ,,0x00BF41B4,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff41b4
 ?d_00bf41c7@@YAXXZ,,0x00BF41C7,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff41c7
-?d_00bf4b32@@YAXXZ,,0x00BF4B32,24,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff4b32
 ?d_00bf75f0@@YAXXZ,,0x00BF75F0,39,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff75f0
 ?d_00bf7808@@YAXXZ,,0x00BF7808,25,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff7808
 ?d_00bf9cf0@@YAXXZ,,0x00BF9CF0,25,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ff9cf0
@@ -38747,7 +38746,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5e118@@YAXXZ,,0x00C5E118,11,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@0105e118
 ?d_00c5f0e0@@YAXXZ,,0x00C5F0E0,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@0105f0e0
 ?d_00c5f190@@YAXXZ,,0x00C5F190,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@0105f190
-?d_00c5f58b@@YAXXZ,,0x00C5F58B,17,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@0105f58b
 ?d_00c5fd7e@@YAXXZ,,0x00C5FD7E,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
 ?d_00c5fd89@@YAXXZ,,0x00C5FD89,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
 ?d_00c5fd94@@YAXXZ,,0x00C5FD94,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
@@ -172549,3 +172547,5 @@ uw_00c138d8,,0x00C138D8,8,game/GameEngine/Source/GameLogic/Object/Update/AIUpdat
 ?dup_00C4DC61@@YAXXZ,,0x00C4DC61,41,game/GameEngineDevice/Source/W3DDevice/GameClient/Rva00745B10OwnerDestructor.cpp,matched,authored C++ cleanup;gen-funclet;parent=??1Rva00745B10Owner@@UAE@XZ;object-symbol=$L1155;retail parent 0x007461B0 -> handler 0x00C4DCFC -> FuncInfo 0x00E3D7AC unwind map state2 names this action (SubsystemInterface base at this+0xFC -> ??1SubsystemInterface@@UAE@XZ);label mapped by state index;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ??1Rva007461B0BaseS@@UAE@XZ,,0x0073A7B0,7,game/GameEngineDevice/Source/W3DDevice/GameClient/Rva00745B10OwnerDestructor.cpp,matched,inline base destructor: body only stores ??_7Rva007461B0BaseS@@6B@ (0x011216B0 per dir32_addresses.csv) and returns;reached via ILT 0x8346 from the +0xB4 second-base unwind funclet of ??1Rva00745B10Owner@@UAE@XZ;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ?dup_00C4DC38@@YAXXZ,,0x00C4DC38,41,game/GameEngineDevice/Source/W3DDevice/GameClient/Rva00745B10OwnerDestructor.cpp,matched,authored C++ cleanup;gen-funclet;parent=??1Rva00745B10Owner@@UAE@XZ;object-symbol=$L1152;retail parent 0x007461B0 -> handler 0x00C4DCFC -> FuncInfo 0x00E3D7AC unwind map state1 names this action (Rva007461B0BaseS base at this+0xB4 via ILT 0x8346 -> ??1Rva007461B0BaseS@@UAE@XZ);label mapped by state index;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00BF4B32Cleanup@@YAXXZ,,0x00BF4B32,24,game/GameEngine/Source/Common/GlobalDataDestructor.cpp,matched,gen-funclet;object-symbol=$L533;parent=??1GlobalData@@UAE@XZ;retail 00084030 -> handler 00BF4DBE -> FuncInfo 00DE26B0 unwind state judged by eh_state_pins;EH vector destructor iterator on 4 AsciiString elements stride 4 at savedthis+9C;RET 00BF4B49;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C5F58BCleanup@@YAXXZ,,0x00C5F58B,17,game/Libraries/Source/WWVegas/WW3D2/hanim.cpp,matched,gen-funclet;object-symbol=$L14973;parent=?Resize@?$VectorClass@UWeightInfoStruct@NamedPivotMapClass@@@@UAE_NHPBUWeightInfoStruct@NamedPivotMapClass@@@Z;retail 00974A30 handler -> FuncInfo 00E4E9F4 state1 judged by eh_state_pins;two-arg cdecl delete of the new-array temporary;RET 00C5F59B;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr

@@ -103,8 +103,9 @@ private:
 
 // One APT compression step of 0x00917920. The buffer is a reference, so the
 // Resize call stays virtual as in retail.
+// Open BFME 2: Code/Libraries/Source/WWVegas/WW3D2/PointGroupClassRender.cpp
 template <class T, class S>
-inline T *rva00917920_compress(VectorClass<T> &buffer, S *source, unsigned int *apt, int count)
+static inline T *rva00917920_compress(VectorClass<T> &buffer, S *source, unsigned int *apt, int count)
 {
 	if (source) {
 		if (buffer.Length() < count) {

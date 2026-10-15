@@ -49,3 +49,13 @@ template void __push_heap<S4SortElem8 *, int, S4SortElem8, S4Cmp009F34B0>(
 	S4SortElem8 *, int, int, S4SortElem8, S4Cmp009F34B0);
 
 }
+
+struct Rva009F2C10Predicate
+{
+    bool operator()(const S4SortElem8 &a, const S4SortElem8 &b) const;
+};
+// Open BFME 2: Code/Libraries/Source/WWVegas/WWLib/stlport_push_heap_s4sortelem8_desc.cpp
+bool Rva009F2C10Predicate::operator()(const S4SortElem8 &a, const S4SortElem8 &b) const
+{
+    return a.m_bfmeKey > b.m_bfmeKey;
+}

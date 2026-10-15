@@ -79,3 +79,15 @@ const ctype_base::mask ctype<char>::_S_classic_table[257] =
 };
 
 _STLP_END_NAMESPACE
+
+struct Rva008408D0Predicate
+{
+    _STL::ctype_base::mask M;
+    const _STL::ctype_base::mask *table;
+    bool operator()(wchar_t c) const;
+};
+// Open BFME 2: Code/Libraries/Source/WWVegas/WWLib/stlport_ctype_wchar_scan_not.cpp
+bool Rva008408D0Predicate::operator()(wchar_t c) const
+{
+    return c >= 0 && size_t(c) < _STL::ctype<char>::table_size && (table[c] & M);
+}

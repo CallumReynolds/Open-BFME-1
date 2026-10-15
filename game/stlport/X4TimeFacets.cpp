@@ -52,8 +52,13 @@ __write_integer(char* buf, ios_base::fmtflags flags, long x);
 // tables in time_get and time_put.  Called only by _Init_timeinfo
 // so its name does not require leading underscores.
 
-static inline void copy_cstring(const char * s, string& v) {
+// Open BFME 2: Code/Libraries/Source/WWVegas/WWLib/stlport_timeinfo.cpp
+static inline void copy_cstring_Rva00846EE0(const char * s, string& v) {
   copy(s, s + strlen(s), back_insert_iterator<string >(v));
+}
+
+static inline void copy_cstring(const char * s, string& v) {
+  copy_cstring_Rva00846EE0(s, v);
 }
 
 // default "C" values for month and day names

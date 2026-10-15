@@ -35,14 +35,18 @@ private:
 	BfmeChannels847EF0 m_second;
 };
 
-// A file-static helper: fully inlined, no COMDAT of its own, and it keeps the
-// two groups' stores in retail's order instead of hoisting both constants.
-static void bfmeSetChannels847EF0(BfmeChannels847EF0 &channels)
+// The two output groups keep the same byte-store order.
+// Open BFME 2: Code/Libraries/Source/WWVegas/WWLib/stlport_moneypunct_ctors.cpp
+static inline void bfmeSetChannels847EF0(BfmeChannels847EF0 &positive, BfmeChannels847EF0 &negative)
 {
-	channels.m_one = 2;
-	channels.m_two = 3;
-	channels.m_three = 0;
-	channels.m_four = 4;
+	positive.m_one = 2;
+	positive.m_two = 3;
+	positive.m_three = 0;
+	positive.m_four = 4;
+	negative.m_one = 2;
+	negative.m_two = 3;
+	negative.m_three = 0;
+	negative.m_four = 4;
 }
 
 BfmeChannelPair847EF0::BfmeChannelPair847EF0(void *source)
@@ -51,6 +55,5 @@ BfmeChannelPair847EF0::BfmeChannelPair847EF0(void *source)
 	m_isNull = (source == 0);
 	m_table = &bfmeTable847EF0;
 
-	bfmeSetChannels847EF0(m_first);
-	bfmeSetChannels847EF0(m_second);
+	bfmeSetChannels847EF0(m_first, m_second);
 }

@@ -1,5 +1,5 @@
-// ?d_0035a060@@YAXXZ
-// partial score=0.603 date=2026-09-25
+// ?rvaUniqueName0035a060@@YAXPAXPAVAsciiString@@@Z
+// partial score=0.6114 date=2026-10-15
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 //
 // Retail 0x0035A060, 350 bytes, bare RET: file-static unique-name helper.  Its
@@ -22,6 +22,17 @@
 
 #include "ascii_string.h"
 
+template <> inline int StringBase<char>::compare(const StringBase<char> &str) const
+{
+    int otherLength = str.m_data ? str.m_data->length : 0;
+    const char *otherData = str.m_data ? str.m_data->data : (const char *)"";
+    int length = m_data ? m_data->length : 0;
+    const char *data = m_data ? m_data->data : (const char *)"";
+    int result = memcmp(data, otherData, length < otherLength ? length : otherLength);
+    return result ? result : length - otherLength;
+}
+
+
 class UnicodeString
 {
 public:
@@ -41,10 +52,15 @@ struct Rva00359330Record
 	void *m_nodes;
 };
 
+static void rvaUniqueName0035a060(void *owner, AsciiString *name);
+
 class Rva00359330StringRecordTable
 {
-public:
+friend void rvaUniqueName0035a060(void *, AsciiString *);
+friend bool rvaLookupReleased00359fe0(void *, AsciiString *);
+private:
 	int findNameIndex(AsciiString *name);
+public:
 
 	int *m_nameIndexesBegin;
 	int *m_nameIndexesEnd;
@@ -107,13 +123,12 @@ static void rvaUniqueName0035a060(void *owner, AsciiString *name)
 			break;
 
 		int recordIndex = ((Rva00359330StringRecordTable *)owner)->m_nameIndexesBegin[nameIndex];
-		if (((Rva00359330StringRecordTable *)owner)->m_records[recordIndex].m_name.compare(candidate) != 0 ||
-			recordIndex == -1 ||
-			((Rva00359330StringRecordTable *)owner)->m_records[recordIndex].m_released)
-			break;
+		int comparison = ((StringBase<char> &)((Rva00359330StringRecordTable *)owner)->m_records[recordIndex].m_name).compare(candidate);
+        if (comparison < 0 || comparison > 0 || recordIndex == -1 || ((Rva00359330StringRecordTable *)owner)->m_records[recordIndex].m_released)
+            break;
 	}
 
-	((UnicodeString *)name)->set(*(UnicodeString *)&candidate);
+	name->set(candidate);
 }
 
 struct Rva0035DD40Holder

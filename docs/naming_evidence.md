@@ -112,9 +112,9 @@ To replace a matched real-name row that independent evidence refutes:
         --replace-rva <rva> --correct-identity <old-name> \
         --identity-evidence targets/game/reverse/identity_evidence/<file>.md
 
-It needs the exact old name and the same proven extent, verifies the new source,
-and tombstones the old claim. Retire the orphaned source once it verifies. Plain
-`--replace-rva` only replaces generated scaffolds.
+It needs the exact old name and extent, verifies, and tombstones the old claim.
+Retire the orphaned source. Vendored rows outside real `game/` need evidence
+naming `0xRVA` and both names; keep sources.
 
 An intentional descriptive-to-opaque correction needs an entry in the JSON list
 `targets/game/reverse/name_corrections.json` with `old_path`, `new_path`,

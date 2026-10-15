@@ -50,7 +50,7 @@ SOURCE_REL = "game/GameEngine/Source/Common/Thing.cpp"
 
 
 def arrange(tmp_path, monkeypatch, *, gate, target_rva="0x00ABCD00", size="32",
-            extra_args=(), scaffold=DUMP):
+            extra_args=(), scaffold=DUMP, replace_rva="0x00ABCD00"):
     reverse = tmp_path / "targets/game/reverse"
     reverse.mkdir(parents=True)
     source = tmp_path / SOURCE_REL
@@ -70,7 +70,7 @@ def arrange(tmp_path, monkeypatch, *, gate, target_rva="0x00ABCD00", size="32",
         fake_run(gate))
     monkeypatch.setattr(sys, "argv", [
         "add_match.py", REAL, target_rva, size, SOURCE_REL,
-        "--replace-rva", "0x00ABCD00", "--root", str(tmp_path),
+        "--replace-rva", replace_rva, "--root", str(tmp_path),
         *extra_args,
     ])
     return functions, deleted, source
@@ -338,12 +338,14 @@ def test_replace_existing_does_not_complete_a_name_at_another_address(tmp_path, 
 
 # Vendored rows (approved by the project lead 2026-10-15): --correct-identity may
 # retire a matched vendored=<lib> row only with evidence naming its RVA and both names.
+VRVA = "0x00069C80"
 VENDORED_OLD = "?swap@?$vector@PAX@_STL@@QAEXAAV12@@Z"
 VENDORED = DUMP.replace("?d_00abcd00@@YAXXZ", VENDORED_OLD).replace(
     "game/gen_asm/d_00abcd00.asm", "game/gen_small/zhstl_001.cpp").replace(
-    "gen-dump;ghidra=FUN_00eacd00", "vendored=cnc-zh;zhstl")
-VENDORED_PROOF = "targets/game/reverse/identity_evidence/0x00abcd00-vendored.md"
-GOOD_PROOF = f"Retail 0x00ABCD00 is {REAL}, not {VENDORED_OLD}: matched caller.\n"
+    "gen-dump;ghidra=FUN_00eacd00", "vendored=cnc-zh;zhstl").replace(
+    "0x00ABCD00", VRVA)
+VENDORED_PROOF = "targets/game/reverse/identity_evidence/0x00069c80-vendored.md"
+GOOD_PROOF = f"Retail 0x00069C80 is {REAL}, not {VENDORED_OLD}: matched caller.\n"
 
 
 def arrange_vendored(tmp_path, monkeypatch, scaffold=VENDORED, proof_text=GOOD_PROOF,
@@ -351,7 +353,7 @@ def arrange_vendored(tmp_path, monkeypatch, scaffold=VENDORED, proof_text=GOOD_P
     extra = ("--correct-identity", VENDORED_OLD)
     if with_evidence:
         extra += ("--identity-evidence", VENDORED_PROOF)
-    functions, deleted, source = arrange(tmp_path, monkeypatch, gate=0,
+    functions, deleted, source = arrange(tmp_path, monkeypatch, gate=0, target_rva=VRVA, replace_rva=VRVA,
                                          scaffold=scaffold, extra_args=extra)
     proof = tmp_path / VENDORED_PROOF
     proof.parent.mkdir(parents=True)
@@ -372,7 +374,7 @@ def test_vendored_correction_with_evidence_is_accepted(tmp_path, monkeypatch):
     ledger = functions.read_text()
     assert VENDORED_OLD not in ledger
     assert "identity-correction=" + VENDORED_PROOF in ledger
-    assert ledger.count("0x00ABCD00") == 1
+    assert ledger.count("0x00069C80") == 1
     tombstone = list(csv.reader(io.StringIO(deleted.read_text())))[-1]
     assert tombstone[0] == VENDORED_OLD
     assert REAL in tombstone[2]
@@ -384,9 +386,9 @@ def test_vendored_correction_without_evidence_is_refused(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("text", [
     f"{REAL} replaces {VENDORED_OLD}.\n",                       # no RVA
-    f"0x00ABCD10 is {REAL}, not {VENDORED_OLD}.\n",             # wrong RVA
-    f"0x00ABCD00 is {REAL}.\n",                                 # no old name
-    f"0x00ABCD00 is not {VENDORED_OLD}.\n",                     # no new name
+    f"0x00069C90 is {REAL}, not {VENDORED_OLD}.\n",             # wrong RVA
+    f"0x00069C80 is {REAL}.\n",                                 # no old name
+    f"0x00069C80 is not {VENDORED_OLD}.\n",                     # no new name
 ])
 def test_vendored_correction_with_weak_evidence_is_refused(tmp_path, monkeypatch, text):
     assert_refused(*arrange_vendored(tmp_path, monkeypatch, proof_text=text))
@@ -404,3 +406,47 @@ def test_unmatched_vendored_row_is_refused(tmp_path, monkeypatch):
 def test_non_vendored_gen_row_still_refused_with_good_evidence(tmp_path, monkeypatch, notes):
     gen = VENDORED.replace("vendored=cnc-zh;zhstl", notes)
     assert_refused(*arrange_vendored(tmp_path, monkeypatch, scaffold=gen))
+
+
+def test_vendored_tombstone_cites_evidence_and_prior_notes(tmp_path, monkeypatch):
+    _, deleted, _ = arrange_vendored(tmp_path, monkeypatch)
+    add_match.main()
+    tombstone = list(csv.reader(io.StringIO(deleted.read_text())))[-1]
+    assert "Identity evidence: " + VENDORED_PROOF in tombstone[2]
+    assert "Prior notes: vendored=cnc-zh;zhstl" in tombstone[2]
+
+
+@pytest.mark.parametrize("text", [
+    f"0x00069c80 is {REAL.upper()}, not {VENDORED_OLD.upper()}.\n",   # case-folded names
+    f"0x00069C801 is {REAL}, not {VENDORED_OLD}.\n",                    # RVA superstring
+    f"0x00069C80 is x{REAL}, not {VENDORED_OLD}.\n",                    # name inside a token
+    f"0x00069C80 is {REAL}, not {VENDORED_OLD}X.\n",                    # name prefix only
+])
+def test_vendored_evidence_must_name_exact_tokens(tmp_path, monkeypatch, text):
+    assert_refused(*arrange_vendored(tmp_path, monkeypatch, proof_text=text))
+
+
+def test_vendored_evidence_hex_case_is_free(tmp_path, monkeypatch):
+    text = f"`0x00069c80` is `{REAL}`, not `{VENDORED_OLD}`.\n"
+    arrange_vendored(tmp_path, monkeypatch, proof_text=text)
+    add_match.main()
+
+
+@pytest.mark.parametrize("new_name", [" ", "", "\t", f"{REAL} x"])
+def test_blank_or_spaced_new_name_refused(tmp_path, monkeypatch, new_name):
+    files = arrange_vendored(tmp_path, monkeypatch,
+                             proof_text=f"0x00069C80 {VENDORED_OLD} {new_name}\n")
+    sys.argv[1] = new_name
+    assert_refused(*files)
+
+
+@pytest.mark.parametrize("rva", ["0x009F9B82", "0x00A00000", "0x00AD5401"])
+def test_vendored_row_in_paused_d3dx_region_refused(tmp_path, monkeypatch, rva):
+    row = VENDORED.replace(VRVA, rva)
+    extra = ("--correct-identity", VENDORED_OLD, "--identity-evidence", VENDORED_PROOF)
+    files = arrange(tmp_path, monkeypatch, gate=0, target_rva=rva, replace_rva=rva, scaffold=row,
+                    extra_args=extra)
+    proof = tmp_path / VENDORED_PROOF
+    proof.parent.mkdir(parents=True)
+    proof.write_text(f"{rva} is {REAL}, not {VENDORED_OLD}.\n")
+    assert_refused(*files)

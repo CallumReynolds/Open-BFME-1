@@ -74,13 +74,29 @@ def vendored_row(row):
     return any(part.strip().startswith("vendored=") for part in row["notes"].split(";"))
 
 
+# Owner directive 2026-10-08: the D3DX9 region is paused and off-limits.
+D3DX_PAUSED = (0x009F9B82, 0x00AD5401)
+# A token ends at whitespace or markdown/prose punctuation, never inside a name.
+TOKEN_EDGE = r"\s`'\"()\[\]<>,;|*"
+
+
+def evidence_names(text, token, *, case_insensitive=False):
+    """TOKEN appears in TEXT as a whole token, not a substring of a longer one."""
+    edge = f"[{TOKEN_EDGE}]"
+    pattern = f"(?:^|(?<={edge})){re.escape(token)}(?=$|{edge}|[.:](?:$|{edge}))"
+    return re.search(pattern, text, re.IGNORECASE if case_insensitive else 0) is not None
+
+
 def correctable_claim(old, old_name, new_name, evidence_text):
     """May --correct-identity retire OLD (named OLD_NAME) for NEW_NAME?
 
     A matched real-source claim qualifies as before. A matched vendored=<lib> row
     (approved by the project lead 2026-10-15) qualifies only with identity
-    evidence that names its address and both names: vendored rows carry the
-    upstream's real identities, so the proof must show retail disagrees there."""
+    evidence that names its 0xRVA and both exact (case-sensitive) names as whole
+    tokens, outside the paused D3DX9 region: vendored rows carry the upstream's
+    real identities, so the proof must show retail disagrees at that address."""
+    if any(not n or re.search(r"\s", n) for n in (old_name, new_name)):
+        return False
     if old["name"] != old_name or old_name == new_name or old["status"] != "matched":
         return False
     if replaceable_scaffold(old):
@@ -88,9 +104,11 @@ def correctable_claim(old, old_name, new_name, evidence_text):
     if (old["source"].startswith("game/") and
             not old["source"].startswith(("game/gen_small/", "game/gen_asm/"))):
         return True
-    text = (evidence_text or "").lower()
-    return (vendored_row(old) and f"0x{old['rva']:08x}" in text and
-            old_name.lower() in text and new_name.lower() in text)
+    if not vendored_row(old) or D3DX_PAUSED[0] <= old["rva"] <= D3DX_PAUSED[1]:
+        return False
+    text = evidence_text or ""
+    return (evidence_names(text, f"0x{old['rva']:08X}", case_insensitive=True) and
+            evidence_names(text, old_name) and evidence_names(text, new_name))
 
 
 def fail(*lines):
@@ -235,7 +253,7 @@ def remove_stash(rva, root):
 
 def replacement_tombstone_record(replaced, successor_name, successor_rva,
                                  successor_size, successor_source, *, verified,
-                                 boundary_evidence=None):
+                                 boundary_evidence=None, identity_evidence=None):
     """Render one durable replacement record for deleted_rows.csv.
 
     A branch forked before the conversion can merge the removed functions.csv
@@ -274,6 +292,9 @@ def replacement_tombstone_record(replaced, successor_name, successor_rva,
             f"claim at 0x{replaced['rva']:08X}/{replaced['size']}B from "
             f"{replaced['source']} was retired."
         )
+    if identity_evidence and vendored_row(replaced):
+        reason += (f" Identity evidence: {identity_evidence}. "
+                   f"Prior notes: {replaced['notes']}")
     buffer = io.StringIO()
     csv.writer(buffer, lineterminator="\n").writerow(
         [replaced["name"], f"0x{replaced['rva']:08X}", reason])
@@ -297,11 +318,12 @@ def validate_tombstone_append_target(raw, path):
 
 def append_replacement_tombstone(path, replaced, successor_name, successor_rva,
                                  successor_size, successor_source, *, verified,
-                                 boundary_evidence=None):
+                                 boundary_evidence=None, identity_evidence=None):
     """Atomically append one replacement record to the deletion ledger."""
     record = replacement_tombstone_record(
         replaced, successor_name, successor_rva, successor_size, successor_source,
-        verified=verified, boundary_evidence=boundary_evidence)
+        verified=verified, boundary_evidence=boundary_evidence,
+        identity_evidence=identity_evidence)
     raw = path.read_bytes()
     validate_tombstone_append_target(raw, path)
     ledger_io.atomic_write_bytes(path, raw + record)
@@ -655,7 +677,8 @@ def main():
                 append_replacement_tombstone(
                     deleted_csv, replaced, name, rva, size, source_rel,
                     verified=not args.no_verify,
-                    boundary_evidence=args.boundary_evidence)
+                    boundary_evidence=args.boundary_evidence,
+                    identity_evidence=args.identity_evidence)
             ledger_io.atomic_write_bytes(
                 functions_csv, new_raw + ledger_row.encode("utf-8") + b"\r\n")
             print(f"add_match: replaced row {replaced['line']}: "

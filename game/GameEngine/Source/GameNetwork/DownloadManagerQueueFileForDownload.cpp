@@ -18,19 +18,13 @@ public:
 	Open2Rec6270C0( const Open2Rec6270C0 &other );
 };
 
-class BfmeErasedValue_00627200
+// Keep this unit's list instantiation separate, but use the shared record's
+// lifetime and destructor (also used by BFME2's DownloadManager.cpp).
+class BfmeErasedValue_00627200 : public QueuedDownload
 {
 public:
-	BfmeErasedValue_00627200() {}
-	~BfmeErasedValue_00627200();
-
-	AsciiString server;
-	AsciiString userName;
-	AsciiString password;
-	AsciiString file;
-	AsciiString localFile;
-	AsciiString regKey;
-	Bool tryResume;
+    BfmeErasedValue_00627200() {}
+    __forceinline ~BfmeErasedValue_00627200() {}
 };
 
 namespace std

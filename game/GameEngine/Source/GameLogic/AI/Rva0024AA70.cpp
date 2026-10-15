@@ -2,7 +2,7 @@
 // Open-BFME: Horde transport admission and linked-member update, retail 0x0024AA70.
 
 // Retail allocates these list nodes through the STL node allocator at
-// 0x0082E540 (?allocate@__new_alloc@_STL@@SAPAXI@Z), not through the global
+// 0x0082E540 (?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z), not through the global
 // operator new.
 namespace _STL {
 // STLport's node allocator entry point is the private

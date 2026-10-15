@@ -2,16 +2,11 @@
 // stlport
 
 #include <new>
-#define __new_alloc Rva00776240VendorNewAlloc
 #include <vector>
-#undef __new_alloc
 
-namespace _STL
-{
 // Small node allocations go through STLport's __node_alloc<true, 0>; its
 // inline allocate() reaches _M_allocate (retail 0x0082E540) for sizes
 // up to _MAX_BYTES.
-}
 
 extern "C" void *memset( void *destination, int value, unsigned int count );
 

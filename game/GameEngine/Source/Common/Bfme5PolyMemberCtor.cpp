@@ -9,17 +9,13 @@
 #include "PreRTS.h"
 #include "System/subsystem_interface.h"
 
-// Retail's buffer allocation at 0x0082E540 is STLport's __new_alloc::allocate,
-// matched in game/Libraries/Source/WWVegas/WWLib/STL_new_alloc_allocateThunk.cpp
-// (ledgered under both its own name and the ICF twin
-// ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z).  Same cdecl shape as the
-// old local shim, so the call site keeps its single pushed argument.
+// Retail's buffer allocation at 0x0082E540 is STLport's private
+// __node_alloc<true, 0>::_M_allocate, matched in
+// game/Libraries/Source/WWVegas/WWLib/STL_new_alloc_allocateThunk.cpp. The
+// cdecl call site keeps its single pushed argument.
 //
 // The declaration below is deliberately TU-local and does NOT include
-// <stl/_alloc.h>: STLport's own __new_alloc::allocate is an inline body
-// (__stl_new -> operator new), so pulling the real header in would collapse
-// this call to ??2@YAPAXI@Z and lose the retail identity, and it would also
-// collide with the class this file declares (C2011).
+// <stl/_alloc.h>, whose __node_alloc would collide with it (C2011).
 namespace _STL
 {
 	// STLport's node allocator entry point is the private

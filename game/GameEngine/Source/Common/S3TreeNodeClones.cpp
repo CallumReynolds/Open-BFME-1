@@ -8,8 +8,8 @@
 // value from the SOURCE NODE rather than from a bare value is what makes it a
 // clone rather than a create.
 //
-// The allocator is the shared __node_alloc body, whose public spelling in the
-// ledger is __new_alloc::allocate. Each _Construct is a distinct template
+// The allocator is STLport's __node_alloc<true, 0>::_M_allocate (0x0082E540).
+// Each _Construct is a distinct template
 // instantiation and its decorated name gives the value type away -- seven
 // pairs keyed by int and three by AsciiString, each with its own four-byte
 // mapped struct.

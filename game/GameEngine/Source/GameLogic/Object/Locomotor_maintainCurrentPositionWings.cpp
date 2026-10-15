@@ -141,7 +141,10 @@ void Locomotor::maintainCurrentPositionWings(Object *object)
 	if (!(object->getHeightAboveTerrain() > g_rva01075350))
 		return;
 
-	__asm { or dword ptr [esi+40h], 10h }
+	// Through a pointer MSVC keeps the single `or [esi+40h],10h`; a direct
+	// member update is split into load/or/store and scheduled.
+	unsigned *flagsWord = &m_flags;
+	*flagsWord |= 0x10;
 
 	LocomotorTemplate *locoTemplate = m_template;
 	if (locoTemplate && locoTemplate->m_nextOverride)

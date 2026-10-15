@@ -4,10 +4,8 @@
 // returns whether the list contains at least one node. No caller or type table
 // proves a semantic owner name, so the class and method keep the retail address.
 //
-// Clean C++ makes this counter a different register and narrows the result with
-// test/setne. Retail keeps the counter in EDX and materialises 0 or 1 with
-// cmp/sbb/neg. These three small assembly statements preserve that proven
-// compiler shape while the list traversal remains expressed in C++.
+// Retail counts the nodes into an unsigned counter and returns `0 < count`,
+// which MSVC 7.1 materialises with xor/cmp/sbb/neg.
 
 typedef int Int;
 
@@ -31,27 +29,8 @@ private:
 Int Rva00256AB0Owner::hasEntries(void) const
 {
 	Rva00256AB0Node *list = m_list;
-	Rva00256AB0Node *node = list->m_next;
-	__asm
-	{
-		xor edx, edx
-	}
-	if (node != list)
-	{
-		do
-		{
-			node = node->m_next;
-			__asm
-			{
-				inc edx
-			}
-		} while (node != list);
-	}
-	__asm
-	{
-		xor eax, eax
-		cmp eax, edx
-		sbb eax, eax
-		neg eax
-	}
+	unsigned int count = 0;
+	for (Rva00256AB0Node *node = list->m_next; node != list; node = node->m_next)
+		++count;
+	return 0 < count;
 }

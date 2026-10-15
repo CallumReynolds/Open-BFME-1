@@ -40,10 +40,11 @@ class GameWindowInputData
 {
 };
 
-class Gen_uw_00021431
+// retail ILT 0x00021431 -> 0x00499BD0, ledgered ??1BfmeHostEAZ@@QAE@XZ
+class BfmeHostEAZ
 {
 public:
-	~Gen_uw_00021431();
+	~BfmeHostEAZ();
 
 	char m_data[ 0x1A8 ];
 };
@@ -69,7 +70,7 @@ protected:
 
 	GameWindowAnchor *m_anchor;
 	char m_data[ 0x28 ];
-	Gen_uw_00021431 m_instData;
+	BfmeHostEAZ m_instData;
 	GameWindowInputData *m_inputData;
 	char m_data2[ 0x38 ];
 	Open2Dtor4793C0 *m_editData;

@@ -51,7 +51,16 @@ struct BuffEntry00409E20 {
  bool transition00409610(int type,int mode,void *arg,void *owner,int count);
 };
 struct BuffRules00409E20 { int entries[6]; int mode; };
-extern BuffRules00409E20 Rules00409E20[];
+// BFME2 BuffManager.cpp supplies the table-driven buff-mode lead. BFME1
+// has six 28-byte records here; keep the retail list/mode layout and values.
+BuffRules00409E20 Rules00409E20[6] = {
+ {{0, 0, 0, 0, 0, 0}, 1},
+ {{0, 0, 0, 0, 0, 0}, 1},
+ {{0, 0, 0, 0, 0, 0}, 2},
+ {{0, 0, 0, 0, 0, 0}, 1},
+ {{0, 0, 0, 0, 0, 0}, 1},
+ {{0, 0, 0, 0, 0, 0}, 1}
+};
 struct BuffState00409E20 {
  int field00; void *field04; BuffEntry00409E20 entries[6];
  void apply(int type,void *arg,int count,const void *color,float extrusion);

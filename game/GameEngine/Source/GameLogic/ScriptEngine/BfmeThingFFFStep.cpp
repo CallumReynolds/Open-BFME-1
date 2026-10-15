@@ -70,6 +70,7 @@ class BfmeThingFFF
 {
 public:
 	void bfmeStepFFF(BfmeSubFFF *list, void *entryPointer);
+	void rva0035BB70(void *entryPointer);
 
 private:
 	char m_unused[0x2C];
@@ -108,6 +109,13 @@ void BfmeThingFFF::bfmeStepFFF(BfmeSubFFF *list, void *entryPointer)
 	((Rva00359530StringRecordTable *)records)->release(index);
 
 	delete entry;
+}
+
+// Retail 0x0035BB70, 37B: ECX passes through unchanged as bfmeStepFFF's
+// receiver; the list argument is the receiver plus 4, null-checked.
+void BfmeThingFFF::rva0035BB70(void *entryPointer)
+{
+	bfmeStepFFF(this ? (BfmeSubFFF *)((char *)this + 4) : 0, entryPointer);
 }
 
 // Retail 0x0035AD00, 143B. Like 0x0035AB70, released records lose their

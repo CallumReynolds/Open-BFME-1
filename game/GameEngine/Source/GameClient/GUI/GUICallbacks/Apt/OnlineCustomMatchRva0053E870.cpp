@@ -1,62 +1,11 @@
-// ?rva0053E870@BfmeAptScreenOnlineCustomMatch@@QAEXXZ
-// partial score=0.733 date=2026-10-04
-// ?rva0053E870@BfmeAptScreenOnlineCustomMatch@@QAEXXZ
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 
 #include <map>
 #include <string>
-// ?rva0053E870@BfmeAptScreenOnlineCustomMatch@@QAEXXZ
-// The caller at 0x00544E40 reaches this body through ILT 0x00017481.
-// This body calls the matched applyPreferredGameNamePassword method on the
-// same receiver, so the class is known and the method name stays address-derived.
+#include "ascii_string.h"
 
-template <typename T> struct StringData
-{
-	int m_refCount;
-	unsigned short m_length;
-	unsigned short m_max;
-	T m_text[ 1 ];
-};
-
-class UnicodeString;
-class AsciiString;
-
-template <typename T> class StringBase
-{
-	friend class AsciiString;
-	friend class UnicodeString;
-
-private:
-	StringBase() : m_data( 0 ) {}
-	StringBase( const T *text );
-	StringBase( const StringBase<T> &other );
-	~StringBase();
-
-	StringData<T> *m_data;
-};
-
-class AsciiString : private StringBase<char>
-{
-public:
-	AsciiString() : StringBase<char>() {}
-	AsciiString( const char *text ) : StringBase<char>( text ) {}
-	AsciiString( const AsciiString &other ) : StringBase<char>( other ) {}
-	~AsciiString() {}
-};
-
-class UnicodeString : private StringBase<unsigned short>
-{
-public:
-	UnicodeString() : StringBase<unsigned short>() {}
-	UnicodeString( const UnicodeString &other ) : StringBase<unsigned short>( other ) {}
-	~UnicodeString() {}
-
-	const unsigned short *str() const
-	{
-		return m_data ? m_data->m_text : (const unsigned short *)L"";
-	}
-};
+#include "unicode_string.h"
 
 class GameWindow;
 class GameSpyStagingRoom;
@@ -118,10 +67,14 @@ public:
 	unsigned int getExeCRC() { return m_exeCRC; }
 	unsigned int getIniCRC() { return m_iniCRC; }
 	unsigned int getExtraCRC() { return m_extraCRC; }
-	unsigned short getLadderPort() { return m_ladderPort; }
+	unsigned short getLadderPort() const { return m_ladderPort; }
+    void setLadderPort(unsigned short port) { m_ladderPort=port; }
+    int getReportedNumPlayers() const { return m_reportedNumPlayers; }
+    int getReportedMaxPlayers() const { return m_reportedMaxPlayers; }
+    bool getHasPassword() const { return m_hasPassword; }
 
 	unsigned char m_head[ 0x428 ];
-	unsigned char m_hasPassword;
+	bool m_hasPassword;
 	unsigned char m_mid[ 0x430 - 0x429 ];
 	unsigned int m_exeCRC;
 	unsigned int m_iniCRC;
@@ -129,8 +82,8 @@ public:
 	unsigned char m_gap[ 0x450 - 0x43C ];
 	unsigned short m_ladderPort;
 	unsigned char m_padPort[ 2 ];
-	unsigned int m_reportedNumPlayers;
-	unsigned int m_reportedMaxPlayers;
+	int m_reportedNumPlayers;
+	int m_reportedMaxPlayers;
 };
 
 class Gen004D4880
@@ -152,6 +105,12 @@ public:
 };
 
 extern GlobalData *TheWritableGlobalData;
+// ?crcEqual0053E870@@YA_NII@Z absent-from-retail
+static __forceinline bool crcEqual0053E870(unsigned int left, unsigned int right)
+{
+    return left == right;
+}
+
 
 class LadderList
 {
@@ -162,11 +121,20 @@ public:
 
 extern LadderList *TheLadderList;
 
+class BfmeLevelAN
+{
+public:
+    char *bfmeBuildAN(unsigned int, int, int, int, int, int, int, int);
+};
+
 class WindowManager
 {
 public:
-	void add( void *ctx, const char *name, int kind, const char *value,
-	          int a, int b, int c, int d );
+    // ?add@WindowManager@@QAEXPAXPBDH1HHHH@Z absent-from-retail
+    __forceinline void add(void *ctx, const char *name, int kind, const char *value, int a, int b, int c, int d)
+    {
+        ((BfmeLevelAN *)this)->bfmeBuildAN((unsigned int)ctx, (int)name, kind, (int)value, a, b, c, d);
+    }
 };
 
 extern WindowManager *g_theWindowManager;
@@ -192,9 +160,9 @@ public:
 	PeerRequest();
 	~PeerRequest();
 	int peerRequestType;
-	StlStr nick;
+	_STL::string nick;
 	_STL::basic_string<unsigned short, _STL::char_traits<unsigned short>, _STL::allocator<unsigned short> > text;
-	StlStr password;
+	_STL::string password;
 	unsigned char m_mid[ 0xE4 - 0x28 ];
 	int m_stagingRoomId;
 	unsigned char m_tail[ 0x194 - 0xE8 ];
@@ -215,6 +183,12 @@ public:
 extern GameSpyPeerMessageQueueInterface *TheGameSpyPeerMessageQueue;
 
 typedef char PeerRequestSizeCheck[ sizeof( PeerRequest ) == 0x194 ? 1 : -1 ];
+class Rva00385F20Room
+{
+public:
+    UnicodeString getGameName() const;
+};
+
 typedef char RoomLayoutCheck[ (int)&( (GameSpyStagingRoom *)0 )->m_ladderPort == 0x450 ? 1 : -1 ];
 
 class BfmeAptScreenOnlineCustomMatch
@@ -240,6 +214,7 @@ private:
 	int m_selectedID;
 };
 
+// ?rva0053E870@BfmeAptScreenOnlineCustomMatch@@QAEXXZ
 void BfmeAptScreenOnlineCustomMatch::rva0053E870()
 {
 	if( m_field1B4 )
@@ -247,12 +222,12 @@ void BfmeAptScreenOnlineCustomMatch::rva0053E870()
 
 	m_state = 1;
 	m_field1C4 = 0;
+	// Look for a game to join
 	int selected;
 	GadgetListBoxGetSelected( m_gameList, &selected );
 	if( selected >= 0 )
 	{
-		GameWindow *itemList = m_gameList;
-		int selectedID = (int)GadgetListBoxGetItemData( itemList, selected, 0 );
+		int selectedID = (int)GadgetListBoxGetItemData( m_gameList, selected, 0 );
 		if( selectedID > 0 )
 		{
 			StagingRoomMap *srm = TheGameSpyInfo->getStagingRoomList();
@@ -260,12 +235,12 @@ void BfmeAptScreenOnlineCustomMatch::rva0053E870()
 			if( srmIt != srm->end() )
 			{
 				GameSpyStagingRoom *roomToJoin = srmIt->second;
-				bool exeOk = roomToJoin && roomToJoin->getExeCRC() == (unsigned int)Rva0009B4B0(
-					(int)TheWritableGlobalData->m_exeCRC, (int)TheWritableGlobalData->m_exeCRC );
+				bool exeOk = roomToJoin && crcEqual0053E870(roomToJoin->getExeCRC(),(unsigned int)Rva0009B4B0((int)TheWritableGlobalData->m_exeCRC,(int)TheWritableGlobalData->m_exeCRC));
 				bool iniOk = roomToJoin && roomToJoin->getIniCRC() == TheWritableGlobalData->m_iniCRC;
 				bool extraOk = roomToJoin && roomToJoin->getExtraCRC() == TheWritableGlobalData->m_extraCRC;
 				if( !exeOk || !iniOk || !extraOk )
 				{
+					// bad crc.  don't go.
 					GSMessageBoxOk( TheGameText->fetch( "GUI:JoinFailedDefault" ),
 						TheGameText->fetch( "GUI:JoinFailedCRCMismatch" ), 0 );
 					return;
@@ -278,7 +253,7 @@ void BfmeAptScreenOnlineCustomMatch::rva0053E870()
 						TheGameText->fetch( "GUI:JoinFailedUnknownLadder" ), 0 );
 					return;
 				}
-				if( roomToJoin->m_reportedNumPlayers == roomToJoin->m_reportedMaxPlayers )
+				if( roomToJoin->getReportedNumPlayers() == roomToJoin->getReportedMaxPlayers() )
 				{
 					GSMessageBoxOk( TheGameText->fetch( "GUI:JoinFailedDefault" ),
 						TheGameText->fetch( "GUI:JoinFailedRoomFull" ), 0 );
@@ -286,23 +261,23 @@ void BfmeAptScreenOnlineCustomMatch::rva0053E870()
 				}
 				m_field1B4 = 1;
 				m_field1BC = -1;
-				if( roomToJoin->m_hasPassword )
+				if( roomToJoin->getHasPassword() )
 				{
 					m_selectedID = selectedID;
-					g_theWindowManager->add( m_field34->m_movie, "CallChild", 1,
-						"EnterPassword", 0, 0, 0, 0 );
+					g_theWindowManager->add(m_field34->m_movie, "CallChild", 1, "EnterPassword", 0, 0, 0, 0);
 					applyPreferredGameNamePassword( 0 );
 					m_state = 10;
 				}
 				else
 				{
 					TheGameSpyInfo->markAsStagingRoomJoiner( selectedID );
-					( (Gen004D4880 *)TheGameSpyGame )->bfmeSet( roomToJoin->getGameName() );
+					( (Gen004D4880 *)TheGameSpyGame )->bfmeSet( ((const Rva00385F20Room *)roomToJoin)->getGameName() );
 					TheGameSpyGame->setLadderIP( roomToJoin->getLadderIP() );
-					TheGameSpyGame->m_ladderPort = roomToJoin->getLadderPort();
+					TheGameSpyGame->setLadderPort( roomToJoin->getLadderPort() );
+					// no password - just join it
 					PeerRequest req;
 					req.peerRequestType = 0xB;
-					req.text = srmIt->second->getGameName().str();
+					req.text = ((const Rva00385F20Room *)srmIt->second)->getGameName().str();
 					req.m_stagingRoomId = selectedID;
 					req.password = "";
 					TheGameSpyPeerMessageQueue->addRequest( req );

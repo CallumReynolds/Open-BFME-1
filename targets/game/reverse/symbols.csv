@@ -12737,6 +12737,7 @@ name,address,notes
 ??_R0?AW4ErrorCode@@@8,0x00EA716C,ErrorCode RTTI type descriptor: pointed to by retail catchable type 0xDDFFDC field 1 (.?AW4ErrorCode@@ at VA 0x012A716C)
 ??_R0H@8,0x00EC83B0,int RTTI type descriptor: pointed to by retail catchable type 0xE4549C field 1 (.H at VA 0x012C83B0)
 ??_VBfmeSceneVectorElement@@SAXPAX@Z,0x00881EF0,SimpleSceneClass destructor scene-vector array deallocator
+??_VRva008947A0Elem@@SAXPAX@Z,0x008926C0,out-of-line class operator delete[] (jmp through g_bfmeFreeDWF) called by Rva008939C0 unwind funclets 0x00C56E20/0x00C56E2B; only rel32 callers in retail
 ?Add@?$DynamicVectorClass@PAVFontCharsBuffer@@@@QAE_NABQAVFontCharsBuffer@@@Z,0x0093D6F0,ICF twin of the PrototypeLoaderClass pointer Add body used by Update_Current_Buffer
 ?Add@?$DynamicVectorClass@PAVVertexMaterialClass@@@@QAE_NABQAVVertexMaterialClass@@@Z,0x0092F7C0,rel32 pin for exact-ambiguous landing
 ?Add@?$DynamicVectorClass@UPtrPairStruct@PointerRemapClass@@@@QAE_NABUPtrPairStruct@PointerRemapClass@@@Z,0x00002A36,pinharvest x1 (thunk)

@@ -1,27 +1,12 @@
 // ?rva8D0B00RouteAction@@YAXPAVRva8D0B00State@@PAURva8D0B00Context@@@Z
-// partial score=0.636363636364 date=2026-09-22
+// partial score=0.7273 date=2026-10-15
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-// Route a selected value through hub 0x008CF740; retail 0x008D0B00, 352 bytes.
-// Opaque identity. Evidence: docs/analysis/0x008cf740.md sections 2, 3, 5;
-// complete caller instructions at +0x2C/+0x67/+0xAC/+0xC9/+0x120.
-// Direct external declarations below are ABI models; unlanded aliases still
-// need address bindings before a relocation/link acceptance gate.
-// In particular, the hub's first argument is the parsed receiver (or context+4),
-// and its third argument is the independent toInteger result. Do not merge them.
-// The bank inherited a wrong selection of the integer as receiver. This version
-// separates the two values and the parse output from its retained copy.
-// Capture after makeValue is safe for this retail graph: 0x008C6320 forwards the
-// output-slot address only to 0x008C4DA0; all five output-address loads in that
-// helper are followed by stores through it and none passes/stores its address.
-// Raw witnesses: 8C4DA0 +57/+68/+F5/+1A0/+1DF and 8C6320 +75/+7F/+99/+AD.
-// Remaining nonmatch: key/lookup stack homes are exchanged; selected-receiver
-// reload is after create instead of before; loop/pool-call scheduling differs.
-// Best measured 353B vs 352B; 126 masked differing bytes; score 0.636363636.
-// 0x012D5298 is the refcounted empty string block, not an installed vtable.
 
 struct Rva8D0B00StringBlock
 {
 	unsigned short m_refs;
+	char m_header[6];
+	char text[1];
 };
 
 extern Rva8D0B00StringBlock g_bfmeDefaultString1284;
@@ -35,6 +20,8 @@ public:
 		m_block = &g_bfmeDefaultString1284;
 		++g_bfmeDefaultString1284.m_refs;
 	}
+	Rva8D0B00String(const char *text) { setText0089E680(text); }
+	void setText0089E680(const char *text);
 	~Rva8D0B00String()
 	{
 		Rva8D0B00StringBlock *block = m_block;
@@ -43,7 +30,7 @@ public:
 			Rva01337A30ReleaseTable[1](block);
 	}
 
-private:
+public:
 	Rva8D0B00StringBlock *m_block;
 };
 
@@ -52,6 +39,7 @@ class Rva8D0B00Value
 public:
 	virtual void addRef();
 	virtual void release();
+	Rva8D0B00Value *lookup0089C290(Rva8D0B00String *key, Rva8D0B00Value *context);
 	int toInteger() const; // thiscall 0x00898300, EAX signed count, no stack args
 	Rva8D0B00Value *at(int index) const; // thiscall 0x008B8E50, ret 4, EAX value
 
@@ -75,10 +63,8 @@ struct Rva8D0B00Context
 class Rva8D0B00State
 {
 public:
-	// 0x008CC940: thiscall, six dword arguments, ret 0x18, EAX value.
 	Rva8D0B00Value *makeValue(Rva8D0B00Value *number, void *contextValue, Rva8D0B00String *key,
 		int one1, int one2, int zero);
-	// 0x008CF740: thiscall, (receiver, callable, count), ret 0x0C.
 	void finish(Rva8D0B00Value *primary, Rva8D0B00Value *value, int number);
 
 	int m_count;
@@ -86,9 +72,105 @@ public:
 	Rva8D0B00Value **m_stack;
 };
 
-// 0x008C6320: cdecl, five dword arguments, AL result ignored.
-void rva8C6320PrepareRoute(Rva8D0B00Value *first, void *second, void *data,
+inline __declspec(noinline) bool rva8C6320PrepareRoute(Rva8D0B00Value *first, void *second, const void *data,
 	Rva8D0B00Value **lookup, Rva8D0B00String *key);
+
+extern "C" char *strcpy(char *, const char *);
+#pragma intrinsic(strcpy)
+struct Rva8D0B00Root { char pad[0x58]; Rva8D0B00Value *root; };
+struct Rva8D0B00Owner { Rva8D0B00Root *root; };
+struct Rva8D0B00Global { char pad[0x122c]; Rva8D0B00Owner *owner; };
+extern Rva8D0B00Global *g_bfmeHolderBU;
+inline __declspec(noinline) bool ParsePath8C4DA0(Rva8D0B00Value *inputScope,Rva8D0B00Value *context,const Rva8D0B00String *path,Rva8D0B00Value **out,char *name)
+{
+ Rva8D0B00Value *scope=inputScope;
+ const char *src=path->m_block->text;
+ *name=0;
+ bool absolute=false;
+ if (*src=='/') {
+  scope=g_bfmeHolderBU->owner->root->root;
+  ++src;
+  *out=scope;
+  absolute=true;
+ } else *out=scope;
+ char buffer[256];
+ char *dest=buffer;
+ while (*src) {
+  switch (*src) {
+  case '.':
+   if (src[1]=='.') {
+    *dest++=*src;
+    *dest++=*++src;
+   } else {
+    *dest=0;
+    Rva8D0B00Value *next=(Rva8D0B00Value *)scope->lookup0089C290(&Rva8D0B00String(buffer),context);
+    context=0;
+    if (!next) { *out=0; return absolute; }
+    scope=next;
+    dest=buffer;
+   }
+   break;
+  case ':': {
+   *dest=0;
+   Rva8D0B00Value *found=(Rva8D0B00Value *)scope->lookup0089C290(&Rva8D0B00String(buffer),context);
+   context=0;
+   if (found) {
+    *out=found;
+    strcpy(name,src+1);
+    return absolute;
+   }
+   dest=buffer;
+   break;
+  }
+  default: *dest++=*src; break;
+  }
+  ++src;
+ }
+ *dest=0;
+ if (context) scope=context;
+ *out=scope;
+ strcpy(name,buffer);
+ return absolute;
+}
+
+inline __declspec(noinline) bool rva8C6320PrepareRoute( Rva8D0B00Value *context, void *rawScope,
+	const void *rawPath, Rva8D0B00Value **targetOut,
+	Rva8D0B00String *nameOut )
+{
+	Rva8D0B00Value *scopePointer = (Rva8D0B00Value *)rawScope;
+	const Rva8D0B00String *path = (const Rva8D0B00String *)rawPath;
+	const Rva8D0B00String &input = *path;
+	Rva8D0B00StringBlock *inputBlock = input.m_block;
+	const char *cursor = inputBlock->text;
+	char name[ 256 ];
+	char character = *cursor++;
+	while( character != 0 )
+	{
+		if( character < '0' || character == ':' )
+			goto parse;
+		character = *cursor++;
+	}
+	if( scopePointer == 0 )
+	{
+		++inputBlock->m_refs;
+		Rva8D0B00StringBlock *oldBlock = nameOut->m_block;
+		if( --oldBlock->m_refs == 0 )
+			Rva01337A30ReleaseTable[ 1 ]( oldBlock );
+		nameOut->m_block = input.m_block;
+		*targetOut = context;
+		return false;
+	}
+
+parse:
+	bool absolute = ParsePath8C4DA0( context, scopePointer, &input, targetOut, name );
+	Rva8D0B00String parsedName( name );
+	++parsedName.m_block->m_refs;
+	Rva8D0B00StringBlock *oldBlock = nameOut->m_block;
+	if( --oldBlock->m_refs == 0 )
+		Rva01337A30ReleaseTable[ 1 ]( oldBlock );
+	nameOut->m_block = parsedName.m_block;
+	return absolute;
+}
 
 void rva8D0B00RouteAction(Rva8D0B00State *state,
 	Rva8D0B00Context *context)
@@ -101,7 +183,6 @@ void rva8D0B00RouteAction(Rva8D0B00State *state,
 	Rva8D0B00String key;
 	Rva8D0B00Value *selected = 0;
 	{
-		Rva8D0B00Value *lookup = 0;
 
 		unsigned flags = top->m_flags;
 		int type = flags & 0x3f;
@@ -123,10 +204,9 @@ void rva8D0B00RouteAction(Rva8D0B00State *state,
 				Rva8D0B00Context *routeContext = context;
 				rva8C6320PrepareRoute(routeContext->m_first,
 					routeContext->m_second,
-					(char *)stringValue + 8, &lookup, &key);
-				top = owner->makeValue(lookup, routeContext->m_second,
+					(char *)stringValue + 8, &selected, &key);
+				top = owner->makeValue(selected, routeContext->m_second,
 					&key, 1, 1, 0);
-				selected = lookup;
 			}
 		}
 
@@ -138,7 +218,8 @@ void rva8D0B00RouteAction(Rva8D0B00State *state,
 		Rva8D0B00Value **entries = owner->m_stack;
 		Rva8D0B00Value *value = entries[index];
 		unsigned char flags = (unsigned char)(value->m_flags >> 30);
-		if (!(flags & 1)) value->release();
+		if (!(flags & 1))
+			value->release();
 	}
 	owner->m_count -= 2;
 	owner->finish(selected != 0 ? selected : context->m_first,

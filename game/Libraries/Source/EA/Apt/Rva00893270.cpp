@@ -59,7 +59,8 @@ class Rva008A9B00
 public:
 	Rva008A9B00();
 
-	void *operator new(unsigned int bytes)
+	// Preserve inline allocation without another conflicting allocator copy.
+	__declspec(dllimport) __forceinline void *operator new(unsigned int bytes)
 	{
 		return Rva008C5D70Alloc(bytes);
 	}

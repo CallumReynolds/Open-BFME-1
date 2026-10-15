@@ -62,7 +62,8 @@ extern void *(__cdecl *Rva008C5D70Alloc)(unsigned int);
 class Rva008A9B00 {
 public:
     __declspec(nothrow) Rva008A9B00();
-    __forceinline void *operator new(unsigned int bytes) { return Rva008C5D70Alloc(bytes); }
+    // Preserve inline allocation without another conflicting allocator copy.
+    __declspec(dllimport) __forceinline void *operator new(unsigned int bytes) { return Rva008C5D70Alloc(bytes); }
     void *m_vtable;
     unsigned int m_flags;
     Rva8CD130String m_string;

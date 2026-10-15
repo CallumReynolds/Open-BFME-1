@@ -20118,5 +20118,75 @@
   "after_sha256": "1b5b0b893d91bb4209d4947b764218d5b21dc4e342b5f0c14c514752f21b0286",
   "evidence": "targets/game/reverse/identity_evidence/00600be0-rva005ecfa0-two-arg-ctor.md",
   "reason": "0x00600BE0 stamps the Rva005ECFA0 vftables (0x0111327C/0x01113278/0x01113274/0x01113290) that dir32_addresses.csv records only for that class; address-derived T1Base_00600BE0 was a placeholder."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00617fb0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/LivingWorld/LivingWorldManagerDestructor.cpp",
+  "old_name": "Lwm00C",
+  "new_name": "Rva0060EBB0",
+  "before_sha256": "0e81668331e56eff1569dd3ac6955ea98b8f4a7e498ec282760158cb5526084c",
+  "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
+  "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
+  "reason": "stash-local descriptive name was invented; ILT oracle contradicts its decoration, so the class takes the address-derived name of the retail body its destructor thunk jumps to."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00617fb0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/LivingWorld/LivingWorldManagerDestructor.cpp",
+  "old_name": "Lwm1AC",
+  "new_name": "Rva00614820",
+  "before_sha256": "0e81668331e56eff1569dd3ac6955ea98b8f4a7e498ec282760158cb5526084c",
+  "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
+  "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
+  "reason": "stash-local descriptive name was invented; ILT oracle contradicts its decoration, so the class takes the address-derived name of the retail body its destructor thunk jumps to."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00617fb0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/LivingWorld/LivingWorldManagerDestructor.cpp",
+  "old_name": "Lwm210",
+  "new_name": "Rva006129E0",
+  "before_sha256": "0e81668331e56eff1569dd3ac6955ea98b8f4a7e498ec282760158cb5526084c",
+  "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
+  "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
+  "reason": "stash-local descriptive name was invented; ILT oracle contradicts its decoration, so the class takes the address-derived name of the retail body its destructor thunk jumps to."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00617fb0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/LivingWorld/LivingWorldManagerDestructor.cpp",
+  "old_name": "Lwm270",
+  "new_name": "Rva006152A0",
+  "before_sha256": "0e81668331e56eff1569dd3ac6955ea98b8f4a7e498ec282760158cb5526084c",
+  "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
+  "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
+  "reason": "stash-local descriptive name was invented; ILT oracle contradicts its decoration, so the class takes the address-derived name of the retail body its destructor thunk jumps to."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00617fb0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/LivingWorld/LivingWorldManagerDestructor.cpp",
+  "old_name": "LwmOwned264",
+  "new_name": "Rva0060B6B0",
+  "before_sha256": "0e81668331e56eff1569dd3ac6955ea98b8f4a7e498ec282760158cb5526084c",
+  "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
+  "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
+  "reason": "stash-local descriptive name was invented; ILT oracle contradicts its decoration, so the class takes the address-derived name of the retail body its destructor thunk jumps to."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00617fb0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/LivingWorld/LivingWorldManagerDestructor.cpp",
+  "old_name": "Snapshot",
+  "new_name": "Rva00D16BE8",
+  "before_sha256": "0e81668331e56eff1569dd3ac6955ea98b8f4a7e498ec282760158cb5526084c",
+  "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
+  "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
+  "reason": "thin address-named wrapper derived from the real base so the vftable symbol this destructor stores encodes its own retail address (DIR32 gate); the real Snapshot base is still derived from underneath."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00617fb0.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/LivingWorld/LivingWorldManagerDestructor.cpp",
+  "old_name": "SubsystemInterface",
+  "new_name": "Rva00D16BFC",
+  "before_sha256": "0e81668331e56eff1569dd3ac6955ea98b8f4a7e498ec282760158cb5526084c",
+  "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
+  "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
+  "reason": "thin address-named wrapper derived from the real base so the vftable symbol this destructor stores encodes its own retail address (DIR32 gate); the real SubsystemInterface base is still derived from underneath."
  }
 ]

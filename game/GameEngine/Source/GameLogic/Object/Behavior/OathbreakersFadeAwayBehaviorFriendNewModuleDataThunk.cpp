@@ -69,18 +69,18 @@ ModuleData *OathbreakersFadeAwayBehavior::friend_newModuleData(INI *ini)
 {
 	OathbreakersFadeAwayBehaviorModuleData *data =
 		(OathbreakersFadeAwayBehaviorModuleData *)operator new(0x0c);
-	OathbreakersFadeAwayBehaviorModuleData *p;
+	OathbreakersFadeAwayBehaviorModuleData *moduleData;
 
 	if (data) {
 		data->m_bfmeVptr = &g_bfmeRva0108D748ParseVtable;
 		data->m_bfme08 = 1;
-		p = data;
+		moduleData = data;
 	} else {
-		p = 0;
+		moduleData = 0;
 	}
 
 	if (ini)
-		ini->initFromINIMultiProc(p, &OathbreakersFadeAwayBehaviorFieldParse);
+		ini->initFromINIMultiProc(moduleData, &OathbreakersFadeAwayBehaviorFieldParse);
 
-	return (ModuleData *)p;
+	return (ModuleData *)moduleData;
 }

@@ -28264,7 +28264,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?bfmeAdd@Gen_001B1240@@QAEXMHH@Z,,0x001B1240,85,game/GameEngine/Source/Common/BfmeOneHundredThree.cpp,matched,
 ?bfmeAdd@Gen_0040D4A0@@QAEXXZ,,0x0040D4A0,108,game/GameEngine/Source/Common/Bfme5MakeAndAppend.cpp,matched,
 ?bfmeAdd@Gen_0045B540@@QAEHPAVBfmePointCH@@@Z,,0x0045B540,26,game/GameEngine/Source/Common/Bfme5TinySeventeen.cpp,matched,
-?bfmeAdd@Rva0045C080Owner@@QAEXM@Z,,0x0045C080,42,game/GameEngine/Source/GameClient/Rva0045C080FloatAccumulator.cpp,matched,retail ret4 at+0x27 then INT3; source-run View.cpp; opaque owner; proven x87 pop/reload blocker uses mnemonic inline asm;model=gpt-6.1-sol;host=yann-pc
 ?bfmeAddA@Gen_000E8870@@QAEXH@Z,,0x000E8870,36,game/GameEngine/Source/Common/Bfme5ThirtyEight.cpp,matched,
 ?bfmeAddAK@BfmeListAK@@QAEXPAX0@Z,,0x001DB430,301,game/GameEngine/Source/Common/BfmeConv1896.cpp,matched,BfmeListAK identity follows BfmeNodeAK ctor at 0x001DB240 and bfmeDropAK at 0x001DB1C0; retail node fields use +0x0C for key and +0x10 for next; clean STLport vector loop matches the 301-byte body
 ?bfmeAddB@Gen_000E8870@@QAEXH@Z,,0x000E88A0,36,game/GameEngine/Source/Common/Bfme5ThirtyEight.cpp,matched,
@@ -172561,3 +172560,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ??1UpdateModule@@MAE@XZ,,0x001B2B10,25,game/GameEngine/Source/GameLogic/Object/Behavior/AutoAbilityBehaviorDestructorThunk.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/001B2B10_dtor_UpdateModule.md;model=claude-opus-5-5;host=GreatFaram
 ?bfmeDelta@@YAMMM@Z,,0x0079D150,30,game/GameEngine/Source/Common/BfmeAngleDelta0079D150.cpp,matched,model=claude-opus-5.5;host=GreatFaram
 ?rva003C3F40@Glo012F1028Type@@QAEXXZ,,0x003C3F40,431,game/GameEngine/Source/GameLogic/LivingWorld/OwnerNotify003C4740.cpp,matched,clean C++ LivingWorld state snapshot writer; matched caller rva003C4740 (same TU) calls it first; saves via Gen_009D83D0 block writer into the stream named LivingWorldLogic::StateSnapshotSave and keeps buffer/size at +0xD4/+0xD8; method address-derived;model=claude-opus-5.5;host=GreatFaram
+?bfmeAdd@Rva0045C080Owner@@QAEXM@Z,,0x0045C080,42,game/GameEngine/Source/GameClient/Rva0045C080FloatAccumulator.cpp,matched,model=claude-opus-5.5;host=GreatFaram

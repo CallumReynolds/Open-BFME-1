@@ -47,7 +47,7 @@ struct Rva008A99D0Object
 	BfmeStrVKI m_text;
 };
 
-extern char g_rva008A99D0Buffer[];
+char g_rva008A99D0Buffer[2048];
 
 void rva008A99D0FormattedString(Rva008A99D0Object *object,
 	const char *format, ...)

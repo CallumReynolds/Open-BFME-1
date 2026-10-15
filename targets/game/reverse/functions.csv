@@ -38647,8 +38647,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5002b@@YAXXZ,,0x00C5002B,34,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0105002b
 ?d_00c5028b@@YAXXZ,,0x00C5028B,24,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0105028b
 ?d_00c50305@@YAXXZ,,0x00C50305,24,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01050305
-?d_00c51008@@YAXXZ,,0x00C51008,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
-?d_00c5101e@@YAXXZ,,0x00C5101E,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0105101e
 ?d_00c54950@@YAXXZ,,0x00C54950,8,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01054950
 ?d_00c54970@@YAXXZ,,0x00C54970,8,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01054970
 ?d_00c54990@@YAXXZ,,0x00C54990,8,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@01054990
@@ -149000,7 +148998,6 @@ eh_00c50f7b,,0x00C50F7B,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;objec
 eh_00c50fa8,,0x00C50FA8,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c50fcb,,0x00C50FCB,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c50feb,,0x00C50FEB,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
-eh_00c51029,,0x00C51029,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c51048,,0x00C51048,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c5107b,,0x00C5107B,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c510a6,,0x00C510A6,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
@@ -172548,3 +172545,6 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ??1LoadScreen0051BF30@@UAE@XZ,,0x0051B7E0,546,game/GameEngine/Source/GameClient/GUI/GUICallbacks/Apt/AptLoadScreen.cpp,matched,destructor of the LoadScreen0051BF30 constructed at 0x0051BF30: installs the same vtable 0x01106070 and undoes every binding the constructor makes;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ??0S4Dtor00494090@@QAE@PAX@Z,,0x00494110,132,game/GameEngine/Source/Common/S4TwoMemberDestructors.cpp,matched,constructor of the S4Dtor00494090 class: installs its vtable 0x010FA198 whose destructor 0x00494090 is matched here; member +0x218 and base constructors match the destructor's member and base;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ?rva0035BB70@BfmeThingFFF@@QAEXPAX@Z,,0x0035BB70,37,game/GameEngine/Source/GameLogic/ScriptEngine/BfmeThingFFFStep.cpp,matched,opaque BfmeThingFFF method: ECX passes unchanged to bfmeStepFFF 0x0035B3D0 via ILT 0x00016C3E; list arg is null-checked this+4; only ILT 0x00020FBD routes here;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C51008Cleanup@@YAXXZ,,0x00C51008,11,game/GameEngine/Source/Common/Rva00789220DualHashConstructor.cpp,matched,authored C++ cleanup;gen-funclet;object-symbol=$L410;parent=??0Rva00789220Holder@@QAE@PAX@Z;retail parent 0x00789220 -> handler 0x00C51029 -> FuncInfo 0x00E4071C map 0x00E406FC state1 toState0;destroys vector+4 storage via [ebp+4]+4 and ILT 0x0001570D;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C5101ECleanup@@YAXXZ,,0x00C5101E,11,game/GameEngine/Source/Common/Rva00789220DualHashConstructor.cpp,matched,authored C++ cleanup;gen-funclet;object-symbol=$L421;parent=??0Rva00789220Holder@@QAE@PAX@Z;retail parent 0x00789220 -> handler 0x00C51029 -> FuncInfo 0x00E4071C map 0x00E406FC state3 toState2;destroys second vector+4 storage via [ebp+4]+4 and ILT 0x0001570D;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+eh_00c51029,,0x00C51029,10,game/GameEngine/Source/Common/Rva00789220DualHashConstructor.cpp,matched,native-eh;object-symbol=__ehhandler$??0Rva00789220Holder@@QAE@PAX@Z;parent=??0Rva00789220Holder@@QAE@PAX@Z;FuncInfo 0x00E4071C;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr

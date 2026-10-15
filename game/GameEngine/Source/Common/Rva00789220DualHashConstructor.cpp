@@ -10,9 +10,12 @@ public:
 	void *m_table;
 };
 
+// The retail unwind map destroys this storage at vector+4 while a vector
+// is still being constructed (funclets 0x00C51008/0x00C5101E), so it is a
+// member after a leading dword rather than a base at +0.
 class Rva00789220VectorStorage
 {
-protected:
+public:
 	Rva00789220VectorStorage()
 	{
 		m_begin = 0;
@@ -20,12 +23,11 @@ protected:
 	}
 	~Rva00789220VectorStorage();
 
-	void *m_pad00;
 	void * volatile m_begin;
 	void * volatile m_end;
 };
 
-class Rva00789220VectorA : public Rva00789220VectorStorage
+class Rva00789220VectorA
 {
 public:
 	Rva00789220VectorA(unsigned int count)
@@ -34,13 +36,16 @@ public:
 		m_extra = 0;
 		bfmeReserve(count);
 	}
+	~Rva00789220VectorA();
 	void bfmeReserve(unsigned int count);
 
+	void *m_pad00;
+	Rva00789220VectorStorage m_storage;
 	void * volatile m_capacityEnd;
 	void *m_extra;
 };
 
-class Rva00789220VectorB : public Rva00789220VectorStorage
+class Rva00789220VectorB
 {
 public:
 	Rva00789220VectorB(unsigned int count)
@@ -52,6 +57,8 @@ public:
 	}
 	void bfmeReserve(unsigned int count);
 
+	void *m_pad00;
+	Rva00789220VectorStorage m_storage;
 	void * volatile m_capacityEnd;
 	void *m_extra;
 };

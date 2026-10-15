@@ -59,8 +59,7 @@ struct BfmeI1015BObject
 
 __forceinline BfmeI1015BObject *bfmeObjectAt(const void *address)
 {
-	__asm { }
-	return *reinterpret_cast<BfmeI1015BObject * const *>(address);
+	return *reinterpret_cast<BfmeI1015BObject * const volatile *>(address);
 }
 
 class BfmeI1015B

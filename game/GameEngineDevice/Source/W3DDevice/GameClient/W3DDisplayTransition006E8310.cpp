@@ -1,10 +1,6 @@
-// ?update@Rva006E8310TransitionState@@QAEXXZ
-// partial score=0.7459 date=2026-10-13
-// ?d_006e8310@@YAXXZ
-// Scratch extern data names are UNBOUND; no new retail bindings are claimed.
-// Three RGB aggregate lifetimes and interpolation operands follow retail disassembly.
-// ?update@Rva006E8310TransitionState@@QAEXXZ
 // cl: /DNDEBUG /MD /EHsc
+// Observed transition state at W3DDisplay +0x278.
+// Evidence: targets/game/reverse/identity_evidence/006e8310-transition.md
 
 typedef float Real;
 
@@ -47,7 +43,7 @@ public:
 	virtual void slot12(); virtual void slot13(); virtual void slot14();
 	virtual void slot15(); virtual void slot16(); virtual void slot17();
 	virtual void slot18(); virtual void slot19();
-	virtual int getFrame();
+	virtual unsigned int getFrame();
 };
 
 class Rva006E8310Display
@@ -83,21 +79,25 @@ public:
 	void update();
 
 	int mode;
-	int startFrame;
+	unsigned int startFrame;
 	Real duration;
 	Real red;
 	Real green;
 	Real blue;
 };
 
-extern Rva006E8310GameClient *TheGameClient;
-extern Rva006E8310Display *TheDisplay;
-extern Rva006E8310GlobalDataLayout *Rva006E8310GlobalDataPtr;
-extern Rva006C8E00Dispatch *TheTerrainRenderObject;
-extern const Real Rva006E8310Zero;
+class GameClient;
+class Display;
+class GlobalData;
+class BaseHeightMapRenderObjClass;
+
+extern GameClient *TheGameClient;
+extern Display *TheDisplay;
+extern GlobalData *TheWritableGlobalData;
+extern BaseHeightMapRenderObjClass *TheTerrainRenderObject;
+extern const Real g_bfmeZeroCY;
 extern const Real g_bfmeDefaultBU;
-extern const Real Rva006E8310Uint32Scale;
-extern const Real Rva006E8310FrameScale;
+Real g_Va012BAA30 = 0.033333335f;
 
 static Rva006E8310TerrainLighting *lightingAt(unsigned char *base,
 	int timeOfDay, unsigned int offset)
@@ -106,54 +106,57 @@ static Rva006E8310TerrainLighting *lightingAt(unsigned char *base,
 		base + offset + static_cast<unsigned int>(timeOfDay) * 0x6c);
 }
 
+// ?update@Rva006E8310TransitionState@@QAEXXZ
 void Rva006E8310TransitionState::update()
 {
-	if (duration != Rva006E8310Zero)
+	if (duration != g_bfmeZeroCY)
 	{
+		unsigned int elapsed = reinterpret_cast<Rva006E8310GameClient *>(TheGameClient)->getFrame() - startFrame;
+		Real seconds = static_cast<Real>(elapsed) * g_Va012BAA30;
+		Real from = seconds / duration;
+		if (from > 1.0f)
+		{
+			duration = 0.0f;
+			return;
+		}
 
-	unsigned int elapsed = TheGameClient->getFrame() - startFrame;
-	Real fraction = static_cast<Real>(elapsed);
-	fraction *= Rva006E8310FrameScale;
-	fraction /= duration;
-	if (fraction >= g_bfmeDefaultBU)
-	{
-		duration = Rva006E8310Zero;
-		return;
-	}
+		Real to = g_bfmeDefaultBU - from;
+		if (mode == 1)
+		{
+			Real swap = to;
+			to = from;
+			from = swap;
+		}
 
-	Real from = g_bfmeDefaultBU - fraction;
-	Real to = fraction;
-	if (mode == 1)
-	{
-		Real swap = from;
-		from = to;
-		to = swap;
-	}
+		unsigned char *global = reinterpret_cast<unsigned char *>(TheWritableGlobalData);
+		int timeOfDay = *reinterpret_cast<int *>(global + 0x218);
+		Rva006E8310TerrainLighting *terrain = lightingAt(global, timeOfDay, 0x224);
+		Rva006E8310TerrainLighting *objects = lightingAt(global, timeOfDay, 0x4ac);
+		Rva006E8310TerrainLighting *active = lightingAt(global, timeOfDay, 0x734);
 
-	unsigned char *global = reinterpret_cast<unsigned char *>(Rva006E8310GlobalDataPtr);
-	int timeOfDay = *reinterpret_cast<int *>(global + 0x218);
-	Rva006E8310TerrainLighting *terrain = lightingAt(global, timeOfDay, 0x224);
-	Rva006E8310TerrainLighting *objects = lightingAt(global, timeOfDay, 0x4ac);
-	Rva006E8310TerrainLighting *active = lightingAt(global, timeOfDay, 0x734);
+		for (int i = 0; i < 3; ++i)
+		{
+			const Rva006E8310TerrainLighting &a = terrain[i];
+			const Rva006E8310TerrainLighting &b = objects[i];
+			const Rva006E8310TerrainLighting &c = active[i];
+			Rva006E8310Rgb color;
+			color.blue = from * a.diffuse.blue + to * blue;
+			color.red = from * a.diffuse.red + to * red;
+			color.green = from * a.diffuse.green + to * green;
+			Rva006E8310Rgb objectColor;
+			objectColor.blue = from * b.diffuse.blue + to * blue;
+			objectColor.red = from * b.diffuse.red + to * red;
+			objectColor.green = from * b.diffuse.green + to * green;
+			Rva006E8310Rgb activeColor;
+			activeColor.blue = from * c.diffuse.blue + to * blue;
+			activeColor.red = from * c.diffuse.red + to * red;
+			activeColor.green = from * c.diffuse.green + to * green;
+			reinterpret_cast<Rva006E8310Display *>(TheDisplay)->setLighting(i, objectColor.red, objectColor.green, objectColor.blue);
+			reinterpret_cast<Rva006E8310Display *>(TheDisplay)->setObjectLighting(i, activeColor.red, activeColor.green, activeColor.blue);
+			reinterpret_cast<Rva006E8310GlobalDataLayout *>(TheWritableGlobalData)->current[i] = color;
+		}
 
-	Rva006E8310Rgb *current = reinterpret_cast<Rva006E8310Rgb *>(global + 0x9e0);
-	for (int i = 0; i < 3; ++i)
-	{
-		const Rva006E8310TerrainLighting &a = terrain[i];
-		const Rva006E8310TerrainLighting &b = objects[i];
-		const Rva006E8310TerrainLighting &c = active[i];
-		Rva006E8310Rgb color = { from * a.diffuse.red + to * red,
-            from * a.diffuse.green + to * green, from * a.diffuse.blue + to * blue };
-        Rva006E8310Rgb objectColor = { from * b.diffuse.red + to * red,
-            from * b.diffuse.green + to * green, from * b.diffuse.blue + to * blue };
-        Rva006E8310Rgb activeColor = { from * c.diffuse.red + to * red,
-            from * c.diffuse.green + to * green, from * c.diffuse.blue + to * blue };
-        TheDisplay->setLighting(i, objectColor.red, objectColor.green, objectColor.blue);
-        TheDisplay->setObjectLighting(i, activeColor.red, activeColor.green, activeColor.blue);
-        Rva006E8310GlobalDataPtr->current[i] = color;
-	}
-
-	if (TheTerrainRenderObject != 0)
-		TheTerrainRenderObject->invoke(timeOfDay);
+		if (TheTerrainRenderObject != 0)
+			reinterpret_cast<Rva006C8E00Dispatch *>(TheTerrainRenderObject)->invoke(timeOfDay);
 	}
 }

@@ -167,7 +167,21 @@ T1_BASE_4( 005FBBE0 )
 T1_BASE_4( 005FDE80 )
 T1_BASE_4( 005FEAD0 )
 T1_BASE_4( 005FFDB0 )
-T1_BASE_4( 00600BE0 )
+// 0x00600BE0 is a constructor of class Rva005ECFA0 (stamps its dir32 vftables;
+// identity_evidence/00600be0-rva005ecfa0-two-arg-ctor.md); only the four-vptr
+// view is modelled here.
+class T1P0_00600BE0 { public: virtual void s0(); int m_pad[ 4 ]; };
+class T1P1_00600BE0 { public: virtual void s0(); };
+class T1P2_00600BE0 { public: virtual void s0(); };
+class T1P3_00600BE0 { public: virtual void s0(); };
+class Rva005ECFA0
+	: public T1P0_00600BE0, public T1P1_00600BE0,
+	  public T1P2_00600BE0, public T1P3_00600BE0
+{
+public:
+	Rva005ECFA0( void *a, void *b );
+};
+#define T1Base_00600BE0 Rva005ECFA0
 
 T1_BASE_4W( 005FC920 )
 T1_BASE_4W( 005FD550 )

@@ -20098,5 +20098,25 @@
   "after_sha256": "b8e625262d1baeb60006deb78d41b36c7372a1976b90b2448aca5a9a2ba36a0d",
   "evidence": "targets/game/reverse/identity_evidence/006009b0-rva005ea080-owner-ctor.md",
   "reason": "0x006009B0 stamps the Rva005EA080 vftables (0x01112A88/0x0111270C/0x011126F8) that dir32_addresses.csv records only for that class; address-derived BaseY005E7940 names were a placeholder model."
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "T1Base_00600BE0",
+  "new_name": "Rva005ECFA0",
+  "before_sha256": "5ce76a8271fbaea0e44289171f231ee8c139333d3757f6ef155a0c4fc25845a8",
+  "after_sha256": "250fe80b059324d034d7c08eb398114c1d0d7877c92554706c598e89e23d7d77",
+  "evidence": "targets/game/reverse/identity_evidence/00600be0-rva005ecfa0-two-arg-ctor.md",
+  "reason": "0x00600BE0 stamps the Rva005ECFA0 vftables (0x0111327C/0x01113278/0x01113274/0x01113290) that dir32_addresses.csv records only for that class; address-derived T1Base_00600BE0 was a placeholder."
+ },
+ {
+  "old_path": "targets/game/reverse/symbols.csv",
+  "new_path": "targets/game/reverse/symbols.csv",
+  "old_name": "T1Base_00600BE0",
+  "new_name": "Rva005ECFA0",
+  "before_sha256": "61b435a765ff5dc091b0c1f0440593c9f160132e478784ff2a00997e99f77de5",
+  "after_sha256": "1b5b0b893d91bb4209d4947b764218d5b21dc4e342b5f0c14c514752f21b0286",
+  "evidence": "targets/game/reverse/identity_evidence/00600be0-rva005ecfa0-two-arg-ctor.md",
+  "reason": "0x00600BE0 stamps the Rva005ECFA0 vftables (0x0111327C/0x01113278/0x01113274/0x01113290) that dir32_addresses.csv records only for that class; address-derived T1Base_00600BE0 was a placeholder."
  }
 ]

@@ -126,8 +126,6 @@ extern void j_0004ab1f();
 
 #define g_bfmeClock Counter0040F780
 #define g_bfmeClockResult g_Va012F1290
-static const double g_bfmeClockScale = 1.0 / 30.0;
-static const double g_bfmeClockFactor = 1000.0;
 #define g_bfmeClockSeconds Interval0040F780
 
 void BfmeStrVM0::bfmeGoVM0(int state)
@@ -138,12 +136,8 @@ void BfmeStrVM0::bfmeGoVM0(int state)
 	if (state != 5)
 	{
 		int divisor = m_34->Slot40() - 2;
-		long long quotient = g_bfmeClock / divisor;
-		__asm fild qword ptr [g_bfmeClock]
-		g_bfmeClockResult = quotient;
-		__asm fdivr qword ptr [g_bfmeClockScale]
-		__asm fmul qword ptr [g_bfmeClockFactor]
-		__asm fstp qword ptr [g_bfmeClockSeconds]
+		g_bfmeClockResult = g_bfmeClock / divisor;
+		g_bfmeClockSeconds = (1.0 / 30.0) / (double)g_bfmeClock * 1000.0;
 	}
 
 	m_3C = CreateMutexA(0, 0, 0);

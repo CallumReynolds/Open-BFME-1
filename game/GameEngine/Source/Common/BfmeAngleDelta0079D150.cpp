@@ -1,22 +1,13 @@
 // cl: /DNDEBUG /MD /EHs-c-
-// The retail x87 compare pops both operands and then conditionally adds to
-// the already reloaded value. MSVC 7.1 does not reproduce that stack shape
-// from equivalent C++ expressions, so this is the narrow x87 codegen seam.
-
-extern float g_bfmeAngleTwoPi;
+// Angle fold: wraps the first angle by one full turn when it lies below the
+// second, then returns the difference. Retail reads the compiler literal
+// __real@40c90fdb (2*pi); writing it as a literal, not an extern float,
+// lets MSVC 7.1 reload the argument under the conditional fadd.
 
 // ?bfmeDelta@@YAMMM@Z
 float __cdecl bfmeDelta(float first, float second)
 {
-    __asm {
-        fld dword ptr [esp + 4]
-        fcomp dword ptr [esp + 8]
-        fld dword ptr [esp + 4]
-        fnstsw ax
-        test ah, 5
-        jp no_wrap
-        fadd dword ptr [g_bfmeAngleTwoPi]
-    no_wrap:
-        fsub dword ptr [esp + 8]
-    }
+    if (first < second)
+        first += 6.2831855f;
+    return first - second;
 }

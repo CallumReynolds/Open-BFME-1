@@ -1,7 +1,6 @@
-// ?d_00590480@@YAXXZ
-// partial score=0.893 date=2026-09-28
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 // stlport
+// Address-derived receiver view shared with the matched Rva00597FC0Client::update caller.
 
 typedef int Int;
 typedef bool Bool;
@@ -9,7 +8,6 @@ typedef bool Bool;
 #include <algorithm>
 #include <stl/_iterator_base.h>
 
-extern "C" long __ftol2( double value );
 extern "C" __declspec(dllimport) void *__cdecl memmove(
 	void *destination, const void *source, unsigned int bytes );
 
@@ -19,7 +17,7 @@ private:
 	char m_unmodelled00[ 0x118 ];
 
 public:
-	unsigned char m_field118;
+	Bool m_field118;
 };
 
 class Rva00589320Player
@@ -31,7 +29,7 @@ public:
 	Int m_rank258;
 	float m_progress25C;
 	Int m_field260;
-	volatile Int m_points264;
+	Int m_points264;
 	Int m_upper268;
 	Int m_lower26C;
 };
@@ -42,9 +40,8 @@ public:
 	Rva00589320Player *getLocalPlayer( void );
 };
 
-#pragma comment( linker, "/alternatename:?getLocalPlayer@Rva002EE330PlayerList@@QAEPAVRva00589320Player@@XZ=?j_0000762b@@YAXXZ" )
-
-#define RVA00590480_PLAYER_LIST (*(Rva002EE330PlayerList **)0x012ED748)
+extern Rva002EE330PlayerList *Rva002EE330ThePlayers;
+#define RVA00590480_PLAYER_LIST Rva002EE330ThePlayers
 
 class Rva00564970
 {
@@ -52,28 +49,38 @@ public:
 	static void go( void );
 };
 
+class Player;
+class ControlBar
+{
+public:
+	Bool Rva004A0B20( Player *player, Int index );
+};
+
 class Rva004A0B20
 {
 public:
-	Bool method( Rva00589320Player *player, Int index );
+	// ?method@Rva004A0B20@@QAE_NPAVRva00589320Player@@H@Z absent-from-retail
+	__forceinline Bool method( Rva00589320Player *player, Int index )
+	{
+		return ((ControlBar *)this)->Rva004A0B20( (Player *)player, index );
+	}
 };
 
-#pragma comment( linker, "/alternatename:?method@Rva004A0B20@@QAE_NPAVRva00589320Player@@H@Z=?j_00030ad0@@YAXXZ" )
+extern ControlBar *TheControlBar;
+#define RVA00590480_CONTROL_BAR ((Rva004A0B20 *)TheControlBar)
 
-#define RVA00590480_CONTROL_BAR (*(Rva004A0B20 **)0x012F33F8)
-
-namespace _STL
-{
-template <>
-char *__find<char *, char>( char *first, char *last, const char &value,
-	const random_access_iterator_tag &tag );
-}
+extern void *g_obj12F4C38;
 
 extern void Rva00564340( Bool on );
 extern void Rva00564750( Bool on );
 extern void Rva005642F0( Bool on );
 extern char bfmeSetRankYX( Int rank );
 extern void bfmeGoEACa( Int progress );
+
+struct Rva00590480Flags
+{
+	unsigned char b0:1, b1:1, b2:1, b3:1, b4:1, b5:1, b6:1, b7:1;
+};
 
 class Rva00590480GameClient
 {
@@ -82,23 +89,23 @@ public:
 
 private:
 	char m_unmodelled00[ 0x58 ];
-	unsigned char m_flags58;
+	Rva00590480Flags m_flags58;
 	char m_unmodelled59[ 3 ];
 	Int m_rank5C;
 	Int m_points60;
 	Int m_progress64;
 	char m_unmodelled68[ 0x450 ];
-	unsigned char m_palantir4B8[ 0x0C ];
-	unsigned char m_palantirReady4C4;
+	Bool m_palantir4B8[ 0x0C ];
+	Bool m_palantirReady4C4;
 };
 
+// ?rva00590480@Rva00590480GameClient@@QAEXXZ
 void Rva00590480GameClient::rva00590480( void )
 {
 	Rva00589320Player *player = RVA00590480_PLAYER_LIST->getLocalPlayer();
 	Int playerRank = player->m_rank258;
 	Int oldRank = m_rank5C;
 	Int zero = 0;
-	__asm xor ebx, ebx
 	if ( playerRank != oldRank )
 	{
 		if ( oldRank >= zero && playerRank > oldRank )
@@ -106,12 +113,12 @@ void Rva00590480GameClient::rva00590480( void )
 		m_rank5C = playerRank;
 	}
 
-	if ( (m_flags58 & 1) == 0 || player->m_points264 != m_points60 )
+	if ( !m_flags58.b0 || player->m_points264 != m_points60 )
 	{
 		Int points = player->m_points264;
 		if ( bfmeSetRankYX( points ) != 0 )
 		{
-			m_flags58 |= 1;
+			m_flags58.b0 = true;
 			m_points60 = player->m_points264;
 		}
 	}
@@ -138,65 +145,61 @@ void Rva00590480GameClient::rva00590480( void )
 		m_progress64 = progress;
 	}
 
-	unsigned char buttonState[ 12 ];
+	Bool buttonState[ 12 ];
 	Int index = 0;
 	for ( index = 0; index < 12; ++index )
 		buttonState[ index ] = RVA00590480_CONTROL_BAR->method( player, index );
 
-	if ( m_palantirReady4C4 == (unsigned char)zero )
+	if ( !m_palantirReady4C4 )
 	{
 		for ( index = 0; index < 12; ++index )
 		{
-			if ( buttonState[ index ] != (unsigned char)zero &&
-				m_palantir4B8[ index ] == (unsigned char)zero )
+			if ( buttonState[ index ] &&
+				!m_palantir4B8[ index ] )
 			{
-				m_palantirReady4C4 = 1;
+				m_palantirReady4C4 = true;
 				break;
 			}
 		}
 	}
 	else
 	{
-		unsigned char *spellStore = *(unsigned char **)0x012F4C38;
+		unsigned char *spellStore = (unsigned char *)g_obj12F4C38;
 		if ( spellStore == (unsigned char *)zero ||
 			spellStore[ 0x259 ] == (unsigned char)zero )
 		{
-			char searchValue = 1;
-			_STL::random_access_iterator_tag tag;
-			char *found = _STL::__find(
-				(char *)buttonState, (char *)buttonState + 12,
-				searchValue, tag );
-			if ( found == (char *)buttonState + 12 )
-				m_palantirReady4C4 = 0;
+			Bool *found = _STL::find(buttonState, buttonState + 12, true);
+			if ( found == buttonState + 12 )
+				m_palantirReady4C4 = false;
 		}
 		else
-			m_palantirReady4C4 = 0;
+			m_palantirReady4C4 = false;
 	}
 
 	memmove( m_palantir4B8, buttonState, 12 );
-	unsigned char ready = m_palantirReady4C4;
-	if ( ((m_flags58 >> 4) & 1) != ready )
+	if ( m_flags58.b4 != m_palantirReady4C4 )
 	{
-		Rva00564340( ready != 0 );
-		m_flags58 = (unsigned char)((m_flags58 & 0xEF) | (ready << 4));
+		Rva00564340( m_palantirReady4C4 );
+		m_flags58.b4 = m_palantirReady4C4;
 	}
 
 	if ( player->m_field04 != (Rva00589320PlayerHeader *)zero )
 	{
-		unsigned char playerFlag = player->m_field04->m_field118;
-		if ( (m_flags58 & 2) == 0 || ((m_flags58 >> 2) & 1) != playerFlag )
+		Bool playerFlag = player->m_field04->m_field118;
+		if ( !m_flags58.b1 || playerFlag != m_flags58.b2 )
 		{
-			Rva00564750( playerFlag != 0 );
-			m_flags58 = (unsigned char)((m_flags58 & 0xC3) |
-				((playerFlag & 1) << 2) | 2);
+			Rva00564750( playerFlag );
+			m_flags58.b2 = playerFlag;
+			m_flags58.b1 = true;
+			m_flags58.b3 = false;
+			m_flags58.b4 = false;
+			m_flags58.b5 = false;
 		}
 	}
 
-	if ( (m_flags58 & 8) == 0 )
+	if ( !m_flags58.b3 )
 	{
 		Rva005642F0( true );
-		m_flags58 |= 8;
+		m_flags58.b3 = true;
 	}
 }
-
-#pragma comment( linker, "/alternatename:?rva00590480@Rva00590480GameClient@@QAEXXZ=?j_00590480@@YAXXZ" )

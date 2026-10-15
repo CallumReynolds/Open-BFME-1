@@ -195,8 +195,16 @@ class Gen_007e86c0 { public: void m(); };
 class Rva007E8810Message
 {
 public:
- Rva007E8810Message();
  ~Rva007E8810Message();
+};
+// BFME-2 Rva007E8810Ctor.cpp identifies the constructor binding; BFME-1
+// callees.py independently resolves 0x007E8810 to this canonical spelling.
+// Keep the separately owned cleanup out of line, through its existing type.
+class Rva007E8810
+{
+public:
+ Rva007E8810();
+ __forceinline ~Rva007E8810() { ((Rva007E8810Message *)this)->~Rva007E8810Message(); }
  unsigned m_00, m_04, m_08, m_0c, m_10, m_14, m_18, m_1c, m_20, m_24, m_28, m_2c;
  char m_30;
 };
@@ -227,7 +235,7 @@ void BfmeThingUNC::rva0080A680(Rva0080A680Input *input)
 {
  bool response = (input->m_04 & 0x80000000) && (input->m_04 & 0x40000000);
  Rva007F91D0((Rva00800E50Header *)input, "<-L");
- Rva007E8810Message message;
+ Rva007E8810 message;
  message.m_10 = input->m_08;
  message.m_14 = input->m_0c;
  message.m_20 = input->m_04;
@@ -244,7 +252,7 @@ void BfmeThingUNC::rva0080A680(Rva0080A680Input *input)
   if (sink) sink->accept((Rva00809500Entry *)&message);
  } else {
   switch ((int)message.m_1c) {
-   case 0x4547414d: ((Rva00809E40Owner *)this)->rva00809E40(&message); break;
+   case 0x4547414d: ((Rva00809E40Owner *)this)->rva00809E40((Rva007E8810Message *)&message); break;
    case 0x45434e4c: ((Rva0080A110Owner *)this)->route((Rva0080A110Message *)&message); break;
    case 0x47444154: rva0080A3C0((Rva0080A3C0Input *)&message); break;
    case 0x474c5354: ((Rva0080A280Owner *)this)->rva0080A280((Rva0080A280Input *)&message); break;

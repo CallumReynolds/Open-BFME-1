@@ -29,16 +29,6 @@ public:
 class NetDisconnectScreenOffCommandMsg : public NetCommandMsg
 {
 public:
-	enum MagicEnum { GLUE_NOT_IMPLEMENTED = 0 };
-	static void *operator new(unsigned int size, MagicEnum)
-	{
-		return ::operator new(size);
-	}
-	static void operator delete(void *pointer, MagicEnum)
-	{
-		::operator delete(pointer);
-	}
-
 	NetDisconnectScreenOffCommandMsg();
 	void setNewFrame(UnsignedInt frame);
 	UnsignedInt m_newFrame;
@@ -86,7 +76,7 @@ void BFMEDisconnectManager::sendDisconnectScreenOff(Int slot, void *conMgr)
 	if (slot < 0 || slot >= 8)
 		return;
 
-	NetDisconnectScreenOffCommandMsg *message = new(NetDisconnectScreenOffCommandMsg::GLUE_NOT_IMPLEMENTED) NetDisconnectScreenOffCommandMsg;
+	NetDisconnectScreenOffCommandMsg *message = new NetDisconnectScreenOffCommandMsg;
 
 	message->setNewFrame(TheGameLogic->getFrame());
 	ConnectionManager *connectionManager = (ConnectionManager *)conMgr;

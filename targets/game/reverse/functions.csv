@@ -38004,7 +38004,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0074d461@@YAXXZ,,0x0074D461,52,game/gen_asm/d_00745b10.asm,matched,gen-dump;ghidra=Catch@00b4d461
 ?d_0074d6d0@@YAXXZ,,0x0074D6D0,1,game/GameEngine/Source/Common/Rva0074D6D0TinyBody.cpp,matched,one-byte carved return at a proven ret boundary
 ?d_0074f1f0@@YAXXZ,,0x0074F1F0,2683,game/gen_asm/d_006e2ac0.asm,matched,gen-dump;carved start=rel32-call/jmp end=ret+int3 callers=1
-?d_007527c0@@YAXXZ,,0x007527C0,485,game/gen_asm/d_00733000.asm,matched,gen-dump;bounds=high
 ?d_00752a20@@YAXXZ,,0x00752A20,281,game/gen_asm/d_00752a20.asm,matched,gen-dump;bounds=high
 ?d_00752b80@@YAXXZ,,0x00752B80,465,game/gen_asm/d_00745b10.asm,matched,gen-dump;ghidra=FUN_00b52b80
 ?d_00754970@@YAXXZ,,0x00754970,119,game/gen_asm/d_00753460.asm,matched,gen-dump;ghidra=FUN_00b54970
@@ -172562,3 +172561,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?readEntire@Rva007852E0@@YAPAXABVAsciiString@@@Z,,0x007852E0,19,game/GameEngine/Source/Common/Open2Conv007.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/007852e0-native-loader-context.md;Open BFME 2 Rva000A9F48FileOpen.cpp donor 000A9F85; source-local address namespace retains readEntire operation; native loader context and private EAX ABI; exact 19-byte RET plus INT3; evidence=targets/game/reverse/identity_evidence/007852e0-native-loader-context.md;model=gpt-6.1-sol;host=fleet
 ?rva0023B9F0@BfmeHordeContainRoster@@QAEXXZ,,0x0023B9F0,321,game/GameEngine/Source/GameLogic/Object/Contain/HordeContain/HordeContainSlotRecenter0023B9F0.cpp,matched,Slot recentering with complete caller and value-helper evidence; preserves bank address identity; evidence=targets/game/reverse/identity_evidence/0023b9f0-recenter.md;model=gpt-6.1-sol;host=fleet
 ?method@Rva003CC940@@QAE?AURva003CC940Point@@XZ,,0x003CC940,437,game/GameEngine/Source/GameLogic/LargeGroupAudio/Rva003CC940Position.cpp,matched,Exact C++ reconstruction; opaque ABI and identity evidence=targets/game/reverse/identity_evidence/003cc940-exact-position.md;model=gpt-6.1-sol;host=fleet
+?method@Rva007527C0@@QBE_NABU1@@Z,,0x007527C0,485,game/GameEngine/Source/Common/Rva007527C0Comparator.cpp,matched,Opaque address-derived comparator; complete thiscall ABI; evidence=targets/game/reverse/identity_evidence/0x007527c0-comparator.md;model=gpt-6.1-sol;host=fleet

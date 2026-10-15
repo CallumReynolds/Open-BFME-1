@@ -2,8 +2,8 @@
 // The vtable at 0x0110CCFC and the matched TextTypeTransition methods identify
 // this constructor at retail address 0x005A0620. The local layout includes the
 // two frame-bound fields that BFME inserted before the position and size fields.
-// MSVC 7.1 does not keep the retail 0x1e value in ecx across the zero stores, so
-// the three field stores use the compiler's inline assembly bridge.
+// Assigning m_endFrame first (plain members) makes MSVC 7.1 hold 0x1e in ECX
+// across the zero stores and sink both 0x1e stores after them, as retail does.
 
 class Rva00489210
 {
@@ -47,8 +47,8 @@ public:
 	virtual void slot05();
 	virtual void slot06();
 
-	volatile int m_startFrame;
-	volatile int m_endFrame;
+	int m_startFrame;
+	int m_endFrame;
 	int m_posX;
 	int m_posY;
 	int m_sizeX;
@@ -61,15 +61,11 @@ public:
 
 TextTypeTransition::TextTypeTransition()
 {
-	__asm mov ecx, 30
+	m_endFrame = 30;
 	m_startFrame = 0;
 	m_win = 0;
 	m_dStr = 0;
-	__asm
-	{
-		mov [esi + 0x14], ecx
-		mov [esi + 0x04], ecx
-	}
+	m_frameLength = 30;
 	m_drawState = -1;
 	m_isForward = 1;
 }

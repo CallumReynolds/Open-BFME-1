@@ -1,11 +1,7 @@
-// ?apply@Rva0073D6D0@@UAEXI@Z
-// partial score=0.9641 date=2026-10-13
-// cl: /DNDEBUG /MD /Oa /Igame/Libraries/Include/Lib
-// Retail 0x0073D6D0 uses an address-derived receiver and camera view.
+// cl: /DNDEBUG /MD /Igame/Libraries/Include/Lib
+// Address-derived W3DView camera snapshot restore at retail 0x0073D6D0.
+// Identity and ABI: targets/game/reverse/identity_evidence/0073d6d0-snapshot-linkage.md.
 #include <math.h>
-extern "C" void _ReadWriteBarrier();
-#pragma intrinsic(_ReadWriteBarrier)
-
 
 #include "Coord3D.h"
 class Rva006DF550 {
@@ -27,8 +23,8 @@ public:
 };
 class TerrainLogic;
 extern TerrainLogic *TheTerrainLogic;
-extern float Rva012F9DD0;
-extern float Rva012F9DD4;
+static float Rva012F9DD0;
+static float Rva012F9DD4;
 extern float Rva012F9DD8;
 extern Coord3D Rva012F9DE4;
 
@@ -229,7 +225,6 @@ void Rva0073D6D0::apply(unsigned unused)
     slot103();
     if (field2439) {
         field006C = Rva012F9DD8;
-        _ReadWriteBarrier();
         field000C = Rva012F9DE4;
         field003C = Rva012F9DD4;
         field0040 = Rva012F9DD0;

@@ -38253,7 +38253,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_009efd40@@YAXXZ,,0x009EFD40,504,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_00defd40
 ?d_009eff50@@YAXXZ,,0x009EFF50,3186,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00deff50
 ?d_009f0fa0@@YAXXZ,,0x009F0FA0,1228,game/gen_asm/d_009f0fa0.asm,matched,gen-dump;switch-carved start=int3-aligned end=switch-table+int3 refs=0
-?d_009f4900@@YAXXZ,,0x009F4900,225,game/gen_asm/d_009f2f00.asm,matched,gen-dump;ghidra=FUN_00df4900
 ?d_009f5600@@YAXXZ,,0x009F5600,45,game/gen_asm/d_009f5600.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009f6dbe@@YAXXZ,,0x009F6DBE,24,game/gen_asm/d_009f2f00.asm,matched,gen-dump;ghidra=FUN_00df6dbe
 ?d_009f6f2e@@YAXXZ,,0x009F6F2E,24,game/gen_asm/d_009f2f00.asm,matched,gen-dump;ghidra=FUN_00df6f2e
@@ -172555,3 +172554,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?update@AIAttackMeleeHordeWaitPathState@@UAE?AW4StateReturnType@@XZ,,0x00175C80,358,game/GameEngine/Source/GameLogic/AI/AIAttackMeleeHordeWaitPathState_update.cpp,matched,retail boundary and constructor identity; no asm barrier;model=claude-opus-5.5;host=GreatFaram
 ?rva003BD9C0@Glo012F1028Type@@QAEXPAXPAURva003BDA10String@@0@Z,,0x003BD9C0,63,game/GameEngine/Source/Common/Glo012F1028Type_Rva003BDA10.cpp,matched,receiver Glo012F1028 proven by caller 0x003AD560 +0x170 via ILT 0x00036264; inline isEmpty predicate keeps retail arm order;model=claude-opus-5.5;host=GreatFaram
 ?reset@TerrainLogic@@UAEXXZ,,0x001ACF90,183,game/GameEngine/Source/GameLogic/Map/TerrainLogic_reset.cpp,matched,Open-BFME convert 183B TerrainLogic::reset from gen-dump; SubsystemInterface this+4; getFirstBridge slot 37; P48 vector clear; bridge unlink then delete through virtual dtor slot 0;model=claude-opus-5.5;host=GreatFaram
+?calculate_009F4900@Gen009F5040@@QAEXPAUGen009F5040Node@@PAH11@Z,,0x009F4900,225,game/Libraries/Source/partitionmanager/Gen009F5040Calculate.cpp,matched,Native member ABI and returned first-stage search value; evidence=targets/game/reverse/identity_evidence/009f4900-returned-search-stage.md;model=gpt-6.1-sol;host=conversion-worker

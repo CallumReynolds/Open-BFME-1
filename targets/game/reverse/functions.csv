@@ -38322,7 +38322,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_009b1ed0@@YAXXZ,,0x009B1ED0,701,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db1ed0
 ?d_009b2190@@YAXXZ,,0x009B2190,916,game/gen_asm/d_009a4740.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00db2190
 ?d_009b5530@@YAXXZ,,0x009B5530,768,game/gen_asm/d_009af200.asm,matched,gen-dump;ghidra=FUN_00db5530
-?d_009bfa40@@YAXXZ,,0x009BFA40,4068,game/gen_asm/d_009b6740.asm,matched,gen-dump;ghidra=FUN_00dbfa40
 ?d_009c2ce0@@YAXXZ,,0x009C2CE0,2374,game/gen_asm/d_009a7b00.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_009c4c10@@YAXXZ,,0x009C4C10,16,game/gen_asm/d_00993b80.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret-tail refs=1
 ?d_009c4c20@@YAXXZ,,0x009C4C20,32,game/gen_asm/d_00993b80.asm,matched,gen-dump;int3-carved start=aligned-after-terminal end=ret+int3 refs=1
@@ -172557,3 +172556,4 @@ _bfmeReload1221,,0x008D3AE0,281,game/GameEngine/Source/Common/BfmeReload1221.cpp
 ??0Rva009F54E0TreeVector@@QAE@I@Z,,0x009F54E0,57,game/Libraries/Source/partitionmanager/Rva009F54E0TreeVector.cpp,matched,Open BFME 2 donor partitionmanager_impl.cpp at game.dat 0x00627AA0; RET4 at +0x36 then INT3; evidence=targets/game/reverse/identity_evidence/009f54e0-donor-vector.md;model=gpt-6.1-sol;host=fleet
 ?rva00902FF0@@YAXHHH@Z,,0x00902FF0,27,game/Libraries/Source/WWVegas/WW3D2/Rva00902FF0DebugForward.cpp,matched,Open BFME 2 donor GapBodiesGE41.cpp at game.dat 0x0011C300; preceding RET and INT3; RET at +0x1A then INT3; evidence=targets/game/reverse/identity_evidence/00902ff0-donor-debug.md;model=gpt-6.1-sol;host=fleet
 ?addTail@Rva00945FC0@@QAEXPAVMultiListObjectClass@@@Z,,0x00945FC0,22,game/Libraries/Source/WWVegas/WW3D2/Rva00945FC0AddTail.cpp,matched,Open BFME 2 donor GapBodiesGE43.cpp at game.dat 0x00144650; INT3 before entry; RET4 at +0x13 then INT3; evidence=targets/game/reverse/identity_evidence/00945fc0-donor-list.md;model=gpt-6.1-sol;host=fleet
+_DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source/Common/BfmeDeblockBand9BFA40.cpp,matched,Open BFME 2 donor VP6/DeblockNonFilteredBandWmt.cpp at game.dat 0x001D0340;address identity and seven-dword cdecl from decoded BFME 1 caller and installer;identity_evidence/009bfa40-donor.md;model=gpt-6.1-sol;host=fleet

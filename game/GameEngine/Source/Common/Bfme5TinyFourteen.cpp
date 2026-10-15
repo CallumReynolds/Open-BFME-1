@@ -1,3 +1,5 @@
+#include <string.h>
+
 // Five more tiny ones: a bit mask that is complemented unless a flag is set,
 // two scans that answer one on the first non-empty slot, a count divided by
 // thirty-six and a value stored with a deadline.
@@ -63,6 +65,21 @@ unsigned char __cdecl bfmeAnySix(int *slots)
 	}
 
 	return 0;
+}
+
+// Retail 0x001EB3C0, 24 bytes, cdecl: loads its pointer argument and zeroes
+// six dwords. Only reference is the unused ILT thunk 0x00019FFB, so no owner
+// is proven.
+class Rva001EB3C0
+{
+public:
+	static void clearSix(int *slots);
+};
+
+// ?clearSix@Rva001EB3C0@@SAXPAH@Z
+void Rva001EB3C0::clearSix(int *slots)
+{
+	memset(slots, 0, 6 * sizeof(int));
 }
 
 class Gen_001C0D80

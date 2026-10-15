@@ -3530,8 +3530,25 @@ def unrecorded_dir32_problem(sym, base, identities, symbol_map=None):
         return f"the name encodes 0x{value:08X} but retail reads 0x{base:08X}"
     if data.get(sym) == base:
         return None
+    # A primary vtable is owned the way dir32_record.py retire proves it: retail's
+    # table at BASE reaches a matched, non-generated deleting destructor of the
+    # same class and no other class's (dir32_record_guard.function_owner_problem).
+    if sym.startswith("??_7"):
+        import dir32_record_guard
+        starts = set(at) | set(data.values())
+        if dir32_record_guard.function_owner_problem(
+                sym, base, rows=_dir32_guard_rows(), starts=starts) is None:
+            return None
     return (f"nothing in the ledger owns 0x{base:08X}. Give the datum a data row first "
             "(tools/add_data_match.py), or use an address name (g_Va<VA>)")
+
+
+@functools.lru_cache(maxsize=1)
+def _dir32_guard_rows():
+    """functions.csv as dir32_record_guard.function_rows yields it."""
+    return [(row["name"], int(row["target_rva"], 16), row.get("source") or "",
+             row.get("status") or "", row.get("notes") or "")
+            for row in load_all_function_rows()]
 
 
 def propose_dir32_addresses(sym2base, whitelist):

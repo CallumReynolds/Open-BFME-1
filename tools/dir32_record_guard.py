@@ -13,10 +13,14 @@ a hand-edited address moved every reference's expectation at once.
     message, so .githooks/commit-msg runs `--commit-msg FILE` with this file AS
     OF HEAD (an edit cannot approve itself) and re-checks, against the staged
     tree, the owner's two conditions (ruling 2026-10-09): NEW is ledger-owned
-    at OLD's address (a data_rows.csv row at that VA, or a `?j_` row in
-    functions.csv at that RVA) and recorded nowhere else, and OLD (decorated
-    and bare) occurs nowhere under game/ or inputs/reference/shims/. Every
-    deletion needs a trailer and every trailer a matching deletion.
+    at OLD's address (a data_rows.csv row at that VA, a `?j_` row in
+    functions.csv at that RVA, the one matched non-generated functions.csv
+    row at that RVA linking under NEW, or a primary vtable ??_7C@@6B@ whose
+    retail slots reach a matched non-generated ??_G/??_E row of C) and
+    recorded nowhere else, and OLD (decorated and bare) occurs nowhere under
+    game/ or inputs/reference/shims/ except in a game/gen_asm|gen_small dump
+    no functions.csv row builds. Every deletion needs a trailer and every
+    trailer a matching deletion.
   * An added line must be one the tool would accept for an unrecorded name:
     build.unrecorded_dir32_problem against the record as of the base
     revision, so the added lines cannot vouch for each other.
@@ -40,6 +44,10 @@ DATA_ROWS = "targets/game/reverse/data_rows.csv"
 FUNCTIONS = "targets/game/reverse/functions.csv"
 IMAGE_BASE = 0x400000
 SOURCE_ROOTS = ("game/", "inputs/reference/shims/")
+# Vendored libraries (.lib archives) carry their own decorated names; a name
+# spelled there is a real upstream identity some vendored object references.
+VENDOR_ROOTS = ("inputs/vendor/",)
+GEN_ROOTS = ("game/gen_asm/", "game/gen_small/")
 RETIRE_RE = re.compile(r"^Dir32-Retire:[ \t]*(\S+)[ \t]+0x([0-9A-Fa-f]{1,8})[ \t]+for[ \t]+(\S+)[ \t]*$",
                        re.MULTILINE)
 TOOL = "python3 tools/dir32_record.py retire OLD --for NEW --msg <message file>"
@@ -71,14 +79,198 @@ def parse_trailers(message):
 
 
 def bare_identifier(name):
-    """The identifier a decorated name spells: ?Foo@Bar@@3HA -> Foo, _g_x -> g_x."""
-    if name.startswith("?"):
+    """The identifier a decorated name spells: ?Foo@Bar@@3HA -> Foo, _g_x -> g_x,
+    and a vtable ??_7Foo@@6B@ its class, Foo."""
+    if name.startswith("??_7"):
+        head = name[4:].split("@", 1)[0]
+    elif name.startswith("?"):
         head = name[1:].split("@", 1)[0]
+    elif name.startswith("__"):
+        head = name[1:]  # __real@41200000 and other compiler names: no identifier
     elif name.startswith("_"):
-        head = name[1:]
+        head = re.sub(r"@\d+$", "", name[1:])  # _Foo@8: __stdcall C name
     else:
         head = name
     return head if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", head) else None
+
+
+def function_rows(tree=":"):
+    """(name, rva, source, status, notes) for every functions.csv row in TREE."""
+    text = git_show_text(f"{tree}{FUNCTIONS}") or ""
+    for row in csv.DictReader(text.splitlines()):
+        try:
+            rva = int(row["target_rva"], 16)
+        except (KeyError, TypeError, ValueError):
+            continue
+        yield row["name"], rva, row.get("source") or "", row.get("status") or "", row.get("notes") or ""
+
+
+def is_generated(source):
+    return source.startswith(GEN_ROOTS)
+
+
+def object_symbol(notes):
+    match = re.search(r"(?:^|;)object-symbol=([^;\s]+)", notes)
+    return match.group(1) if match else None
+
+
+def authored_row(source, status, name, notes):
+    """A matched, non-generated row that links under its own name."""
+    return (status == "matched" and not is_generated(source)
+            and object_symbol(notes) in (None, name))
+
+
+EXE = "inputs/baselines/bfme1/retail-1.03-unpacked/files/lotrbfme.exe"
+_IMAGE = {}
+
+
+def read_retail(va, size):
+    """SIZE bytes of the retail image at VA, or None outside its sections."""
+    if "sections" not in _IMAGE:
+        try:
+            data = (Path(root()) / EXE).read_bytes()
+        except OSError:
+            data = b""
+        sections = []
+        if len(data) > 0x40:
+            pe = int.from_bytes(data[0x3C:0x40], "little")
+            count = int.from_bytes(data[pe + 6:pe + 8], "little")
+            table = pe + 24 + int.from_bytes(data[pe + 20:pe + 22], "little")
+            for i in range(count):
+                at = table + 40 * i
+                vsize, vaddr, rsize, raw = (int.from_bytes(data[at + 8 + 4 * k:at + 12 + 4 * k], "little")
+                                            for k in range(4))
+                characteristics = int.from_bytes(data[at + 36:at + 40], "little")
+                sections.append((vaddr, min(vsize, rsize), raw, bool(characteristics & 0x20000000)))
+        _IMAGE["data"], _IMAGE["sections"] = data, sections
+    rva = va - IMAGE_BASE
+    for vaddr, length, raw, _code in _IMAGE["sections"]:
+        if vaddr <= rva and rva + size <= vaddr + length:
+            return _IMAGE["data"][raw + rva - vaddr:raw + rva - vaddr + size]
+    return None
+
+
+def in_code(va):
+    read_retail(IMAGE_BASE, 0)
+    rva = va - IMAGE_BASE
+    return any(code and vaddr <= rva < vaddr + length for vaddr, length, _raw, code in _IMAGE["sections"])
+
+
+VTABLE_RE = re.compile(r"^\?\?_7(.+)@@6B@$")
+VTABLE_SLOTS = 512
+
+
+def code_references(va):
+    """True when retail code holds VA as an imm32/disp32 anywhere: a ctor/dtor
+    `mov [reg], imm32` marks a table start, so a slot walk must stop there."""
+    if "code" not in _IMAGE:
+        read_retail(IMAGE_BASE, 0)
+        _IMAGE["code"] = b"".join(_IMAGE["data"][raw:raw + length]
+                                  for _vaddr, length, raw, code in _IMAGE["sections"] if code)
+    return _IMAGE["code"].find(va.to_bytes(4, "little")) >= 0
+
+
+def vtable_slot_targets(va, starts=frozenset()):
+    """RVAs the vtable at VA reaches, one ILT `jmp rel32` followed per slot. Retail
+    has no RTTI locators between tables, so the slots run until the first dword
+    that is not a code address or the first address in STARTS (another recorded
+    name or data row, or an address retail code references: the next table's start)."""
+    out = set()
+    for slot in range(VTABLE_SLOTS):
+        if slot and (va + 4 * slot in starts or code_references(va + 4 * slot)):
+            break
+        raw = read_retail(va + 4 * slot, 4)
+        if raw is None:
+            break
+        target = int.from_bytes(raw, "little")
+        if not in_code(target):
+            break
+        out.add(target - IMAGE_BASE)
+        jump = read_retail(target, 5)
+        if jump and jump[0] == 0xE9:
+            out.add(((target + 5 + int.from_bytes(jump[1:], "little", signed=True)) & 0xFFFFFFFF)
+                    - IMAGE_BASE)
+    return out
+
+
+def data_vas(tree=":"):
+    out = set()
+    for row in csv.DictReader((git_show_text(f"{tree}{DATA_ROWS}") or "").splitlines()):
+        try:
+            at = int(row["address"], 16)
+        except (KeyError, TypeError, ValueError):
+            continue
+        out.add(at + IMAGE_BASE if row.get("address_kind") == "rva" else at)
+    return out
+
+
+DTOR_RE = re.compile(r"^\?\?_[GE](.+?)@@")
+def is_dtor_of(name, cls):
+    """NAME is ??_G/??_E of exactly class CLS: the qualified name ends at `@@`
+    and a plain virtual access code follows (U/M/E: public/protected/private
+    virtual). A further `@` would mean CLS is only a prefix of a template's
+    argument list; W/O/G codes are this-adjusting thunks, which sit in
+    secondary tables, so they never prove a primary vtable."""
+    for kind in ("??_G", "??_E"):
+        head = f"{kind}{cls}@@"
+        if name.startswith(head) and name[len(head):len(head) + 1] in ("U", "M", "E"):
+            return True
+    return False
+
+
+SECONDARY_VTABLE_RE = re.compile(r"^\?\?_7.+@@6B(?!@$).+$")
+
+
+def function_owner_problem(name, va, tree=":", old_name=None, recorded=None, rows=None, starts=None):
+    """None when NAME is ledger-proven at VA as code, else why not.
+      * a function: the one matched, non-generated functions.csv row at VA's RVA
+        is NAME (it links under NAME, no other authored row claims the RVA);
+      * a primary vtable ??_7C@@6B@: a slot of retail's table at VA reaches
+        (directly or through one ILT jmp) a matched, non-generated ??_G/??_E
+        deleting destructor of the same class C. A class's deleting destructor
+        is its own (derived classes get their own), so it sits in C's vtable
+        only; a ctor is no proof, since it also stores its bases' vtables."""
+    rows = list(function_rows(tree)) if rows is None else rows
+    rva = va - IMAGE_BASE
+    match = VTABLE_RE.match(name)
+    if match:
+        cls = match.group(1)
+        if old_name and SECONDARY_VTABLE_RE.match(old_name):
+            return f"{old_name} names a secondary (multiple-inheritance) table, {name} a primary one"
+        dtors = {r for n, r, src, st, notes in rows
+                 if is_dtor_of(n, cls) and authored_row(src, st, n, notes)}
+        if not dtors:
+            return f"no matched, non-generated ??_G/??_E deleting destructor row of {cls} proves its vtable"
+        if starts is None:
+            starts = set((recorded or {}).values()) | data_vas(tree)
+        reached = vtable_slot_targets(va, starts)
+        if not dtors & reached:
+            return f"retail's table at 0x{va:08X} does not reach a matched deleting destructor of {cls}"
+        # Unrecorded neighbours leave the table's end unknown: a walk that also
+        # reaches another class's deleting destructor ran into a second table.
+        foreign = sorted({n for n, r, *_ in rows if r in reached and DTOR_RE.match(n)
+                          and not is_dtor_of(n, cls)})
+        if foreign:
+            return (f"retail's slots from 0x{va:08X} also reach {foreign[0]}, another class's "
+                    "deleting destructor; the table's end is unknown")
+        return None
+    here = [(n, src, st, notes) for n, r, src, st, notes in rows
+            if r == rva and st == "matched" and not n.startswith("?j_")]
+    mine = [row for row in here if row[0] == name]
+    thunk = read_retail(va, 1)
+    if mine and thunk == b"\xE9":
+        return f"0x{va:08X} is a jmp thunk; retire for its ?j_ row, not the body's name"
+    if not mine:
+        return f"no matched functions.csv row {name} at RVA 0x{rva:08X}"
+    _n, src, st, notes = mine[0]
+    if is_generated(src):
+        return f"{name} is a generated row ({src}), not an identity"
+    if object_symbol(notes) not in (None, name):
+        return f"{name} links as object-symbol {object_symbol(notes)}, not under its own name"
+    others = sorted({n for n, src, _st, _notes in here if n != name and not is_generated(src)})
+    if others:
+        return f"RVA 0x{rva:08X} has other matched rows ({others[0]}); one identity per body"
+    return None
 
 
 def owners_at(va, tree=":"):
@@ -107,6 +299,10 @@ def owners_at(va, tree=":"):
     return out
 
 
+def row_sources(tree=":"):
+    return {src for _n, _r, src, _st, _notes in function_rows(tree)}
+
+
 def source_mentions(name):
     """Indexed paths under game/ or the shims that spell NAME, decorated or bare."""
     hits = set()
@@ -114,9 +310,28 @@ def source_mentions(name):
         if not needle:
             continue
         cmd = ["git", "grep", "--cached", "-l", "-F"] + (["-w"] if word else []) + ["-e", needle]
-        got = subprocess.run(cmd + ["--", *SOURCE_ROOTS], cwd=root(), capture_output=True, text=True)
+        roots = SOURCE_ROOTS + (() if word else VENDOR_ROOTS)
+        got = subprocess.run(cmd + ["--", *roots], cwd=root(), capture_output=True, text=True)
         hits.update(p for p in got.stdout.splitlines() if p)
-    return sorted(hits)
+    # A generated dump no functions.csv row builds is never compiled, linked or
+    # DIR32-checked, and nobody may edit it: its spelling references nothing.
+    # A dump some row still builds keeps blocking. A later conversion of such a
+    # dump (list_naked_candidates.py) must spell NEW, not OLD: OLD is retired.
+    dead = {p for p in hits if is_generated(p)}
+    if dead:
+        dead -= row_sources()
+    return sorted(hits - dead)
+
+
+PLACEHOLDER_RE = re.compile(
+    r"(?i)(?:rva|va|gen|glo|dup_|d_|j_|obj|data?|addr|sub_|fun_|t\d\w*_)_?[0-9a-f]{5,8}"
+    r"|(?:^|[?@_$])(?:bfme|gen_|genx|dup_|d_)")
+
+
+def is_placeholder(name):
+    """An address-derived or generated stand-in name (Rva00819920, Gen_0014B790,
+    bfmeCb974D, ?d_00819920, T1A2_0110F9CC, g_Va0109FB78)."""
+    return bool(PLACEHOLDER_RE.search(bare_identifier(name) or name))
 
 
 def retire_problem(old_name, va, new_name, old, new):
@@ -127,11 +342,23 @@ def retire_problem(old_name, va, new_name, old, new):
         return f"{old_name} is recorded at {where}, not 0x{va:08X}"
     if new_name == old_name:
         return "NEW must differ from OLD"
-    if new_name not in owners_at(va):
-        return (f"{new_name} is not ledger-owned at 0x{va:08X}: it needs a data_rows.csv row "
-                "at that VA (tools/add_data_match.py) or a ?j_ functions.csv row at that RVA")
+    code_owner = new_name not in owners_at(va)
+    if code_owner:
+        code = function_owner_problem(new_name, va, old_name=old_name, recorded=old)
+        if code:
+            return (f"{new_name} is not ledger-owned at 0x{va:08X}: it needs a data_rows.csv row "
+                    "at that VA (tools/add_data_match.py), a ?j_ functions.csv row at that RVA, "
+                    "the matched non-generated function row there, or a vtable a matched deleting "
+                    f"destructor of its class proves ({code})")
     if new_name in new and new[new_name] != va:
         return f"{new_name} is recorded at 0x{new[new_name]:08X}, not 0x{va:08X}"
+    # A code owner (a function row or a vtable) is admitted only when OLD's
+    # absence can be shown and nothing descriptive is lost.
+    if code_owner and bare_identifier(old_name) is None:
+        return (f"{old_name} spells no plain identifier (ctor/dtor/operator/template), so a source "
+                "search cannot show nothing still references it")
+    if code_owner and is_placeholder(new_name) and not is_placeholder(old_name):
+        return f"{new_name} is an address-derived/placeholder name; it may not replace descriptive {old_name}"
     mentions = source_mentions(old_name)
     if mentions:
         return (f"{old_name} (or {bare_identifier(old_name)}) still appears in "

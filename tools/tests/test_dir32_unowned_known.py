@@ -12,7 +12,9 @@ import build  # noqa: E402
 import gate_baseline as gb  # noqa: E402
 
 ROW = {"name": "?f@@YAXXZ", "source": "game/f.cpp"}
-OLD = "??_7?$SubsystemDeleter@VAI@@@@6B@"
+# Not SubsystemDeleter<AI>: retail 0x01075E20 reaches its matched ??_G, which
+# now proves that vtable (dir32_record_guard.function_owner_problem).
+OLD = "??_7?$SubsystemDeleter@VNoLedgerOwner@@@@6B@"
 
 
 def _full_gate(refs, known_text):

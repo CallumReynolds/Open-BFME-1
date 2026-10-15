@@ -4,9 +4,12 @@
   retire OLD --for NEW [--msg FILE]
       Delete OLD's line when the owner's two conditions hold (ruling 2026-10-09):
       NEW is ledger-owned at OLD's recorded address (a data_rows.csv row at that
-      VA, or a `?j_` functions.csv row at that RVA) and recorded nowhere else,
-      and OLD, decorated or as its bare identifier, occurs nowhere under game/ or
-      inputs/reference/shims/ in the index. Prints the trailer
+      VA, a `?j_` functions.csv row at that RVA, the one matched non-generated
+      functions.csv row at that RVA linking under NEW, or a primary vtable
+      ??_7C@@6B@ whose retail slots reach a matched non-generated ??_G/??_E
+      row of class C) and recorded nowhere else, and OLD, decorated or as its
+      bare identifier, occurs nowhere under game/ or inputs/reference/shims/ in
+      the index (a generated dump no functions.csv row builds does not count). Prints the trailer
       `Dir32-Retire: OLD 0x<VA> for NEW`; --msg appends it to that message file.
       The commit-msg hook (tools/dir32_record_guard.py --commit-msg, as of HEAD)
       refuses a deletion without a matching trailer and re-checks both conditions.

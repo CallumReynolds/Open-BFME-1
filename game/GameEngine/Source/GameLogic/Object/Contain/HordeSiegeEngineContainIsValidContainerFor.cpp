@@ -23,7 +23,7 @@ class Object
 public:
 	unsigned char m_unmodelled_000[0x90];
 	ObjectStatusMaskType m_status;
-	unsigned int isKindOf(unsigned int mask) const
+	unsigned int testStatusWord1(unsigned int mask) const
 	{
 		return m_status.m_words[1] & mask;
 	}
@@ -88,7 +88,7 @@ Bool HordeSiegeEngineContain::isValidContainerFor(const Object *object,
 	Bool checkCapacity) const
 {
 	register Object *rider = (Object *)object;
-	if (rider->isKindOf(0x20000000))
+	if (rider->testStatusWord1(0x20000000))
 		return false;
 
 	const Object *owner = getObject();

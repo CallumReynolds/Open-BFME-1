@@ -1,21 +1,14 @@
-// ?rva001f96e0@DynamicPortalBehaviour@@QAEXXZ
-// partial score=0.8468 date=2026-10-01
-// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath
+// ?createWaypoints@DynamicPortalBehaviour@@QAEXXZ
+// cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/GameEngine/Source/GameLogic/Object
 // stlport
-// Retail returns at +0x3D2, confirming a 979-byte body.
-// Caller 0x001F9C20 reaches slot 1 of vtable 0x010A3950, which identifies the receiver as DynamicPortalBehaviour.
-// The caller and vtable do not name the method, so the source uses an address-derived name.
-// The draft reads each path through begin() and end() accessors.
-// It emits 979 bytes with 150 bytes outside relocation operands and seven structural differences.
-// The compiler still writes the module pointer at [esp+0x2C], while retail writes it at [esp+0x18].
-
 
 #define _STLP_NO_EXCEPTIONS 1
 
+#define _Vector_base Rva001F9330VectorBase
 #include <vector>
+#undef _Vector_base
 #include "ascii_string.h"
 #include "coord3d.h"
-
 
 typedef int Int;
 typedef unsigned int UnsignedInt;
@@ -25,23 +18,15 @@ typedef bool Bool;
 #define TRUE true
 #define FALSE false
 
-extern const AsciiString BFMEAsciiEmptyString;
-#pragma comment(linker, "/alternatename:?BFMEAsciiEmptyString@@3VAsciiString@@B=?TheEmptyString@AsciiString@@2V1@B")
+#define BFMEAsciiEmptyString AsciiString::TheEmptyString
 
 class Matrix3D;
 
-class Object
-{
-public:
-	Int getMultiLogicalBonePosition(const char *boneNamePrefix, Int maxBones,
-		Coord3D *positions, Matrix3D *transforms, Bool convertToWorld, Int extra) const;
-
-	UnsignedInt rva074() const { return m_rva074; }
-
-private:
-	char m_pad00[0x74];
-	UnsignedInt m_rva074;
-};
+#define OBJECT_TU_MEMBERS \
+    Int getMultiLogicalBonePosition(const char *boneNamePrefix, Int maxBones, Coord3D *positions, Matrix3D *transforms, Bool convertToWorld, Int extra) const; \
+    UnsignedInt rva074() const { return m_id; }
+#include "object.h"
+#undef OBJECT_TU_MEMBERS
 
 class GameLogic
 {
@@ -75,7 +60,7 @@ private:
 
 extern AI *TheAI;
 
-// Twelve-byte location argument of the node constructor (pinned spelling).
+// Trivial coordinate copy passed by pointer to the Waypoint constructor.
 struct Rva001AB600Arg
 {
 	Real x, y, z;
@@ -87,13 +72,20 @@ struct Rva001F96E0Six
 	UnsignedInt w[6];
 };
 
-// The 0xB0-byte node built here (constructor 0x001AB600 via ILT 0x0001ADB1).
+// Field view of the Waypoint built through constructor 0x001AB600.
 class Rva001A2D50Node
 {
 public:
-	Rva001A2D50Node(Int id, AsciiString name, const Rva001AB600Arg &location,
+	Rva001A2D50Node(Int id, AsciiString name, const Coord3D *location,
 		AsciiString s1, AsciiString s2, AsciiString s3, Bool flag, Int kind,
 		AsciiString s4);
+
+	void setRva88_001F96E0(const Rva001F96E0Six &mask)
+	{
+		m_rva84 = TRUE;
+		m_rva88 = mask;
+	}
+	void setRvaA0_001F96E0(Bool value) { m_rvaA0 = value; }
 
 	char m_pad00[0x20];
 	Rva001A2D50Node *m_links[8];
@@ -142,7 +134,7 @@ public:
 class DynamicPortalBehaviour
 {
 public:
-	void rva001f96e0();
+	void createWaypoints();
 
 	const Rva001F96E0ModuleData *getModuleData() const { return m_moduleData; }
 	Object *getObject() const { return m_object; }
@@ -156,7 +148,8 @@ private:
 	Bool m_built;
 };
 
-void DynamicPortalBehaviour::rva001f96e0()
+// ?createWaypoints@DynamicPortalBehaviour@@QAEXXZ
+void DynamicPortalBehaviour::createWaypoints()
 {
 	Coord3D positions[16];
 	const Rva001F96E0ModuleData *data = getModuleData();
@@ -180,15 +173,14 @@ void DynamicPortalBehaviour::rva001f96e0()
 			const Coord3D *src = &positions[it->first];
 			Rva001AB600Arg location = *(const Rva001AB600Arg *)src;
 			Rva001A2D50Node *node = new Rva001A2D50Node(0x7ffffffe,
-				AsciiString("#dynamicportal_wp"), location,
+				AsciiString("#dynamicportal_wp"), (const Coord3D *)&location,
 				BFMEAsciiEmptyString, BFMEAsciiEmptyString, BFMEAsciiEmptyString,
 				FALSE, it->second, BFMEAsciiEmptyString);
 			node->m_rvaA8 = objectValue;
 			node->m_rva68 = TRUE;
 			node->m_rva6c = data->m_rva74;
-			node->m_rva84 = TRUE;
-			node->m_rvaA0 = data->m_rvaC5;
-			node->m_rva88 = data->m_rva8c;
+			node->setRva88_001F96E0(data->m_rva8c);
+			node->setRvaA0_001F96E0(data->m_rvaC5);
 			if (startFrame > 0)
 				node->m_rvaAC = startFrame;
 			m_nodes[i] = node;
@@ -201,8 +193,8 @@ void DynamicPortalBehaviour::rva001f96e0()
 	{
 		Rva001F96E0Path path = *pathIt;
 		Int first = *path.begin();
+		Int last = path[path.size() - 1];
 		Int count = path.size();
-		Int last = *(path.end() - 1);
 		if (!built)
 		{
 			Rva001A2D50Node *end = m_nodes[last];
@@ -221,8 +213,10 @@ void DynamicPortalBehaviour::rva001f96e0()
 			{
 				Int next = *(path.begin() + j + 1);
 				Int prev = *(path.begin() + j);
-				m_nodes[next]->m_rva48 = FALSE;
-				m_nodes[prev]->m_rva44 = m_nodes[next];
+				Rva001A2D50Node *nextNode = m_nodes[next];
+				nextNode->m_rva48 = FALSE;
+				Rva001A2D50Node *nextNodeAgain = m_nodes[next];
+				m_nodes[prev]->m_rva44 = nextNodeAgain;
 			}
 		}
 	}

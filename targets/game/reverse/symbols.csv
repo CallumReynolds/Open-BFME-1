@@ -91173,3 +91173,5 @@ _bfmeFormatText,0x009D6220,address-only compatibility pin for 10 frozen game/gen
 ?d_009bfa40@@YAXXZ,0x009BFA40,legacy address-only compatibility pin; complete callback ABI and target extent in identity_evidence/009bfa40-donor.md
 ?d_00894ff0@@YAXXZ,0x00894FF0,legacy address-only compatibility pin for retired generated name; retained by game/gen_asm/d_00891ca0.asm
 ?d_007852e0@@YAXXZ,0x007852E0,legacy address-only compatibility pin for retired generated name; retained by game/gen_asm/d_006f60e0.asm
+??0Rva001A2D50Node@@QAE@HVAsciiString@@PBVCoord3D@@000_NH0@Z,0x001AB600,Address-derived pointer-ABI view; complete constructor and caller evidence targets/game/reverse/identity_evidence/001f96e0-waypoint-construction.md
+?d_001f96e0@@YAXXZ,0x001F96E0,Address-only compatibility for the retired dump name; game/GameEngine/Source/Common/BfmeThreeHundredSixteen.cpp still calls it; body is ?createWaypoints@DynamicPortalBehaviour@@QAEXXZ

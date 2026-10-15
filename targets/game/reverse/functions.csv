@@ -36856,7 +36856,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_001f7430@@YAXXZ,,0x001F7430,675,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp end=jmp+int3 callers=1
 ?d_001f7b10@@YAXXZ,,0x001F7B10,289,game/gen_asm/d_001f11e0.asm,matched,gen-dump;ghidra=FUN_005f7b10
 ?d_001f8e20@@YAXXZ,,0x001F8E20,273,game/gen_asm/d_001f11e0.asm,matched,gen-dump;ghidra=FUN_005f8e20
-?d_001f96e0@@YAXXZ,,0x001F96E0,979,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_005f96e0
 ?d_001fd1c0@@YAXXZ,,0x001FD1C0,722,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_005fd1c0
 ?d_001fe4d0@@YAXXZ,,0x001FE4D0,12,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,object-symbol=?invokeIgnoringArgument@EmbeddedVirtualSlot2CallOwner@@QAEXH@Z;Open-BFME5 clean C++ embedded virtual slot 2 call
 ?d_001ff060@@YAXXZ,,0x001FF060,242,game/gen_asm/d_001f11e0.asm,matched,gen-dump;ghidra=FUN_005ff060
@@ -172562,3 +172561,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?destroyMember@Rva002408E0View@@QAEXPAVObject@@@Z,,0x002408E0,439,game/GameEngine/Source/GameLogic/Object/Contain/HordeContain/MemberDestroy002408E0.cpp,matched,Secondary HordeContain receiver; address-derived method spelling; one asm flag store for verified VC7.1 epilogue scheduling blocker; evidence=targets/game/reverse/identity_evidence/002408e0-owner-fields-and-epilogue.md;model=gpt-6.1-sol;host=fleet
 ?changeToFormation@HordeContain@@UAEXPBVThingTemplate@@@Z,,0x002382D0,543,game/GameEngine/Source/GameLogic/Object/Contain/HordeContain/HordeContainReplace002382D0.cpp,matched,Address-qualified secondary-interface slot 25; evidence=targets/game/reverse/identity_evidence/0x002382d0-exact-getter-lifetimes.md;model=gpt-6.1-sol;host=fleet
 ?visit@Rva21ABF0Worker@@QAEXPAX@Z,,0x00225700,484,game/GameEngine/Source/Common/Rva21ABF0WorkerVisit.cpp,matched,address-derived ILT 0x3288 visitor; caller Rva21ABF0RingDispatch::dispatchAll at 0x0021ABF0; ret4 at +0x1E1 INT3 at +0x1E4 verify 484B extent;model=deepseek-v4.1-flash;host=GreatFaram
+?createWaypoints@DynamicPortalBehaviour@@QAEXXZ,,0x001F96E0,979,game/GameEngine/Source/GameLogic/Object/Behavior/DynamicPortalBehaviourRva001F96E0.cpp,matched,Complete receiver and constructor ABI; seven unwind actions strict; evidence targets/game/reverse/identity_evidence/001f96e0-waypoint-construction.md;model=gpt-6.1-sol;host=fleet

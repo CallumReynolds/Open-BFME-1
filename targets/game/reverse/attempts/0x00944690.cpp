@@ -1,8 +1,14 @@
 // ?method@Rva00944690Scene@@UAEXPAVCameraClass@@@Z
+// partial score=0.9257 date=2026-10-15
+// stlport
+#define __PLACEMENT_VEC_NEW_INLINE
+#define _STLP_NO_EXCEPTIONS 1
+// ?method@Rva00944690Scene@@UAEXPAVCameraClass@@@Z
 // partial score=0.55 date=2026-09-24
-// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWSaveLoad
+// cl: /D_STLP_USE_STATIC_LIB /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWSaveLoad
 #include "../WWLib/always.h"
 #include <stdlib.h>
+#include <slist>
 #include "../WWLib/bittype.h"
 #include "../WWDebug/wwdebug.h"
 #define MEMPOOL_H
@@ -114,13 +120,6 @@ struct Rva00944690Node
 	RenderObjClass *object;
 };
 
-namespace _STL {
-template <bool threads, int inst> class __node_alloc {
-public:
-	static void _M_deallocate(void *node, unsigned int size);
-};
-}
-
 struct Rva00944690LocalList
 {
 	Rva00944690Node *head;
@@ -130,62 +129,63 @@ struct Rva00944690LocalList
 		Rva00944690Node *node = head;
 		while (node) {
 			Rva00944690Node *next = node->next;
-			_STL::__node_alloc<true, 0>::_M_deallocate(node, 8);
+			std::allocator<Rva00944690Node>().deallocate(node, 1);
 			node = next;
 		}
 	}
 };
 
+static __forceinline bool visibleSphere(CameraClass *camera, const SphereClass &sphere)
+{
+    return CollisionMath::Overlap_Test(camera->Get_Frustum(), sphere) != CollisionMath::OUTSIDE;
+}
+
+// Open BFME 2: Code/Libraries/Source/WWVegas/WW3D2/SimpleSceneClassVisibilityCheck.cpp.
 void Rva00944690Scene::method(CameraClass *camera)
 {
-	Gen_00943CF0 *grid = (Gen_00943CF0 *)((char *)this + 0x34);
-	NonRefRenderObjListIterator grid_objects(&list_bc);
-	for (grid_objects.First(); !grid_objects.Is_Done(); ) {
-		RenderObjClass *object = grid_objects.Peek_Obj();
-		int first;
-		int second;
-		int third;
-		grid->first(object, &first, &second, &third);
-		int old_key = *(int *)((char *)object + 0x94);
-		if (old_key < 0) {
-			grid->link(object, first, second, third);
-		} else {
-			int key = ((first << 10) | second) << 10 | third;
-			if (old_key != key) {
-				grid->unlink(object);
-				grid->link(object, first, second, third);
-			}
-		}
-		grid_objects.Next();
-	}
+    NonRefRenderObjListIterator grid_objects(&list_bc);
+    for (; !grid_objects.Is_Done(); grid_objects.Next()) {
+        RenderObjClass *object = grid_objects.Peek_Obj();
+        volatile int first, second, third;
+        ((Gen_00943CF0 *)((char *)this + 0x34))->first(object, (int *)&first, (int *)&second, (int *)&third);
+        int old_key = *(volatile int *)((char *)object + 0x94);
+        int out_third = third;
+        int out_second = second;
+        int out_first = first;
+        if (old_key >= 0) {
+            int key = ((out_first << 10) | out_second) << 10 | out_third;
+            if (key == old_key) continue;
+            ((Gen_00943CF0 *)((char *)this + 0x34))->unlink(object);
+        }
+        ((Gen_00943CF0 *)((char *)this + 0x34))->link(object, out_first, out_second, out_third);
+    }
 
-	while (!list_bc.Is_Empty())
-		list_bc.remove_head();
+	NonRefRenderObjListClass *dirty = &list_bc;
+	while (dirty->Peek_Head() != 0)
+		dirty->Remove_Head();
 	++generation;
-	list_ec.Reset_List();
+	RefMultiListClass<RenderObjClass> *visible = &list_ec;
+	visible->Reset_List();
 
-	Rva00944690LocalList local;
+	std::slist<RenderObjClass *> local;
 	((Rva00944430 *)((char *)this + 0x34))->rva00944430(
-		(void **)&local.head, camera, 0);
-	Rva00944690Node *node = local.head;
-	while (node) {
-		RenderObjClass *object = node->object;
+		(void **)&local, camera, 0);
+	std::slist<RenderObjClass *>::iterator node = local.begin();
+	while (node != local.end()) {
+		RenderObjClass *object = *node;
 		Rva00944690RenderObjectSlots *slots =
 			(Rva00944690RenderObjectSlots *)object;
-		if (slots->slot103() ||
-			CollisionMath::Overlap_Test(camera->Get_Frustum(),
-				object->Get_Bounding_Sphere()) != CollisionMath::OUTSIDE) {
-			if (list_ec.add(object))
-				++*(int *)((char *)object + 4);
-			slots->slot98(this, generation);
+		if (object->Is_Force_Visible() ||
+			!camera->Cull_Sphere(object->Get_Bounding_Sphere())) {
+			visible->Add(object);
+			object->Set_Visible((int)this, generation);
 		}
-		node = node->next;
+		++node;
 	}
 
 	MultiListIterator<RenderObjClass> extra_objects(&list_d4);
 	for (extra_objects.First(); !extra_objects.Is_Done(); extra_objects.Next()) {
 		RenderObjClass *object = extra_objects.Peek_Obj();
-		if (list_ec.add(object))
-			++*(int *)((char *)object + 4);
+		visible->Add(object);
 	}
 }

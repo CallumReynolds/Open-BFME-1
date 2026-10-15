@@ -38626,7 +38626,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c4b6e0@@YAXXZ,,0x00C4B6E0,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104b6e0
 ?d_00c4b8c8@@YAXXZ,,0x00C4B8C8,25,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104b8c8
 ?d_00c4b9b8@@YAXXZ,,0x00C4B9B8,17,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104b9b8
-?d_00c4d0f0@@YAXXZ,,0x00C4D0F0,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
 ?d_00c4d2b0@@YAXXZ,,0x00C4D2B0,11,game/gen_asm/d_00c44ba8.asm,matched,gen-dump;ghidra=Unwind@0104d2b0
 ?d_00c4dc38@@YAXXZ,,0x00C4DC38,41,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c4dc61@@YAXXZ,,0x00C4DC61,41,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
@@ -38685,7 +38684,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c55644@@YAXXZ,,0x00C55644,31,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@01055644
 ?d_00c5566b@@YAXXZ,,0x00C5566B,31,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105566b
 ?d_00c5568a@@YAXXZ,,0x00C5568A,33,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@0105568a
-?d_00c55ae0@@YAXXZ,,0x00C55AE0,8,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@01055ae0
 ?d_00c55b00@@YAXXZ,,0x00C55B00,8,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@01055b00
 ?d_00c56490@@YAXXZ,,0x00C56490,25,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@01056490
 ?d_00c56e20@@YAXXZ,,0x00C56E20,11,game/gen_asm/d_00c550fd.asm,matched,gen-dump;ghidra=Unwind@01056e20
@@ -38823,7 +38821,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5fdba@@YAXXZ,,0x00C5FDBA,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
 ?d_00c5fdc5@@YAXXZ,,0x00C5FDC5,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c5fdcd@@YAXXZ,,0x00C5FDCD,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fdd8@@YAXXZ,,0x00C5FDD8,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
 ?d_00c5fde0@@YAXXZ,,0x00C5FDE0,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
 ?d_00c5fdeb@@YAXXZ,,0x00C5FDEB,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c5fdf3@@YAXXZ,,0x00C5FDF3,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
@@ -38839,7 +38836,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5fe5d@@YAXXZ,,0x00C5FE5D,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
 ?d_00c5fe68@@YAXXZ,,0x00C5FE68,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
 ?d_00c5fe70@@YAXXZ,,0x00C5FE70,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fe7b@@YAXXZ,,0x00C5FE7B,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
 ?d_00c5fe83@@YAXXZ,,0x00C5FE83,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
 ?d_00c5fe8e@@YAXXZ,,0x00C5FE8E,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
 ?d_00c5fe96@@YAXXZ,,0x00C5FE96,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
@@ -172548,3 +172544,7 @@ eh_00c51029,,0x00C51029,10,game/GameEngine/Source/Common/Rva00789220DualHashCons
 ?Rva00C42D50Cleanup@@YAXXZ,,0x00C42D50,8,game/Libraries/Source/WWVegas/WWLib/stlport_narrow_string_substr.cpp,matched,authored C++ cleanup;gen-funclet;object-symbol=$L560;parent=?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;retail parent 0x006550F0 -> handler 0x00C42D58 -> FuncInfo 0x00E32800 state0 toState-1;destroys the result string base via [ebp+4] and ILT 0x00016DE7;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 eh_00c42d58,,0x00C42D58,10,game/Libraries/Source/WWVegas/WWLib/stlport_narrow_string_substr.cpp,matched,native-eh;object-symbol=__ehhandler$?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;parent=?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;FuncInfo 0x00E32800;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ?slot04@Rva004C1B60Adapter@@UAE?AVRva004C1510Handle@@XZ,,0x004C1AE0,101,game/GameEngine/Source/GameClient/GUI/ControlBar/ControlBarRva004C1B60.cpp,matched,adapter vtable CFD964 slot1 per 4C1B60 TU; heap copy of the three-dword adapter returned via owning handle stolen by caller 4C15D0; placeholder slot name kept;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C4D0F0Cleanup@@YAXXZ,,0x00C4D0F0,8,game/Libraries/Source/WWVegas/WW3D2/distlod.cpp,matched,gen-funclet;object-symbol=$L20175;parent=??1DistLODClass@@UAE@XZ;retail parent 0x00725F40 -> handler 0x00C4D0F8 -> FuncInfo 0x00E3CC98 state0 toState-1;eh_state_pins twin-proven by state index;destroys RenderObjClass base via [ebp-10];model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C5FDD8Cleanup@@YAXXZ,,0x00C5FDD8,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27868;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail parent 0x00989A20 -> handler 0x00C5FEBC -> FuncInfo 0x00E4F39C state12 toState11;eh_state_pins twin-proven by state index;destroys via [ebp+4] and ILT 0x00001F05;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C5FE7BCleanup@@YAXXZ,,0x00C5FE7B,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L28037;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail parent 0x00989A20 -> handler 0x00C5FEBC -> FuncInfo 0x00E4F39C state29 toState28;eh_state_pins twin-proven by state index;destroys via [ebp+4] and ILT 0x00001F05;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C55AE0Cleanup@@YAXXZ,,0x00C55AE0,8,game/Libraries/Source/WWVegas/WWLib/stlport_collate_narrow_transform.cpp,matched,gen-funclet;object-symbol=$L14319;parent=?do_transform@?$collate@D@_STL@@MBE?AV?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@2@PBD0@Z;retail parent 0x00844400 -> handler 0x00C55AE8 -> FuncInfo 0x00E44CC4 state0 toState-1;eh_state_pins unique label;destroys the result string via [ebp+4] and ILT 0x00016DE7;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr

@@ -15572,6 +15572,7 @@ name,address,notes
 ?_M_insert_overflow@?$vector@PAURva00418C50Elem@@V?$allocator@PAURva00418C50Elem@@@_STL@@@_STL@@IAEXPAPAURva00418C50Elem@@ABQAU3@ABU__true_type@2@I_N@Z,0x00004AED,ILT jmp 0x00418C50; Drawable::xfer m_298 push_back (0x0041E1C3 and 0x0041B97A/0x0041BCDA); replaces the disproved vector<void*> pin (void* overflow is 0x000670F0)
 ?_M_insert_overflow@?$vector@PAURva003C9DD0Item@@V?$allocator@PAURva003C9DD0Item@@@_STL@@@_STL@@IAEXPAPAURva003C9DD0Item@@ABQAU3@ABU__true_type@2@I_N@Z,0x00010596,ILT to the STLport vector<T*> insert-overflow body 0x003C8F80 called at 0x003C9DD0+0xAF with (pos &x &__true_type 1 1) by the collect body
 ?_M_insert_overflow@?$vector@PAURva0060B710IconObject@@V?$allocator@PAURva0060B710IconObject@@@_STL@@@_STL@@IAEXPAPAURva0060B710IconObject@@ABQAU3@ABU__true_type@2@I_N@Z,0x00032ECF,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x0060B710 calls; autopin
+?_M_insert_overflow@?$vector@PAURva00754970Record@@V?$allocator@PAURva00754970Record@@@_STL@@@_STL@@IAEXPAPAURva00754970Record@@ABQAU3@ABU__true_type@2@I_N@Z,0x0003E14E,ILT to 0x00753FC0 (ledger Gen_f265_b7a8aa_00753fc0); the only call 0x00754970 makes through this thunk is its pointer-vector push_back overflow
 ?_M_insert_overflow@?$vector@PAUSiegeDockEntry00206FF0@@V?$allocator@PAUSiegeDockEntry00206FF0@@@_STL@@@_STL@@IAEXPAPAUSiegeDockEntry00206FF0@@ABQAU3@ABU__true_type@2@I_N@Z,0x0003A292,body 0x002065C0; SiegeDockingBehavior::xfer +0x157 push_back overflow call with ecx=this+0x24 and 5 args; body ret 0x14 and 4-byte stride; same ILT as the existing SiegeDockingEntry pin respelled to the address-token element type
 ?_M_insert_overflow@?$vector@PAUSiegeDockingEntry@@V?$allocator@PAUSiegeDockingEntry@@@_STL@@@_STL@@IAEXPAPAUSiegeDockingEntry@@ABQAU3@ABU__true_type@2@I_N@Z,0x0003A292,retail SiegeDockingBehavior::xfer call target at ILT 0x0003A292 reaches vector helper body 0x002065C0
 ?_M_insert_overflow@?$vector@PAVAnim2D@@V?$allocator@PAVAnim2D@@@_STL@@@_STL@@IAEXPAPAVAnim2D@@ABQAV3@ABU__true_type@2@I_N@Z,0x00471700,ILT 00001852 targets this body; 00471900 stores landed Anim2D ctor results; callee independently decoded as STLport 4-byte vector growth with thiscall ret20
@@ -78550,7 +78551,6 @@ name,address,notes
 ?bfmeGrow@Gen_0065DD10@@AAEXPAX@Z,0x0001B018,Open-BFME5 the grow routine the bounded append at 0x0065DD10 calls
 ?bfmeGrow@Gen_006AB0B0@@AAEXPAX@Z,0x0000B61D,Open-BFME5 the grow routine the bounded append at 0x006AB0B0 calls
 ?bfmeGrow@Gen_006AC5D0@@AAEXPAX@Z,0x0000B61D,Open-BFME5 the grow routine the bounded append at 0x006AC5D0 calls
-?bfmeGrowERB@BfmeVecERB@@QAEXPAPAVBfmeNodeERB@@0PAPAVBfmeOwnerERB@@HH@Z,0x0003E14E,pin
 ?bfmeGrowQV@BfmeVecQV@@QAEXPAUBfmeElemQV@@0PAPAXHH@Z,0x0003827B,pin
 ?bfmeGrowUPC@@YAXPAUBfmeStateUPC@@H@Z,0x009959C0,pin
 ?bfmeGrowV15@BfmeStrV15@@QAEXXZ,0x000132CD,Open-BFME5 /Od range-check grow thunk for 0x00831780

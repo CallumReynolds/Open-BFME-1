@@ -1,11 +1,15 @@
-// ?inGameTailA0@W3DInGameUI@@UAEXXZ
-// partial score=0.6 date=2026-09-24
-// cl: /DNDEBUG /MD /EHsc /Igame/GameEngine/Include/Precompiled
+// ?inGameTailA0_0043B4F0@W3DInGameUI@@UAEXXZ
+// stlport
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/display /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
+#define Matrix4x4 Matrix4
 #include "PreRTS.h"
+#include <math.h>
+#include "GameClient/Display.h"
 
 typedef unsigned char byte;
 
-class View {};
+
+
 
 #define DECLARE_TEN(prefix) \
 	virtual void prefix##0(); virtual void prefix##1(); \
@@ -13,22 +17,6 @@ class View {};
 	virtual void prefix##4(); virtual void prefix##5(); \
 	virtual void prefix##6(); virtual void prefix##7(); \
 	virtual void prefix##8(); virtual void prefix##9();
-
-class DisplaySlots
-{
-public:
-	DECLARE_TEN(displayA)
-	virtual void displayA10();
-	virtual Int getWidth();   // +0x2c slot 11
-	virtual Int getHeight();  // +0x30 slot 12
-};
-
-class Display : public DisplaySlots
-{
-public:
-	virtual View *getFirstView();
-	virtual View *getNextView(View *view);
-};
 
 class WindowManagerSlots
 {
@@ -95,14 +83,11 @@ struct MilitarySubtitleRecord
 	UnsignedInt m_color;          // +0x40
 };
 
-extern "C" void __cdecl GameGetColorComponents(Int color, byte *r, byte *g,
-	byte *b, byte *a);
-extern "C" __declspec(dllimport) double __cdecl BfmeFloorER(double value);
 
-#define g_bfme40BC00 (*(const Real *)0x01075334)
-#define g_bfme40BC28 (*(const Real *)0x01075358)
-#define g_bfme40BC0C (*(const Real *)0x0107533C)
-#define g_bfme4C8615 (*(const Real *)0x0108615C)
+
+#define g_bfme40BC00 1.0f
+#define g_bfme40BC0C 0.5f
+#define g_bfme4C8615 30.0f
 
 class W3DInGameUI : public W3DInGameUISlots
 {
@@ -110,7 +95,7 @@ public:
 	virtual void draw();
 	virtual void preDraw();
 	virtual void postDraw();
-	virtual void inGameTailA0();
+	virtual void inGameTailA0_0043B4F0();
 	virtual void inGameTailA1(); virtual void inGameTailA2();
 	virtual void inGameTailA3(); virtual void inGameTailA4();
 	virtual void inGameTailA5(); virtual void inGameTailA6();
@@ -139,9 +124,8 @@ public:
 
 #undef DECLARE_TEN
 
-extern Display *TheDisplay;
-
-void W3DInGameUI::inGameTailA0()
+// ?inGameTailA0_0043B4F0@W3DInGameUI@@UAEXXZ
+void W3DInGameUI::inGameTailA0_0043B4F0()
 {
 	Int index = 0;
 	Int startY;
@@ -152,35 +136,38 @@ void W3DInGameUI::inGameTailA0()
 	Real fraction = (Real)frameDelta / m_fadeDuration;
 	fraction = g_bfme40BC00 - fraction;
 
-	Int width = TheDisplay->getWidth();
+	UnsignedInt width = TheDisplay->getWidth();
 	Real fx = (Real)(UnsignedInt)width * m_widthFraction + g_bfme40BC0C;
-	Int startX = fast_float2long_round((Real)BfmeFloorER((double)fx));
+	Int startX = fast_float2long_round((Real)floor((double)fx));
 
-	Int height = TheDisplay->getHeight();
+	UnsignedInt height = TheDisplay->getHeight();
 	Real fy = (Real)(UnsignedInt)height * m_heightFraction + g_bfme40BC0C;
-	startY = fast_float2long_round((Real)BfmeFloorER((double)fy));
+	startY = fast_float2long_round((Real)floor((double)fy));
 
 	byte a, r, g, b;
 	GameGetColorComponents((Int)m_subtitle->m_color, &r, &g, &b, &a);
 	UnsignedInt dropColor = ((UnsignedInt)a) << 24;
 
 	Int cursorY = startY;
-	Int blockY;
-	Int measuredW, measuredH;
+	ICoord2D blockPos;
+	Int &blockY = blockPos.y;
+	Int measuredW;
 	measuredW = 0;
 	Int byteOffset = 8;
 	for (; (UnsignedInt)index <= (UnsignedInt)m_subtitle->m_lineCount; ++index, byteOffset += 4)
 	{
+		Int measuredH;
 		blockY = cursorY;
-		((DisplayLine **)((char *)m_subtitle + byteOffset))[0]->getSize(&measuredW, &measuredH);
-		((DisplayLine **)((char *)m_subtitle + byteOffset))[0]->setColor(m_subtitle->m_color, dropColor);
-		Int lineX = startX + *(Int *)((char *)m_subtitle + byteOffset + 0x10);
-		((DisplayLine **)((char *)m_subtitle + byteOffset))[0]->draw(lineX, cursorY, 1, 1);
+		m_subtitle->m_lines[index]->getSize(&measuredW, &measuredH);
+		m_subtitle->m_lines[index]->setColor(m_subtitle->m_color, dropColor);
+		Int lineX = startX + m_subtitle->m_lineX[index];
+		m_subtitle->m_lines[index]->draw(lineX, cursorY, 1, 1);
 		cursorY += measuredH;
 	}
 
-	Int blockX = (Int)((Real)m_subtitle->m_lineX[m_subtitle->m_lineCount]
-		+ (g_bfme40BC00 - fraction) * g_bfme4C8615 + measuredW + startX);
+	Int &blockX = blockPos.x;
+	blockX = (Int)((Real)(m_subtitle->m_lineX[m_subtitle->m_lineCount] + measuredW)
+		+ (g_bfme40BC00 - fraction) * g_bfme4C8615 + startX);
 	a = (byte)(Int)((Real)a * fraction);
 	UnsignedInt blockColor = (((UnsignedInt)a) << 24)
 		| (((UnsignedInt)r) << 16) | (((UnsignedInt)g) << 8) | b;

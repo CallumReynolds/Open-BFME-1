@@ -1,5 +1,5 @@
 // ?update@SpawnTownsmenBehavior@@UAE?AW4UpdateSleepTime@@XZ
-// partial score=0.6404 date=2026-10-09
+// partial score=0.9123 date=2026-10-15
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Include /Igame/GameEngine/Source /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib
 
 #define _STLP_NO_EXCEPTIONS 1
@@ -29,19 +29,23 @@ enum UpdateSleepTime
 
 class Team;
 
+// This TU models the object-status mask storage used by the factory.
 template <int N>
 class BitFlags
 {
 public:
-	BitFlags()
+	BitFlags() {}
+	// ?zero0020CE30@?$BitFlags@$0FG@@@QAEAAV1@XZ absent-from-retail
+	BitFlags &zero0020CE30()
 	{
+		return *static_cast<BitFlags *>(memset(this, 0, sizeof(*this)));
 	}
 
 private:
-	_STL::bitset<N> m_bits;
+	unsigned long m_bits[3];
 };
-
 typedef BitFlags<86> ObjectStatusMaskType;
+typedef char ObjectStatusMask0020CE30Size[sizeof(ObjectStatusMaskType) == 12 ? 1 : -1];
 
 class ThingFactory
 {
@@ -170,6 +174,7 @@ static __forceinline void countLivingTownsmen(BfmeListAK *list, Int &living)
 // ?update@SpawnTownsmenBehavior@@UAE?AW4UpdateSleepTime@@XZ
 UpdateSleepTime SpawnTownsmenBehavior::update()
 {
+	Coord3D pos;
 	const SpawnTownsmenBehaviorModuleData *data = m_moduleData;
 	Object *object = m_object;
 	BfmeListAK *list = townsmenList(object);
@@ -177,7 +182,8 @@ UpdateSleepTime SpawnTownsmenBehavior::update()
 
 	if (list == 0)
 	{
-		living = 0;
+		// Keep the counter store before the list allocation.
+		*reinterpret_cast<volatile Int *>(&living) = 0;
 		list = new BfmeListAK;
 		townsmenList(object) = list;
 	}
@@ -190,10 +196,9 @@ UpdateSleepTime SpawnTownsmenBehavior::update()
 		if (tmpl != 0)
 		{
 			ObjectStatusMaskType status;
-			Object *townsman = TheThingFactory->newObject(tmpl, object->m_team, status, 0);
+			Object *townsman = TheThingFactory->newObject(tmpl, object->m_team, status.zero0020CE30(), 0);
 			Real z = TheTerrainLogic->getGroundHeight(object->m_cachedPos.x + data->m_offsetX,
 				data->m_offsetY + object->m_cachedPos.y, 0) + object->m_cachedPos.z;
-			Coord3D pos;
 			pos.x = object->m_cachedPos.x + data->m_offsetX;
 			pos.y = data->m_offsetY + object->m_cachedPos.y;
 			pos.z = z;

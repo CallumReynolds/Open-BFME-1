@@ -19,7 +19,9 @@ public:
 	void DrawPixel(unsigned x, unsigned y, unsigned color);
 };
 
-extern int g_Va012F7F44;
+// BFME2 W3DRadar.cpp defines the corresponding endpoint colour cell.
+// BFME1 keeps its existing address-derived name; retail starts it at zero.
+int g_Va012F7F44 = 0;
 
 // upstream body: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Source/W3DDevice/Common/System/W3DRadar.cpp
 inline bool legalRadarPoint(int x, int y)

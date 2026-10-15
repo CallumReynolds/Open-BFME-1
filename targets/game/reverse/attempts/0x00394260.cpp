@@ -1,15 +1,18 @@
 // ?startNewGame@GameLogic@@QAEX_N@Z
-// partial score=0.3722 date=2026-10-15
+// partial score=0.3847 date=2026-10-15
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib /Iinputs/reference/shims/buddythread /Iinputs/reference/shims/sweep
 // stlport
 // BANKED RECONSTRUCTION, NOT VERIFIED FOR LANDING.
 // Full 7643-byte extent ends at RVA 0039603B; legacy lift row is three bytes short.
 // 370 calls in retail order after resolving ILT routes and comparing virtual slots.
-// Frame 0x340. Call adapters are macros so the receiver is evaluated inside the call
-// (after by-value arguments) as retail does; this fixed the edi=0/ebp=-1 constant caches
-// and the first 0x391 bytes now agree structurally. Remaining: frame-slot homes (retail
-// guard -844 key -840 prefs/assets/context -836 game -816 skirmish -812 cameraName -800
-// created/stream -796) and the register residue that follows from them.
+// Frame 0x344 (retail 0x340). Call adapters are macros so the receiver is evaluated inside
+// the call (after by-value arguments) as retail does. Frame homes now on retail's slots:
+// prefs/assets/context -836 (OptionPreferences is 20 bytes: vptr+map+filename), extent -780,
+// matrix -756, message -708; the ensureTree flag shares the key slot via a 4-byte union, and
+// created lives in a block ending after the network-slot loop so it shares stream's slot.
+// Still off (retail from eh_info and /FAsc): guard -844 key -840 progress(59) -840 game -816
+// pos/skirmish -812 cameraName -800 created/stream -796; retail's second-loop counter (41)
+// is a separate local at -812. Declaration order does not move slots; scope does.
 // checkForDuplicateColors is compiled here for its private EBX ABI; its 104 bytes
 // match modulo relocations. This helper is already landed elsewhere, not new progress.
 // Still-unresolved data identities: G012ED5F4, G012F089C, G012F7090. No speculative pins.
@@ -692,7 +695,7 @@ call.entry=&Gen_008f73e0::m; (((Receiver00394260*)self)->*call.member)(a0);
 
 class PartitionManager { public: void revealMapForPlayer(int); };
 inline void reveal00394260(void *p,int i) { ((PartitionManager*)p)->revealMapForPlayer(i); }
-struct Preferences00394260 { char data[0x24]; Preferences00394260() { D0003713C(this); } ~Preferences00394260() { D00001307(this); } };
+struct Preferences00394260 { char data[0x14]; Preferences00394260() { D0003713C(this); } ~Preferences00394260() { D00001307(this); } };
 struct MenuGuard00394260 {
  MenuGuard00394260() { void *menu=GetSystemMenu((HWND)G012ED238,FALSE); EnableMenuItem(menu,SC_CLOSE,MF_GRAYED); }
  ~MenuGuard00394260() { void *menu=GetSystemMenu((HWND)G012ED238,FALSE); EnableMenuItem(menu,SC_CLOSE,MF_ENABLED); }
@@ -725,8 +728,8 @@ template<int Offset> static __forceinline void ensureTree00394260(void *self,uns
   void *type=D00028560(G012EF1D8,AsciiString(name));
   if(type) {
    if(!(F<bool,0x11fc>(G012ED5C8))) {
-    bool flag=false; AssetList00394260 assets;
-    D00017A12(type,&assets,&flag); Rva009EBAC0((int)&assets);
+    union { bool b; int pad; } flag; flag.b=false; AssetList00394260 assets;
+    D00017A12(type,&assets,&flag.b); Rva009EBAC0((int)&assets);
    }
    (F<void*,Offset>(self))=D0004494A(G012EF1D8,type,(F<void*,0x230>(F<void*,0x14>(G012ED748))),Flags00394260(),id);
    if((F<void*,Offset>(self))) D00005A7E(V028p((F<void*,Offset>(self))),id);
@@ -945,6 +948,7 @@ void GameLogic::startNewGame(bool loadingSaveGame)
         }
     }
     pump00394260();
+    {
     ObjectMapVector00394260 created;
     pump00394260();
     int progress=59;
@@ -997,6 +1001,7 @@ void GameLogic::startNewGame(bool loadingSaveGame)
             progress00394260(this,progress++);
         }
     }
+    }
     pump00394260(); progress00394260(this,50);
     V038(G012F64BC); Sleep(1);
     D00002914(G012F33F8); D00038497(G012F33F8,false);
@@ -1037,8 +1042,8 @@ void GameLogic::startNewGame(bool loadingSaveGame)
         (F<int,0x110>(this))=(F<int,0xec0>(G012ED5C8));
     if(((F<int,0x10c>(this))==1 || (F<int,0x10c>(this))==5) && G012F7714) { V074(G012F7714); V024i(G012F7714,0); }
     if(!(F<bool,0x11fc>(G012ED5C8))) {
-        bool flag=false; AssetList00394260 assets;
-        D0004AABB(G012F076C,&assets,&flag); Rva009EBAC0((int)&assets);
+        union { bool b; int pad; } flag; flag.b=false; AssetList00394260 assets;
+        D0004AABB(G012F076C,&assets,&flag.b); Rva009EBAC0((int)&assets);
     }
     while((unsigned)bfmeForward_009EBB60()<100) { pump00394260(); D00008DEB(this); Sleep(100); }
     if((F<int,0x10c>(this))==4) {

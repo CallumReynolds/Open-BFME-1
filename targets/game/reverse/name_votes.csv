@@ -1235,3 +1235,4 @@ game/GameEngine/Source/Common/BfmeConv1214.cpp|local|bfmeGo1214|c,64739315722c4d
 game/GameEngine/Source/Common/BfmeConv1214.cpp|local|bfmeGo1214|e,4682d60ef1f7670c28421bbc,claude-sonnet,20261015134319-56a4ef,2026-10-15
 game/GameEngine/Source/GameNetwork/GameSpy/GenerateLadderGameResultsPacket.cpp|param|AsciiString#2|s,380583c8e8214e4dc173c943,claude-sonnet,20261015134613-fe9b1f,2026-10-15
 game/GameEngine/Source/GameNetwork/GameSpy/GenerateLadderGameResultsPacket.cpp|param|concat#2|s,60d6b26388f408fb83f16086,claude-sonnet,20261015134613-fe9b1f,2026-10-15
+game/Libraries/Source/EA/Apt/ValuePredicates008C4940.cpp|function|ValuePredicates008C4940@|isType6_008C49A0,9fb8c34d94651f3cf73b4e1b,claude-sonnet,20261015134812-fb26f6,2026-10-15

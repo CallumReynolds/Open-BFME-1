@@ -1737,7 +1737,6 @@ extern const char g_011142CC[];
 extern const char g_011142BC[];
 extern const char g_011142AC[];
 extern const char g_011142A4[];
-extern const char g_01089284[];
 extern const char g_010A141C[];
 extern const char g_010AF400[];
 extern const char g_0109D84C[];
@@ -9176,7 +9175,7 @@ void OrthoEmissionVelocityModuleTemplate::writeINI(File &file, unsigned int flag
     _STL::basic_ostringstream<char, _STL::char_traits<char>, _STL::allocator<char> > stream(0x10);
     U1Pair *xComponent = (U1Pair *)((unsigned char *)this + 0x0c);
     if (xComponent->m_x != g_rva01075350 || xComponent->m_y != g_rva01075350)
-        u1Do_005C9030((void *)&stream, (void *)flags, ( void *)g_01089284, xComponent);
+        u1Do_005C9030((void *)&stream, (void *)flags, ( void *)"X", xComponent);
 
     U1Pair *yComponent = (U1Pair *)((unsigned char *)this + 0x18);
     if (yComponent->m_x != g_rva01075350 || yComponent->m_y != g_rva01075350)

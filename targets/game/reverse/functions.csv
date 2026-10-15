@@ -38603,7 +38603,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c3f560@@YAXXZ,,0x00C3F560,25,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@0103f560
 ?d_00c40678@@YAXXZ,,0x00C40678,17,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01040678
 ?d_00c40760@@YAXXZ,,0x00C40760,8,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01040760
-?d_00c42d50@@YAXXZ,,0x00C42D50,8,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01042d50
 ?d_00c43f90@@YAXXZ,,0x00C43F90,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01043f90
 ?d_00c43f9b@@YAXXZ,,0x00C43F9B,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01043f9b
 ?d_00c44730@@YAXXZ,,0x00C44730,11,game/gen_asm/d_00c33460.asm,matched,gen-dump;ghidra=Unwind@01044730
@@ -147964,7 +147963,6 @@ eh_00c42cc6,,0x00C42CC6,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;objec
 eh_00c42cf8,,0x00C42CF8,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c42d20,,0x00C42D20,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c42d38,,0x00C42D38,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
-eh_00c42d58,,0x00C42D58,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c42da4,,0x00C42DA4,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c42f51,,0x00C42F51,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
 eh_00c42fd8,,0x00C42FD8,10,game/gen_small/eh_anchor.cpp,matched,gen-ehstub;object-symbol=__ehhandler$?eh_anchor@@YAXXZ
@@ -172548,3 +172546,5 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ?Rva00C51008Cleanup@@YAXXZ,,0x00C51008,11,game/GameEngine/Source/Common/Rva00789220DualHashConstructor.cpp,matched,authored C++ cleanup;gen-funclet;object-symbol=$L410;parent=??0Rva00789220Holder@@QAE@PAX@Z;retail parent 0x00789220 -> handler 0x00C51029 -> FuncInfo 0x00E4071C map 0x00E406FC state1 toState0;destroys vector+4 storage via [ebp+4]+4 and ILT 0x0001570D;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 ?Rva00C5101ECleanup@@YAXXZ,,0x00C5101E,11,game/GameEngine/Source/Common/Rva00789220DualHashConstructor.cpp,matched,authored C++ cleanup;gen-funclet;object-symbol=$L421;parent=??0Rva00789220Holder@@QAE@PAX@Z;retail parent 0x00789220 -> handler 0x00C51029 -> FuncInfo 0x00E4071C map 0x00E406FC state3 toState2;destroys second vector+4 storage via [ebp+4]+4 and ILT 0x0001570D;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
 eh_00c51029,,0x00C51029,10,game/GameEngine/Source/Common/Rva00789220DualHashConstructor.cpp,matched,native-eh;object-symbol=__ehhandler$??0Rva00789220Holder@@QAE@PAX@Z;parent=??0Rva00789220Holder@@QAE@PAX@Z;FuncInfo 0x00E4071C;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+?Rva00C42D50Cleanup@@YAXXZ,,0x00C42D50,8,game/Libraries/Source/WWVegas/WWLib/stlport_narrow_string_substr.cpp,matched,authored C++ cleanup;gen-funclet;object-symbol=$L560;parent=?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;retail parent 0x006550F0 -> handler 0x00C42D58 -> FuncInfo 0x00E32800 state0 toState-1;destroys the result string base via [ebp+4] and ILT 0x00016DE7;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr
+eh_00c42d58,,0x00C42D58,10,game/Libraries/Source/WWVegas/WWLib/stlport_narrow_string_substr.cpp,matched,native-eh;object-symbol=__ehhandler$?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;parent=?substr@?$basic_string@DV?$char_traits@D@_STL@@V?$allocator@D@2@@_STL@@QBE?AV12@II@Z;FuncInfo 0x00E32800;model=claude-opus-5-5;host=fixe.int.yoannlaissus.fr

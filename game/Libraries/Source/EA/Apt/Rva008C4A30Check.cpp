@@ -1,12 +1,5 @@
-// ?Rva008C4A30Check@@YA_NPAVRva8CD130Value@@@Z
-// partial score=0.64 date=2026-09-28
-// ?Rva008C4A30Check@@YA_NPAVRva8CD130Value@@@Z
-// Retail 0x008C4A30, 873 bytes: AptValue numeric-string predicate (false for defined numbers
-// and numeric strings, true otherwise; undefined/type 3 answer SWF version == 7).
-// Rewritten from retail: per-type inline predicates, forceinline string dtor,
-// text/length re-read from m_data at every use, bool local for the SWF test.
-// Remaining: loop allocates length in EDX and next in EDI where retail uses EDI/EBP.
 // cl: /O2 /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
+// Address-qualified predicate for values that fail numeric conversion.
 
 extern "C" long __cdecl strtol(const char *, char **, int);
 extern "C" int __cdecl isdigit(int);
@@ -28,7 +21,7 @@ struct BfmeStringPool3AF0
 extern BfmeStringData3AF0 g_bfmeDefaultString1284;
 extern BfmeStringPool3AF0 *g_bfmeStringPool1284;
 
-int Rva00892370Get();
+unsigned int AptGetSwfVersion();
 
 class Rva8CD130String
 {
@@ -71,6 +64,7 @@ public:
 	};
 };
 
+// ?Rva008C4A30Check@@YA_NPAVRva8CD130Value@@@Z
 bool Rva008C4A30Check(Rva8CD130Value *value)
 {
 	if (value->isType7() || value->isType6())
@@ -103,13 +97,12 @@ bool Rva008C4A30Check(Rva8CD130Value *value)
 
 		for (int index = 1; index < string.getLength(); ++index)
 		{
-			char current = string.text()[index];
-			if (current == '.' && !sawDot)
+			if (string.text()[index] == '.' && !sawDot)
 			{
 				sawDot = true;
 				continue;
 			}
-			if (current == 'e' && index != 1)
+			if (string.text()[index] == 'e' && index != 1)
 			{
 				if (index == 2 && (string.text()[0] == '+' || string.text()[0] == '-'))
 					return true;
@@ -123,7 +116,7 @@ bool Rva008C4A30Check(Rva8CD130Value *value)
 				}
 				continue;
 			}
-			if (!isdigit(current))
+			if (!isdigit(string.text()[index]))
 				return true;
 		}
 		return false;
@@ -131,6 +124,6 @@ bool Rva008C4A30Check(Rva8CD130Value *value)
 
 	if (!value->isUndefined() && value->m_type != 3)
 		return true;
-	bool swf7 = Rva00892370Get() == 7;
+	bool swf7 = AptGetSwfVersion() == 7;
 	return swf7;
 }

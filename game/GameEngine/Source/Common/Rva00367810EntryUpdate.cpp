@@ -24,8 +24,6 @@
 // reinforcement-army (auto-summon) store.  The caller and reloc_names.csv
 // establish Rva00367810Entry as the real class name for this method.
 
-extern "C" void _ReadWriteBarrier( void );
-#pragma intrinsic( _ReadWriteBarrier )
 
 class Rva00367810VirtualGate;
 
@@ -160,23 +158,8 @@ void Rva00367810Entry::update()
 		if( m_state == 0 )
 		{
 			m_state = 2;
-			_ReadWriteBarrier();
-			unsigned int frame = rva00367810TheGameLogicView()->m_frame;
-			// The clean C++ expression matches every other instruction but emits
-			// add eax,ecx and stores EAX.  MSVC 7.1 needs these short asm blocks
-			// to preserve retail's add ecx,eax register order.
-			__asm
-			{
-				mov ecx, dword ptr [esi+24h]
-			}
-			m_startFrame = frame;
-			__asm
-			{
-				mov edx, dword ptr TheGameLogic
-				mov eax, dword ptr [edx+3Ch]
-				add ecx, eax
-				mov dword ptr [esi+28h], ecx
-			}
+			m_startFrame = rva00367810Frame( rva00367810TheGameLogicView() );
+			m_frame = m_delay + rva00367810Frame( rva00367810TheGameLogicView() );
 		}
 		break;
 

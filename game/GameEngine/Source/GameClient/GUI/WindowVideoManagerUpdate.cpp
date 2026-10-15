@@ -1,19 +1,6 @@
-// ?update@WindowVideoManager@@UAEXXZ
-// partial score=0.82 date=2026-09-09
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Source/Common/System /Igame/GameEngine/Source/GameClient /Igame/GameEngine/Include/Precompiled /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
-// Open-BFME5: byte-exact clean C++ implementation of the retail
-// WindowVideoManager::update, retail 0x00499050, 301 bytes.
-//
-// Sibling of WindowVideoManagerStopAllMovies.cpp / PauseAllMovies.cpp /
-// ResumeAllMovies.cpp -- same BFME WindowVideo layout (no video-stream
-// member, m_state at +0x10). BFME also folded VideoStreamInterface's
-// frame-advance API directly into VideoBuffer, so the ZH source's
-// isFrameReady/frameDecompress/frameRender/frameNext/frameIndex chain
-// collapses to two VideoBuffer virtuals here: slot06 (vtable+0x18, takes
-// an int mode and returns a Bool) and slot08 (vtable+0x20, no args,
-// returns Int) -- called through the same useBuffer() accessor (slot15,
-// vtable+0x3c) already pinned in GUI/WindowVideo_init_bfme.cpp.
+// Evidence: targets/game/reverse/identity_evidence/00499050-update.md
 
 #include <map>
 #include <hash_map>
@@ -22,9 +9,7 @@
 #include "ascii_string.h"
 #include "subsystem_interface.h"
 #include "window_video_manager.h"
-#include "game_window.h"
-#include "video_player.h"
-#include "display.h"
+class GameWindow { public: Bool winIsHidden( void ); };
 
 namespace BfmeUpdate
 {
@@ -37,7 +22,7 @@ namespace BfmeUpdate
 		virtual void slot03();
 		virtual void slot04();
 		virtual void slot05();
-		virtual Bool slot06( Int mode );		// slot 6, vtable+0x18
+		virtual unsigned int slot06( Int mode );		// slot 6, vtable+0x18
 		virtual void slot07();
 		virtual Int  slot08();					// slot 8, vtable+0x20
 		virtual void slot09();
@@ -49,38 +34,30 @@ namespace BfmeUpdate
 		virtual int useBuffer();				// slot 15, vtable+0x3c
 	};
 
-	class WinInstanceData
-	{
-	public:
-		void setVideoBuffer( int bufferHandle );		// ILT 0x0002E073
-	};
+	typedef ::GameWindow GameWindow;
 
-	class GameWindow
-	{
-	public:
-		WinInstanceData *winGetInstanceData( void );		// ILT 0x00034991
-		Bool winIsHidden( void );				// ILT 0x0003A5B7
-	};
-
-	// TU-local view of the real BFME WindowVideo layout -- only the fields
-	// update() touches, cast in from the header's (ZH-shaped) WindowVideo*.
+	// BFME keeps the name at +0x0c and the state at +0x10.
+	// This view is used only to read existing WindowVideo objects.
 	class WindowVideo
 	{
 	public:
 		WindowVideoPlayType getPlayType( void ) { return m_playType; }
 		GameWindow *getWin( void ) { return m_win; }
 		VideoBuffer *getVideoBuffer( void ) { return m_videoBuffer; }
+		// ?getBufferHandle00499050@WindowVideo@BfmeUpdate@@QAEHXZ absent-from-retail
+		int getBufferHandle00499050( void ) { return m_videoBuffer ? m_videoBuffer->useBuffer() : 0; }
 		WindowVideoStates getState( void ) { return m_state; }
 
 	private:
 		WindowVideoPlayType m_playType;
 		GameWindow *m_win;
 		VideoBuffer *m_videoBuffer;
-		void *m_movieName;
+		AsciiString m_movieName;
 		WindowVideoStates m_state;
 	};
 }
 
+// ?update@WindowVideoManager@@UAEXXZ
 void WindowVideoManager::update( void )
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
@@ -88,6 +65,7 @@ void WindowVideoManager::update( void )
 	if ( m_pauseAllMovies || m_stopAllMovies )
 		return;
 
+	//Iterate through the maps
 	while ( it != m_playingVideos.end() )
 	{
 		BfmeUpdate::WindowVideo *winVid = (BfmeUpdate::WindowVideo *)it->second;
@@ -105,30 +83,41 @@ void WindowVideoManager::update( void )
 		if ( winVid->getState() == WINDOW_VIDEO_STATE_PLAY && win->winIsHidden() )
 			hideMovie( (GameWindow *)win );
 
+		// Only advance the frame if we're playing
 		if ( winVid->getState() != WINDOW_VIDEO_STATE_PLAY )
 		{
 			it++;
 			continue;
 		}
 
+		// Get the Stream and the buffer to update for each animation
 		BfmeUpdate::VideoBuffer *videoBuffer = winVid->getVideoBuffer();
-		Int handle = videoBuffer ? videoBuffer->useBuffer() : 0;
+		Int handle = winVid->getBufferHandle00499050();
 
 		if ( videoBuffer && handle )
 		{
-			if ( winVid->getPlayType() == WINDOW_PLAY_MOVIE_LOOP )
+			switch ( winVid->getPlayType() )
 			{
-				videoBuffer->slot06( 4 );
-			}
-			else if ( videoBuffer->slot06( 0 ) )
-			{
-				if ( videoBuffer->slot08() == 0 )
+			default:
+			case WINDOW_PLAY_MOVIE_ONCE:
+				if ( videoBuffer->slot06( 0 ) & 1 )
 				{
-					if ( winVid->getPlayType() == WINDOW_PLAY_MOVIE_ONCE )
+					// If we reach frame Index of 0, we might have to pause, or loop.
+					if ( videoBuffer->slot08() == 0 )
 						stopMovie( (GameWindow *)win );
-					else if ( winVid->getPlayType() == WINDOW_PLAY_MOVIE_SHOW_LAST_FRAME )
+				}
+				break;
+			case WINDOW_PLAY_MOVIE_LOOP:
+				videoBuffer->slot06( 4 );
+				break;
+			case WINDOW_PLAY_MOVIE_SHOW_LAST_FRAME:
+				if ( videoBuffer->slot06( 0 ) & 1 )
+				{
+					// If we reach frame Index of 0, we might have to pause, or loop.
+					if ( videoBuffer->slot08() == 0 )
 						pauseMovie( (GameWindow *)win );
 				}
+				break;
 			}
 		}
 

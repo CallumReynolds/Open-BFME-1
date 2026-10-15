@@ -9,10 +9,12 @@ struct Rva0082C6E0FalseType
 {
 };
 
-extern Rva0082C6E0Value *__cdecl rva0082C6E0CopyValues(
-	Rva0082C6E0Value *first,
-	Rva0082C6E0Value *last,
-	Rva0082C6E0Value *result );
+// BFME2 uses STLport's real helper here; BFME1 erase independently calls
+// the same 41-byte trivial-copy implementation through ILT 0x00018179 -> 0x00065E30.
+namespace _STL
+{
+	void *__cdecl __copy_trivial(const void *first, const void *last, void *result);
+}
 
 inline Rva0082C6E0Value *rva0082C6E0CopyPointers(
 	Rva0082C6E0Value *first,
@@ -20,7 +22,7 @@ inline Rva0082C6E0Value *rva0082C6E0CopyPointers(
 	Rva0082C6E0Value *result,
 	const Rva0082C6E0FalseType & )
 {
-	return rva0082C6E0CopyValues( first, last, result );
+	return (Rva0082C6E0Value *)_STL::__copy_trivial(first, last, result);
 }
 
 inline void rva0082C6E0Destroy( Rva0082C6E0Value * )

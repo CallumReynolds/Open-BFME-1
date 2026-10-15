@@ -1574,11 +1574,107 @@ void LanGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 /** Lan Game Options menu update method */
 //-------------------------------------------------------------------------------------------------
+// BFME un-comments ZH's TheLAN->update() and adds an auto-start pass. The
+// LANAPI vtable slots it calls (0x14 update, 0x38, 0xB8, 0xC0, 0xCC) are
+// spelled as a TU-local facade like BfmeVirtualLanApi above; only update()
+// has a proven name. The auto-start counter at VA 0x012F3D44 has no recorded
+// name, so it keeps its address. StartPressed(Bool) is the matched BFME
+// variant at 0x004CC980 (LanGameOptionsMenu_StartPressed.cpp).
+class Rva004CD470LanApi
+{
+public:
+	virtual void slot000() = 0;
+	virtual void slot004() = 0;
+	virtual void slot008() = 0;
+	virtual void slot00C() = 0;
+	virtual void slot010() = 0;
+	virtual void update( void ) = 0;
+	virtual void slot018() = 0;
+	virtual void slot01C() = 0;
+	virtual void slot020() = 0;
+	virtual void slot024() = 0;
+	virtual void slot028() = 0;
+	virtual void slot02C() = 0;
+	virtual void slot030() = 0;
+	virtual void slot034() = 0;
+	virtual void autoStart038( void ) = 0;
+	virtual void slot03C() = 0;
+	virtual void slot040() = 0;
+	virtual void slot044() = 0;
+	virtual void slot048() = 0;
+	virtual void slot04C() = 0;
+	virtual void slot050() = 0;
+	virtual void slot054() = 0;
+	virtual void slot058() = 0;
+	virtual void slot05C() = 0;
+	virtual void slot060() = 0;
+	virtual void slot064() = 0;
+	virtual void slot068() = 0;
+	virtual void slot06C() = 0;
+	virtual void slot070() = 0;
+	virtual void slot074() = 0;
+	virtual void slot078() = 0;
+	virtual void slot07C() = 0;
+	virtual void slot080() = 0;
+	virtual void slot084() = 0;
+	virtual void slot088() = 0;
+	virtual void slot08C() = 0;
+	virtual void slot090() = 0;
+	virtual void slot094() = 0;
+	virtual void slot098() = 0;
+	virtual void slot09C() = 0;
+	virtual void slot0A0() = 0;
+	virtual void slot0A4() = 0;
+	virtual void slot0A8() = 0;
+	virtual void slot0AC() = 0;
+	virtual void slot0B0() = 0;
+	virtual void slot0B4() = 0;
+	virtual Bool query0B8( void ) = 0;
+	virtual void slot0BC() = 0;
+	virtual GameInfo *game0C0( void ) = 0;
+	virtual void slot0C4() = 0;
+	virtual void slot0C8() = 0;
+	virtual Bool query0CC( void ) = 0;
+};
+
+void StartPressed( Bool );
+extern UnsignedInt g_Va012F3D44;
+
 void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 {
 	if(LANisShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownCompleteLanGameOptionsMenu(layout);
-	//TheLAN->update(); // this is handled in the lobby
+	((Rva004CD470LanApi *)TheLAN)->update();
+
+	if (LANbuttonPushed)
+		return;
+
+	if (((Rva004CD470LanApi *)TheLAN)->query0CC() && ((Rva004CD470LanApi *)TheLAN)->query0B8() && buttonStart && (buttonStart->winGetStatus() & 8))
+	{
+		GameInfo *game = ((Rva004CD470LanApi *)TheLAN)->game0C0();
+		if (game)
+		{
+			Int i;
+			for (i = 1; i < MAX_SLOTS; ++i)
+			{
+				GameSlot *slot = game->getSlot(i);
+				if (slot && slot->isOpen())
+					break;
+			}
+			if (i == MAX_SLOTS)
+				StartPressed(FALSE);
+		}
+	}
+
+	if (!((Rva004CD470LanApi *)TheLAN)->query0B8() &&
+		(getenv("_EA_RTS_HEADLESS") || reinterpret_cast<const char *>(TheGlobalData)[0xb88]))
+	{
+		if (++g_Va012F3D44 > 30)
+		{
+			((Rva004CD470LanApi *)TheLAN)->autoStart038();
+			g_Va012F3D44 = 0;
+		}
+	}
 }// void LanGameOptionsMenuUpdate( WindowLayout * layout, void *userData)
 
 //-------------------------------------------------------------------------------------------------

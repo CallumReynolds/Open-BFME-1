@@ -3649,7 +3649,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ??0Matrix3D@@QAE@MMMMMMMMMMMM@Z,,0x008D64A0,88,game/Libraries/Source/WWVegas/WWMath/matrix3d.cpp,matched,
 ??0Matrix3D@@QAE@XZ,,0x000C8DD0,3,game/GameEngine/Source/Common/Thing/Thing.cpp,matched,icf-closed
 ??0Matrix3D@@QAE@_N@Z,,0x001B5AF0,55,game/Libraries/Source/WWVegas/WW3D2/pivot.cpp,matched,
-??0Matrix3x3@@QAE@ABV0@@Z,,0x005F6970,61,game/Libraries/Source/WWVegas/WW3D2/camera.cpp,matched,
 ??0Matrix3x3@@QAE@_N@Z,,0x0060C330,46,game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDraw.cpp,matched,ICF alias of existing matched body
 ??0Matrix4@@QAE@ABV0@@Z,,0x008D6680,103,game/Libraries/Source/WWVegas/WW3D2/camera.cpp,matched,
 ??0Matrix4@@QAE@ABVMatrix3D@@@Z,,0x006CB3A0,97,game/Libraries/Source/WWVegas/WWMath/matrix3d.cpp,matched,
@@ -24277,7 +24276,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?Set@Matrix3D@@QAEXABVVector3@@M@Z,,0x006DFB30,237,game/GameEngine/Source/GameLogic/Object/Locomotor.cpp,matched,
 ?Set@Matrix3D@@QAEXABVVector3@@MM@Z,,0x006DF970,223,game/GameEngine/Source/GameLogic/Object/Locomotor.cpp,matched,
 ?Set@Matrix3D@@QAEXMMMMMMMMMMMM@Z,,0x00131EC0,86,game/GameEngine/Source/Common/Thing/Thing.cpp,matched,
-?Set@Matrix3x3@@QAEXABVMatrix3D@@@Z,,0x008D9000,59,game/Libraries/Source/WWVegas/WWMath/matrix3.cpp,matched,object-symbol=?Set@Matrix3@@QAEXABVMatrix4@@@Z;C++ alias
 ?Set@Matrix4D@@QAEAAV1@ABVCoord3D@@@Z,0x0003670F,0x007E6150,80,game/Libraries/Source/WWVegas/WWMath/Matrix4DSetNative.cpp,matched,native Coord3D setter inlines SetIdentity in same TU;model=openai-codex/gpt-6-sol
 ?Set@Matrix4D@@QAEAAV1@ABVCoord3D@@M@Z,0x0000BE51,0x007E61C0,247,game/Libraries/Source/WWVegas/WWMath/matrix4d.cpp,matched,export ordinal 1311; Rodrigues C++; proven 58B x87 compiler exception; identity_evidence/Matrix4D_Set_007E61C0.md; unchanged ctor is not new conversion credit;model=gpt-6.1-sol;host=GreatFaram
 ?Set@Matrix4D@@QAEAAV1@MMMMMMMMMMMMMMMM@Z,0x0000D7CE,0x007E60B0,116,game/Libraries/Source/WWVegas/WWMath/Matrix4DSetNative.cpp,matched,native float setter isolated from mixed naked matrix overload;model=openai-codex/gpt-6-sol
@@ -172558,3 +172556,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?bfmeEnd982C0078B4F0@BfmeHub982@@QAEXXZ,,0x0078B4F0,1694,game/GameEngineDevice/Source/W3DDevice/GameClient/GUI/W3DAptRendererEnd0078B4F0.cpp,matched,Complete thiscall renderer handoff; unconditional projection reset; identity and ABI evidence identity_evidence/0078b4f0-renderer-end.md;model=gpt-6.1-sol;host=fleet
 ?Rva008C4A30Check@@YA_NPAVRva8CD130Value@@@Z,,0x008C4A30,873,game/Libraries/Source/EA/Apt/Rva008C4A30Check.cpp,matched,Opaque numeric-conversion predicate; caller ABI and string cleanup decoded; evidence=targets/game/reverse/identity_evidence/008c4a30-numeric-predicate.md;model=gpt-6.1-sol;host=fleet
 ?rva006D2280@HeightMapRenderObjClass@@UAEX_N@Z,,0x006D2280,215,game/GameEngineDevice/Source/W3DDevice/GameClient/HeightMapRenderObjRva006D2280.cpp,matched,HeightMapRenderObjClass vtable 0x0111DC88 slot 138 via ILT 0x00012ADF after matched doPartialUpdate slot 137; flag-driven tile rebuild/reset walk;model=claude-opus-5-5;host=app
+?Set@Matrix3@@QAEXABVMatrix3D@@@Z,,0x008D9000,59,game/Libraries/Source/WWVegas/WWMath/matrix3.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/008D8F80.md;identity-correction=reverse/identity_evidence/008D8F80.md;BFME has no Matrix3x3 class (matrix3.h typedef);matched callers camera.cpp and boxrobj.cpp pass a Matrix3D;native object symbol replaces the Matrix4-overload alias;model=claude-opus-5-5;host=app

@@ -1,5 +1,5 @@
 // ?setFlipRecursive@W3DTerrainBackground@@IAEXHHH@Z
-// partial score=0.24 date=2026-09-22
+// partial score=0.1919 date=2026-09-22
 // cl: /DNDEBUG /MD /EHsc
 // Full retail729700/792. BFME adds cliff/bit-plane tests and aligned corners.
 class Rva00729370BitPlane { public: bool test(int,int) const; };

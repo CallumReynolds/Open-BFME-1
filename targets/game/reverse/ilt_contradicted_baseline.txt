@@ -220,7 +220,6 @@ functions	0x000695F0	??0?$pair@$$CBW4NameKeyType@@VModuleTemplate@ModuleFactory@
 functions	0x00069750	?Floor@WWMath@@SAMM@Z
 functions	0x00069750	?floor@@YAMM@Z
 functions	0x000699F0	??$_Construct@U?$pair@$$CBW4NameKeyType@@VModuleTemplate@ModuleFactory@@@_STL@@U12@@_STL@@YAXPAU?$pair@$$CBW4NameKeyType@@VModuleTemplate@ModuleFactory@@@0@ABU10@@Z
-functions	0x00069C80	?swap@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QAEXAAV12@@Z
 functions	0x0006B090	?Set_Current_UV_Offset@SegLineRendererClass@@QAEXABVVector2@@@Z
 functions	0x0006B3B0	?getShouldFade@AudioEventRTS@@QBE_NXZ
 functions	0x0006B4E0	?Friend_Set_Hierarchy_Valid@Animatable3DObjClass@@QBEX_N@Z
@@ -724,7 +723,6 @@ functions	0x000CE910	?testForAll@?$BitFlags@$0MA@@@QBE_NABV1@@Z
 functions	0x000CEC30	?_Unchecked_set@?$bitset@$0IA@@_STL@@QAEAAV12@IH@Z
 functions	0x000CEC90	?_Unchecked_set@?$bitset@$0CN@@_STL@@QAEAAV12@IH@Z
 functions	0x000CED80	??0?$_Base_bitset@$02@_STL@@QAE@XZ
-functions	0x000CF750	?erase@?$vector@PAVScienceInfo@@V?$allocator@PAVScienceInfo@@@_STL@@@_STL@@QAEPAPAVScienceInfo@@PAPAV3@0@Z
 functions	0x000CFC30	?findClosestByKindOf@Player@@QAEPAVObject@@PAV2@V?$BitFlags@$0MA@@@1@Z
 functions	0x000CFD20	?findClosestByKindOf@Player@@QAEPAVObject@@PBUCoord3D@@V?$BitFlags@$0MA@@@1@Z
 functions	0x000D01D0	??0?$bitset@$0ED@@_STL@@QAE@XZ
@@ -8550,21 +8548,16 @@ pins	0x0005B8E0	?AtlW2AHelper@ATL@@YGPADPADPBGHI@Z
 pins	0x0005C0C0	?release@DcPool@@QAEXPAX@Z
 pins	0x0005E4C0	?isEmpty@AsciiString@@QBE_NXZ
 pins	0x0005EE90	?add@TeamsInfoRecAddTeamShim@@QAEXPBVDict@@@Z
-pins	0x000665A0	?get_allocator@?$vector@PAVScienceInfo@@V?$allocator@PAVScienceInfo@@@_STL@@@_STL@@QBE?AV?$allocator@PAVScienceInfo@@@2@XZ
 pins	0x00066670	??0?$_STLP_alloc_proxy@PAHHV?$allocator@H@_STL@@@_STL@@QAE@ABV01@@Z
 pins	0x000668C0	??0?$_STLP_alloc_proxy@PAVAsciiString@@V1@V?$allocator@VAsciiString@@@_STL@@@_STL@@QAE@ABV?$allocator@VAsciiString@@@1@PAVAsciiString@@@Z
 pins	0x00066A90	??0?$_Vector_base@HV?$allocator@H@_STL@@@_STL@@QAE@IABV?$allocator@H@1@@Z
 pins	0x00066BC0	??$swap@V?$_STLP_alloc_proxy@PAHHV?$allocator@H@_STL@@@_STL@@@_STL@@YAXAAV?$_STLP_alloc_proxy@PAHHV?$allocator@H@_STL@@@0@0@Z
-pins	0x00066C30	??1?$_Vector_base@PAVScienceInfo@@V?$allocator@PAVScienceInfo@@@_STL@@@_STL@@QAE@XZ
-pins	0x00066EB0	??0?$vector@PAVScienceInfo@@V?$allocator@PAVScienceInfo@@@_STL@@@_STL@@QAE@IABQAVScienceInfo@@ABV?$allocator@PAVScienceInfo@@@1@@Z
-pins	0x00066F00	?swap@?$vector@PAVScienceInfo@@V?$allocator@PAVScienceInfo@@@_STL@@@_STL@@QAEXAAV12@@Z
 pins	0x000673D0	??$_M_allocate_and_copy@PAH@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEPAHIPAH0@Z
 pins	0x000681C0	?release@DictReleaseDataShim@@QAEXXZ
 pins	0x000683D0	?run@DictEnsureUniqueShim@@QAEPAUDictPair@1@H_NPAU21@@Z
 pins	0x00068BE0	??0?$_STLP_alloc_proxy@PAVAsciiString@@V1@V?$allocator@VAsciiString@@@_STL@@@_STL@@QAE@ABV?$allocator@VAsciiString@@@1@PAVAsciiString@@@Z
 pins	0x00068FA0	?reserve@HorzLineVectorReserveShim@_STL@@QAEXI@Z
 pins	0x00069070	?insert_overflow@HorzLineInsertOverflowShim@_STL@@QAEXPAUHorzLine@@ABU3@ABU__false_type@2@I_N@Z
-pins	0x00069970	??$swap@V?$_STLP_alloc_proxy@PAPAXPAXV?$allocator@PAX@_STL@@@_STL@@@_STL@@YAXAAV?$_STLP_alloc_proxy@PAPAXPAXV?$allocator@PAX@_STL@@@0@0@Z
 pins	0x0006E5A0	??0?$_STLP_alloc_proxy@PAU?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@_STL@@U12@V?$allocator@U?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@_STL@@@2@@_STL@@QAE@ABV?$allocator@U?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@_STL@@@1@PAU?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@1@@Z
 pins	0x0006E5F0	??0?$_STLP_alloc_proxy@PAU?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@_STL@@U12@V?$allocator@U?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@_STL@@@2@@_STL@@QAE@ABV?$allocator@U?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@_STL@@@1@PAU?$_Rb_tree_node@U?$pair@$$CBW4NameKeyType@@M@_STL@@@1@@Z
 pins	0x0006E750	??0?$_STLP_alloc_proxy@PAU?$_Rb_tree_node@VAsciiString@@@_STL@@U12@V?$allocator@U?$_Rb_tree_node@VAsciiString@@@_STL@@@2@@_STL@@QAE@ABV?$allocator@U?$_Rb_tree_node@VAsciiString@@@_STL@@@1@PAU?$_Rb_tree_node@VAsciiString@@@1@@Z

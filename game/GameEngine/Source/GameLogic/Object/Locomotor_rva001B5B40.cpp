@@ -19,8 +19,6 @@ class Overridable
 public:
 	const Overridable *getFinalOverride(void) const
 	{
-		if (this == 0)
-			return this;
 		if (m_nextOverride != 0)
 			return m_nextOverride->getFinalOverride();
 		return this;

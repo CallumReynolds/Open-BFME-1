@@ -12,7 +12,7 @@ class BfmeA1214
 public:
 	int m_bfme00;
 	int m_bfme04;
-	BfmeE1214 **m_bfme08;
+	BfmeE1214 **m_stack;
 	char m_bfmePad0c[0x60 - 0x0c];
 	BfmeE1214 **m_bfme60;
 };
@@ -46,15 +46,15 @@ void rva8CD130NamedDispatch(Rva8CD130State *state, Rva8CD130Context *context);
 void bfmeGo1214(BfmeA1214 *a, const unsigned char **b)
 {
 	const unsigned char *p;
-	unsigned char c;
+	unsigned char index;
 	BfmeE1214 *e;
 	BfmeG1214 *g;
 
 	p = *b;
-	c = *p;
+	index = *p;
 	*b = p + 1;
-	e = a->m_bfme60[c];
-	a->m_bfme08[a->m_bfme00] = e;
+	e = a->m_bfme60[index];
+	a->m_stack[a->m_bfme00] = e;
 	++a->m_bfme00;
 	if (!((unsigned char)(e->m_bfme04 >> 30) & 1))
 		e->bfmeV1214();

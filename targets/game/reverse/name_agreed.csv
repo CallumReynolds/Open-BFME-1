@@ -622,3 +622,5 @@ game/GameEngine/Source/Common/Audio/AudioManagerInit.cpp|type||AudioSettings006B
 game/GameEngine/Source/Common/Audio/AudioManagerInit.cpp|type||AudioSettings006B8220,AudioSettings,claude-opus+gpt-6-astra,blocked: hook: skipped 1: declaration windows into a larger class | game/GameEngine/Source/Common/Audio/AudioManagerInit.cpp:53: AudioSettings+0x2c says 'm_own,2026-10-14
 game/GameEngine/Source/Common/BfmeConv1214.cpp|member||m_bfme08,m_stack,claude-sonnet+gpt-6-astra,agreed,2026-10-15
 game/GameEngine/Source/Common/BfmeConv1214.cpp|local|bfmeGo1214|c,index,claude-sonnet+gpt-6-astra,agreed,2026-10-15
+game/GameEngine/Source/Common/BfmeConv1214.cpp|member||m_bfme08,m_stack,claude-sonnet+gpt-6-astra,applied,2026-10-15
+game/GameEngine/Source/Common/BfmeConv1214.cpp|local|bfmeGo1214|c,index,claude-sonnet+gpt-6-astra,applied,2026-10-15

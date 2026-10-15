@@ -1,10 +1,9 @@
-// ?destroyMember@Rva002408E0View@@QAEXPAVObject@@@Z
-// partial score=0.7403 date=2026-10-09
 // cl: /O2 /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/GameEngine/Source/GameLogic/Object /Igame/GameEngine/Source/GameClient
 // stlport
 // HordeContain secondary receiver at complete owner +0xE4.
 #include <list>
 #include <map>
+#include <set>
 
 enum KindOfType { Rva002408E0Kind11 = 11 };
 #define THING_TU_MEMBERS bool isKindOf(KindOfType kind) const;
@@ -26,6 +25,7 @@ struct Rva002408E0Node
 struct Rva002408E0List
 {
     Rva002408E0Node *sentinel;
+    // ?push_front@Rva002408E0List@@QAEXABH@Z absent-from-retail
     __forceinline void push_front(const int &value)
     {
         Rva002408E0Node *position = sentinel->next;
@@ -64,6 +64,12 @@ public:
     SLOT(30) SLOT(31) SLOT(32) SLOT(33)
 #undef SLOT
     virtual bool rvaSlot34();
+    char pad04[0x1b4 - 4];
+    ObjectID objectID1B4;
+    int word1B8;
+    ObjectID objectID1BC;
+    char pad1C0[0xc];
+    int word1CC;
 };
 
 struct Rva002408E0ModuleData { char pad00[0x2e4]; int message2E4; };
@@ -117,12 +123,12 @@ public:
 #undef SLOT
     virtual int rvaSlot84(Rva00238BC0Filter *filter) const;
     char pad04[0x30 - 4];
-    char index30[12];
+    std::set<ObjectID> index30;
     Rva002408E0Indices indices3C;
     char pad48[0x54 - 0x48];
     Rva002408E0List available54;
     char pad58[0xd0 - 0x58];
-    int memberD0;
+    ObjectID memberD0;
     char padD4[0x110 - 0xd4];
     unsigned int frame110;
     int bodyValue114;
@@ -130,17 +136,29 @@ public:
     bool flag119;
 };
 
+BFME_LAYOUT_CHECK(Rva002408E0Primary, objectID1B4, 0x1b4);
+BFME_LAYOUT_CHECK(Rva002408E0Primary, objectID1BC, 0x1bc);
+BFME_LAYOUT_CHECK(Rva002408E0Primary, word1CC, 0x1cc);
+BFME_LAYOUT_CHECK(Rva002408E0View, index30, 0x30);
+BFME_LAYOUT_CHECK(Rva002408E0View, indices3C, 0x3c);
+BFME_LAYOUT_CHECK(Rva002408E0View, available54, 0x54);
+BFME_LAYOUT_CHECK(Rva002408E0View, memberD0, 0xd0);
+BFME_LAYOUT_CHECK(Rva002408E0View, frame110, 0x110);
+BFME_LAYOUT_CHECK(Rva002408E0View, bodyValue114, 0x114);
+BFME_LAYOUT_CHECK(Rva002408E0View, flag119, 0x119);
+
 // ?destroyMember@Rva002408E0View@@QAEXPAVObject@@@Z
 void Rva002408E0View::destroyMember(Object *member)
 {
     Rva002408E0Primary *owner = (Rva002408E0Primary *)((char *)this - 0xe4);
-    int id = member->getID();
-    if (memberD0 != id && *(int *)((char *)owner + 0x1bc) != id && !member->isKindOf(Rva002408E0Kind11))
+    ObjectID id = member->getID();
+    if (owner->objectID1B4 != id && owner->objectID1BC != id && !member->isKindOf(Rva002408E0Kind11))
         available54.push_front(indices3C[int(id)]);
 
-    if (member->m_body)
+    BodyModuleInterface *body = member->m_body;
+    if (body)
     {
-        Rva002408E0Word08 *value = member->m_body->rvaSlot15();
+        Rva002408E0Word08 *value = body->rvaSlot15();
         if (value)
             bodyValue114 = value->value08;
         else
@@ -154,7 +172,7 @@ void Rva002408E0View::destroyMember(Object *member)
     (((Rva002408E0Erase *)&index30)->*secondErase.call)(member->getID());
 
     while (owner->rvaSlot34()) {}
-    if (((std::list<Object *> *)((char *)this - 0xac))->empty() && *(int *)((char *)this + 0x34) == 0)
+    if (((std::list<Object *> *)((char *)this - 0xac))->empty() && index30.empty())
     {
         Rva002408E0ModuleData *data = *(Rva002408E0ModuleData **)((char *)this - 0xe0);
         TheEva->setShouldPlay((EvaMessage)data->message2E4, 0);
@@ -167,16 +185,23 @@ void Rva002408E0View::destroyMember(Object *member)
         if (drawable && *(bool *)((char *)drawable + 0x3ac))
             ((Rva00413FF0GuardedVCall *)drawable)->forward(rvaSlot84(0));
     }
-    if (*(int *)((char *)owner + 0x1b4) == member->getID())
-        *(int *)((char *)owner + 0x1b4) = 0;
-    else if (*(int *)((char *)owner + 0x1bc) == member->getID())
+    if (owner->objectID1B4 == member->getID())
     {
-        *(int *)((char *)owner + 0x1bc) = 0;
+        owner->objectID1B4 = (ObjectID)0;
+        // ESI is the secondary receiver; this store must precede EDI restoration.
+        __asm {
+            mov byte ptr [esi]Rva002408E0View.flag119, 1
+        }
+        return;
+    }
+    else if (owner->objectID1BC == member->getID())
+    {
+        owner->objectID1BC = (ObjectID)0;
         typedef Rva002408E0Banner *(Rva002408E0Primary::*FindBanner)(const Object *);
         union { void (*fn)(); FindBanner call; } findBanner = { j_0003f5da };
         Rva002408E0Banner *banner = (owner->*findBanner.call)(member);
         if (banner)
-            *(int *)((char *)owner + 0x1cc) = banner->data04->value10;
+            owner->word1CC = banner->data04->value10;
     }
     flag119 = true;
 }

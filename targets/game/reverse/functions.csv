@@ -36933,7 +36933,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0023f1a0@@YAXXZ,,0x0023F1A0,507,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_0063f1a0
 ?d_0023f670@@YAXXZ,,0x0023F670,606,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063f670
 ?d_0023fed0@@YAXXZ,,0x0023FED0,316,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_0063fed0
-?d_002408e0@@YAXXZ,,0x002408E0,439,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_006408e0
 ?d_00240b10@@YAXXZ,,0x00240B10,247,game/gen_asm/d_00234360.asm,matched,gen-dump;bounds=high
 ?d_00240c50@@YAXXZ,,0x00240C50,562,game/gen_asm/d_002310f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00640c50
 ?d_002417e0@@YAXXZ,,0x002417E0,1467,game/gen_asm/d_0023c310.asm,matched,gen-dump;ghidra=FUN_006417e0
@@ -172562,3 +172561,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?method@Rva007527C0@@QBE_NABU1@@Z,,0x007527C0,485,game/GameEngine/Source/Common/Rva007527C0Comparator.cpp,matched,Opaque address-derived comparator; complete thiscall ABI; evidence=targets/game/reverse/identity_evidence/0x007527c0-comparator.md;model=gpt-6.1-sol;host=fleet
 ?setRect@Rva00435270Layout@@AAEXMMMMHH@Z,,0x00433DC0,360,game/GameEngine/Source/GameClient/GUI/Rva00435270SetRect.cpp,matched,Complete rectangle draw; existing opaque owner and six-word ABI retained; packed-color value lifetime and in-place alpha shift; identity_evidence/00433dc0-packed-color-recovery.md;model=gpt-6.1-sol;host=fleet
 ?update@WindowVideoManager@@UAEXXZ,,0x00499050,301,game/GameEngine/Source/GameClient/GUI/WindowVideoManagerUpdate.cpp,matched,WindowVideoManager update from vtable slot 5 and strong EA pairing; complete flag-result switch and nullable member accessor; evidence=targets/game/reverse/identity_evidence/00499050-update.md;model=gpt-6.1-sol;host=fleet
+?destroyMember@Rva002408E0View@@QAEXPAVObject@@@Z,,0x002408E0,439,game/GameEngine/Source/GameLogic/Object/Contain/HordeContain/MemberDestroy002408E0.cpp,matched,Secondary HordeContain receiver; address-derived method spelling; one asm flag store for verified VC7.1 epilogue scheduling blocker; evidence=targets/game/reverse/identity_evidence/002408e0-owner-fields-and-epilogue.md;model=gpt-6.1-sol;host=fleet

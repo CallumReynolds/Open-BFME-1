@@ -1,5 +1,5 @@
 // ?finish@BfmeRvaB7E0Owner@@QAEXPAVBfmeRvaB7E0Object@@_N@Z
-// partial score=0.37 date=2026-09-28
+// partial score=0.3657 date=2026-09-28
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 #include <map>

@@ -26593,6 +26593,7 @@ object_symbol	targets/game/reverse/functions.csv	0x00C0CDE8	1
 object_symbol	targets/game/reverse/functions.csv	0x00C0CDF6	1
 object_symbol	targets/game/reverse/functions.csv	0x00C0CE04	1
 object_symbol	targets/game/reverse/functions.csv	0x00C0CE12	1
+object_symbol	targets/game/reverse/functions.csv	0x00C0CE30	1	allow=718d09fff4a25d550fd9355a76889cdd66a3d037
 object_symbol	targets/game/reverse/functions.csv	0x00C0CE46	1
 object_symbol	targets/game/reverse/functions.csv	0x00C0CE51	1
 object_symbol	targets/game/reverse/functions.csv	0x00C0CE7E	1
@@ -32988,6 +32989,7 @@ object_symbol	targets/game/reverse/functions.csv	0x00C25D78	1
 object_symbol	targets/game/reverse/functions.csv	0x00C25D90	1
 object_symbol	targets/game/reverse/functions.csv	0x00C25D9B	1
 object_symbol	targets/game/reverse/functions.csv	0x00C25DB0	1
+object_symbol	targets/game/reverse/functions.csv	0x00C25DB8	1	allow=8133c26434adb107ed8fa018a3c51dca209c7c44
 object_symbol	targets/game/reverse/functions.csv	0x00C25DC0	1
 object_symbol	targets/game/reverse/functions.csv	0x00C25DD0	1
 object_symbol	targets/game/reverse/functions.csv	0x00C25DD8	1
@@ -42076,6 +42078,7 @@ object_symbol	targets/game/reverse/functions.csv	0x00C465E9	1
 object_symbol	targets/game/reverse/functions.csv	0x00C465F4	1
 object_symbol	targets/game/reverse/functions.csv	0x00C465FF	1
 object_symbol	targets/game/reverse/functions.csv	0x00C46620	1
+object_symbol	targets/game/reverse/functions.csv	0x00C46628	1	allow=6217e4a99f9876337db941794f9589a3c69ae532
 object_symbol	targets/game/reverse/functions.csv	0x00C46633	1
 object_symbol	targets/game/reverse/functions.csv	0x00C46650	1
 object_symbol	targets/game/reverse/functions.csv	0x00C46658	1
@@ -46693,6 +46696,7 @@ object_symbol	targets/game/reverse/functions.csv	0x00C57D1B	1
 object_symbol	targets/game/reverse/functions.csv	0x00C57D29	1
 object_symbol	targets/game/reverse/functions.csv	0x00C57D37	1
 object_symbol	targets/game/reverse/functions.csv	0x00C57D45	1
+object_symbol	targets/game/reverse/functions.csv	0x00C57D53	1	allow=6217e4a99f9876337db941794f9589a3c69ae532
 object_symbol	targets/game/reverse/functions.csv	0x00C57D5E	1
 object_symbol	targets/game/reverse/functions.csv	0x00C57D70	1
 object_symbol	targets/game/reverse/functions.csv	0x00C57D7B	1
@@ -47426,6 +47430,7 @@ object_symbol	targets/game/reverse/functions.csv	0x00C5A6E0	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5A6E8	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5A700	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5A71E	1
+object_symbol	targets/game/reverse/functions.csv	0x00C5A730	1	allow=6217e4a99f9876337db941794f9589a3c69ae532
 object_symbol	targets/game/reverse/functions.csv	0x00C5A74E	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5A760	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5A76F	1
@@ -47936,6 +47941,7 @@ object_symbol	targets/game/reverse/functions.csv	0x00C5C2F0	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5C2F8	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5C300	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5C308	1
+object_symbol	targets/game/reverse/functions.csv	0x00C5C310	1	allow=6217e4a99f9876337db941794f9589a3c69ae532
 object_symbol	targets/game/reverse/functions.csv	0x00C5C31B	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5C326	1
 object_symbol	targets/game/reverse/functions.csv	0x00C5C331	1

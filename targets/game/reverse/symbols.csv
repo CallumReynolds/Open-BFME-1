@@ -10132,6 +10132,8 @@ name,address,notes
 ??3Gen_uws44_008a9120@@SAXPAXI@Z,0x008A9120,gen-uw-pin dtor target read from the retail funclet bytes
 ??3Gen_uws48_008bd0c0@@SAXPAXI@Z,0x008BD0C0,gen-uw-pin dtor target read from the retail funclet bytes
 ??3Gen_uws4_008bd020@@SAXPAXI@Z,0x008BD020,gen-uw-pin dtor target read from the retail funclet bytes
+??3BfmeThingBE@@SAXPAXI@Z,0x008BD020,sized class delete jmp [TheBfmeFree] stub; reached by rel32 only from funclets 0x00C5A730 (BfmeThingCBC::bfmeStepCBC state0 delete of new BfmeThingBE) and 0x00C59300
+??_VBfmeVecEVE@@SAXPAX@Z,0x008A05B0,class array delete jmp [g_bfmeFreeDWF] stub; reached by rel32 only from funclet 0x00C57D53 (BfmeThingUEW ctor state5 delete[] of new BfmeVecEVE[])
 ??3Gen_uws52_008ba800@@SAXPAXI@Z,0x008BA800,gen-uw-pin dtor target read from the retail funclet bytes
 ??3Gen_uws52_008ba870@@SAXPAXI@Z,0x008BA870,gen-uw-pin dtor target read from the retail funclet bytes
 ??3Gen_uws56_00894c50@@SAXPAXI@Z,0x00894C50,gen-uw-pin dtor target read from the retail funclet bytes

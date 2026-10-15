@@ -1895,3 +1895,20 @@ const override resolver all pass strict checks. See
 `identity_evidence/00372e40-native-override.md` for caller ABI and extent proof.
 identity_evidence/00256240-upgrade-die.md for the slot and field evidence.
 unreachable compiler-layout decision. Evidence: `identity_evidence/003dc810-clear-cell.md`.
+
+## Define a called functor or container member in its class (2026-10-15)
+
+A member called on a parameter's address (a comparator's `operator()`, a
+list's `push_back(const T &)`) that is only DECLARED marks that parameter
+address-taken, and VC7.1 then refuses tail calls through it and keeps it in
+memory. Defining the member inside its class, so the optimiser emits it as a
+COMDAT but declines to expand it (EH temporaries under /EHsc, or too big),
+reproduces retail. SiegeEngineContain::addToContainList (0x0022C160) got
+back its `mov [esp+4],10 / jmp [edx+0x1FC]` tail call. Three
+`__partial_sort<int*, int, Cmp>` instances (0x0034B8D0, 0x00455E20,
+0x00455EC0) cache `comp` in EBP and reload `last` once the matched comparator
+body is defined in-class beside the real `<algorithm>` instantiation in its
+`*Comparator.cpp`. Before this, four siblings had banked the same "comparator
+staging" wall. A helper holding a loop or a `new` with EH cleanup is never
+expanded by VC7.1, so wrapping such code in an inline helper reproduces nothing
+(0x000E15A0, 0x00139B40).

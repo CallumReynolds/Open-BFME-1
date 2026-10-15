@@ -1,16 +1,12 @@
-// ?d_002c0fe0@@YAXXZ
-// partial score=0.6 date=2026-09-21
+// ?update@GiantBirdGuardIdleState@@UAE?AW4StateReturnType@@XZ
+// partial score=0.9517 date=2026-10-15
 // cl: /DNDEBUG /MD /EHsc
-// GiantBirdGuardIdleState::update at retail RVA 0x002C0FE0, 290 bytes.
-// Vtable 0x010C7BB8 (GiantBirdGuardMachineCtor.cpp) slot 6 (ILT 0x0043A55D)
-// reaches this body, matching the same slot GiantBirdGuardReturnState::update
-// occupies on its own vtable 0x010C7CB8; the m_int24/m_tail28 fields declared
-// there for GiantBirdGuardIdleState are this body's m_frameToSleepUntil and
-// m_position (Coord3D, 0x0C bytes at +0x28).
-
+// GiantBirdGuardIdleState::update retail 0x002C0FE0 (290B): ZH AIGuardIdleState::update with the crate check via machine setState(0x138C) and the team-to-guard fallback. Arm-order lever: an up-front `if (target == NULL && team == NULL) return sleep;` makes the team arm the fallthrough (was 95 diffs). Residue 14 diffs at +0xEB: retail loads x/y/z of the object position into ebx/esi/edx before storing x/y; ours interleaves load/store.
 typedef int Int;
 typedef unsigned int UnsignedInt;
+typedef unsigned int TeamID;
 typedef bool Bool;
+typedef float Real;
 
 enum StateReturnType
 {
@@ -21,178 +17,151 @@ enum StateReturnType
 
 struct Coord3D
 {
-	float x;
-	float y;
-	float z;
+	Real x;
+	Real y;
+	Real z;
+};
+
+class AIUpdateInterface
+{
+public:
+	Int getCrateID() const { return *(const Int *)((const char *)this + 0x218); }
 };
 
 class Object
 {
 public:
-	unsigned char m_unreconstructed00[ 0x38 ];
-	Coord3D m_position;
+	const Coord3D *getPosition() const { return (const Coord3D *)((const char *)this + 0x38); }
+	AIUpdateInterface *getAI() const { return *(AIUpdateInterface **)((const char *)this + 0x204); }
+};
+
+class Team
+{
+public:
+	void getEstimateTeamPosition_000EDCD0(Coord3D *position) const;
+};
+
+class TeamFactory
+{
+public:
+	Team *findTeamByID(TeamID id);
 };
 
 class GameLogic
 {
 public:
-	Object *findObjectByID( Int id );
-	unsigned char m_unreconstructed00[ 0x3c ];
-	UnsignedInt m_frame;
+	Object *findObjectByID(Int id);
+	UnsignedInt getFrame() const { return *(const UnsignedInt *)((const char *)this + 0x3c); }
 };
 
-class TAiData
+class AIData
 {
 public:
-	unsigned char m_pad00[ 0x40 ];
+	unsigned char m_fields[0x40];
 	UnsignedInt m_guardEnemyScanRate;
 };
 
 class AI
 {
 public:
-	unsigned char m_unreconstructed00[ 0x14 ];
-	TAiData *m_aiData;
+	unsigned char m_fields[0x14];
+	AIData *m_data;
+	AIData *getAiData() { return m_data; }
 };
 
-class Team;
+extern GameLogic *TheGameLogic;
+extern TeamFactory *TheTeamFactory;
+extern AI *TheAI;
 
-class TeamFactory
+class AIGuardMachine
 {
 public:
-	void *find( Int id );
+	virtual void slot00();
+	virtual void slot01();
+	virtual void slot02();
+	virtual void slot03();
+	virtual void slot04();
+	virtual void slot05();
+	virtual void slot06();
+	virtual void slot07();
+	virtual void setState(int state);
+
+	Object *getOwner() const { return m_owner; }
+	Object *findTargetToGuardByID() { return TheGameLogic->findObjectByID(m_targetToGuard); }
+	Team *findTeamToGuardByID() { return TheTeamFactory->findTeamByID(m_teamToGuard); }
+
+protected:
+	unsigned char m_unmodelled04[0x0C];
+	Object *m_owner;
+	unsigned char m_unmodelled14[0x30];
+	Int m_targetToGuard;
+	TeamID m_teamToGuard;
 };
 
-class Team
+class GiantBirdGuardMachine : public AIGuardMachine
 {
 public:
-	Coord3D *getEstimateTeamPosition_000EDCD0( Coord3D *position ) const;
+	Bool lookForInnerTarget(void);
 };
 
-class GiantBirdGuardMachine
-{
-public:
-	Bool lookForInnerTarget();
-
-	unsigned char m_unreconstructed00[ 0x10 ];
-	void *m_notifyChain;
-	unsigned char m_unreconstructed14[ 0x44 - 0x14 ];
-	Int m_teamID;
-	Int m_otherID;
-};
-
-class GiantBirdNormalFlightState
-{
-public:
-	virtual StateReturnType onEnter();
-};
-
-class GiantBirdGuardIdleState : public GiantBirdNormalFlightState
+class GiantBirdGuardIdleState
 {
 public:
 	virtual StateReturnType update();
 
 private:
-	unsigned char m_unreconstructed04[ 0x18 ];
+	unsigned char m_stateFields04[0x18];
 	GiantBirdGuardMachine *m_machine;
-	unsigned char m_unreconstructed20[ 4 ];
-	UnsignedInt m_frameToSleepUntil;
-	Coord3D m_position;
+	unsigned char m_unreconstructed20[4];
+	UnsignedInt m_nextEnemyScanTime;
+	Coord3D m_guardeePos;
 };
 
-#define TheBfmeGameLogic ( *(GameLogic **)0x012F0898 )
-#define TheBfmeAI ( *(AI **)0x012EF214 )
-#define TheBfmeTeamFactory ( *(TeamFactory **)0x012ED810 )
+#define PATHFIND_CELL_SIZE_F 10.0f
 
-extern void j_00044c2e();
-extern void j_000241fe();
-
-typedef void *(TeamFactory::*FindTeamCall)( Int );
-typedef Coord3D *(Team::*EstimateTeamPositionCall)( Coord3D * ) const;
-
-typedef void ( GiantBirdGuardMachine::*NotifySlot8 )( Int );
-
+#define NULL 0
+static inline Bool getGuardeePos(Object *target, Team *team, Coord3D *pos)
+{
+	if (target) { *pos = *target->getPosition(); return true; }
+	if (team) { team->getEstimateTeamPosition_000EDCD0(pos); return true; }
+	return false;
+}
 StateReturnType GiantBirdGuardIdleState::update()
 {
-	UnsignedInt now = TheBfmeGameLogic->m_frame;
-	if (now < m_frameToSleepUntil)
-		return (StateReturnType)( m_frameToSleepUntil - now );
+	UnsignedInt now = TheGameLogic->getFrame();
+	if (now < m_nextEnemyScanTime)
+		return (StateReturnType)(m_nextEnemyScanTime - now);
 
-	m_frameToSleepUntil = now + TheBfmeAI->m_aiData->m_guardEnemyScanRate;
+	m_nextEnemyScanTime = now + TheAI->getAiData()->m_guardEnemyScanRate;
 
 	GiantBirdGuardMachine *machine = m_machine;
-	void *chain = *reinterpret_cast<void **>(
-		reinterpret_cast<char *>( machine ) + 0x10 );
-	void *deeper = *reinterpret_cast<void **>(
-		reinterpret_cast<char *>( chain ) + 0x204 );
-	void *flag = *reinterpret_cast<void **>(
-		reinterpret_cast<char *>( deeper ) + 0x218 );
-
-	if (flag != 0)
+	if (machine->getOwner()->getAI()->getCrateID() != 0)
 	{
-		void *slot8 = ( *reinterpret_cast<void ***>( machine ) )[ 8 ];
-		union
-		{
-			void *asVoid;
-			NotifySlot8 asMember;
-		} notifyCast;
-		notifyCast.asVoid = slot8;
-		(machine->*notifyCast.asMember)( 0x138C );
-		return (StateReturnType)( m_frameToSleepUntil - now );
+		machine->setState(0x138c);
+		return (StateReturnType)(m_nextEnemyScanTime - now);
 	}
 
 	if (machine->lookForInnerTarget())
 		return STATE_SUCCESS;
 
-	Object *object = TheBfmeGameLogic->findObjectByID( machine->m_teamID );
+	Object *targetToGuard = machine->findTargetToGuardByID();
+	Team *teamToGuard = machine->findTeamToGuardByID();
+	Coord3D pos;
+	if (targetToGuard == NULL && teamToGuard == NULL) return (StateReturnType)(m_nextEnemyScanTime - now);
+	if (targetToGuard) pos = *targetToGuard->getPosition();
+	else teamToGuard->getEstimateTeamPosition_000EDCD0(&pos);
 
-	union
+	Real delta = m_guardeePos.x - pos.x;
+	if (delta * delta > 4 * PATHFIND_CELL_SIZE_F * PATHFIND_CELL_SIZE_F)
 	{
-		void *asVoid;
-		FindTeamCall asMember;
-	} findTeamCast;
-	findTeamCast.asVoid = (void *)j_00044c2e;
-	Team *team = (Team *)(TheBfmeTeamFactory->*findTeamCast.asMember)( machine->m_otherID );
-
-	Coord3D goal;
-	if (object == 0)
-	{
-		if (team == 0)
-			return (StateReturnType)( m_frameToSleepUntil - now );
-
-		union
-		{
-			void *asVoid;
-			EstimateTeamPositionCall asMember;
-		} estimateTeamPositionCast;
-		estimateTeamPositionCast.asVoid = (void *)j_000241fe;
-		(team->*estimateTeamPositionCast.asMember)( &goal );
+		m_guardeePos = pos;
+		return STATE_FAILURE;
 	}
-	else
+	delta = m_guardeePos.y - pos.y;
+	if (delta * delta > 4 * PATHFIND_CELL_SIZE_F * PATHFIND_CELL_SIZE_F)
 	{
-		goto compute_from_object;
+		m_guardeePos = pos;
+		return STATE_FAILURE;
 	}
-
-distance_check:
-	{
-		float dx = m_position.x - goal.x;
-		if (dx * dx > *(float *)0x01096418)
-		{
-			m_position = goal;
-			return STATE_FAILURE;
-		}
-
-		float dy = m_position.y - goal.y;
-		if (dy * dy > *(float *)0x01096418)
-		{
-			m_position = goal;
-			return STATE_FAILURE;
-		}
-
-		return (StateReturnType)( m_frameToSleepUntil - now );
-	}
-
-compute_from_object:
-	goal = *(Coord3D *)( (char *)object + 0x38 );
-	goto distance_check;
+	return (StateReturnType)(m_nextEnemyScanTime - now);
 }

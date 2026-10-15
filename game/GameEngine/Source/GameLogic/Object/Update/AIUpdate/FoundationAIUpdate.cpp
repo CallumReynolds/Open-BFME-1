@@ -1,28 +1,45 @@
 // ?update@FoundationAIUpdate@@UAE?AW4UpdateSleepTime@@XZ
-// partial score=0.621 date=2026-09-26
-// cl: /DNDEBUG /MD /EHsc /Iinputs/reference/shims/stringinline
-#include "../../../../../../../inputs/reference/shims/stringinline/StringInline.h"
+// cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWLib
+#include "ascii_string.h"
 
 class Drawable
 {
 public:
 	void setSelectable(bool value);
 };
+enum ObjectID { INVALID_ID = 0, FORCE_OBJECTID_TO_LONG_SIZE = 0x7ffffff };
 enum KindOfType { KINDOF_FOUNDATION = 0x95 };
 enum ObjectStatusTypes { OBJECT_STATUS_UNSELECTABLE = 3 };
 enum NameKeyType { NAMEKEY_INVALID = 0 };
 enum UpdateSleepTime { UPDATE_SLEEP_NONE = 1 };
-class Thing
-{
-public:
-	bool isKindOf(KindOfType kind) const;
-};
 class Overridable
 {
 public:
+	virtual ~Overridable();
 	const Overridable *getFinalOverride() const;
-	unsigned char m_unreconstructed[0xd8];
+	Overridable *m_nextOverride;
+};
+class ThingTemplate : public Overridable
+{
+public:
+	unsigned char m_unreconstructed[0xd8 - 8];
 	unsigned int m_flags;
+};
+class Thing
+{
+public:
+	virtual ~Thing();
+	bool isKindOf(KindOfType kind) const;
+	const ThingTemplate *getTemplate() const
+	{
+		const ThingTemplate *playerObject = m_template;
+		if (!playerObject)
+			return 0;
+		const Overridable *source = playerObject->m_nextOverride;
+		return source ? (const ThingTemplate *)source->getFinalOverride() : playerObject;
+	}
+private:
+	const ThingTemplate *m_template;
 };
 class Module;
 class Object
@@ -39,7 +56,10 @@ public:
 	virtual void slot20() = 0;
 	virtual void slot24() = 0;
 	virtual Drawable *getDrawable() const = 0;
+	friend class FoundationAIUpdate;
+protected:
 	Module *findModule(NameKeyType key) const;
+public:
 	void clearStatus(ObjectStatusTypes status);
 	unsigned char m_fields04[0x340];
 };
@@ -56,22 +76,31 @@ public:
 class GameLogic
 {
 public:
-	Object *findObjectByID(int id);
+	Object *findObjectByID(ObjectID id);
 };
 class Module
 {
 public:
 	unsigned char m_fields00[0x14];
-	Object *m_pending;
-	int m_pendingID;
+	ObjectID m_pending;
+	ObjectID m_pendingID;
 	unsigned char m_fields1c[0x84];
 	int m_pendingData;
 	bool isPendingObjectUnavailable() const;
 };
+class BfmeItemE63
+{
+public:
+	bool checkValid();
+};
 class CastleBehavior : public Module
 {
 public:
-	bool isPendingObjectUnavailable() const;
+	// ?isPendingObjectUnavailable00372090@CastleBehavior@@QBE_NXZ absent-from-retail
+	__forceinline bool isPendingObjectUnavailable00372090() const
+	{
+		return ((BfmeItemE63 *)this)->checkValid();
+	}
 };
 class InGameUI
 {
@@ -112,6 +141,7 @@ class BfmeA1057
 public:
 	void bfmeGo1057A(int value);
 };
+// The primary slot at +0x38 has no stack arguments or used return value.
 class UpdateOwner
 {
 public:
@@ -129,14 +159,16 @@ public:
 	virtual void slot2c() = 0;
 	virtual void slot30() = 0;
 	virtual void slot34() = 0;
-	virtual Object *getObject() = 0;
+	virtual void getObject() = 0;
 };
+// This view begins at the UpdateModuleInterface subobject of FoundationAIUpdate.
 class FoundationAIUpdate
 {
 public:
 	virtual UpdateSleepTime update();
+	Object *getObject002BAC00() const { return *(Object **)((char *)this - 8); }
 	char m_fields04[0x80];
-	int m_currentID;
+	ObjectID m_currentID;
 	bool m_updatePending;
 };
 
@@ -146,13 +178,14 @@ extern InGameUI *TheInGameUI;
 
 UpdateSleepTime FoundationAIUpdate::update()
 {
+	Drawable *object;
 	if (m_updatePending)
 	{
 		UpdateOwner *module = (UpdateOwner *)((char *)this - 0x10);
 		module->getObject();
 		m_updatePending = false;
 		static NameKeyType castleMemberKey = TheNameKeyGenerator->nameToKey("CastleMemberBehavior");
-		Object *owner = *(Object **)((char *)this - 8);
+		Object *owner = getObject002BAC00();
 		Module *member = owner->findModule(castleMemberKey);
 		if (member && !member->m_pending && member->m_pendingID)
 		{
@@ -162,54 +195,61 @@ UpdateSleepTime FoundationAIUpdate::update()
 				static NameKeyType castleKey = TheNameKeyGenerator->nameToKey("CastleBehavior");
 				Module *castle = pending->findModule(castleKey);
 				if (castle)
-					member->m_pending = *(Object **)((char *)castle + 0xa0);
+					member->m_pending = *(ObjectID *)((char *)castle + 0xa0);
 			}
 		}
 	}
-	Object *owner = *(Object **)((char *)this - 8);
+	Object *owner = getObject002BAC00();
 	if (*(unsigned int *)((char *)owner + 0x344) & 1)
 	{
-		Object *playerObject = *(Object **)((char *)owner + 4);
-		Overridable *source = playerObject ? *(Overridable **)((char *)playerObject + 4) : 0;
-		if (source && (source->getFinalOverride()->m_flags & 0x200000))
+		const ThingTemplate *finalSource = ((Thing *)owner)->getTemplate();
+		if (finalSource->m_flags & 0x200000)
 		{
-			((Gen002BA170 *)owner)->bfmeSet(AsciiString("empty"));
-			owner->getDrawable();
+			((Gen002BA170 *)getObject002BAC00())->bfmeSet(AsciiString("empty"));
+			object = owner->getDrawable();
+			goto updateUI;
+		}
+	}
+	{
+		if (m_currentID && TheBfmeGameLogic->findObjectByID(m_currentID))
 			return UPDATE_SLEEP_NONE;
+		if (m_currentID)
+		{
+			Object *owner = getObject002BAC00();
+			m_currentID = INVALID_ID;
+			if (!((Thing *)owner)->isKindOf(KINDOF_FOUNDATION))
+			{
+				owner->clearStatus(OBJECT_STATUS_UNSELECTABLE);
+				Drawable *drawable = getObject002BAC00()->getDrawable();
+				if (drawable && !((Thing *)getObject002BAC00())->isKindOf(KINDOF_FOUNDATION))
+				{
+					drawable->setSelectable(true);
+					((BfmeA1057 *)drawable)->bfmeGo1057A(0x1e);
+				}
+			}
 		}
-	}
-	if (m_currentID && TheBfmeGameLogic->findObjectByID(m_currentID))
+		static NameKeyType memberKey = TheNameKeyGenerator->nameToKey("CastleMemberBehavior");
+		Module *member = getObject002BAC00()->findModule(memberKey);
+		if (member)
+		{
+			bool unavailable;
+			if (member->m_pending)
+				unavailable = ((CastleBehavior *)member)->isPendingObjectUnavailable00372090();
+			else
+				unavailable = false;
+			if (!unavailable)
+				((Gen002BA170 *)getObject002BAC00())->bfmeSet(AsciiString(""));
+			else
+			{
+				((Gen002BA170 *)getObject002BAC00())->bfmeSet(AsciiString("empty"));
+				object = owner->getDrawable();
+				goto updateUI;
+			}
+		}
 		return UPDATE_SLEEP_NONE;
-	if (m_currentID)
-	{
-		m_currentID = 0;
-		if (!((Thing *)owner)->isKindOf(KINDOF_FOUNDATION))
-		{
-			owner->clearStatus(OBJECT_STATUS_UNSELECTABLE);
-			Drawable *drawable = owner->getDrawable();
-			if (drawable && !((Thing *)owner)->isKindOf(KINDOF_FOUNDATION))
-			{
-				drawable->setSelectable(true);
-				((BfmeA1057 *)drawable)->bfmeGo1057A(0x1e);
-			}
-		}
 	}
-	static NameKeyType memberKey = TheNameKeyGenerator->nameToKey("CastleMemberBehavior");
-	Module *member = owner->findModule(memberKey);
-	if (member)
-	{
-		if (member->m_pending)
-		{
-			if (((CastleBehavior *)member)->isPendingObjectUnavailable())
-			{
-				((Gen002BA170 *)owner)->bfmeSet(AsciiString("empty"));
-				Drawable *object = owner->getDrawable();
-				if (object && *(unsigned char *)((char *)object + 0x3ac))
-					TheInGameUI->slotE4(object);
-			}
-		}
-		else
-			((Gen002BA170 *)owner)->bfmeSet(AsciiString(""));
-	}
+updateUI:
+	if (object && *(unsigned char *)((char *)object + 0x3ac))
+		TheInGameUI->slotE4(object);
 	return UPDATE_SLEEP_NONE;
 }

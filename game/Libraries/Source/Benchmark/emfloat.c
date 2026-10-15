@@ -230,7 +230,9 @@ static void SetInternalFPFNaN(InternalFPF *dest)
 {
 int i;          /* Index */
 
-dest->type=IFPF_IS_NAN;
+/* BFME-2 Rva006B9510Multiply.cpp: preserve VC7.1's native NaN
+** operand allocation when this initializer is inlined into multiplication. */
+(dest ? dest : dest)->type=IFPF_IS_NAN;
 dest->exp=MAX_EXP;
 dest->sign=1;
 dest->mantissa[0]=0x4000;
@@ -255,6 +257,22 @@ int n;          /* Return value */
 n=0;
 for(i=0;i<INTERNAL_FPF_PRECISION;i++)
         n|=mant[i];
+
+return(!n);
+}
+
+/* BFME-2 donor 3f2d993a9762 uses this equivalent OR order for
+** MultiplyInternalFPF's extra bits. Keep existing helpers unchanged. */
+// ?IsMantissaZero00879C80@@YAHPAG@Z absent-from-retail
+static __forceinline int IsMantissaZero00879C80(u16 *mant)
+{
+int i;
+int n;
+int order[INTERNAL_FPF_PRECISION] = {0,2,1,3};
+
+n=0;
+for(i=0;i<INTERNAL_FPF_PRECISION;i++)
+        n|=mant[order[i]];
 
 return(!n);
 }
@@ -895,7 +913,7 @@ case NORMAL_NORMAL:
         /*
         ** Set the sticky bit if any bits set in extra bits.
         */
-        if (IsMantissaZero(extra_bits))
+        if (IsMantissaZero00879C80(extra_bits))
         {
                 z->mantissa[INTERNAL_FPF_PRECISION-1] |= 1;
         }

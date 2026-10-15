@@ -17,6 +17,7 @@ import csv
 import io
 import json
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -100,6 +101,21 @@ def read_blobs(paths, spec):
         blobs[path] = blob
     if stream.read(1):
         raise SystemExit("check_csv: unexpected data after Git blob batch")
+    return blobs
+
+
+def read_worktree_blobs(paths, problems, what):
+    """Git can track a path the working tree lacks (sparse checkout, unstaged bank
+    deletion); name it as a problem instead of an opaque traceback."""
+    blobs = {}
+    for path in paths:
+        try:
+            blobs.update(read_blobs([path], None))
+        except FileNotFoundError:
+            shown = path.relative_to(ROOT).as_posix()
+            problems.append(f"{shown}: {what} is absent from the working tree. Restore it "
+                            f"(`git checkout -- {shlex.quote(shown)}`; a sparse checkout "
+                            f"must include it) or fix the reference.")
     return blobs
 
 
@@ -428,15 +444,17 @@ def check_attempts(spec, problems, *, functions_raw=None, sources_ok=None):
                 continue
             matched.setdefault(address, []).append((row[0], row[4]))
 
-    blobs = read_blobs((ROOT / rel for rel in paths
-                        if ATTEMPT_NAME.match(rel[len(ATTEMPTS_DIR):])), spec)
+    attempts = [ROOT / rel for rel in paths
+                if ATTEMPT_NAME.match(rel[len(ATTEMPTS_DIR):])]
+    # Worktree reads stay fail-closed but report absent files as problems.
+    blobs = (read_worktree_blobs(attempts, problems, "the banked attempt")
+             if spec is None else read_blobs(attempts, spec))
     lines_by_path = {
         path: blob.decode("utf-8", errors="replace").splitlines()
         for path, blob in blobs.items()
     }
     # A source can back several banked addresses. Read each source once from
-    # the same index/commit as its bank, rather than launching git show for
-    # every claim. Missing blobs still fail closed through read_blobs.
+    # the same state as its bank, rather than launching git show for every claim.
     source_paths = {
         ROOT / source
         for path, lines in lines_by_path.items()
@@ -444,7 +462,9 @@ def check_attempts(spec, problems, *, functions_raw=None, sources_ok=None):
         for _, source in matched.get(path.stem, [])
         if Path(source).suffix.lower() not in (".asm", ".s", ".lib")
     }
-    source_blobs = read_blobs(sorted(source_paths), spec)
+    source_blobs = (read_worktree_blobs(sorted(source_paths), problems,
+                                        "the source this bank names")
+                    if spec is None else read_blobs(sorted(source_paths), spec))
     for rel in paths:
         name = rel[len(ATTEMPTS_DIR):]
         if not ATTEMPT_NAME.match(name):
@@ -452,6 +472,8 @@ def check_attempts(spec, problems, *, functions_raw=None, sources_ok=None):
                 f"{rel}: name must be the lowercase rva it banks, e.g. "
                 f"0x000c8220.cpp — serving looks the stash up by address.")
             continue
+        if ROOT / rel not in blobs:
+            continue  # absent bank already named as a problem
         blob = blobs[ROOT / rel]
         if len(blob) > ATTEMPT_LIMIT:
             problems.append(f"{rel}: {len(blob)} bytes, over {ATTEMPT_LIMIT}. "
@@ -474,7 +496,10 @@ def check_attempts(spec, problems, *, functions_raw=None, sources_ok=None):
             # and a .cpp row is one when its body is a naked/__emit lift.
             if Path(source).suffix.lower() in (".asm", ".s", ".lib"):
                 continue
-            text = source_blobs[ROOT / source].decode("utf-8", errors="replace")
+            source_blob = source_blobs.get(ROOT / source)
+            if source_blob is None:
+                continue  # absent source already named as a problem
+            text = source_blob.decode("utf-8", errors="replace")
             if "__declspec(naked)" in text or "_emit" in text:
                 continue
             problems.append(

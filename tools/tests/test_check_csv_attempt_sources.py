@@ -107,6 +107,29 @@ def test_missing_committed_source_fails_without_reading_disk(attempt_repo):
         check_csv.check_attempts(sha, [])
 
 
+def test_absent_worktree_source_is_a_problem_not_a_traceback(attempt_repo):
+    root, git, populate = attempt_repo
+    sha, code, banks = populate(count=1)
+    code.unlink()  # index still lists it; a sparse checkout leaves it off disk
+    problems = []
+    assert check_csv.check_attempts(None, problems) == 1
+    assert len(problems) == 1, problems
+    assert 'game/shared source.cpp' in problems[0]
+    assert "git checkout -- 'game/shared source.cpp'" in problems[0]
+    assert 'absent from the working tree' in problems[0]
+
+
+def test_absent_worktree_bank_is_a_problem_not_a_traceback(attempt_repo):
+    root, git, populate = attempt_repo
+    sha, code, banks = populate(count=1)
+    (banks / '0x00001000.cpp').unlink()  # index still lists it; deletion not staged
+    problems = []
+    assert check_csv.check_attempts(None, problems) == 1
+    assert len(problems) == 1, problems
+    assert 'targets/game/reverse/attempts/0x00001000.cpp' in problems[0]
+    assert 'absent from the working tree' in problems[0]
+
+
 def test_bad_score_does_not_trigger_unreachable_source_read(attempt_repo):
     root, git, populate = attempt_repo
     sha, code, banks = populate(commit_source=False, count=1,

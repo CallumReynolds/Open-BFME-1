@@ -1,5 +1,5 @@
 // ??0Rva006DABB0@@QAE@PAVRva006DABB0Source@@H@Z
-// partial score=0.79 date=2026-09-02
+// partial score=0.7875 date=2026-09-02
 // cl: /DNDEBUG /MD /EHsc
 // Twin of ??1Rva006DABB0@@UAE@XZ. Retail 0x006DB470 (160 bytes).
 // Two stack args: source object and an int stored at +4. Increments g_012F801C.

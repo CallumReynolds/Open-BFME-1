@@ -16,6 +16,10 @@ extern "C" __declspec(dllimport) DWORD WINAPI GetGlyphIndicesW(HDC,LPCWSTR,int,L
 class FontCharsClassGdiState;extern FontCharsClassGdiState *g_fontCharsGdiState0134AEAC;
 struct Rva009412F0GdiView {char m00[16];HDC m10;};
 struct Rva00941400CharRecord;
+// BFME-2 FontCharsClassGetCharData.cpp records the header/provider
+// declaration mismatch. Call BFME-1's public/struct provider directly;
+// both declarations return EAX and consume one unsigned-short stack slot.
+extern "C" void __identifier("?Get_Char_Data@FontCharsClass@@QAEPBUFontCharsClassCharDataStruct@@G@Z")();
 // The generated loader target uses thiscall, takes one stack argument, and returns with RET 4.
 void d_0093f440();
 class Rva00941400Font {
@@ -38,7 +42,12 @@ const Rva00941400CharRecord *Rva00941400Font::Get_Char_Data(unsigned short ch) {
   HGDIOBJ old=SelectObject(dc,font);
   GetGlyphIndicesW(((Rva009412F0GdiView*)g_fontCharsGdiState0134AEAC)->m10,&ch,1,(WORD*)&glyph,1);
   SelectObject(dc,old);
-  if((unsigned short)glyph!=0xffff) return (const Rva00941400CharRecord*)(reinterpret_cast<FontCharsClass*>(this)->Get_Char_Data((unsigned short)glyph));
+  if((unsigned short)glyph!=0xffff) {
+   union {void (*p)(); const Rva00941400CharRecord *(Rva00941400Font::*m)(unsigned short);} lookup;
+   typedef char LookupMemberWidth[sizeof(lookup)==4?1:-1];
+   lookup.p=__identifier("?Get_Char_Data@FontCharsClass@@QAEPBUFontCharsClassCharDataStruct@@G@Z");
+   return (this->*lookup.m)((unsigned short)glyph);
+  }
   if(m08) return m08->Get_Char_Data(ch);
  }
  const Rva00941400CharRecord *data;

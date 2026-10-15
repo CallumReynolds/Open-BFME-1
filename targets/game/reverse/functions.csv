@@ -37373,7 +37373,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0042d460@@YAXXZ,,0x0042D460,435,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
 ?d_0042ec50@@YAXXZ,,0x0042EC50,1,game/GameEngine/Source/Common/Rva0042TinyBodies.cpp,matched,opaque address-derived body with proven ret boundary
 ?d_004327e0@@YAXXZ,,0x004327E0,387,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
-?d_00433dc0@@YAXXZ,,0x00433DC0,360,game/gen_asm/d_0042c460.asm,matched,gen-dump;ghidra=FUN_00833dc0
 ?d_004340c0@@YAXXZ,,0x004340C0,177,game/gen_asm/d_004171c0.asm,matched,gen-dump;bounds=high
 ?d_00435170@@YAXXZ,,0x00435170,195,game/gen_asm/d_00435170.asm,matched,gen-dump;ghidra=FUN_00835170
 ?d_004354f0@@YAXXZ,,0x004354F0,517,game/gen_asm/d_00435170.asm,matched,gen-dump;ghidra=FUN_008354f0
@@ -172562,3 +172561,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?rva0023B9F0@BfmeHordeContainRoster@@QAEXXZ,,0x0023B9F0,321,game/GameEngine/Source/GameLogic/Object/Contain/HordeContain/HordeContainSlotRecenter0023B9F0.cpp,matched,Slot recentering with complete caller and value-helper evidence; preserves bank address identity; evidence=targets/game/reverse/identity_evidence/0023b9f0-recenter.md;model=gpt-6.1-sol;host=fleet
 ?method@Rva003CC940@@QAE?AURva003CC940Point@@XZ,,0x003CC940,437,game/GameEngine/Source/GameLogic/LargeGroupAudio/Rva003CC940Position.cpp,matched,Exact C++ reconstruction; opaque ABI and identity evidence=targets/game/reverse/identity_evidence/003cc940-exact-position.md;model=gpt-6.1-sol;host=fleet
 ?method@Rva007527C0@@QBE_NABU1@@Z,,0x007527C0,485,game/GameEngine/Source/Common/Rva007527C0Comparator.cpp,matched,Opaque address-derived comparator; complete thiscall ABI; evidence=targets/game/reverse/identity_evidence/0x007527c0-comparator.md;model=gpt-6.1-sol;host=fleet
+?setRect@Rva00435270Layout@@AAEXMMMMHH@Z,,0x00433DC0,360,game/GameEngine/Source/GameClient/GUI/Rva00435270SetRect.cpp,matched,Complete rectangle draw; existing opaque owner and six-word ABI retained; packed-color value lifetime and in-place alpha shift; identity_evidence/00433dc0-packed-color-recovery.md;model=gpt-6.1-sol;host=fleet

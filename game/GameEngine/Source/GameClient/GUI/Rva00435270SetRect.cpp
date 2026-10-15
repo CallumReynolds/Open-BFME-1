@@ -1,9 +1,23 @@
-// ?setRect@Rva00435270Layout@@AAEXMMMMHH@Z
-// partial score=0.6472 date=2026-10-09
 // cl: /DNDEBUG /MD /EHsc /O2 /Ob2
 
 class Display;
 extern Display *TheDisplay;
+
+
+// The value copy keeps the completed packed color across the draw setup call.
+struct PackedColor00433DC0
+{
+    int value;
+
+    // ??0PackedColor00433DC0@@QAE@H@Z absent-from-retail
+    PackedColor00433DC0(int c) : value(c) {}
+
+    // ??BPackedColor00433DC0@@QBEHXZ absent-from-retail
+    operator int() const { return value; }
+
+    // ?alpha@PackedColor00433DC0@@QAEXH@Z absent-from-retail
+    void alpha(int a) { value = (value & 0x00ffffff) | (a << 24); }
+};
 
 class Rva00433DC0DisplaySlots
 {
@@ -64,8 +78,8 @@ public:
 	virtual void slot35();
 	virtual void slot36();
 	virtual void end();
-	// ?drawFill@Rva00433DC0DisplaySlots@@QAEXMMMMH@Z absent-from-retail
-	void drawFill(float left, float top, float width, float height, int color)
+	// ?drawFill@Rva00433DC0DisplaySlots@@QAEXMMMMUPackedColor00433DC0@@@Z absent-from-retail
+	void drawFill(float left, float top, float width, float height, PackedColor00433DC0 color)
 	{
 		begin();
 		fill(left, top, width, height, color);
@@ -94,17 +108,17 @@ private:
 	int m_progress28;
 };
 
-// ?setRect@Rva00435270Layout@@AAEXMMMMHH@Z present-unmatched
+// ?setRect@Rva00435270Layout@@AAEXMMMMHH@Z
 void Rva00435270Layout::setRect(float left, float top, float right, float bottom, int color, int border)
 {
 	float width = right - left;
 	float height = bottom - top;
+	PackedColor00433DC0 packedColor(color);
 	int originalAlpha = (unsigned int)color >> 24;
-	color &= 0x00ffffff;
 	int alpha = bfmeMin(m_progress28, originalAlpha);
-	color |= alpha << 24;
-	reinterpret_cast<Rva00433DC0DisplaySlots *>(TheDisplay)->drawFill(left, top, width, height, color);
-	alpha = bfmeMin(m_progress28, alpha * 2);
+	packedColor.alpha(alpha);
+	reinterpret_cast<Rva00433DC0DisplaySlots *>(TheDisplay)->drawFill(left, top, width, height, packedColor);
+	alpha = bfmeMin(m_progress28, (alpha <<= 1));
 	reinterpret_cast<Rva00433DC0DisplaySlots *>(TheDisplay)->drawOutline(left - border + 1.0f, top - border + 1.0f, width + border * 2, height + border * 2, (float)border, alpha << 24);
 	reinterpret_cast<Rva00433DC0DisplaySlots *>(TheDisplay)->drawOutline(left - border, top - border, width + border * 2, height + border * 2, (float)border, 0x7f7f7f7f);
 }

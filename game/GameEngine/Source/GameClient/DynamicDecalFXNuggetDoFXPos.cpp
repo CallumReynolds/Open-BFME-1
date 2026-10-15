@@ -29,7 +29,7 @@ public:
 
 class TerrainLogic;
 extern TerrainLogic *TheTerrainLogic;
-extern const Real BfmeZeroRange;
+extern const Real g_rva01075350;		// VA 0x01075350, 0.0f
 
 // BFME-only fields are deliberately separate from canonical Shadow.
 struct Rva00429080ShadowInfo {
@@ -147,8 +147,8 @@ void DynamicDecalFXNugget::doFXPos(const Coord3D *primary,
 		((BfmeColourABK *)shadow)->bfmeSetABK(m_color.getAsInt());
 		*(Coord3D*)((char*)shadow+8) = position;
 
-		Int initialOpacity = (Int)(m_startingDelay > BfmeZeroRange
-			? BfmeZeroRange : (Real)m_opacityStart);
+		Int initialOpacity = (Int)(m_startingDelay > g_rva01075350
+			? g_rva01075350 : (Real)m_opacityStart);
 		((Rva00429080ShadowView *)shadow)->setOpacity(initialOpacity);
 		((Rva00429080ShadowView *)shadow)->setOpacityFade(
 			(Int)(m_startingDelay * BFME_FRAME_SCALE),

@@ -55,7 +55,7 @@ public:
 
 typedef Override<LocomotorTemplate> LocomotorTemplateOverride;
 
-extern const Real BfmeZeroRange;
+extern const Real g_rva01075350;		// VA 0x01075350, 0.0f
 
 class Locomotor
 {
@@ -85,7 +85,7 @@ bool Locomotor::rva001B5B40(const Thing *thing,
 			offset.y -= thing->m_cachedPos.y;
 			if ((*(volatile Real *)&direction.y * offset.y)
 				+ direction.x * *(volatile Real *)&offset.x
-				< BfmeZeroRange)
+				< g_rva01075350)
 				return true;
 		}
 	}

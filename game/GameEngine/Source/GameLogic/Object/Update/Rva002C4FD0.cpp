@@ -36,7 +36,7 @@ protected:
 	virtual void privateMoveToPosition( const Coord3D *position, CommandSourceType commandSource );
 };
 
-extern Real BfmeZeroRange;
+extern const Real g_rva01075350;		// VA 0x01075350, 0.0f
 extern Real g_bfmeDefaultBU;
 
 class Rva002C4FD0
@@ -77,7 +77,7 @@ void Rva002C4FD0::method(Object *thing, CommandSourceType ctx)
 	delta.y -= thing->m_cachedPos.y;
 	delta.z -= thing->m_cachedPos.z;
 	double distance = sqrt( delta.z * delta.z + delta.y * delta.y + delta.x * delta.x );
-	if (distance != BfmeZeroRange)
+	if (distance != g_rva01075350)
 	{
 		Real scale = g_bfmeDefaultBU / distance;
 		delta.x *= scale;

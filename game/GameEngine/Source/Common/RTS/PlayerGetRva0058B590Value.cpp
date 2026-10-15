@@ -23,8 +23,8 @@ typedef unsigned int UnsignedInt;
 typedef int Int;
 typedef float Real;
 
-extern const float BfmeZeroRange;
-extern float g_rva0058B590Scale;
+extern const float g_rva01075350;		// VA 0x01075350, 0.0f
+
 extern const float g_rva0107533C;
 
 __forceinline long rva0058B590FloatToLong( float value )
@@ -83,7 +83,7 @@ private:
 
 long Player::getRva0058B590Value( int value ) const
 {
-	Real result = BfmeZeroRange;
+	Real result = g_rva01075350;
 	UnsignedInt valueIndex = 0;
 	PlayerValueNode0058B590 *anchor = m_valueList;
 	PlayerValueNode0058B590 *node = anchor->m_next;
@@ -115,7 +115,7 @@ long Player::getRva0058B590Value( int value ) const
 		}
 	}
 
-	result *= g_rva0058B590Scale;
+	result *= 100.0f;
 	result = g_rva0107533C - result;
 	return rva0058B590FloatToLong( (float)floor( (double)result ) );
 }

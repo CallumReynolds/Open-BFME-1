@@ -1,9 +1,6 @@
-// ?rva00365df0@BfmeLivingWorldPlayerArmyCollection@@SIXPAV1@PAXPAVObject@@@Z
-// partial score=0.9478 date=2026-10-03
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
-// Retail 0x00365DF0 (498 B).  The owning class is not named by the retail
-// symbols; this TU keeps the proven Living World layouts and uses an
-// address-qualified owner/method name.
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS
+// stlport
+// Identity and ABI: targets/game/reverse/identity_evidence/00365df0-state-transfer.md.
 
 typedef int Int;
 typedef float Real;
@@ -11,6 +8,7 @@ typedef bool Bool;
 
 extern "C" __declspec(dllimport) double __cdecl floor( double value );
 
+// ?bfmeFloatToLong@@YAJM@Z absent-from-retail
 __forceinline long bfmeFloatToLong( Real value )
 {
 	long result;
@@ -28,7 +26,7 @@ enum KindOfType
 };
 
 class Rva00365DF0Player;
-typedef Rva00365DF0Player Player;
+class Player;
 class BfmeLivingWorldPlayerArmyCollection;
 
 class GameLogic
@@ -36,8 +34,6 @@ class GameLogic
 public:
 	Bool _bfme_isInLivingWorldCampaign( void );
 };
-
-#pragma comment( linker, "/alternatename:?_bfme_isInLivingWorldCampaign@GameLogic@@QAE_NXZ=?j_0001d1c9@@YAXXZ" )
 
 class Rva00365DF0PlayerList
 {
@@ -48,8 +44,11 @@ public:
 	Player *m_firstPlayer;
 };
 
-#define RVA00365DF0_GAME_LOGIC (*(GameLogic **)0x012F0898)
-#define RVA00365DF0_PLAYER_LIST (*(Rva00365DF0PlayerList **)0x012ED748)
+extern GameLogic *TheGameLogic;
+#define RVA00365DF0_GAME_LOGIC TheGameLogic
+class PlayerList;
+extern PlayerList *ThePlayerList;
+#define RVA00365DF0_PLAYER_LIST (reinterpret_cast<Rva00365DF0PlayerList *>(ThePlayerList))
 
 class Object
 {
@@ -83,7 +82,9 @@ public:
 	virtual void v24();
 	virtual void v25();
 	virtual void v26();
-	virtual void fill( void *record );
+	virtual void bfmeBuildObjectInfo( struct BfmeObjectInfo *record ) const;
+	// ?fill@Object@@QBEXPAX@Z absent-from-retail
+	void fill(void *record) const { bfmeBuildObjectInfo(reinterpret_cast<BfmeObjectInfo *>(record)); }
 
 	char m_unmodelled04[ 0x84 ];
 	Object *m_next;
@@ -93,33 +94,41 @@ public:
 	Int m_livingWorldIndex;
 };
 
-#pragma comment( linker, "/alternatename:?getControllingPlayer@Object@@QBEPAVPlayer@@XZ=?j_00020824@@YAXXZ" )
-
 class Thing
 {
 public:
 	Bool isKindOf( KindOfType kind ) const;
 };
 
-#pragma comment( linker, "/alternatename:?isKindOf@Thing@@QBE_NW4KindOfType@@@Z=?j_0003251f@@YAXXZ" )
-
-class Rva00365DF0Record
+class Rva00362670Owner
 {
 public:
-	Rva00365DF0Record();
-	~Rva00365DF0Record();
-	void reset();
-
-	char m_body00[ 0x34 ];
-	Int m_field34;
-	char m_body38[ 0x04 ];
-	Int m_field3C;
-	char m_body40[ 0x74 ];
+    void reset();
 };
 
-#pragma comment( linker, "/alternatename:??0Rva00365DF0Record@@QAE@XZ=?j_0000b30c@@YAXXZ" )
-#pragma comment( linker, "/alternatename:??1Rva00365DF0Record@@QAE@XZ=?j_000257ed@@YAXXZ" )
-#pragma comment( linker, "/alternatename:?reset@Rva00365DF0Record@@QAEXXZ=?j_00022e99@@YAXXZ" )
+class BfmeOwnVUM
+{
+public:
+    BfmeOwnVUM();
+    ~BfmeOwnVUM();
+    virtual void bfmeSlot0VUM();
+    virtual void bfmeSlot1VUM();
+    virtual void bfmeSlot2VUM();
+    virtual void bfmeSlot3VUM();
+    virtual void bfmeSlot4VUM();
+
+    // ?reset@BfmeOwnVUM@@QAEXXZ absent-from-retail
+    void reset() { reinterpret_cast<Rva00362670Owner *>(this)->reset(); }
+
+    char m_body00[0x30];
+    Int m_field34;
+    char m_body38[4];
+    Int m_field3C;
+    char m_body40[0x74];
+};
+
+typedef BfmeOwnVUM Rva00365DF0Record;
+typedef char Rva00365DF0RecordSize[sizeof(Rva00365DF0Record) == 0xB4 ? 1 : -1];
 
 class Rva00364B10Summary
 {
@@ -131,23 +140,18 @@ public:
 	Int scanArmyGroups( Rva00364B10Summary *summary, Bool copySummary );
 };
 
-#pragma comment( linker, "/alternatename:?scanArmyGroups@Rva00364B10LivingWorldPlayerArmyCollection@@QAEHPAVRva00364B10Summary@@_N@Z=?j_0002fdc4@@YAXXZ" )
-
+struct P6Elem00365520;
 class Gen00365520
 {
 public:
-	void bfmeAppend( const Rva00365DF0Record *record );
+	void bfmeAppend( const P6Elem00365520 *record );
 };
-
-#pragma comment( linker, "/alternatename:?bfmeAppend@Gen00365520@@QAEXPBVRva00365DF0Record@@@Z=?j_0000c405@@YAXXZ" )
 
 class BfmeLivingWorldPlayerArmyCollection
 {
 public:
 	void clearModeFourArmies();
-	static void __fastcall rva00365df0(
-		BfmeLivingWorldPlayerArmyCollection *self, void *unused,
-		Object *firstObject );
+	void rva00365df0(Object *firstObject);
 
 	struct ArmySlot
 	{
@@ -158,15 +162,15 @@ public:
 		ArmySlot *m_begin;
 		ArmySlot *m_end;
 		ArmySlot *m_capacity;
-		unsigned int size() const { return (unsigned int)(m_end - m_begin); }
-		ArmySlot *begin() const { return m_begin; }
+		// ?size@ArmyVector@BfmeLivingWorldPlayerArmyCollection@@QBEIXZ absent-from-retail
+	unsigned int size() const { return (unsigned int)(m_end - m_begin); }
+		// ?begin@ArmyVector@BfmeLivingWorldPlayerArmyCollection@@QBEPAVArmySlot@2@XZ absent-from-retail
+	ArmySlot *begin() const { return m_begin; }
 	};
 
 	char m_unmodelled00[ 0x18 ];
 	ArmyVector m_playerArmies;
 };
-
-#pragma comment( linker, "/alternatename:?clearModeFourArmies@BfmeLivingWorldPlayerArmyCollection@@QAEXXZ=?j_00002dba@@YAXXZ" )
 
 struct UpgradeMaskType
 {
@@ -182,24 +186,7 @@ public:
 	UpgradeMaskType m_mask;
 };
 
-#pragma comment( linker, "/alternatename:?setMask@Rva003C1050@@QAEXUUpgradeMaskType@@@Z=?j_000275a7@@YAXXZ" )
-
-namespace _STL
-{
-template <class Type>
-class allocator
-{
-};
-
-template <class Type, class Allocator = allocator<Type> >
-class vector
-{
-public:
-	Type *_M_start;
-	Type *_M_finish;
-	Type *_M_end_of_storage;
-};
-}
+#include <vector>
 
 enum ScienceType
 {
@@ -212,19 +199,18 @@ public:
 	void copy( const _STL::vector<ScienceType> *source );
 };
 
-#pragma comment( linker, "/alternatename:?copy@Rva003C2720Owner@@QAEXPBV?$vector@W4ScienceType@@V?$allocator@W4ScienceType@@@_STL@@@_STL@@@Z=?j_0001c440@@YAXXZ" )
-
+class Rva00365C20Visitor;
+class Rva000F99C0RecordDispatch { public: void dispatch(Rva00365C20Visitor *visitor); };
 class Rva000F99C0Owner
 {
 public:
-	void update( BfmeLivingWorldPlayerArmyCollection *owner );
+	// ?update@Rva000F99C0Owner@@QAEXPAVBfmeLivingWorldPlayerArmyCollection@@@Z absent-from-retail
+	void update( BfmeLivingWorldPlayerArmyCollection *owner ) { reinterpret_cast<Rva000F99C0RecordDispatch *>(this)->dispatch(reinterpret_cast<Rva00365C20Visitor *>(owner)); }
 
 	void *m_begin;
 	void *m_end;
 	void *m_capacity;
 };
-
-#pragma comment( linker, "/alternatename:?update@Rva000F99C0Owner@@QAEXPAVBfmeLivingWorldPlayerArmyCollection@@@Z=?j_00020fef@@YAXXZ" )
 
 class Rva00365DF0Player
 {
@@ -240,8 +226,8 @@ public:
 	_STL::vector<ScienceType> m_sciencesHidden;
 	Int m_rankLevel;
 	Real m_field25C;
-	volatile Real m_field260;
-	volatile Int m_field264;
+	Real m_field260;
+	Int m_field264;
 	char m_unmodelled268[ 0x41C ];
 	Rva000F99C0Owner m_field684;
 };
@@ -255,16 +241,24 @@ public:
 	Int m_fieldA0;
 	Real m_fieldA4;
 	Rva003C1050 m_setMaskView;
+	// ?assign74@Rva00365DF0Logic@@QAEXH@Z absent-from-retail
+	void assign74( Int value ) { m_field74 = value; }
+	// ?assignA0@Rva00365DF0Logic@@QAEXH@Z absent-from-retail
+	void assignA0( Int value ) { m_fieldA0 = value; }
+	// ?assignA4@Rva00365DF0Logic@@QAEXM@Z absent-from-retail
+	void assignA4( Real value ) { m_fieldA4 = value; }
+
 };
 
-#define RVA00365DF0_LIVING_WORLD_LOGIC (*(Rva00365DF0Logic **)0x012F1028)
+class Glo012F1028Type;
+extern Glo012F1028Type *Glo012F1028;
+#define RVA00365DF0_LIVING_WORLD_LOGIC (reinterpret_cast<Rva00365DF0Logic *>(Glo012F1028))
 
-void __fastcall BfmeLivingWorldPlayerArmyCollection::rva00365df0(
-	BfmeLivingWorldPlayerArmyCollection *self, void *unused,
-	Object *firstObject )
+// ?rva00365df0@BfmeLivingWorldPlayerArmyCollection@@QAEXPAVObject@@@Z
+void BfmeLivingWorldPlayerArmyCollection::rva00365df0(Object *firstObject)
 {
 	Rva00365DF0Player *player;
-	(void)unused;
+	BfmeLivingWorldPlayerArmyCollection *self = this;
 
 	if( !RVA00365DF0_GAME_LOGIC->_bfme_isInLivingWorldCampaign() )
 		return;
@@ -272,15 +266,16 @@ void __fastcall BfmeLivingWorldPlayerArmyCollection::rva00365df0(
 		return;
 
 	self->clearModeFourArmies();
-	player = RVA00365DF0_PLAYER_LIST->m_firstPlayer;
+	player = reinterpret_cast<Rva00365DF0Player *>(RVA00365DF0_PLAYER_LIST->m_firstPlayer);
 	if( player == 0 )
 		return;
 
 	Rva00365DF0Record record;
 	for( Object *object = firstObject; object != 0; object = object->m_next )
 	{
-		if (object == 0) continue;
-		if( player != object->getControllingPlayer() )
+		if( object == 0 )
+			continue;
+		if( reinterpret_cast<Player *>(player) != object->getControllingPlayer() )
 			continue;
 		if( !reinterpret_cast<Thing *>( object )->isKindOf( RVA00365DF0_KIND_127 ) )
 			continue;
@@ -303,19 +298,16 @@ void __fastcall BfmeLivingWorldPlayerArmyCollection::rva00365df0(
 		BfmeLivingWorldPlayerArmyCollection::ArmySlot *begin = self->m_playerArmies.begin();
 		Gen00365520 *army = reinterpret_cast<Gen00365520 *>(
 			reinterpret_cast<char *>( begin ) + index * 0x58 );
-		army->bfmeAppend( &record );
+		army->bfmeAppend( reinterpret_cast<const P6Elem00365520 *>(&record) );
 		record.reset();
 	}
 
 	player->m_field684.update( self );
 	Real floored = (Real)floor( (double)player->m_field25C );
 	Int whole = bfmeFloatToLong( floored );
-	RVA00365DF0_LIVING_WORLD_LOGIC->m_field74 = whole;
-	RVA00365DF0_LIVING_WORLD_LOGIC->m_fieldA0 = player->m_field264;
-	RVA00365DF0_LIVING_WORLD_LOGIC->m_fieldA4 = player->m_field260;
-	const _STL::vector<ScienceType> *scienceSource = &player->m_sciences;
-	reinterpret_cast<Rva003C2720Owner *>( RVA00365DF0_LIVING_WORLD_LOGIC )->copy(
-		scienceSource );
+	RVA00365DF0_LIVING_WORLD_LOGIC->assign74( whole );
+	RVA00365DF0_LIVING_WORLD_LOGIC->assignA0( player->m_field264 );
+	reinterpret_cast<Rva003C2720Owner *>(RVA00365DF0_LIVING_WORLD_LOGIC)->copy( (RVA00365DF0_LIVING_WORLD_LOGIC->assignA4(player->m_field260), &player->m_sciences) );
 	UpgradeMaskType mask = player->m_upgradesCompleted;
 	reinterpret_cast<Rva003C1050 *>( RVA00365DF0_LIVING_WORLD_LOGIC )->setMask( mask );
 }

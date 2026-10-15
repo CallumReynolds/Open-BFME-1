@@ -1,7 +1,14 @@
-// ?visit@Rva21ABF0Worker@@QAEXPAX@Z
-// partial score=1.0 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath
 // stlport
+// ?visit@Rva21ABF0Worker@@QAEXPAX@Z  @ 0x00225700 (484 bytes)
+// Address-derived ring visitor. Identity: ILT pin 0x00003288 names
+// Rva21ABF0Worker::visit(void*); the matched caller
+// Rva21ABF0RingDispatch::dispatchAll (0x0021ABF0) reaches this body through
+// that ILT. Retail returns with ret 4 at +0x1E1 and pads with INT3 at +0x1E4,
+// which proves the 484-byte extent. The body tests a 192-bit kind mask, does
+// drawable cleanup, applies a motive force, builds a DamageInfo, resolves a
+// lookup object and kills it. No source declaration names the owner, so the
+// symbol keeps its address token.
 struct Rva21ABF0Node
 {
 	Rva21ABF0Node *next;
@@ -120,15 +127,11 @@ typedef float Real;
 #define _OPERATOR_NEW_DEFINED_
 #include "vector3.h"
 
-template <int N>
-class BitFlags
+struct KindOfMask
 {
-	_STL::bitset<N> m_bits;
+	_STL::bitset<192> m_bits;
 
-public:
-	enum BogusInitType { kInit = 0 };
-
-	BitFlags(BogusInitType, int first, int second)
+	KindOfMask(int first, int second)
 	{
 		m_bits._Unchecked_set((size_t)first);
 		m_bits._Unchecked_set((size_t)second);
@@ -146,15 +149,10 @@ public:
 	virtual void slot05(void);
 	virtual void slot06(void);
 	virtual void slot07(void);
-	bool isAnyKindOf(const BitFlags<192> &mask) const;
+	bool isAnyKindOf(const KindOfMask &mask) const;
 };
 
-struct Coord3D
-{
-	Real x;
-	Real y;
-	Real z;
-};
+#include "../../../Libraries/Include/Lib/Coord3D.h"
 
 class Gen_00411DD0
 {
@@ -208,7 +206,7 @@ public:
 	virtual Real getMaxHealth(void);
 };
 
-class Rva21ABF0PhysicsBehavior
+class PhysicsBehavior
 {
 public:
 	void applyMotiveForce(const Coord3D *force);
@@ -264,9 +262,9 @@ public:
 	{
 		return (Rva21ABF0BodyModule *)m_pointer200;
 	}
-	Rva21ABF0PhysicsBehavior *getPhysicsBehavior(void) const
+	PhysicsBehavior *getPhysicsBehavior(void) const
 	{
-		return (Rva21ABF0PhysicsBehavior *)m_pointer208;
+		return (PhysicsBehavior *)m_pointer208;
 	}
 
 	unsigned char m_unknown04[4];
@@ -330,63 +328,6 @@ public:
 	void visit(void *value);
 };
 
-void Rva21ABF0RingDispatch::dispatchAll(void)
-{
-	Rva21ABF0Node *node = m_ring->next;
-
-	while (node != m_ring) {
-		void *value = node->value;
-		node = node->next;
-		union
-		{
-			void *asVoid;
-			void (Rva21ABF0WorkerCallView::*asMember)(void *);
-		} call;
-		call.asVoid = reinterpret_cast<void *>(j_00003288);
-		(reinterpret_cast<Rva21ABF0WorkerCallView *>(
-			(char *)this - 0x20)->*call.asMember)(value);
-	}
-
-	finish();
-}
-
-void Rva21ABF0RingDispatch::finish(void)
-{
-	Rva21ABF0List *list;
-	Rva21ABF0Node *node;
-	register int pass;
-	pass = 0;
-	do {
-		if (pass)
-			list = second();
-		else
-			list = first();
-
-		if (list == 0)
-			continue;
-
-		node = list->begin();
-		if (node == list->end())
-			continue;
-
-		Rva21ABF0Worker *worker =
-			(Rva21ABF0Worker *)((char *)this - 0x20);
-		do {
-			void *value = node->value;
-			node = node->next;
-			union
-			{
-				void *asVoid;
-				void (Rva21ABF0WorkerCallView::*asMember)(void *);
-			} call;
-			call.asVoid = reinterpret_cast<void *>(j_00003288);
-			(reinterpret_cast<Rva21ABF0WorkerCallView *>(worker)->*
-				call.asMember)(value);
-		} while (node != list->end());
-
-	} while (++pass < 2);
-}
-
 void Rva21ABF0Worker::visit(void *value)
 {
 	Object *object = (Object *)value;
@@ -394,7 +335,7 @@ void Rva21ABF0Worker::visit(void *value)
 	OpenContainModuleDataView *moduleData = m_moduleData;
 
 	{
-		BitFlags<192> mask(BitFlags<192>::kInit, 93, 96);
+		KindOfMask mask(93, 96);
 		if (object->isAnyKindOf(mask))
 		{
 			if (object->getDrawable() != 0)
@@ -407,7 +348,7 @@ void Rva21ABF0Worker::visit(void *value)
 	if (moduleData->m_unknown153)
 	{
 		m_dispatch.slot36(object, 0);
-		Rva21ABF0PhysicsBehavior *physics = object->getPhysicsBehavior();
+		PhysicsBehavior *physics = object->getPhysicsBehavior();
 		if (physics != 0)
 		{
 			Vector3 scaled(object->m_forceScaleX, object->m_forceScaleY, 1.0f);

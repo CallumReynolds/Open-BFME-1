@@ -162,20 +162,7 @@ static DynamicVectorClass<Vector3>	_TempVertexBuffer;
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-// ?MeshClass::MeshClass present-unmatched
-MeshClass::MeshClass(void) :
-	Model(NULL),
-	DecalMesh(NULL),
-	LightEnvironment(NULL),
-	BaseVertexOffset(0),
-	NextVisibleSkin(NULL),
-	IsDisabledByDebugger(false),
-	MeshDebugId(MeshDebugIdCount++),
-	m_alphaOverride(1.0f),
-	m_materialPassAlphaOverride(1.0f),
-	m_materialPassEmissiveOverride(1.0f)
-{
-}
+// MeshClass::MeshClass(void): the retail body (0x0092C270) is MeshClassConstructor.cpp.
 
 
 /***********************************************************************************************

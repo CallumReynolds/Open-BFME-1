@@ -12,7 +12,22 @@
 #include "GameClient/Color.h"
 #include "GameClient/Shadow.h"
 
-void adjustVector(Coord3D *vec, const Matrix3D *mtx);
+// Retail RVA 00429350 (84 bytes): this TU's own copy of FXList.cpp's static
+// adjustVector; doFXPos at 0x00429080 calls it directly (callees.py).
+void adjustVector(Coord3D *vec, const Matrix3D* mtx)
+{
+	if (mtx)
+	{
+		Vector3 rotatedVector;
+		rotatedVector.X = vec->x;
+		rotatedVector.Y = vec->y;
+		rotatedVector.Z = vec->z;
+		rotatedVector = mtx->Rotate_Vector(rotatedVector);
+		vec->x = rotatedVector.X;
+		vec->y = rotatedVector.Y;
+		vec->z = rotatedVector.Z;
+	}
+}
 
 // upstream layout: reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/TerrainLogic.h
 class Rva00429080TerrainView

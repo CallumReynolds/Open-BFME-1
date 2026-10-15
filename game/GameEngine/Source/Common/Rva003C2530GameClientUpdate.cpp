@@ -181,26 +181,8 @@ void Rva003C2530Owner::prepare()
 		(livingWorld012F706C()->*gameCall.member)();
 	}
 
-	__asm
-	{
-		mov al, byte ptr [esi + 2Dh]
-		test al, al
-		mov ecx, dword ptr [g_rva012F7048LivingWorld]
-		je not_ready
-		mov dl, byte ptr [ecx + 8]
-		test dl, dl
-		jne ready
-		mov byte ptr [esi + 2Dh], 0
-		pop esi
-		ret
-	ready:
-		test al, al
-		jne done
-	not_ready:
-		mov al, byte ptr [ecx + 8]
-		test al, al
-		je done
-		mov byte ptr [esi + 2Dh], 1
-	done:
-	}
+	if (m_ready && !((Gen_00609320 *)g_rva012F7048LivingWorld)->m_flag08)
+		m_ready = false;
+	else if (!m_ready && ((Gen_00609320 *)g_rva012F7048LivingWorld)->m_flag08)
+		m_ready = true;
 }

@@ -1,6 +1,5 @@
 // Byte-exact body of ?setRepairModelConditionStates@SlavedUpdate@@QAEXW4ModelConditionFlagType@@@Z.
 // The vtable and the named endRepair caller identify SlavedUpdate.
-// Inline assembly covers the final register order that clean MSVC 7.1 cannot express.
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 
@@ -10,8 +9,6 @@
 typedef int Int;
 typedef bool Bool;
 typedef unsigned int UnsignedInt;
-
-void __cdecl j_0002191d(void);
 
 enum ModelConditionFlagType
 {
@@ -46,22 +43,6 @@ public:
 	unsigned char m_unmodelled_000[0x110];
 	ModelConditionFlags m_conditionFlags;
 };
-
-__forceinline void setRepairModelConditionState(ModelConditionFlagType flag, Object *obj)
-{
-	UnsignedInt flagValue = (UnsignedInt)flag;
-	UnsignedInt bitIndex = flagValue & 31;
-	UnsignedInt wordIndex = flagValue >> 5;
-	UnsignedInt mask = 1;
-	mask <<= bitIndex;
-	UnsignedInt *word = (UnsignedInt *)&obj->m_conditionFlags;
-	word += wordIndex;
-	if (!(*word & mask))
-	{
-		*word |= mask;
-		obj->notifyModelConditionChanged();
-	}
-}
 
 class SlavedUpdate
 {
@@ -119,21 +100,9 @@ void SlavedUpdate::setRepairModelConditionStates(ModelConditionFlagType flag)
 		obj->m_conditionFlags.reset(MODELCONDITION_RELOADING_C);
 		obj->notifyModelConditionChanged();
 	}
-	__asm {
-		mov eax, dword ptr [esp+8]
-		mov ecx, eax
-		and ecx, 1fh
-		mov edx, 1
-		shr eax, 5
-		shl edx, cl
-		mov ecx, dword ptr [esi+eax*4+110h]
-		lea eax, [esi+eax*4+110h]
-		test edx, ecx
-		jne repair_state_done
-		or ecx, edx
-		mov dword ptr [eax], ecx
-		mov ecx, esi
-		call j_0002191d
-	repair_state_done:
+	if (!obj->m_conditionFlags.test(flag))
+	{
+		obj->m_conditionFlags.set(flag);
+		obj->notifyModelConditionChanged();
 	}
 }

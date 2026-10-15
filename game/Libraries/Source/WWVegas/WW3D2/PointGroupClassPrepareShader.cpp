@@ -41,12 +41,10 @@ private:
 // ?prepare_shader@PointGroupClass@@QAEXXZ
 void PointGroupClass::prepare_shader(void)
 {
-	__asm
-	{
-		mov eax, dword ptr [ecx+0x28]
-		and eax, 0xFFEFFFFF
-		mov dword ptr [ecx+0x28], eax
-	}
+	// Through a pointer MSVC keeps retail's load/and/store ahead of the
+	// float test; a direct member update is sunk below it.
+	unsigned int *bits = &ShaderBits;
+	*bits &= ~0x100000u;
 
 	float value_255 = 0.9961f;
 	bool default_white_opaque = (DefaultPointColor.X > value_255 &&

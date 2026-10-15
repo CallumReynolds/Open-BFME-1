@@ -18,7 +18,7 @@ class Glo012F368CType
 };
 
 extern Glo012F368CType *Glo012F368C;                         // 0x012F368C
-extern Bool g_bfmeReadyPT;                                   // 0x012F3690
+Bool g_bfmeReadyPT;                                          // 0x012F3690
 
 class GlobalData
 {
@@ -31,7 +31,7 @@ public:
 
 extern GlobalData *TheWritableGlobalData;                    // 0x012ED5C8
 
-class BfmeAnimateWindowManager
+class AnimateWindowManager
 {
 public:
 	Bool isReversed(void) const
@@ -39,7 +39,7 @@ public:
 		return *(const Bool *)((const char *)this + 0x11);
 	}
 
-	void reverseAnimateWindow(void);                            // ILT 0x00027B65
+	void reverseAnimateWindow(void);                            // 0x0045D3E0 via ILT 0x00027B65
 };
 
 class ControlBar
@@ -52,8 +52,8 @@ public:
 // ?hideBuildTooltipLayout@ControlBar@@QAEXXZ
 void ControlBar::hideBuildTooltipLayout(void)
 {
-	BfmeAnimateWindowManager *manager =
-		reinterpret_cast<BfmeAnimateWindowManager *>(Glo012F368C);
+	AnimateWindowManager *manager =
+		reinterpret_cast<AnimateWindowManager *>(Glo012F368C);
 	if (manager && manager->isReversed())
 		return;
 	if (g_bfmeReadyPT && manager && TheWritableGlobalData->m_animateWindows)

@@ -51,22 +51,22 @@ class Glo012F368CType
 
 extern Glo012F368CType *Glo012F368C;                          // 0x012F368C
 
-class BfmeAnimateWindowManager
+class AnimateWindowManager
 {
 public:
 	// A partial ABI view: one deleting-destructor slot and four unnamed
 	// slots place update at the retail offset +0x14.
-	virtual ~BfmeAnimateWindowManager();
+	virtual ~AnimateWindowManager();
 	virtual void slot02(void);
 	virtual void slot03(void);
 	virtual void slot04(void);
 	virtual void slot05(void);
 	virtual void update(void);
 
-	void reverseAnimateWindow(void);                            // ILT 0x00027B65
+	void reverseAnimateWindow(void);                            // 0x0045D3E0 via ILT 0x00027B65
 
-	Bool isFinished(void) const { return !m_needsUpdate; }
-	Bool isReversed(void) const { return m_reverse; }
+	Bool isFinished(void) { return !m_needsUpdate; }          // 0x0049CA30
+	Bool isReversed(void) { return m_reverse; }               // 0x0049CA40
 
 private:
 	char m_bfmeHead[0x0C];
@@ -75,7 +75,7 @@ private:
 };
 
 #define BFME_ANIMATE_WINDOW_MANAGER \
-	(reinterpret_cast<BfmeAnimateWindowManager *>(Glo012F368C))
+	(reinterpret_cast<AnimateWindowManager *>(Glo012F368C))
 
 // Retail ControlBar offsets needed by this callback only.  The helper at
 // 0x00027336 is the already matched ControlBar::deleteBuildTooltipLayout
@@ -84,17 +84,6 @@ class ControlBar
 {
 public:
 	void deleteBuildTooltipLayout(void);
-
-	inline void hideBuildTooltipLayout(void)
-	{
-		if (BFME_ANIMATE_WINDOW_MANAGER && BFME_ANIMATE_WINDOW_MANAGER->isReversed())
-			return;
-		if (g_bfmeReadyPT && BFME_ANIMATE_WINDOW_MANAGER
-			&& TheWritableGlobalData->m_animateWindows)
-			BFME_ANIMATE_WINDOW_MANAGER->reverseAnimateWindow();
-		else
-			deleteBuildTooltipLayout();
-	}
 
 	Bool getShowBuildTooltipLayout(void) const { return m_showBuildToolTipLayout; }
 
@@ -106,11 +95,25 @@ private:
 
 extern ControlBar *TheControlBar;                              // 0x012F33F8
 
+// Retail inlines ControlBar::hideBuildTooltipLayout (0x004C1940, defined in
+// ControlBar_hideBuildTooltipLayout.cpp) here.  A TU-local copy keeps that
+// inline expansion without emitting a second external definition.
+static inline void inlineHideBuildTooltipLayout(ControlBar *bar)
+{
+	if (BFME_ANIMATE_WINDOW_MANAGER && BFME_ANIMATE_WINDOW_MANAGER->isReversed())
+		return;
+	if (g_bfmeReadyPT && BFME_ANIMATE_WINDOW_MANAGER
+		&& TheWritableGlobalData->m_animateWindows)
+		BFME_ANIMATE_WINDOW_MANAGER->reverseAnimateWindow();
+	else
+		bar->deleteBuildTooltipLayout();
+}
+
 // ?ControlBarPopupDescriptionUpdateFunc@@YAXPAVWindowLayout@@PAX@Z
 void ControlBarPopupDescriptionUpdateFunc(WindowLayout *, void *)
 {
 	if (TheScriptEngine->isGameEnding())
-		TheControlBar->hideBuildTooltipLayout();
+		inlineHideBuildTooltipLayout(TheControlBar);
 
 	if (BFME_ANIMATE_WINDOW_MANAGER && !TheControlBar->getShowBuildTooltipLayout()
 		&& !BFME_ANIMATE_WINDOW_MANAGER->isReversed())

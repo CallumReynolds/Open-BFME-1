@@ -5,9 +5,9 @@
 // family shares, but THIS body actually reads a stack argument and cleans it
 // with ret 4, so its true signature takes one UnsignedInt id). Reached from
 // Rva002BAA30::invoke (this-32) which itself is reached, via the same bare
-// jmp chain, from d_002baa40.asm and d_00373220.asm; none of those callers
-// are landed yet, so no proven owning class exists -- keeping the address
-// token per docs/naming_evidence.md.
+// jmp chain, from Rva002BAA40::slot14 and d_00373220.asm; neither caller
+// proves an owning class, so the address token stays per
+// docs/naming_evidence.md.
 //
 // Body: this+0x94 is a last-seen id guard (return if unchanged); this+0x8 is
 // an object pointer. When id != 0, this+0x8's vtable slot 0x28 is called to

@@ -1,6 +1,5 @@
 // ?slot14@Rva002BAA40@@UAEXXZ
-// partial score=0.949 date=2026-10-10
-// cl: /DNDEBUG /MD /EHsc /Igame/GameEngine/Source /Igame/Libraries/Include
+// cl: /DNDEBUG /MD /EHsc /Igame/GameEngine/Source /Igame/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include
 // stlport
 #include <bitset>
 
@@ -13,11 +12,21 @@ typedef int Int;
 class Overridable
 {
 public:
-    const Overridable *getFinalOverride() const;
+    // recursively ask if there is a next override, and if not, return this.
+    const Overridable *getFinalOverride() const
+    {
+        if (m_nextOverride)
+            return m_nextOverride->getFinalOverride();
+        return this;
+    }
     void *m_vptr;
     Overridable *m_nextOverride;
 };
 
+#define _OVERRIDABLE_H_
+#include <Common/Override.h>
+
+// The retail radius is at +0x14; the shared GeometryInfo header has a different layout.
 class GeometryInfo
 {
 public:
@@ -49,9 +58,7 @@ enum KindOfType { KINDOF_003F = 63, KINDOF_0098 = 152 };
     Bool isKindOf(KindOfType kind) const; \
     const ThingTemplate *getTemplate() const \
     { \
-        const ThingTemplate *tmpl = m_template; \
-        if (tmpl != 0 && tmpl->m_nextOverride != 0) \
-            tmpl = static_cast<const ThingTemplate *>(tmpl->m_nextOverride->getFinalOverride()); \
+        OVERRIDE<ThingTemplate> tmpl(m_template); \
         return tmpl; \
     } \
     const Coord3D *getPosition() const { return &m_cachedPos; } \
@@ -68,6 +75,7 @@ public:
     BitFlags(BogusInitType, Int index) { m_bits.set(index); }
     _STL::bitset<NUMBITS> m_bits;
 };
+// This inherited copy view covers six words without asserting the retail mask bit count.
 typedef BitFlags<192> KindOfMaskType;
 extern const KindOfMaskType KINDOFMASK_NONE;
 

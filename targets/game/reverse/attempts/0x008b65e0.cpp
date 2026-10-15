@@ -1,6 +1,6 @@
 // ?apply@Rva8CB8C0Bounds@@QAEXPAURva8CB8C0BoundsBlock@@0H@Z
-// partial score=0.85 date=2026-09-02
-// cl: /O2 /DNDEBUG /MD
+// partial score=0.3237 date=2026-10-15
+// cl: /O2 /G7 /DNDEBUG /MD
 
 struct Rva8CB8C0BoundsBlock
 {
@@ -14,7 +14,14 @@ struct Rva8CB8C0BoundsBlock
 	int m_1c;
 };
 
-int __stdcall daysInMonth(unsigned int month, int year);
+class Rva008B6580Date { public: int daysInMonth(unsigned int month, int year); };
+static __forceinline int daysInMonth(unsigned int month, int year)
+{
+    typedef int (Rva008B6580Date::*Member)(unsigned int, int);
+    union { Member member; int (__stdcall *entry)(unsigned int, int); } native;
+    native.member=&Rva008B6580Date::daysInMonth;
+    return native.entry(month,year);
+}
 
 class Rva8CB8C0Bounds
 {
@@ -23,6 +30,7 @@ public:
 		int offset);
 };
 
+// Open BFME 2 Code/Libraries/Source/Apt/AptDate.cpp.
 void Rva8CB8C0Bounds::apply(Rva8CB8C0BoundsBlock *first,
 	Rva8CB8C0BoundsBlock *second, int offset)
 {

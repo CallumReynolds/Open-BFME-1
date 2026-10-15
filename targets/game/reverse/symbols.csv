@@ -91171,3 +91171,5 @@ _bfmeFormatText,0x009D6220,address-only compatibility pin for 10 frozen game/gen
 ?d_008f8110@@YAXXZ,0x008F8110,address-only compatibility pin for retired dump name
 ?d_008f80a0@@YAXXZ,0x008F80A0,address-only compatibility pin for retired dump name
 ?d_009bfa40@@YAXXZ,0x009BFA40,legacy address-only compatibility pin; complete callback ABI and target extent in identity_evidence/009bfa40-donor.md
+?d_00894ff0@@YAXXZ,0x00894FF0,legacy address-only compatibility pin for retired generated name; retained by game/gen_asm/d_00891ca0.asm
+?d_007852e0@@YAXXZ,0x007852E0,legacy address-only compatibility pin for retired generated name; retained by game/gen_asm/d_006f60e0.asm

@@ -106,7 +106,7 @@ public:
 	virtual void slot28();
 	virtual void slot2C();
 	virtual void slot30();
-	virtual File *slot34();
+	virtual void *slot34();
 };
 
 class FileSystem
@@ -175,12 +175,22 @@ static File *Open2OpenPastSeparators( const AsciiString &name )
 	return file;
 }
 
+namespace Rva007852E0 {
+// ?readEntire@Rva007852E0@@YAPAXABVAsciiString@@@Z
+// Open BFME 2 Code/GameEngine/Source/Common/Rva000A9F48FileOpen.cpp.
+static void *readEntire(const AsciiString &name)
+{
+    File *file = Open2OpenPastSeparators(name);
+    return file ? file->slot34() : 0;
+}
+}
+
 class Rva00785930
 {
 public:
 	void load( void );
 	AsciiString m_name;
-	File *m_stream;
+	void *m_stream;
 };
 
 // @?load@Rva00785930@@QAEXXZ 0x00785930
@@ -189,6 +199,5 @@ void Rva00785930::load( void )
 	AsciiString path = m_name;
 	path.concat( ".apt", 4 );
 
-	File *file = Open2OpenPastSeparators( path );
-	m_stream = file ? file->slot34() : 0;
+	m_stream = Rva007852E0::readEntire(path);
 }

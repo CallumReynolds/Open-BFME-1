@@ -311,20 +311,10 @@ void BfmeThingFBA::bfmeUpdFBA(void *a)
 	{
 		const BfmeFBAThingTemplate *objectTemplate =
 			((BfmeFBAObjectView *)nearby)->getTemplate();
-		if (objectTemplate == 0)
-		{
-			__asm {
-				fld total
-				xor eax, eax
-				fadd dword ptr [eax + 0x3fc]
-				fstp total
-			}
-			continue;
-		}
-		if (objectTemplate->m_nextOverride != 0)
-			objectTemplate = (const BfmeFBAThingTemplate *)
-				objectTemplate->m_nextOverride->getFinalOverride();
-		total += objectTemplate->m_float3FC;
+		const BfmeFBAThingTemplate *finalTemplate = objectTemplate == 0 ? 0 :
+			objectTemplate->m_nextOverride == 0 ? objectTemplate :
+			(const BfmeFBAThingTemplate *)objectTemplate->m_nextOverride->getFinalOverride();
+		total += finalTemplate->m_float3FC;
 	}
 	m_bfmeF = total;
 	m_bfmeN = TheBfmeGameLogic()->m_frame + 25;

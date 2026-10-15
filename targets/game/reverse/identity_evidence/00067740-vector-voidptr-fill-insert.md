@@ -15,8 +15,8 @@ Retail 1.03 unpacked, rel32 scan of every E8/E9 (tools/callers_of.py, tools/call
 - 0x003D3D50 is reached only through ILT 0x0002570C, called only by the resize 0x003D4210, whose only
   callers are LargeGroupAudioKeyMap bfmeMerge 0x003D4580 and bfmeAddKey 0x003D46A0. No hashtable
   reaches it. Retail has no identical-COMDAT folding, so it is a different instantiation: its
-  element is four-byte and trivially assignable, real type unproven, spelled `Rva003D3D50Elem*`.
-  The resize 0x003D4210 that calls it is therefore `vector<Rva003D3D50Elem*>::resize`, not void*.
+  element type is `unsigned int` (see the section "0x003D3D50 is vector<unsigned int>" below).
+  The resize 0x003D4210 that calls it is therefore `vector<unsigned int>::resize`, not void*.
 - 0x00067740 calls fill ILT 0x00018412 (-> 0x00066530) twice and overflow ILT 0x0001F4FB
   (-> 0x000670F0) once; 0x003D3D50 calls fill ILT 0x0000A060 (-> 0x003D31A0) twice and overflow ILT
   0x0001CBFC (-> 0x000BBC80) once. So `fill<void**,void*>` is 0x00066530 and the void* overflow is
@@ -34,14 +34,14 @@ Retail 1.03 unpacked, rel32 scan of every E8/E9 (tools/callers_of.py, tools/call
 | change | name | old | new |
 |---|---|---|---|
 | row | `vector<void*>::_M_fill_insert` | 0x003D3D50 | 0x00067740 (ParticleSys.cpp) |
-| row | `vector<Rva003D3D50Elem*>::_M_fill_insert` | - | 0x003D3D50 (Rva003D3D50VectorFillInsert.cpp) |
-| row | `vector<void*>::resize(n, v)` -> `vector<Rva003D3D50Elem*>::resize` | 0x003D4210 | 0x003D4210 |
+| row | `vector<unsigned int>::_M_fill_insert` | - | 0x003D3D50 (Rva003D3D50VectorFillInsert.cpp) |
+| row | `vector<void*>::resize(n, v)` -> `vector<unsigned int>::resize(n, v)` | 0x003D4210 | 0x003D4210 |
 | row | `fill<void**,void*>` | - | 0x00066530 (ParticleSys.cpp) |
 | retired rows | int/Drawable* `_M_fill_insert` at 0x00067740; int/Drawable*/ObjectID `fill` at 0x00066530 | | |
 | pin moved | `fill<void**,void*>` | 0x0000A060 | 0x00018412 |
-| pin added | `fill<Rva003D3D50Elem**,Rva003D3D50Elem*>` | - | 0x0000A060 |
+| pin added | `fill<unsigned int*,unsigned int>` | - | 0x0000A060 |
 | pin moved | `_M_insert_overflow<void*>` | 0x0001CBFC | 0x0001F4FB |
-| pin added | `_M_insert_overflow<Rva003D3D50Elem*>` | - | 0x0001CBFC |
+| pin retired | `_M_insert_overflow<void*>` at 0x00004AED (replaced by `<Rva00418C50Elem*>`); `<int>` and `<Drawable*>` at 0x0001F4FB | | |
 
 Each added pin covers the retail call the moved wrong pin used to cover.
 
@@ -67,3 +67,36 @@ ILT 0x0001F4FB (jmp 0x000670F0) is the overflow call of the proven vector<void*>
 ParticleSys.cpp, which emits the void* overflow next to its _M_fill_insert (probe EXACT, 265 bytes).
 The five gen-shim rows whose object-symbol also spells the void* overflow (0x000BBFC0, 0x00201270,
 0x002013C0, 0x003A0960, 0x003CF220) are other instantiations; their aliases are left for a follow-up.
+
+## 0x003D3D50 is vector<unsigned int> (round-1 review correction)
+
+The first version spelled the element as an opaque pointer, which was unsupported. 0x003D3D50's overflow
+call goes through ILT 0x0001CBFC to 0x000BBC80. 0x000BBC80 is also called by 7 int-like vectors:
+`XferBlockPositionStack::pushPosition` 0x000BC760, `addAudioHandle` 0x006145C0, WindowManager 0x0046B340
+and 0x0046C5F0, `parseSpecialPowerIDVector` 0x000BCE80, and the set bodies 0x009EC5B0 and 0x009EC770.
+With no folding, they all share one element type. It is `unsigned int`:
+- `addAudioHandle` grows a vector of AudioHandle (ZH GameAudio.h:74 `typedef UnsignedInt AudioHandle`).
+  symbols.csv already pinned `_M_insert_overflow<unsigned int>` at 0x0001CBFC for that call.
+- The LargeGroupAudioKeyMap copy constructor 0x003D3BB0 calls `_Vector_base(n, a)` 0x003D3540 and
+  `get_allocator` 0x003D32D0. Both were already pinned, ilt_oracle CONFIRMED, as vector<unsigned int>'s.
+- bfmeMerge and bfmeAddKey pass the resize fill value as `push 0`, a scalar. A wrapped struct
+  (Gen_t_000bbc80_m4pod) builds a stack temporary instead and does not match.
+- It is not int: vector<int>::_M_fill_insert 0x001DBAB0 (called by vector<int>::resize 0x001DC360) calls
+  its overflow through ILT 0x0003B075 -> 0x000BBE70. So the int overflow is 0x000BBE70, which leaves
+  0x000BBC80 for unsigned int. The name `pushPosition(const int&)` is a reconstruction, not evidence.
+
+Consequences:
+- The four LargeGroupAudioKeyMap TUs (Merge, AddKey, CopyConstructor, Rva003D47A0Load) derive from
+  vector<unsigned int>.
+- The copy constructor no longer `#define`s `_Vector_base` and `get_allocator` to the address-scoped
+  stand-ins. Their pins (`Rva003D3540VectorBase<void*>` at 0x0000799B, `bfmeGetAllocator003D32D0<void*>`
+  at 0x0002CE4E) are retired.
+- No new overflow name is pinned at 0x0001CBFC: the existing unsigned int pin serves it.
+
+Retired pins proven wrong by this change:
+- `_M_insert_overflow<void*>` at 0x00004AED (-> 0x00418C50): Drawable::xfer (DrawableXfer.cpp) now
+  spells its m_298 element as the opaque `Rva00418C50Elem*`, pinned at 0x00004AED in its place.
+  The void* overflow is 0x000670F0. NOT retired (banked): the void* pin at 0x0003B075 (-> 0x000BBE70,
+  int's); BfmeConv1896.cpp bfmeAddAK 0x001DB430 spells that vector as void*, and retyping it to int
+  changes codegen (309 vs 301 bytes), so the pin stays until that body is reshaped.
+- `_M_insert_overflow<int>` and `<Drawable*>` at 0x0001F4FB (-> 0x000670F0, void*'s).

@@ -6163,7 +6163,6 @@ pins	0x000049E9	?setFrameFade@W3DDynamicLightPulseShim@@QAEXII@Z
 pins	0x00004A75	?assign@StlWStr@@QAEAAV1@PBG0@Z
 pins	0x00004AB1	?_M_clear@?$vector@URunwayInfo@FlightDeckBehavior@@V?$allocator@URunwayInfo@FlightDeckBehavior@@@_STL@@@_STL@@IAEXXZ
 pins	0x00004AD9	??_GProcessAnimateWindowSlideFromTop@@MAEPAXI@Z
-pins	0x00004AED	?_M_insert_overflow@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@IAEXPAPAXABQAXABU__true_type@2@I_N@Z
 pins	0x00004B47	?parseFXList@INI@@SAXPAV1@PAX1PBX@Z
 pins	0x00004C87	??1PartitionFilterRelationship@@MAE@XZ
 pins	0x00004C9B	??0CleanupHazardUpdate@@QAE@PAVThing@@PBVModuleData@@@Z
@@ -7154,8 +7153,6 @@ pins	0x0001F253	?findObjectByID@GameLogic@@QAEPAVObject@@H@Z
 pins	0x0001F361	?isEmpty@UnicodeString@@QBE_NXZ
 pins	0x0001F3E3	?parse@OutwardEmissionVelocityTemplateParseShim@FXParticleSystem@@QAEXPAVINI@@@Z
 pins	0x0001F4F1	??1AIGuardRetaliateMachine@@MAE@XZ
-pins	0x0001F4FB	?_M_insert_overflow@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEXPAHABHABU__true_type@2@I_N@Z
-pins	0x0001F4FB	?_M_insert_overflow@?$vector@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@IAEXPAPAVDrawable@@ABQAV3@ABU__true_type@2@I_N@Z
 pins	0x0001F55F	??1RecorderClass@@QAE@XZ
 pins	0x0001F587	??1AIMoveOutOfTheWayState@@MAE@XZ
 pins	0x0001F62C	?aptPalantirOnInitialized@@YAXXZ

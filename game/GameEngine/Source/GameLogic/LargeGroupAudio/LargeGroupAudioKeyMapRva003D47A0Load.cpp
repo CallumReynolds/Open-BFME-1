@@ -67,7 +67,8 @@ public:
 	int tag;
 };
 
-class LargeGroupAudioKeyMap : public _STL::vector<void *, _STL::allocator<void *> >
+// The word vector is vector<unsigned int>: see Rva003D3D50VectorFillInsert.cpp.
+class LargeGroupAudioKeyMap : public _STL::vector<unsigned int, _STL::allocator<unsigned int> >
 {
 public:
 	void rva003D47A0Load(Xfer *xfer);

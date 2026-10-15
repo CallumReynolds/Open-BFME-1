@@ -1376,7 +1376,7 @@ name,address,notes
 ??$fill@PAHH@_STL@@YAXPAH0ABH@Z,0x001DB670,zh-landmulti per-site callee copy (body proven byte-equal)
 ??$fill@PAMM@_STL@@YAXPAM0ABM@Z,0x00011171,Open-BFME5 ILT thunk to 0x00459A00 - the fill() both fill-arms of _M_fill_insert at 0x00459D90 call; same TU 0x390 bytes below it
 ??$fill@PAPAVObject@@PAV1@@_STL@@YAXPAPAVObject@@0ABQAV1@@Z,0x0003C7F9,ILT thunk used by call site
-??$fill@PAPAURva003D3D50Elem@@PAU1@@_STL@@YAXPAPAURva003D3D50Elem@@0ABQAU1@@Z,0x0000A060,ILT jmp 0x003D31A0; called twice by vector<Rva003D3D50Elem*>::_M_fill_insert 0x003D3D50 (took over the vector<void*> pin)
+??$fill@PAII@_STL@@YAXPAI0ABI@Z,0x0000A060,ILT jmp 0x003D31A0; called twice by vector<unsigned int>::_M_fill_insert 0x003D3D50 (took over the vector<void*> pin)
 ??$fill@PAPAXPAX@_STL@@YAXPAPAX0ABQAX@Z,0x00018412,route=0x00066530; called twice by vector<void*>::_M_fill_insert 0x00067740 (the hashtable bucket copy; was 0x0000A060)
 ??$fill@PAUEvaSideSounds@@U1@@_STL@@YAXPAUEvaSideSounds@@0ABU1@@Z,0x0000E9B7,EvaSideSounds vector fill-insert helper ILT proven by exact call position
 ??$fill@PAUGen_p24pod@@U1@@_STL@@YAXPAUGen_p24pod@@0ABU1@@Z,0x0058ACB0,gen-tgrid payload member used by AptPalantirHeroSelector constructor
@@ -1560,7 +1560,6 @@ name,address,notes
 ??0?$LatchRestore@VAsciiString@@@@QAE@AAVAsciiString@@ABV1@@Z,0x00339DA0,native released template; aligned00343780 call; independently exact99B ctor with StringBase set and witnessed vtable
 ??0?$NATProbeStringBase@D@@QAE@PBD@Z,0x00888BC0,NAT sendAProbe string constructor body
 ??0?$Rva003B6680StringBase@D@@AAE@ABV0@@Z,0x00887B60,additive: retail call target of the red row ??0Rva003B6680@@QAE@ABV0@@Z
-??0?$Rva003D3540VectorBase@PAXV?$allocator@PAX@_STL@@@_STL@@QAE@IABV?$allocator@PAX@1@@Z,0x0000799B,Open-BFME5 address-scoped STLport vector-base constructor ILT to body 0x003D3540 used by the key-map copy constructor
 ??0?$Rva0048EC80StringBase@G@@AAE@ABV0@@Z,0x00888400,Rva0048EC80 UnicodeString forwarding base copy constructor
 ??0?$ShareBufferClass@E@@QAE@HPBDH@Z,0x0004B4A7,derived from part_buf matched-caller call sites
 ??0?$ShareBufferClass@I@@QAE@ABV0@@Z,0x0092A090
@@ -15563,7 +15562,6 @@ name,address,notes
 ?_M_insert_overflow@?$vector@GV?$allocator@G@_STL@@@_STL@@IAEXPAGABGABU__true_type@2@I_N@Z,0x0000791E,pinharvest x1 (thunk)
 ?_M_insert_overflow@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEXPAHABHABU__true_type@2@I_N@Z,0x000028C4,Open-BFME7 additive: retail call target used by the landed row at 0x003CFE10 (thunk drift repair)
 ?_M_insert_overflow@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEXPAHABHABU__true_type@2@I_N@Z,0x0001CBFC,pinharvest x1 (thunk)
-?_M_insert_overflow@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEXPAHABHABU__true_type@2@I_N@Z,0x0001F4FB,"the address retail's own call sites encode; re-added after d27ae4b7b, one-name-one-body clean"
 ?_M_insert_overflow@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEXPAHABHABU__true_type@2@I_N@Z,0x0003B075,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x001E8670 calls; autopin
 ?_M_insert_overflow@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEXPAHABHABU__true_type@2@I_N@Z,0x000486BC,"the address retail's own call sites encode; re-added after d27ae4b7b, one-name-one-body clean"
 ?_M_insert_overflow@?$vector@IV?$allocator@I@_STL@@@_STL@@IAEXPAIABIABU__true_type@2@I_N@Z,0x0001CBFC,Audio handle vector growth ILT called by 0x006145C0
@@ -15571,7 +15569,7 @@ name,address,notes
 ?_M_insert_overflow@?$vector@PAUDistanceNode003C5990@@V?$allocator@PAUDistanceNode003C5990@@@_STL@@@_STL@@IAEXPAPAUDistanceNode003C5990@@ABQAU3@ABU__true_type@2@I_N@Z,0x003C54A0,STLport pointer overflow; calls 003C5D0D and 003C5D7C pass position and node pointer ref plus true_type count 1 and bool 1; five-slot thiscall ret 14 independently confirmed by callees and existing 4-byte POD vector pins
 ?_M_insert_overflow@?$vector@PAURecord003C3D90@@V?$allocator@PAURecord003C3D90@@@_STL@@@_STL@@IAEXPAPAURecord003C3D90@@ABQAU3@ABU__true_type@2@I_N@Z,0x003C0950,Pointer-vector overflow; 003C4306 passes vector+38 this with finish record-ref true_type-ref count 1 and flag 1; five-slot thiscall ret14 and 4-byte POD element confirmed by existing pins
 ?_M_insert_overflow@?$vector@PAURva002D8C10Record@@V?$allocator@PAURva002D8C10Record@@@_STL@@@_STL@@IAEXPAPAURva002D8C10Record@@ABQAU3@ABU__true_type@2@I_N@Z,0x00007711,route=0x002D8820; UpgradeTexture parser ILT call to native pointer-vector body
-?_M_insert_overflow@?$vector@PAURva003D3D50Elem@@V?$allocator@PAURva003D3D50Elem@@@_STL@@@_STL@@IAEXPAPAURva003D3D50Elem@@ABQAU3@ABU__true_type@2@I_N@Z,0x0001CBFC,ILT jmp 0x000BBC80; called by vector<Rva003D3D50Elem*>::_M_fill_insert 0x003D3D50 (took over the vector<void*> pin)
+?_M_insert_overflow@?$vector@PAURva00418C50Elem@@V?$allocator@PAURva00418C50Elem@@@_STL@@@_STL@@IAEXPAPAURva00418C50Elem@@ABQAU3@ABU__true_type@2@I_N@Z,0x00004AED,ILT jmp 0x00418C50; Drawable::xfer m_298 push_back (0x0041E1C3 and 0x0041B97A/0x0041BCDA); replaces the disproved vector<void*> pin (void* overflow is 0x000670F0)
 ?_M_insert_overflow@?$vector@PAURva003C9DD0Item@@V?$allocator@PAURva003C9DD0Item@@@_STL@@@_STL@@IAEXPAPAURva003C9DD0Item@@ABQAU3@ABU__true_type@2@I_N@Z,0x00010596,ILT to the STLport vector<T*> insert-overflow body 0x003C8F80 called at 0x003C9DD0+0xAF with (pos &x &__true_type 1 1) by the collect body
 ?_M_insert_overflow@?$vector@PAURva0060B710IconObject@@V?$allocator@PAURva0060B710IconObject@@@_STL@@@_STL@@IAEXPAPAURva0060B710IconObject@@ABQAU3@ABU__true_type@2@I_N@Z,0x00032ECF,Open-BFME7 retail REL32 target (ILT thunk) the body at 0x0060B710 calls; autopin
 ?_M_insert_overflow@?$vector@PAUSiegeDockEntry00206FF0@@V?$allocator@PAUSiegeDockEntry00206FF0@@@_STL@@@_STL@@IAEXPAPAUSiegeDockEntry00206FF0@@ABQAU3@ABU__true_type@2@I_N@Z,0x0003A292,body 0x002065C0; SiegeDockingBehavior::xfer +0x157 push_back overflow call with ecx=this+0x24 and 5 args; body ret 0x14 and 4-byte stride; same ILT as the existing SiegeDockingEntry pin respelled to the address-token element type
@@ -15583,7 +15581,6 @@ name,address,notes
 ?_M_insert_overflow@?$vector@PAVChainVictim005C92F0@@V?$allocator@PAVChainVictim005C92F0@@@_STL@@@_STL@@IAEXPAPAVChainVictim005C92F0@@ABQAV3@ABU__true_type@2@I_N@Z,0x00016AE5,Sub005C92F0 copy constructor retail call invokes the vector insert-overflow ILT thunk
 ?_M_insert_overflow@?$vector@PAVCrateTemplate@@V?$allocator@PAVCrateTemplate@@@_STL@@@_STL@@IAEXPAPAVCrateTemplate@@ABQAV3@ABU__true_type@2@I_N@Z,0x0001CE4F,Open-BFME5 ILT; CrateSystem::newCrateTemplate vector growth call at retail 0x0037A418
 ?_M_insert_overflow@?$vector@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@IAEXPAPAVDrawable@@ABQAV3@ABU__true_type@2@I_N@Z,0x0001CBFC,pinharvest x1 (thunk)
-?_M_insert_overflow@?$vector@PAVDrawable@@V?$allocator@PAVDrawable@@@_STL@@@_STL@@IAEXPAPAVDrawable@@ABQAV3@ABU__true_type@2@I_N@Z,0x0001F4FB,"pinharvest x1 (thunk); re-added after d27ae4b7b, one-name-one-body clean"
 ?_M_insert_overflow@?$vector@PAVEmotion@@V?$allocator@PAVEmotion@@@_STL@@@_STL@@IAEXPAPAVEmotion@@ABQAV3@ABU__true_type@2@I_N@Z,0x00022E4E,EmotionTrackerUpdate vector overflow ILT
 ?_M_insert_overflow@?$vector@PAVEmotionNugget@@V?$allocator@PAVEmotionNugget@@@_STL@@@_STL@@IAEXPAPAVEmotionNugget@@ABQAV3@ABU__true_type@2@I_N@Z,0x0002FC61,addNugget retail vector overflow ILT target
 ?_M_insert_overflow@?$vector@PAVExperienceScalarTable@@V?$allocator@PAVExperienceScalarTable@@@_STL@@@_STL@@IAEXPAPAVExperienceScalarTable@@ABQAV3@ABU__true_type@2@I_N@Z,0x0037F7D0,Open-BFME5 grow path of the vector at TheExperienceLevelSystem+0x20
@@ -15609,7 +15606,6 @@ name,address,notes
 ?_M_insert_overflow@?$vector@PAVTunnelTracker@@V?$allocator@PAVTunnelTracker@@@_STL@@@_STL@@IAEXPAPAVTunnelTracker@@ABQAV3@ABU__true_type@2@I_N@Z,0x0001212A,REL32 pin from CaveSystem::registerNewCave @0x378970
 ?_M_insert_overflow@?$vector@PAVUpdateModule@@V?$allocator@PAVUpdateModule@@@_STL@@@_STL@@IAEXPAPAVUpdateModule@@ABQAV3@ABU__true_type@2@I_N@Z,0x00036B79,GameLogic loadPostProcess growth call at 0x0038E894 and 0x0038E88E reaches the existing vector overflow thunk
 ?_M_insert_overflow@?$vector@PAVWeaponTemplate@@V?$allocator@PAVWeaponTemplate@@@_STL@@@_STL@@IAEXPAPAVWeaponTemplate@@ABQAV3@ABU__true_type@2@I_N@Z,0x00012067,newWeaponTemplate STL growth call target (incremental-link thunk)
-?_M_insert_overflow@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@IAEXPAPAXABQAXABU__true_type@2@I_N@Z,0x00004AED,REL32 pin from Drawable::xfer 0x0041D290 (ILT to the f265_b7a8aa family copy at 0x00418C50)
 ?_M_insert_overflow@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@IAEXPAPAXABQAXABU__true_type@2@I_N@Z,0x0001F4FB,ILT jmp 0x000670F0; called by vector<void*>::_M_fill_insert 0x00067740 (was 0x0001CBFC)
 ?_M_insert_overflow@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@IAEXPAPAXABQAXABU__true_type@2@I_N@Z,0x0003B075,retail 0x001DB430 calls ILT 0x0003B075; ABI matches five-argument STLport true_type overflow and body 0x000BBE70
 ?_M_insert_overflow@?$vector@PBDV?$allocator@PBD@_STL@@@_STL@@IAEXPAPBDABQBDABU__true_type@2@I_N@Z,0x0000321F,006A83F0 callsite plus independent retail callee inspection: 006A4160 grows by max(size n) and memmoves pointer ranges with repeated 4 byte insertion; 0111BAC8 room-name table proves const char pointer elements
@@ -78422,7 +78418,6 @@ name,address,notes
 ?bfmeGetARC@BfmeOwnerRC@@QAEPAXXZ,0x0004B12D,pin
 ?bfmeGetAUZA@BfmeSubAUZA@@QBE?AUBfmeHandleUZA@@HH@Z,0x009292E0,pin
 ?bfmeGetAllocator00009C28@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QBE?AV?$allocator@PAX@2@XZ,0x00009C28,Open-BFME5 address-scoped STLport get_allocator ILT to body 0x000665A0 used by the vector void pointer copy constructor at 0x0082EB30
-?bfmeGetAllocator003D32D0@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QBE?AV?$allocator@PAX@2@XZ,0x0002CE4E,Open-BFME5 address-scoped STLport get_allocator ILT to body 0x003D32D0 used by the key-map copy constructor
 ?bfmeGetAllocator@BfmeVector12DK@@QBEPAUBfmeAllocatorDK@@PAU2@@Z,0x00008580,vector allocator copy thunk
 ?bfmeGetAllocator@Gen_000bb890@@ABE?AVBfmeAllocator@@XZ,0x0001E2A4,Open-BFME5 ILT the copy constructor at 0x000BB890 gets its allocator through
 ?bfmeGetAllocator@Gen_000ce890@@ABE?AVBfmeAllocator@@XZ,0x00008BED,Open-BFME5 ILT the copy constructor at 0x000CE890 gets its allocator through

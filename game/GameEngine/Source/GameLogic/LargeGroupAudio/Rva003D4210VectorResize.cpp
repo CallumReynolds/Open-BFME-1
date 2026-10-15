@@ -12,11 +12,9 @@
 //
 // The element is not void*: the grow arm's rel32 resolves to ILT 0x0002570C ->
 // 0x003D3D50, while vector<void*>::_M_fill_insert is 0x00067740 (called by the
-// hashtable bucket code) and retail has no identical-COMDAT folding.  The real
-// element type is unproven, so it is the address-named opaque
-// Rva003D3D50Elem*, shared with Rva003D3D50VectorFillInsert.cpp.
+// hashtable bucket code) and retail has no identical-COMDAT folding.  It is
+// vector<unsigned int> (see Rva003D3D50VectorFillInsert.cpp).
 
-struct Rva003D3D50Elem;
 
 typedef unsigned int size_t_;
 
@@ -65,7 +63,7 @@ public:
 
 	void resize(unsigned int newSize, Type value);
 
-	// ?_M_fill_insert@?$vector@PAURva003D3D50Elem@@V?$allocator@PAURva003D3D50Elem@@@_STL@@@_STL@@QAEXPAPAURva003D3D50Elem@@IABQAU3@@Z
+	// ?_M_fill_insert@?$vector@IV?$allocator@I@_STL@@@_STL@@QAEXPAIIABI@Z
 	void _M_fill_insert(Type *pos, unsigned int n, const Type &value);
 
 private:
@@ -83,5 +81,5 @@ void vector<Type, Allocator>::resize(unsigned int newSize, Type value)
 		_M_fill_insert(end(), newSize - size(), value);
 }
 
-template void vector<Rva003D3D50Elem *, allocator<Rva003D3D50Elem *> >::resize(unsigned int, Rva003D3D50Elem *);
+template void vector<unsigned int, allocator<unsigned int> >::resize(unsigned int, unsigned int);
 }

@@ -2,18 +2,15 @@
 // stlport
 
 // Open-BFME5: LargeGroupAudioKeyMap copy constructor, retail 0x003D3BB0,
-// 133 bytes. Retail linked this TU's private copies of two STLport helpers.
-// Scope their source spellings to the observed RVAs so the exact constructor
-// does not add false candidates to the same helpers instantiated elsewhere.
+// 133 bytes. The word vector is vector<unsigned int>: retail calls its
+// _Vector_base(n, a) 0x003D3540 (ILT 0x0000799B) and get_allocator 0x003D32D0
+// (ILT 0x0002CE4E), both pinned under the unsigned int names; see
+// Rva003D3D50VectorFillInsert.cpp.
 
-#define _Vector_base Rva003D3540VectorBase
-#define get_allocator bfmeGetAllocator003D32D0
 #include <vector>
-#undef get_allocator
-#undef _Vector_base
 
 class LargeGroupAudioKeyMap :
-	public _STL::vector<void *, _STL::allocator<void *> >
+	public _STL::vector<unsigned int, _STL::allocator<unsigned int> >
 {
 public:
 	LargeGroupAudioKeyMap(const LargeGroupAudioKeyMap &other);
@@ -24,7 +21,7 @@ void bfmeRetainMembers(LargeGroupAudioKeyMap *map);
 // ??0LargeGroupAudioKeyMap@@QAE@ABV0@@Z
 LargeGroupAudioKeyMap::LargeGroupAudioKeyMap(
 	const LargeGroupAudioKeyMap &other) :
-	_STL::vector<void *, _STL::allocator<void *> >(other)
+	_STL::vector<unsigned int, _STL::allocator<unsigned int> >(other)
 {
 	bfmeRetainMembers(this);
 }

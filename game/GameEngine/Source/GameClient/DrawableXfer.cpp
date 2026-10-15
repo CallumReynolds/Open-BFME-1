@@ -94,7 +94,10 @@ class Rva0041D290Manager {char bytes[0xc];Pathfinder *p;public:Pathfinder *get()
 // TU's offset view of it; the references below are the real global.
 class AI;
 extern AI *TheAI;
-typedef _STL::vector<void*> Rva0041D290Vector;
+// m_298 grows through ILT 0x00004AED -> 0x00418C50, not the vector<void*> overflow
+// 0x000670F0: an opaque pointer element (identity_evidence/00067740-vector-voidptr-fill-insert.md).
+struct Rva00418C50Elem;
+typedef _STL::vector<Rva00418C50Elem*> Rva0041D290Vector;
 enum Rva0041D290Decal {RvaDecalZero};
 class Rva00410F10Allocation;
 class Rva00410F10Owner { public: Rva00410F10Allocation *ensure(); };
@@ -319,8 +322,8 @@ void Drawable::xfer(Xfer *x)
  absent=m_ec==0;*x==absent;if(!absent){if(!m_ec)m_ec=new Rva0041D290Ambient;m_ec->event.rva000b2ba0(x);}
  *x==m_290; *x==m_294; *x==m_2a8; *x==m_2ac;
 
- if(x->IsLoading()){unsigned count;*x==count;while(count--){unsigned value;Rva0010BE80((MidVirtualSlot90Receiver*)x,&value);void *v=((Rva0041D290Client *)TheTerrainLogic)->v20(value);m_298.push_back(v);}}
- else{unsigned count=m_298.size();*x==count;for(void **it=m_298.begin();it!=m_298.end();++it){unsigned value=field<unsigned>(*it,4);Rva0010BE80((MidVirtualSlot90Receiver*)x,&value);}}
+ if(x->IsLoading()){unsigned count;*x==count;while(count--){unsigned value;Rva0010BE80((MidVirtualSlot90Receiver*)x,&value);void *v=((Rva0041D290Client *)TheTerrainLogic)->v20(value);m_298.push_back((Rva00418C50Elem*)v);}}
+ else{unsigned count=m_298.size();*x==count;for(Rva00418C50Elem **it=m_298.begin();it!=m_298.end();++it){unsigned value=field<unsigned>(*it,4);Rva0010BE80((MidVirtualSlot90Receiver*)x,&value);}}
  *x==m_c;*x==m_18; *x==m_1c; *x==m_20; *x==m_24; *x==m_28; *x==m_2b4; *x==m_2b8; *x==m_2b9; *x==m_360;
  *x==m_274;*x==m_278;*x==m_2ba; *x==m_351; *x==m_354;
  bfmeHandOver_00001A50((BfmeSeedTarget*)x,p+0x30);bfmeHandOver_00001A50((BfmeSeedTarget*)x,p+0x3c);*x==m_84; *x==field<ICoord2D>(p,0x88);*x==m_90; *x==m_94; *x==m_98; *x==m_d4; *x==m_268; *x==m_288; *x==field<IRegion2D>(p,0x364);x->XferRawBytes(p+0x28c,4);

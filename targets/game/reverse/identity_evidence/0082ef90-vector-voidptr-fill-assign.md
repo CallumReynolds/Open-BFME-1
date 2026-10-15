@@ -53,7 +53,21 @@ These are the ScienceInfo "folded body" pins on void* bodies:
   `??$swap@V?$_STLP_alloc_proxy@PAPAXPAXV?$allocator@PAX@_STL@@@_STL@@@_STL@@YAXAAV?$_STLP_alloc_proxy@PAPAXPAXV?$allocator@PAX@_STL@@@0@0@Z`.
 - The old pin of that name at 0x00069970 is retired. pin_consistency reports that the bodies at 0x00066BC0 and
   0x00069970 diverge at +0xB.
-- The vendored alias row `dup_69ec0` (object-symbol vector<void*>::swap) only verified through that wrong pin.
-  Nothing calls 0x00069EC0 (its only reference is ILT 0x0001C9A4), so the row is tombstoned as a one-identity
-  over-claim.
 - The opaque swap at 0x00069C80 still calls 0x00069970, under its own opaque proxy-swap name.
+
+## 0x00069C80 and 0x00069EC0 are interchangeable twins
+
+- 0x00069C80 and 0x00069EC0 are byte-identical 45-byte swaps.
+- Neither is called. Their only references are their ILT jmps, 0x00042997 and 0x0001C9A4.
+- Both call the proxy swap 0x00069970 through ILT 0x00025176.
+- Under no folding, at most one of them is `vector<Rva00069C80Elem*>::swap`, and nothing says which. The row name
+  goes to 0x00069C80.
+- The placeholder `dup_69ec0` keeps its row. It is now sourced from Rva00069C80PointerVectorSwap.cpp with
+  dup-of= and object-symbol= set to the opaque swap name. Its old dup-of/object-symbol, vector<void*>::swap, was wrong.
+- 0x00069970's ledger name, a `_List_node` alloc_proxy swap, is a gen placeholder. Three vector-shaped swaps call it:
+  0x00069C80, 0x00069EC0 and 0x0006A060.
+
+## swap<_STLP_alloc_proxy<int*>> pin at 0x00066BC0 retired
+
+0x00066BC0's only caller is 0x00066F00, which is vector<void*>::swap. So the `<int*>` proxy-swap pin there is
+wrong, and the `<void**>` pin takes its place.

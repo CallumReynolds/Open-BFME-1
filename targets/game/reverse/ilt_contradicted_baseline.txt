@@ -8551,7 +8551,6 @@ pins	0x0005EE90	?add@TeamsInfoRecAddTeamShim@@QAEXPBVDict@@@Z
 pins	0x00066670	??0?$_STLP_alloc_proxy@PAHHV?$allocator@H@_STL@@@_STL@@QAE@ABV01@@Z
 pins	0x000668C0	??0?$_STLP_alloc_proxy@PAVAsciiString@@V1@V?$allocator@VAsciiString@@@_STL@@@_STL@@QAE@ABV?$allocator@VAsciiString@@@1@PAVAsciiString@@@Z
 pins	0x00066A90	??0?$_Vector_base@HV?$allocator@H@_STL@@@_STL@@QAE@IABV?$allocator@H@1@@Z
-pins	0x00066BC0	??$swap@V?$_STLP_alloc_proxy@PAHHV?$allocator@H@_STL@@@_STL@@@_STL@@YAXAAV?$_STLP_alloc_proxy@PAHHV?$allocator@H@_STL@@@0@0@Z
 pins	0x000673D0	??$_M_allocate_and_copy@PAH@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEPAHIPAH0@Z
 pins	0x000681C0	?release@DictReleaseDataShim@@QAEXXZ
 pins	0x000683D0	?run@DictEnsureUniqueShim@@QAEPAUDictPair@1@H_NPAU21@@Z

@@ -1208,33 +1208,44 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 	*   texture and rendered at end of scene. */
 //-------------------------------------------------------------------------------------------------
 //DECLARE_PERF_TIMER(Water)
-// ?Render@WaterRenderObjClass@@UAEXAAVRenderInfoClass@@@Z present-unmatched
+// Retail reads a Real at GlobalData +0x180 before rendering the sky box.
+struct BFMEWaterGlobalDataView
+{
+	char BeforeOffset180[0x180];
+	Real m_at180;
+};
+
+extern bool HighlightRendering;
+
+// 0x007AA820 (ILT 0x000243B6) and 0x007A2330 (ILT 0x0001B897) are matched under
+// the opaque owner Rva007A2330; both take this WaterRenderObjClass and rinfo.
+class Rva007A2330Target;
+class Rva007A2330
+{
+public:
+	void helper(Rva007A2330Target **target);
+	void apply(Rva007A2330Target **target);
+};
+
+// ?Render@WaterRenderObjClass@@UAEXAAVRenderInfoClass@@@Z
 void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	//USE_PERF_TIMER(Water)
-	if (TheTerrainRenderObject && !TheTerrainRenderObject->getMap())
+	if (HighlightRendering)
+		return;
+
+	// Retail keeps the terrain's map at +0x2FF4.
+	if (TheTerrainRenderObject && !*(WorldHeightMap **)((char *)TheTerrainRenderObject + 0x2ff4))
 		return;	//no map has been loaded yet.
 
-	if (((RTS3DScene *)rinfo.Camera.Get_User_Data())->getCustomPassMode() == SCENE_PASS_ALPHA_MASK ||
-		((SceneClass *)rinfo.Camera.Get_User_Data())->Get_Extra_Pass_Polygon_Mode() == SceneClass::EXTRA_PASS_CLEAR_LINE)
-		return;	//water is not drawn in wireframe or custom scene passes
-
-#ifdef EXTENDED_STATS
-	if (DX8Wrapper::stats.m_disableWater) {
-		return;
-	}
-#endif
 	if (ShaderClass::Is_Backface_Culling_Inverted())
 		return;	//the water object will not reflect in itself, so don't do anything if rendering a mirror.
-
-	//this water type needs to rendered after the rest of scene, so buffer it up for later
 
 	// If static sort lists are enabled and this mesh has a sort level, put it on the list instead
 	// of rendering it.
 	unsigned int sort_level = (unsigned int)Get_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level != SORT_LEVEL_NONE) 
-	{	
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level != SORT_LEVEL_NONE)
+	{
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 		return;
 	}
@@ -1243,203 +1254,20 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 	{
 		case WATER_TYPE_0_TRANSLUCENT:
 		case WATER_TYPE_3_GRIDMESH:
-			//Draw the water surface as a bunch of alpha blended tiles covering areas where water is visible
-			renderWater();
-			if (!m_drawingRiver || m_disableRiver) {
-				renderWaterMesh();	//Draw water surface as 3D deforming mesh if it's enabled on this map.
-			}
+			((Rva007A2330 *)this)->helper((Rva007A2330Target **)&rinfo);
 			break;
 
 		case WATER_TYPE_2_PVSHADER:
-			//Pixel/Vertex Shader based water which uses an off-screen rendered reflection texture
-			drawSea(rinfo);	//draw water surface
+			drawSea(rinfo);
 			break;
 
 		case WATER_TYPE_1_FB_REFLECTION:
-			{
-				//Normal frame buffer reflection water type. Non translucent.  Legacy code we're not using anymore.
-				Matrix3D	OldCameraMatrix=rinfo.Camera.Get_Transform();
-				Matrix4x4	FullMatrix4(rinfo.Camera.Get_Transform());	//copy 3x4 matrix into a 4x4
-				Vector3		WaterNormal(0,0,1);	//normal of plane used for reflection
-				Vector4		WaterPlane(WaterNormal.X,WaterNormal.Y,WaterNormal.Z,m_level);	//assume distance to origin 0
-				Vector3		rRight,rUp,rN,rPos;	//orientation and translation vectors of camera
-
-				Matrix4x4	FullMatrix(FullMatrix4.Transpose());	//swap rows/columns
-
-				//reflect camera right vector
-				Real axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[0],WaterNormal);
-				rRight = (Vector3&)FullMatrix[0] - (2.0f*axis_distance*WaterNormal);
-
-				//reflect camera up vector
-				axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[1],WaterNormal);
-				rUp = (Vector3&)FullMatrix[1] - (2.0f*axis_distance*WaterNormal);
-
-				//reflect camera n vector
-				axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[2],WaterNormal);
-				rN = (Vector3&)FullMatrix[2] - (2.0f*axis_distance*WaterNormal);
-
-				//reflect camera position
-				axis_distance=Vector3::Dot_Product((Vector3&)FullMatrix[3],WaterNormal);	//distance cam to origin
-				axis_distance -= WaterPlane.W;	// subtract mirror plane distance to get distance camera to plane
-				rPos = (Vector3&)FullMatrix[3] - (2.0f*axis_distance*WaterNormal);
-
-				//generate a new camera matrix from reflected vectors
-				Matrix3D reflectedTransform(rRight,rUp,rN,rPos);
-
-				//flip the winding order of polygons to draw the reflected back sides.
-				ShaderClass::Invert_Backface_Culling(true);
-
-			#ifdef CLIP_GEOMETRY_TO_PLANE
-			  // Set a clip plane, so that only objects above the water are reflected
-				WaterPlane.W *= -1.0f;	//flip sign of plane distance for D3D use.
-
-			//	DX8Wrapper::Set_DX8_Clip_Plane( 0, &WaterPlane.X );
-			//	DX8Wrapper::Set_DX8_Render_State(D3DRS_CLIPPLANEENABLE, D3DCLIPPLANE0 );	//turn on first clip plane
-
-				// Alternate Clipping Method using alpha testing hack!
-				/**************************************************************************************/
-
-				D3DXMATRIX inv;
-				D3DXMATRIX clipMatrix;
-				Real det;
-				Matrix4x4 curView;
-
-				//get current view matrix
-				DX8Wrapper::_Get_DX8_Transform(D3DTS_VIEW, curView);
-
-				//get inverse of view matrix(= view to world matrix)
-				D3DXMatrixInverse(&inv, &det, (D3DXMATRIX*)&curView);
-
-				//create clipping matrix by inserting our plane equation into the 1st column
-				D3DXMatrixIdentity(&clipMatrix);
-				clipMatrix(0,0)=WaterNormal.X;
-				clipMatrix(1,0)=WaterNormal.Y;
-				clipMatrix(2,0)=WaterNormal.Z;
-				clipMatrix(3,0)=WaterPlane.W+0.5f;
-				inv *=clipMatrix;
-
-				// Change texture wrapping mode to 'clamp' for texture stage 1
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-
-				// Use CameraSpace vertices as input to matrix and use texture wrap mode from stage 1
-				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEPOSITION|1);
-				// Two output coordinates are used.
-				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);	
-
-				// Set texture generation matrix for stage 1
-				DX8Wrapper::_Set_DX8_Transform(D3DTS_TEXTURE1, *((Matrix4*)&inv));
-
-				// Disable bilinear filtering
-				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MINFILTER, D3DTEXF_POINT);
-				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_MAGFILTER, D3DTEXF_POINT);
-
-				// Pass stage 0 texture data untouched(by modulating with white)
-// byte-exact reconstruction: game/GameEngine/Source/Common/ExactStaticThunks.cpp
-// ?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z present-unmatched
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );	//stage 1 texture
-// byte-exact reconstruction: game/GameEngine/Source/Common/ExactStaticThunks.cpp
-// ?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z present-unmatched
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLORARG2, D3DTA_CURRENT );	//previous stage texture
-// byte-exact reconstruction: game/GameEngine/Source/Common/ExactStaticThunks.cpp
-// ?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z present-unmatched
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_COLOROP,   D3DTOP_MODULATE );	//module with white => does nothing
-
-// byte-exact reconstruction: game/GameEngine/Source/Common/ExactStaticThunks.cpp
-// ?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z present-unmatched
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );	//stage 1 texture
-// byte-exact reconstruction: game/GameEngine/Source/Common/ExactStaticThunks.cpp
-// ?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z present-unmatched
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT );	//previous stage texture
-// byte-exact reconstruction: game/GameEngine/Source/Common/ExactStaticThunks.cpp
-// ?Set_DX8_Texture_Stage_State@DX8Wrapper@@SAXIKI@Z present-unmatched
-				DX8Wrapper::Set_DX8_Texture_Stage_State( 1, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );	//modulate with clipping texture
-
-				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,0x00);
-// (folded home; the donor no longer holds this body)
-// (Set_DX8_Render_State is claimed from this file now; the marker was stale)
-				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAFUNC,D3DCMP_NOTEQUAL);	//pass pixels who's alpha is not zero
-// (folded home; the donor no longer holds this body)
-// (Set_DX8_Render_State is claimed from this file now; the marker was stale)
-				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE, true);	//test pixels if transparent(clipped) before rendering.
-
-				// Set clipping texture
-				m_alphaClippingTexture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-				m_alphaClippingTexture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-				m_alphaClippingTexture->Set_Min_Filter(TextureClass::FILTER_TYPE_NONE);
-				m_alphaClippingTexture->Set_Mag_Filter(TextureClass::FILTER_TYPE_NONE);
-				m_alphaClippingTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_NONE);
-
-				DX8Wrapper::Set_Texture(0,m_alphaClippingTexture);
-
-				//TODO: Will have to make sure that the shader system is not resetting my stage 1 setup
-				//while rendering the scene
-
-				/*************************************************************************************/
-			#endif
-
-			#if 0	// No longer do simple rendering.
-				if (TheGlobalData->m_useWaterPlane)
-				{
-					//@todo : Would it be better to create a new camera or change the transform of the
-					//existing one?
-					rinfo.Camera.Set_Transform( reflectedTransform );
-					rinfo.Camera.Apply();	//force an update of all the camera dependent parameters like frustum clip planes
-
-					if(m_useCloudLayer)
-					{	
-						if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
-							m_skyBox->Render(rinfo);
-						else
-						{
-							renderSky();
-							if (m_tod == TIME_OF_DAY_NIGHT)
-								renderSkyBody(&reflectedTransform);
-						}
-					}
-
-					WW3D::Render(m_parentScene,&rinfo.Camera);
-
-					rinfo.Camera.Set_Transform(OldCameraMatrix);	//restore original non-reflected matrix
-					rinfo.Camera.Apply();	//force an update of all the camera dependent parameters like frustum clip planes
-
-					//clear the z-buffer to remove changes made by objects inside mirror
-					DX8Wrapper::Clear(false,true,Vector3(0.1f,0.1f,0.1f));
-				}
-			#endif
-
-			#ifdef CLIP_GEOMETRY_TO_PLANE
-				//restore default culling mode
-			//	DX8Wrapper::Set_DX8_Render_State(D3DRS_CLIPPLANEENABLE, 0 );	//turn off first clip plane
-
-				//disable texture coordinate generation
-				DX8Wrapper::Set_DX8_Texture_Stage_State(1, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
-// (folded home; the donor no longer holds this body)
-// (Set_DX8_Render_State is claimed from this file now; the marker was stale)
-				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE, false);	//disable alpha testing
-			#endif
-
-// byte-exact reconstruction: game/Libraries/Source/WWVegas/WW3D2/shader.cpp
-// ?Invert_Backface_Culling@ShaderClass@@ present-unmatched
-				ShaderClass::Invert_Backface_Culling(false);	//return culling back to normal
-
-// ?Invalidate@ShaderClass@@SAXXZ present-unmatched
-				ShaderClass::Invalidate();	//reset shading system so it forces full state set.
-
-				renderWater();
-			}	//WATER_TYPE_1
-
-		default:
+			((Rva007A2330 *)this)->apply((Rva007A2330Target **)&rinfo);
 			break;
-	}//switch
-
-	if (TheGlobalData && TheGlobalData->m_drawSkyBox)
-	{	//center skybox around camera
-		Vector3 pos=rinfo.Camera.Get_Position();
-		pos.Z = TheGlobalData->m_skyBoxPositionZ;
-		m_skyBox->Set_Position(pos);
-		m_skyBox->Render(rinfo);
 	}
+
+	if (TheGlobalData && ((const BFMEWaterGlobalDataView *)TheGlobalData)->m_at180 != 0.0f)
+		m_skyBox->Render(rinfo);
 
 	//Clean up after any pixel shaders.
 	//Force render state apply so that the "NULL" texture gets applied to D3D, thus releasing shroud reference count.
@@ -1448,9 +1276,6 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 
 	if (m_waterTrackSystem)
 		m_waterTrackSystem->flush(rinfo);
-
-//	renderWaterMesh();
-//	renderWaterWave();
 }
 
 //-------------------------------------------------------------------------------------------------

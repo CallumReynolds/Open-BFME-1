@@ -20188,5 +20188,15 @@
   "after_sha256": "f15810bd51a3739098f5ce77fb570e6e62811196c2237c02c240606e4b51709f",
   "evidence": "targets/game/reverse/identity_evidence/00617fb0-livingworldmanager-dtor-extent.md",
   "reason": "thin address-named wrapper derived from the real base so the vftable symbol this destructor stores encodes its own retail address (DIR32 gate); the real SubsystemInterface base is still derived from underneath."
+ },
+ {
+  "old_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/Water/W3DWater.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/Water/W3DWater.cpp",
+  "old_name": "Vector3",
+  "new_name": "Rva007A2330",
+  "before_sha256": "561d56a780de21d9badfd0f39fa63f118516696107420e23df4d487bbf37e170",
+  "after_sha256": "2cac60d4d740ba3e1d62bf27d1e2e3ed4abd2cee408cb3cf04f1a653dfb01557",
+  "evidence": "targets/game/reverse/identity_evidence/007aaa30-water-render.md",
+  "reason": "false pairing: Render's ZH reflection block (Vector3 locals) is outlined in BFME into the matched 0x007A2330 body, which Render now calls through the existing opaque Rva007A2330 route; Vector3 is not renamed."
  }
 ]

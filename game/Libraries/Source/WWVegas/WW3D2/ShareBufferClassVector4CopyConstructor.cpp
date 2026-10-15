@@ -2,6 +2,7 @@
 // Open-BFME5: retail ShareBufferClass<Vector4> copy constructor.
 
 void *operator new[](unsigned int size);
+void operator delete[](void *ptr);
 inline void *operator new( unsigned int, void *place ) { return place; }
 
 class Vector4

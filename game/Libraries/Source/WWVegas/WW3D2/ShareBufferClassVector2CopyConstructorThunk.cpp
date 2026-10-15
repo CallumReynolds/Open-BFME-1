@@ -4,6 +4,7 @@
 // Vector4; Vector2 drops the Z/W members but keeps the identical body shape.
 
 void *operator new[](unsigned int size);
+void operator delete[](void *ptr);
 inline void *operator new( unsigned int, void *place ) { return place; }
 
 class Vector2

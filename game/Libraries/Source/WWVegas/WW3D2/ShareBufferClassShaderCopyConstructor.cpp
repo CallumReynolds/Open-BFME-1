@@ -2,6 +2,7 @@
 // Open-BFME: retail ShareBufferClass<ShaderClass> copy constructor.
 
 void *operator new[](unsigned int size);
+void operator delete[](void *ptr);
 
 class ShaderClass
 {

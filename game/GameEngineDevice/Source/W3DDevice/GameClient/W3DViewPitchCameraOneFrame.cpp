@@ -39,10 +39,9 @@ public:
 
 extern GlobalData *TheWritableGlobalData;	// ?TheWritableGlobalData@@3PAVGlobalData@@A @ 0x012ED5C8
 
-// Retail @ 0x01075954 holds 35 fa 8e 3c -- exactly float(pi/180) -- in read-only
-// .rdata, immediately before the ASCII literal "Function curve tangent angle
-// value...". Rva0045B7D0ScaledForwarder.cpp owns this shared constant.
-extern const float g_01075954;
+// Retail @ 0x01075954 holds 35 fa 8e 3c -- exactly float(pi/180), the
+// compiler literal __real@3c8efa35. Written as a literal (not an extern
+// float) MSVC 7.1 keeps retail's fld m_pcEndPitch / flag store / fmul order.
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include/W3DDevice/GameClient/W3DView.h
 class W3DView
@@ -76,17 +75,11 @@ void W3DView::pitchCameraOneFrame(void)
 	{
 		// not just holding; do the camera adjustment
 		Real factor = m_pcEase(((Real)m_pcCurFrame) / m_pcNumFrames);
-		m_cameraPitchFX = WWMath::Lerp(m_pcStartPitch, m_pcEndPitch, factor) * g_01075954;
+		m_cameraPitchFX = WWMath::Lerp(m_pcStartPitch, m_pcEndPitch, factor) * 0.017453292f;
 	}
 
 	if (m_pcCurFrame >= m_pcNumFrames) {
-		// MSVC 7.1 commutes this multiply in C++, so spell the retail x87
-		// operand order around the intervening flag store.
-		__asm { fld dword ptr [esi + 240h] }
+		m_cameraPitchFX = m_pcEndPitch * 0.017453292f;
 		m_doingPitchCamera = false;
-		__asm {
-			fmul dword ptr [g_01075954]
-			fstp dword ptr [esi + 6ch]
-		}
 	}
 }

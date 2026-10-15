@@ -1,10 +1,15 @@
-// ?newMap@Pathfinder@@QAEXXZ
-// partial score=0.74 date=2026-09-25
-// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/terrainlogic /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Include
+// Retail 0x003D80F0: Pathfinder::NewMap.
+// Evidence: targets/game/reverse/identity_evidence/003d80f0-newmap.md
+
+#include "Lib/Coord3D.h"
+void *__cdecl operator new[](unsigned int);
+void __cdecl operator delete[](void *);
 typedef int Int;
 typedef float Real;
 typedef bool Bool;
 
+// Native x87 rounding for the CRT floor result.
 __forceinline long fast_float2long_round(float value)
 {
 	long result;
@@ -14,11 +19,6 @@ __forceinline long fast_float2long_round(float value)
 	}
 	return result;
 }
-
-struct Coord3D
-{
-	Real x, y, z;
-};
 
 struct Region3D
 {
@@ -61,7 +61,7 @@ public:
 	virtual void slot24();
 	virtual void slot28();
 	virtual void slot2C();
-	virtual void getMaximumPathfindExtent(Region3D *extent);
+	virtual void getMaximumPathfindExtent(Region3D *extent) const;
 	virtual void slot34();
 	virtual void slot38();
 	virtual void slot3C();
@@ -150,11 +150,40 @@ public:
 class Pathfinder
 {
 public:
-	void newMap(void);
+	void NewMap(void);
+	PathfindCell *getCell(PathfindLayerEnum layer, Int x, Int y)
+	{
+		if (x >= m_extent.lo.x && x <= m_extent.hi.x &&
+			y >= m_extent.lo.y && y <= m_extent.hi.y)
+		{
+			PathfindCell *cell = 0;
+			if (layer > LAYER_GROUND && layer <= LAYER_LAST)
+			{
+				cell = m_layers[layer].getCell(x, y);
+				if (cell)
+					return cell;
+			}
+			return &m_map[x][y];
+		}
+		return 0;
+	}
+
+	PathfindCell *getCell(PathfindLayerEnum layer, const Coord3D *pos)
+	{
+		ICoord2D cell;
+		Bool overflow = worldToCell(pos, &cell);
+		if (overflow)
+			return 0;
+		return getCell(layer, cell.x, cell.y);
+	}
+
 	Bool worldToCell(const Coord3D *position, ICoord2D *cell);
-	void classifyMap(void);
 	void updateAt003FA5B0(Object *object, int add, int flags);
 
+protected:
+	void classifyMap(void);
+
+public:
 	void *m_vtable;
 	unsigned char m_unreconstructed_04[4];
 	Bool m_isMapReady;
@@ -167,7 +196,23 @@ public:
 	PathfindZoneManager m_zoneManager;
 };
 
-void Pathfinder::newMap(void)
+#define BFME_FLOOR(x) (fast_float2long_round((Real)BfmeFloorER((double)(x))))
+// ?worldToCell@Pathfinder@@QAE_NPBUCoord3D@@PAUICoord2D@@@Z
+// The visible body lets NewMap keep cell coordinates in registers.
+inline __declspec(noinline) Bool Pathfinder::worldToCell(const Coord3D *worldPosition, ICoord2D *cellIndex)
+{
+	cellIndex->x = BFME_FLOOR(worldPosition->x/10);
+	cellIndex->y = BFME_FLOOR(worldPosition->y/10);
+	Bool overflow = false;
+	if (cellIndex->x < m_extent.lo.x) {overflow = true; cellIndex->x = m_extent.lo.x;}
+	if (cellIndex->y < m_extent.lo.y) {overflow = true; cellIndex->y = m_extent.lo.y;}
+	if (cellIndex->x > m_extent.hi.x) {overflow = true; cellIndex->x = m_extent.hi.x;}
+	if (cellIndex->y > m_extent.hi.y) {overflow = true; cellIndex->y = m_extent.hi.y;}
+	return overflow;
+}
+
+// ?NewMap@Pathfinder@@QAEXXZ
+void Pathfinder::NewMap(void)
 {
 	Region3D terrainExtent;
 	TheTerrainLogic->getMaximumPathfindExtent(&terrainExtent);
@@ -184,9 +229,12 @@ void Pathfinder::newMap(void)
 			dataAllocated = true;
 		}
 	}
+	// For map load from file, we have to call newMap twice to do sequencing issues.
+	// so the second time through, dataAllocated==TRUE, so we skip the allocate.
 	if (!dataAllocated) {
 		m_extent = bounds;
 		m_zoneManager.allocateBlocks(m_extent);
+		// Allocate cells.
 		m_blockOfMapCells = new PathfindCell[(bounds.hi.x + 1) * (bounds.hi.y + 1)];
 		m_map = new PathfindCellP[bounds.hi.x + 1];
 		Int i;
@@ -206,29 +254,14 @@ void Pathfinder::newMap(void)
 			if (kind != 1 && kind != 2 && kind != 3 && kind != 4)
 				continue;
 			PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(0, &waypoint->m_location);
-			ICoord2D cellPosition;
-			if (worldToCell(&waypoint->m_location, &cellPosition))
-				continue;
-			if (cellPosition.x < m_extent.lo.x)
-				continue;
-			if (cellPosition.x > m_extent.hi.x)
-				continue;
-			if (cellPosition.y < m_extent.lo.y)
-				continue;
-			if (cellPosition.y > m_extent.hi.y)
-				continue;
-			PathfindCell *cell;
-			if (layer > LAYER_GROUND && layer < LAYER_LAST) {
-				cell = m_layers[layer].getCell(cellPosition.x, cellPosition.y);
-			} else {
-				cell = &m_map[cellPosition.x][cellPosition.y];
-			}
+			PathfindCell *cell = getCell(layer, &waypoint->m_location);
 			if (cell != 0) {
 				((BfmeCellETD *)cell)->bfmeSetOwnerETD((BfmeOwnerETD *)waypoint);
 			}
 		}
 	}
 	classifyMap();
+	// Add existing objects.
 	for (Object *object = TheGameLogic->getFirstObject(); object != 0; object = object->getNextObject()) {
 		updateAt003FA5B0(object, 1, 0);
 	}

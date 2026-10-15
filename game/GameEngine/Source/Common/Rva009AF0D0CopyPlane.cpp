@@ -21,7 +21,7 @@ struct Rva009AF0D0Locals
     Rva009AF0D0Callback rowFunction;
 };
 
-extern Rva009AF0D0Callback g_rva01356EB4;
+Rva009AF0D0Callback g_rva01356EB4;	// retail .bss callback slot 0x01356EB4
 extern void __cdecl Rva009ADAA0(
 	Rva009AF200Context *, unsigned char *, unsigned char *,
 	unsigned int, unsigned int, int, const unsigned int *);

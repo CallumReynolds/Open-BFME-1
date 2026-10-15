@@ -1,5 +1,14 @@
 // cl: /O2 /Ob0 /DNDEBUG /DWIN32 /D_WINDOWS /MD
 
+// BFME2 BfmeConv780.cpp and Rva004EF4C1Pace.cpp call queueUnits here.
+// BFME1 independently routes ILT 0x0001C75B to its named body 0x00167E80.
+class AIPlayer
+{
+	friend class BfmeThingDTK;
+protected:
+	void queueUnits();
+};
+
 struct BfmeThingDTKConfig
 {
 	unsigned char m_pad0[0x294];
@@ -25,7 +34,6 @@ public:
 	virtual void slot68(void) = 0;
 
 	void update(void);
-	void bfmeTailDTK(void);
 
 private:
 	unsigned char m_pad4[8];
@@ -48,7 +56,7 @@ void BfmeThingDTK::update(void)
 	}
 
 	if (--m_periodicCountdown < 1) {
-		bfmeTailDTK();
+		((AIPlayer *)this)->queueUnits();
 		if (m_active)
 			slot68();
 		m_periodicCountdown = 25;

@@ -17,10 +17,13 @@ private:
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/BehaviorModule.h
+class UpdateModuleInterface;
+
 class BehaviorModuleInterface
 {
 public:
 	virtual void behaviorModuleInterfaceAnchor() = 0;
+	virtual UpdateModuleInterface *getUpdate() = 0;
 };
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/UpdateModule.h
@@ -40,8 +43,13 @@ public:
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Module/UpdateModule.h
 class UpdateModule : public BehaviorModule, public UpdateModuleInterface
 {
-public:
+protected:
+	// ??1UpdateModule@@MAE@XZ: protected, as the retail thunk-table order proves (ilt_oracle).
 	virtual ~UpdateModule() {}
+public:
+	// ?getUpdate@UpdateModule@@UAEPAVUpdateModuleInterface@@XZ (0x001B2D20): entered
+	// through the BehaviorModuleInterface subobject at +0xC, returns the +0x10 interface.
+	virtual UpdateModuleInterface *getUpdate() { return this; }
 
 private:
 	unsigned int m_14;

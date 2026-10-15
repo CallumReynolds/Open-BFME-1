@@ -26,7 +26,7 @@ extern DX8MeshRendererClass *TheDX8MeshRenderer;
 // 0x012D6D8C.  Declared external rather than file-static so the optimizer
 // cannot reason about the only writer, which is what keeps the two reloads
 // retail performs around the first Invalidate call.
-extern unsigned NPatchesLevel;
+unsigned NPatchesLevel = 1;	// 0x012D6D8C, WW3D::NPatchesLevel
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2/ww3d.h
 class WW3D

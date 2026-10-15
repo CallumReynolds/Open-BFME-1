@@ -34,11 +34,17 @@ class allocator
 {
 };
 
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *__cdecl allocate(unsigned int bytes);
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 template <class Type>
 __forceinline void construct(Type *destination, const Type &value)
@@ -111,7 +117,7 @@ void vector<Type, Allocator>::_M_insert_overflow(
 		if (bytes > 128)
 			newStart = (Type *)::operator new(bytes);
 		else
-			newStart = (Type *)__new_alloc::allocate(bytes);
+			newStart = (Type *)nodePoolAllocate(bytes);
 	}
 	else
 	{

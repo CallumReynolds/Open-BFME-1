@@ -39,7 +39,7 @@ EXTERN ?j_00015a69@@YAXXZ:NEAR
 EXTERN ?j_0003aa6c@@YAXXZ:NEAR
 EXTERN ?j_0004066f@@YAXXZ:NEAR
 EXTERN ?j_000298e8@@YAXXZ:NEAR
-EXTERN ?allocate@__new_alloc@_STL@@SAPAXI@Z:NEAR
+EXTERN ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z:NEAR
 _TEXT SEGMENT
 public ?rva006B66A0@Rva006B66A0AudioOwner@@QAE_NPAVRva006B66A0AudioHolder@@HH@Z
 ?rva006B66A0@Rva006B66A0AudioOwner@@QAE_NPAVRva006B66A0AudioHolder@@HH@Z PROC
@@ -96,7 +96,7 @@ public ?rva006B66A0@Rva006B66A0AudioOwner@@QAE_NPAVRva006B66A0AudioHolder@@HH@Z
     db 08Dh, 04Ch, 024h, 020h, 0C7h, 044h, 024h, 018h, 0FFh, 0FFh, 0FFh, 0FFh
     call ?j_000298e8@@YAXXZ
     db 08Bh, 073h, 04Ch, 06Ah, 00Ch
-    call ?allocate@__new_alloc@_STL@@SAPAXI@Z
+    call ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z
     db 08Dh, 048h, 008h, 083h, 0C4h, 004h, 085h, 0C9h, 074h, 002h, 089h, 039h, 08Bh, 04Eh, 004h, 089h
     db 030h, 089h, 048h, 004h, 089h, 001h, 08Bh, 04Ch, 024h, 010h, 05Fh, 089h, 046h, 004h, 05Eh, 05Dh
     db 0B0h, 001h, 064h, 089h, 00Dh, 000h, 000h, 000h, 000h, 05Bh, 083h, 0C4h, 00Ch, 0C2h, 00Ch, 000h

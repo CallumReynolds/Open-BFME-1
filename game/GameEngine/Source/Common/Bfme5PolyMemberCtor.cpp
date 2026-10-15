@@ -22,11 +22,17 @@
 // collide with the class this file declares (C2011).
 namespace _STL
 {
-	class __new_alloc
+	// STLport's node allocator entry point is the private
+	// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+	// TU-local helper reaches it under its real name.
+	static void *nodePoolAllocate(unsigned int bytes);
+	template <bool __threads, int __inst>
+	class __node_alloc
 	{
-	public:
-		static void *allocate( unsigned int n );
+		friend void *nodePoolAllocate(unsigned int);
+		static void *__cdecl _M_allocate(unsigned int __n);
 	};
+	static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 }
 
 struct BfmeTailT
@@ -34,7 +40,7 @@ struct BfmeTailT
 	BfmeTailT(unsigned int bytes)
 	{
 		m_bfmeData = 0;
-		m_bfmeData = (char *)_STL::__new_alloc::allocate(bytes);
+		m_bfmeData = (char *)_STL::nodePoolAllocate(bytes);
 		m_bfmeLength = 0;
 		m_bfmeData[0] = 0;
 		*(int *)(m_bfmeData + 4) = 0;

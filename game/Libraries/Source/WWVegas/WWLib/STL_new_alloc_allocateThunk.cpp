@@ -1,8 +1,10 @@
 // cl: /DNDEBUG /MD /EHsc /Og-
 // Open-BFME7: STLport 4.5.3 __node_alloc<true,0>::_M_allocate, retail
-// 0x0082E540, 162 bytes (also ledgered under its ICF twin
-// ?allocate@__new_alloc@_STL@@SAPAXI@Z). The body follows inputs/vendor/stlport/
-// stl/_alloc.c: the result pointer is the first local, the lock guard has no
+// 0x0082E540, 162 bytes. Retail has no identical-code folding: the
+// ?allocate@__new_alloc@_STL@@SAPAXI@Z name belongs to the 5-byte
+// `jmp operator new` body at 0x0082AD80 (callee of __debug_alloc<__new_alloc>
+// ::allocate 0x0082B700), which TUs emit as STLport's inline COMDAT. The
+// body follows inputs/vendor/stlport/stl/_alloc.c: the result pointer is the first local, the lock guard has no
 // data members, and the node mutex acquire/release are the out-of-line
 // thiscall members retail keeps. The one frame slot the earlier
 // reconstructions could not place is an unreferenced local inside the
@@ -44,38 +46,6 @@ public:
 template <bool __threads, int __inst>
 NodeAllocMutex _Node_Alloc_Lock<__threads, __inst>::_S_lock;
 
-class __new_alloc
-{
-    struct _Obj
-    {
-        _Obj *_M_free_list_link;
-    };
-
-    static _Obj *_S_free_list[0x10];
-
-    static _Obj *_S_refill(unsigned int n);
-
-public:
-    static void *allocate(unsigned int n);
-};
-
-void *__new_alloc::allocate(unsigned int n)
-{
-    void *result;
-    _Obj * volatile *my_free_list = _S_free_list + ((n - 1) >> 3);
-
-    _Node_Alloc_Lock<true, 0> lock_instance;
-    if ((result = *my_free_list) != 0) {
-        *my_free_list = ((_Obj *)result)->_M_free_list_link;
-    } else {
-        result = _S_refill(n);
-    }
-
-    return result;
-}
-
-// Retail folded ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z onto the
-// same body (ICF); both names are ledgered at 0x0082E540.
 template <bool __threads, int __inst>
 class __node_alloc
 {

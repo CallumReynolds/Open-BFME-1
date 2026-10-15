@@ -2,11 +2,17 @@
 // experiment: retail 0x005C8400 (69 bytes)
 namespace _STL
 {
-	class __new_alloc
+	// STLport's node allocator entry point is the private
+	// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+	// TU-local helper reaches it under its real name.
+	static void *nodePoolAllocate(unsigned int bytes);
+	template <bool __threads, int __inst>
+	class __node_alloc
 	{
-	public:
-		static void *allocate(unsigned int size);
+		friend void *nodePoolAllocate(unsigned int);
+		static void *__cdecl _M_allocate(unsigned int __n);
 	};
+	static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 	template <typename T>
 	void _Construct(T *p, const T &val);
@@ -41,7 +47,7 @@ public:
 void Rva005C6730List::pushBack(const Rva005C6730Value &value)
 {
 	Rva005C6730Node *sentinel = m_sentinel;
-	Rva005C6730Node *node = (Rva005C6730Node *)_STL::__new_alloc::allocate(0x14);
+	Rva005C6730Node *node = (Rva005C6730Node *)_STL::nodePoolAllocate(0x14);
 	_STL::_Construct(&node->m_value, value);
 
 	Rva005C6730Node *last = sentinel->m_prev;

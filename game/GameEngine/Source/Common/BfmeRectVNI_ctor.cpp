@@ -2,22 +2,25 @@
 // Open-BFME5: VNE-family ctor with inlined 0x2c rb-header at +0xC.
 // Retail 0x003BC360, 162 bytes. Base virtual dtor pulls the EH frame.
 //
-// /G6: retail calls _STL::__new_alloc::allocate (0x0082E540, ret 4) from this
-// body, so the allocator declaration has to mangle
-// ?allocate@__new_alloc@_STL@@SAPAXI@Z (the /G6 convention, as in
-// game/Libraries/Source/WWVegas/WWLib/Small03hStlAlloc.cpp) rather than a
-// TU-local wrapper name. Every member body here is __thiscall, so the flag
-// does not move their bytes.
+// /G6: retail calls _STL::__node_alloc<true, 0>::_M_allocate (0x0082E540)
+// directly from this body. Every member body here is __thiscall, so the
+// flag does not move their bytes.
 
 // (body owned by game/Libraries/Source/WWVegas/WWLib/STL_new_alloc_allocateThunk.cpp)
 namespace _STL
 {
 
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *allocate(unsigned int n);
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 }
 
@@ -68,7 +71,7 @@ struct BfmeVNITree
 BfmeVNITree::BfmeVNITree()
 {
 	header = 0;
-	header = (BfmeVNINode *)_STL::__new_alloc::allocate(0x2c);
+	header = (BfmeVNINode *)_STL::nodePoolAllocate(0x2c);
 	count = 0;
 	header->color = 0;
 	header->parent = 0;

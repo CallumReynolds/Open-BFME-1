@@ -36,7 +36,7 @@ multi_name.different = 0
 size_outlier.indicted = 1
 ctor_vtable.contradicted = 20
 ctor_vtable.unreadable = 0
-one_identity.surplus = 2142
+one_identity.surplus = 2141
 # Retail registration proves DynamicPortalBehaviour owns ctor 001F8B80 and factory 001156B0; four false aliases retired.
 # fcf825b4f7 retired the false FXNugget zero-store claim; the body still has aliases.
 # 4c8346b3c9 retired the GDIFileStream ctor over-claim at 0x00087A50 (a zero-store body).
@@ -2323,8 +2323,6 @@ null_reloc.max_unreadable = 1000
 @ one_identity.surplus 0x0081D410 ?parseSingleBitFromINI@?$BitFlags@$0CG@@@SAXPAVINI@@PAX1PBX@Z
 @ one_identity.surplus 0x0081D410 ?parseSingleBitFromINI@?$BitFlags@$0CN@@@SAXPAVINI@@PAX1PBX@Z
 @ one_identity.surplus 0x0081D410 ?parseSingleBitFromINI@?$BitFlags@$0HF@@@SAXPAVINI@@PAX1PBX@Z
-@ one_identity.surplus 0x0082E540 ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z
-@ one_identity.surplus 0x0082E540 ?allocate@__new_alloc@_STL@@SAPAXI@Z
 @ one_identity.surplus 0x00857200 ?GadgetButtonGetEnabledColor@@YAHPAVGameWindow@@@Z
 @ one_identity.surplus 0x00857200 ?GadgetCheckBoxGetEnabledColor@@YAHPAVGameWindow@@@Z
 @ one_identity.surplus 0x00857200 ?GadgetComboBoxGetEnabledColor@@YAHPAVGameWindow@@@Z

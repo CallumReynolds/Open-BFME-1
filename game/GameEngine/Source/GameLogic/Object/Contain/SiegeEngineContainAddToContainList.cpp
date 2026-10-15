@@ -120,11 +120,17 @@ public:
 
 namespace _STL
 {
-	class __new_alloc
+	// STLport's node allocator entry point is the private
+	// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+	// TU-local helper reaches it under its real name.
+	static void *nodePoolAllocate(unsigned int bytes);
+	template <bool __threads, int __inst>
+	class __node_alloc
 	{
-	public:
-		static void *allocate( unsigned int size );
+		friend void *nodePoolAllocate(unsigned int);
+		static void *__cdecl _M_allocate(unsigned int __n);
 	};
+	static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 }
 
 struct Rva000CFFE0Node
@@ -140,7 +146,7 @@ public:
 	void push_back( Object *const &object )
 	{
 		Rva000CFFE0Node *pos = m_node;
-		Rva000CFFE0Node *node = (Rva000CFFE0Node *)_STL::__new_alloc::allocate( sizeof( Rva000CFFE0Node ) );
+		Rva000CFFE0Node *node = (Rva000CFFE0Node *)_STL::nodePoolAllocate( sizeof( Rva000CFFE0Node ) );
 		Object **data = &node->m_data;
 		if( data != 0 )
 			*data = object;

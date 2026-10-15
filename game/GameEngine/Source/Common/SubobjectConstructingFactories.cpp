@@ -16,7 +16,7 @@
 //     call <REL32> / add esp,0xC / mov eax,esi / pop esi / ret 4
 //
 // WHAT THE BYTES SHOW.  0x0082E540 is already matched as
-// __new_alloc::allocate and is called DIRECTLY, not through a thunk.  The
+// __node_alloc<true, 0>::_M_allocate and is called DIRECTLY, not through a thunk.  The
 // single `add esp,0xC` after the second call retires all three pushes at once
 // -- the allocation size and the second call's two arguments -- so both calls
 // are __cdecl and the second takes exactly two dwords: the address of the
@@ -39,12 +39,18 @@
 // pointer that is nulled.  The subobject is opaque -- nothing in these bodies
 // reads it.  Names are address-derived and the callee pins are additive.
 
+// 0x0082E540 is STLport's private _STL::__node_alloc<true, 0>::_M_allocate;
+// this TU-local helper reaches it under its real name.
 namespace _STL
 {
-	struct __new_alloc
+	static void *nodePoolAllocate( unsigned int bytes );
+	template <bool __threads, int __inst>
+	class __node_alloc
 	{
-		static void * allocate( unsigned int size );
+		friend void *nodePoolAllocate( unsigned int );
+		static void *__cdecl _M_allocate( unsigned int __n );
 	};
+	static inline void *nodePoolAllocate( unsigned int bytes ) { return __node_alloc<true, 0>::_M_allocate( bytes ); }
 }
 
 // 0x18 total, opaque subobject at +0x10.
@@ -69,7 +75,7 @@ struct AllocatedBlockC
 	AllocatedBlock18 * __stdcall NAME( void *source )                         \
 	{                                                                         \
 		AllocatedBlock18 *block = (AllocatedBlock18 *)                        \
-			_STL::__new_alloc::allocate( sizeof( AllocatedBlock18 ) );        \
+			_STL::nodePoolAllocate( sizeof( AllocatedBlock18 ) );        \
 		CALLEE( block->m_subobject, source );                                 \
 		return block;                                                         \
 	}
@@ -79,7 +85,7 @@ struct AllocatedBlockC
 	AllocatedBlockC * __stdcall NAME( void *source )                          \
 	{                                                                         \
 		AllocatedBlockC *block = (AllocatedBlockC *)                          \
-			_STL::__new_alloc::allocate( sizeof( AllocatedBlockC ) );         \
+			_STL::nodePoolAllocate( sizeof( AllocatedBlockC ) );         \
 		block->m_head = 0;                                                    \
 		CALLEE( block->m_subobject, source );                                 \
 		return block;                                                         \

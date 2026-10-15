@@ -31,11 +31,17 @@ class AsciiString
 namespace _STL
 {
 
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *allocate(unsigned int size);			// retail 0x0082E540
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 template <class T1, class T2> struct pair
 {
@@ -214,7 +220,7 @@ struct Gen_005671a0Node
 
 Gen_000a3bc0Node *__stdcall Gen_000a3bc0(const Gen_000a3bc0Node *source)
 {
-	Gen_000a3bc0Node *node = (Gen_000a3bc0Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_000a3bc0Node *node = (Gen_000a3bc0Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -227,7 +233,7 @@ Gen_000a3bc0Node *__stdcall Gen_000a3bc0(const Gen_000a3bc0Node *source)
 
 Gen_000aaaf0Node *__stdcall Gen_000aaaf0(const Gen_000aaaf0Node *source)
 {
-	Gen_000aaaf0Node *node = (Gen_000aaaf0Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_000aaaf0Node *node = (Gen_000aaaf0Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -240,7 +246,7 @@ Gen_000aaaf0Node *__stdcall Gen_000aaaf0(const Gen_000aaaf0Node *source)
 
 Gen_000d15f0Node *__stdcall Gen_000d15f0(const Gen_000d15f0Node *source)
 {
-	Gen_000d15f0Node *node = (Gen_000d15f0Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_000d15f0Node *node = (Gen_000d15f0Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -253,7 +259,7 @@ Gen_000d15f0Node *__stdcall Gen_000d15f0(const Gen_000d15f0Node *source)
 
 Gen_000d1640Node *__stdcall Gen_000d1640(const Gen_000d1640Node *source)
 {
-	Gen_000d1640Node *node = (Gen_000d1640Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_000d1640Node *node = (Gen_000d1640Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -266,7 +272,7 @@ Gen_000d1640Node *__stdcall Gen_000d1640(const Gen_000d1640Node *source)
 
 Gen_001358a0Node *__stdcall Gen_001358a0(const Gen_001358a0Node *source)
 {
-	Gen_001358a0Node *node = (Gen_001358a0Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_001358a0Node *node = (Gen_001358a0Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -279,7 +285,7 @@ Gen_001358a0Node *__stdcall Gen_001358a0(const Gen_001358a0Node *source)
 
 Gen_001358e0Node *__stdcall Gen_001358e0(const Gen_001358e0Node *source)
 {
-	Gen_001358e0Node *node = (Gen_001358e0Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_001358e0Node *node = (Gen_001358e0Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -292,7 +298,7 @@ Gen_001358e0Node *__stdcall Gen_001358e0(const Gen_001358e0Node *source)
 
 Gen_00135920Node *__stdcall Gen_00135920(const Gen_00135920Node *source)
 {
-	Gen_00135920Node *node = (Gen_00135920Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_00135920Node *node = (Gen_00135920Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -305,7 +311,7 @@ Gen_00135920Node *__stdcall Gen_00135920(const Gen_00135920Node *source)
 
 Gen_001367c0Node *__stdcall Gen_001367c0(const Gen_001367c0Node *source)
 {
-	Gen_001367c0Node *node = (Gen_001367c0Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_001367c0Node *node = (Gen_001367c0Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -318,7 +324,7 @@ Gen_001367c0Node *__stdcall Gen_001367c0(const Gen_001367c0Node *source)
 
 Gen_00424070Node *__stdcall Gen_00424070(const Gen_00424070Node *source)
 {
-	Gen_00424070Node *node = (Gen_00424070Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_00424070Node *node = (Gen_00424070Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 
@@ -331,7 +337,7 @@ Gen_00424070Node *__stdcall Gen_00424070(const Gen_00424070Node *source)
 
 Gen_005671a0Node *__stdcall Gen_005671a0(const Gen_005671a0Node *source)
 {
-	Gen_005671a0Node *node = (Gen_005671a0Node *)_STL::__new_alloc::allocate(0x18);
+	Gen_005671a0Node *node = (Gen_005671a0Node *)_STL::nodePoolAllocate(0x18);
 
 	_STL::_Construct(&node->m_bfmeValue, source->m_bfmeValue);
 

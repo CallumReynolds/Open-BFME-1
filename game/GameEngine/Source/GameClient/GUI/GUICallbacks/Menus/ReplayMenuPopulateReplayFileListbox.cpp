@@ -156,11 +156,17 @@ namespace _STL
 		_Rb_tree_node_base *_M_right;
 	};
 
-	class __new_alloc
+	// STLport's node allocator entry point is the private
+	// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+	// TU-local helper reaches it under its real name.
+	static void *nodePoolAllocate(unsigned int bytes);
+	template <bool __threads, int __inst>
+	class __node_alloc
 	{
-	public:
-		static void *allocate(size_t n);
+		friend void *nodePoolAllocate(unsigned int);
+		static void *__cdecl _M_allocate(unsigned int __n);
 	};
+	static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 	template <class Dummy> struct _Rb_global
 	{
@@ -188,7 +194,7 @@ namespace _STL
 	public:
 		_Rb_tree() : _M_header(0)
 		{
-			_M_header = (_Rb_tree_node_base *)__new_alloc::allocate(0x14);
+			_M_header = (_Rb_tree_node_base *)nodePoolAllocate(0x14);
 			_M_node_count = 0;
 			_M_header->_M_color = 0;
 			_M_header->_M_parent = 0;

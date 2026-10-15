@@ -41,7 +41,7 @@
 EXTERN g_Va010228C9:NEAR
 EXTERN ?getNextAsciiString@INI@@QAE?AVAsciiString@@XZ:NEAR
 EXTERN ?set@?$StringBase@D@@QAEXABV1@@Z:NEAR
-EXTERN ?allocate@__new_alloc@_STL@@SAPAXI@Z:NEAR
+EXTERN ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z:NEAR
 EXTERN ?j_00020bad@@YAXXZ:NEAR
 EXTERN ?releaseBuffer@?$StringBase@D@@AAEXXZ:NEAR
 _TEXT SEGMENT
@@ -56,7 +56,7 @@ public ?parseFontFileName@GlobalLanguage@@SAXPAVINI@@PAX1PBX@Z
     db 024h, 00Ch, 051h, 08Dh, 04Ch, 024h, 018h, 0C6h, 044h, 024h, 028h, 001h
     call ?set@?$StringBase@D@@QAEXABV1@@Z
     db 08Bh, 054h, 024h, 030h, 08Bh, 082h, 034h, 001h, 000h, 000h, 08Bh, 038h, 06Ah, 010h
-    call ?allocate@__new_alloc@_STL@@SAPAXI@Z
+    call ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z
     db 08Bh, 0F0h, 08Dh, 04Eh, 008h, 083h, 0C4h, 004h, 089h, 04Ch, 024h, 030h, 089h, 04Ch, 024h, 010h
     db 03Bh, 0CBh, 0C6h, 044h, 024h, 024h, 002h, 074h, 00Ah, 08Dh, 054h, 024h, 014h, 052h
     call ?j_00020bad@@YAXXZ

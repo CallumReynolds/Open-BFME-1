@@ -5,11 +5,17 @@
 // 0x0082E540 (?allocate@__new_alloc@_STL@@SAPAXI@Z), not through the global
 // operator new.
 namespace _STL {
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *__cdecl allocate( unsigned int size );
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 }
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/Object.h
@@ -114,7 +120,7 @@ void Rva0024AA70::update(Object *object)
 	{
 		BfmeRvaAA70Node *sentinel = m_sentinel;
 		BfmeRvaAA70Node *node =
-			(BfmeRvaAA70Node *)_STL::__new_alloc::allocate(12);
+			(BfmeRvaAA70Node *)_STL::nodePoolAllocate(12);
 		Object **slot = &node->m_object;
 		if (slot != 0)
 			*slot = object;

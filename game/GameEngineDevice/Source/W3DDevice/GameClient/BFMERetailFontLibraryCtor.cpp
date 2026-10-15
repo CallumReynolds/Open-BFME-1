@@ -9,11 +9,17 @@
 namespace _STL
 {
 
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *allocate(unsigned int n);
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 }
 
@@ -61,7 +67,7 @@ public:
 	BfmeMemACA(void)
 	{
 		m_node = 0;
-		m_node = (BfmeTreeHeader *)_STL::__new_alloc::allocate(0x18);
+		m_node = (BfmeTreeHeader *)_STL::nodePoolAllocate(0x18);
 		m_count = 0;
 		m_node->m_color = 0;
 		m_node->m_parent = 0;
@@ -81,7 +87,7 @@ public:
 	BfmeMemBCA(void)
 	{
 		m_node = 0;
-		m_node = (BfmeTreeHeader *)_STL::__new_alloc::allocate(0x18);
+		m_node = (BfmeTreeHeader *)_STL::nodePoolAllocate(0x18);
 		m_count = 0;
 		m_node->m_color = 0;
 		m_node->m_parent = 0;

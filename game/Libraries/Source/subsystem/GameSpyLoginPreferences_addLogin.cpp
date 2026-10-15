@@ -11,11 +11,9 @@
 
 namespace _STL
 {
-class __new_alloc
-{
-public:
-	static void *allocate(unsigned int size);
-};
+// Small node allocations go through STLport's __node_alloc<true, 0>; its
+// inline allocate() reaches _M_allocate (retail 0x0082E540) for sizes
+// up to _MAX_BYTES.
 }
 
 template <class T> class StringBase
@@ -119,7 +117,7 @@ void GameSpyLoginPreferences::addLogin(AsciiString email, AsciiString nick,
 	{
 		AsciiStringList &list = m_emailNickMap[email];
 		BfmeAsciiListNode *sentinel = *(BfmeAsciiListNode **)&list;
-		BfmeAsciiListNode *node = (BfmeAsciiListNode *)_STL::__new_alloc::allocate(12);
+		BfmeAsciiListNode *node = (BfmeAsciiListNode *)_STL::__node_alloc<true, 0>::allocate(12);
 		AsciiString *value = &node->value;
 		new (value) AsciiString(nick);
 		BfmeAsciiListNode *previous = sentinel->previous;

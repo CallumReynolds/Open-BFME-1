@@ -7,7 +7,7 @@
 // address-derived blob; the placement-construct callee is the already-pinned
 // STLport ??$_Construct@UParkingPlaceInfo@ParkingPlaceBehavior@@... at
 // 0x0003E4BE, and the two allocation paths call the real operator new
-// (0x00881F30) and _STL::__new_alloc::allocate (0x0082E540) directly instead
+// (0x00881F30) and _STL::__node_alloc<true, 0>::_M_allocate (0x0082E540) directly instead
 // of through a local vectorLargeAllocate/vectorSmallAllocate wrapper.
 
 #include <stddef.h>
@@ -21,11 +21,17 @@ void *operator new( size_t bytes );
 
 namespace _STL
 {
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *allocate( unsigned int n );
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 struct __false_type
 {
@@ -118,7 +124,7 @@ void vector<Type, Allocator>::_M_insert_overflow(
 		if ( bytes > 128 )
 			newStart = (Type *)operator new( bytes );
 		else
-			newStart = (Type *)__new_alloc::allocate( bytes );
+			newStart = (Type *)nodePoolAllocate( bytes );
 	}
 	else
 	{

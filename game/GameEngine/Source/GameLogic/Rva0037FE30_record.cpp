@@ -10,11 +10,17 @@ inline void *operator new(unsigned int, void *place) { return place; }
 namespace _STL
 {
 
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *allocate(unsigned int n);
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 
 template <class T1, class T2>
 inline void __cdecl _Construct(T1 *destination, const T2 &value)
@@ -50,7 +56,7 @@ public:
 
 	iterator insert(iterator position, const T &value)
 	{
-		_Node *node = (_Node *)__new_alloc::allocate(sizeof(_Node));
+		_Node *node = (_Node *)nodePoolAllocate(sizeof(_Node));
 		_Construct(&node->_M_data, value);
 		_List_node_base *at = position._M_node;
 		_List_node_base *before = at->_M_prev;

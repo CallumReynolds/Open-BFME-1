@@ -112,11 +112,17 @@ extern GameLogic *TheGameLogic;
 
 namespace _STL
 {
-class __new_alloc
+// STLport's node allocator entry point is the private
+// _STL::__node_alloc<true, 0>::_M_allocate (retail 0x0082E540); this
+// TU-local helper reaches it under its real name.
+static void *nodePoolAllocate(unsigned int bytes);
+template <bool __threads, int __inst>
+class __node_alloc
 {
-public:
-	static void *allocate(unsigned int bytes);
+	friend void *nodePoolAllocate(unsigned int);
+	static void *__cdecl _M_allocate(unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 }
 
 struct AutoHealScanListNode
@@ -132,7 +138,7 @@ public:
 	void push_back(Object *object)
 	{
 		AutoHealScanListNode *head = m_node;
-		AutoHealScanListNode *node = (AutoHealScanListNode *)_STL::__new_alloc::allocate(12);
+		AutoHealScanListNode *node = (AutoHealScanListNode *)_STL::nodePoolAllocate(12);
 		Object **value = &node->value;
 		if (value)
 			*value = object;

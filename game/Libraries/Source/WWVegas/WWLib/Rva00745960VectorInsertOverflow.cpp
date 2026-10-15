@@ -36,20 +36,18 @@ class allocator
 // 0x0082E5F0); these TU-local helpers reach them under their real names.
 template <bool __threads, int __inst> class __node_alloc;
 static void nodePoolDeallocate(void *block, unsigned int bytes);
+static void *nodePoolAllocate(unsigned int bytes);
 template <bool __threads, int __inst>
 class __node_alloc
 {
 	friend void nodePoolDeallocate(void *, unsigned int);
+	friend void *nodePoolAllocate(unsigned int);
 	static void *__cdecl _M_allocate(unsigned int __n);
 	static void __cdecl _M_deallocate(void *__p, unsigned int __n);
 };
+static inline void *nodePoolAllocate(unsigned int bytes) { return __node_alloc<true, 0>::_M_allocate(bytes); }
 static inline void nodePoolDeallocate(void *block, unsigned int bytes) { __node_alloc<true, 0>::_M_deallocate(block, bytes); }
 
-class __new_alloc
-{
-public:
-	static void *allocate( unsigned int bytes );
-};
 
 template <class Type>
 __forceinline Type *uninitialized_copy( Type *first, Type *last, Type *result )
@@ -106,7 +104,7 @@ void vector<Type, Allocator>::_M_insert_overflow( Type *position,
 		if ( bytes > 128 )
 			newStart = ( Type * )::operator new( bytes );
 		else
-			newStart = ( Type * )__new_alloc::allocate( bytes );
+			newStart = ( Type * )nodePoolAllocate( bytes );
 	}
 	else
 	{

@@ -8,11 +8,9 @@
 
 namespace _STL
 {
-class __new_alloc
-{
-public:
-	static void *allocate( unsigned int bytes );
-};
+// Small node allocations go through STLport's __node_alloc<true, 0>; its
+// inline allocate() reaches _M_allocate (retail 0x0082E540) for sizes
+// up to _MAX_BYTES.
 }
 
 extern "C" void *memset( void *destination, int value, unsigned int count );
@@ -41,7 +39,7 @@ struct Rva00776240List50
 {
 	Rva00776240List50() : m_head( 0 )
 	{
-		void *head = _STL::__new_alloc::allocate( 0x2c );
+		void *head = _STL::__node_alloc<true, 0>::allocate( 0x2c );
 		*( (void **)head ) = head;
 		*( (void **)( (unsigned char *)head + 4 ) ) = head;
 		m_head = head;
@@ -81,7 +79,7 @@ struct Rva00776240Vector70
 {
 	Rva00776240Vector70() : m_tree( 0 )
 	{
-		m_tree = _STL::__new_alloc::allocate( 0x48 );
+		m_tree = _STL::__node_alloc<true, 0>::allocate( 0x48 );
 		m_size = 0;
 		*( (unsigned char *)m_tree ) = 0;
 		*( (unsigned int *)( (unsigned char *)m_tree + 4 ) ) = 0;

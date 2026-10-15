@@ -3,7 +3,7 @@
 ; db bodies made symbolic by tools/dump_apply.py (tools/dump_relocs.py + retail .reloc)
 EXTERN ?ClientAt012F1464@@3PAVClient0009A580@@A:BYTE
 EXTERN ?TheParticleSystemManager@@3PAVParticleSystemManager@@A:BYTE
-EXTERN ?allocate@__new_alloc@_STL@@SAPAXI@Z:NEAR
+EXTERN ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z:NEAR
 EXTERN ?j_00001b18@@YAXXZ:NEAR
 EXTERN ?j_0000d7b5@@YAXXZ:NEAR
 EXTERN ?j_0000fa3d@@YAXXZ:NEAR
@@ -128,7 +128,7 @@ public ??0ParticleSystem@@QAE@PBVParticleSystemTemplate@@W4ParticleSystemID@@_N@
     dd ?TheParticleSystemManager@@3PAVParticleSystemManager@@A
     db 08Bh, 0B8h, 080h, 000h, 000h, 000h, 06Ah, 014h, 0C6h, 044h, 024h, 038h, 008h, 089h, 044h, 024h
     db 048h
-    call ?allocate@__new_alloc@_STL@@SAPAXI@Z
+    call ?_M_allocate@?$__node_alloc@$00$0A@@_STL@@CAPAXI@Z
     db 08Dh, 048h, 008h, 083h, 0C4h, 004h, 03Bh, 0CBh, 074h, 03Eh, 08Bh, 054h, 024h, 014h, 089h, 011h
     db 08Bh, 054h, 024h, 014h, 03Bh, 0D3h, 074h, 02Ah, 08Bh, 0AAh, 09Ch, 000h, 000h, 000h, 081h, 0C2h
     db 09Ch, 000h, 000h, 000h, 089h, 069h, 004h, 089h, 059h, 008h, 089h, 00Ah, 08Bh, 051h, 004h, 03Bh

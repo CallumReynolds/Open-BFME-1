@@ -3,24 +3,7 @@
 // Open-BFME5: _STL::__unguarded_insertion_sort_aux<S4SortElem20 *,
 // S4SortElem20, S4Cmp002EB8E0>, retail 0x002EA750.
 
-template <class T>
-class StringBase
-{
-private:
-	StringBase(const StringBase<T> &other);
-	void releaseBuffer(void);
-	T *m_bfmeData;
-
-	friend struct S4Name;
-};
-
-struct S4Name
-{
-	S4Name(const S4Name &other) : m_bfmeName(other.m_bfmeName) {}
-	~S4Name(void) { m_bfmeName.releaseBuffer(); }
-
-	StringBase<char> m_bfmeName;
-};
+#include "ascii_string.h"
 
 class BfmeSortElem20Tail
 {
@@ -34,7 +17,7 @@ private:
 
 struct S4SortElem20
 {
-	S4Name m_bfmeName;
+	AsciiString m_bfmeName;
 	char m_bfmeFlag;
 	BfmeSortElem20Tail m_bfmeTail;
 };

@@ -4,17 +4,7 @@
 // S4SortElem20, int>, retail 0x002EACD0, 184 bytes.  The neighboring
 // STLport sort bodies identify the twenty-byte element and comparator.
 
-template <class T>
-class StringBase
-{
-private:
-	StringBase(const StringBase<T> &other);
-	~StringBase(void);
-
-	T *m_bfmeData;
-
-	friend struct S4SortElem20;
-};
+#include "ascii_string.h"
 
 class BfmeSortElem20Tail
 {
@@ -28,7 +18,7 @@ private:
 
 struct S4SortElem20
 {
-	StringBase<char> m_bfmeName;
+	AsciiString m_bfmeName;
 	char m_bfmeFlag;
 	BfmeSortElem20Tail m_bfmeTail;
 };

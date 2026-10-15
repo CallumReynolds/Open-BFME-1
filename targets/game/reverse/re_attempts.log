@@ -62934,3 +62934,6 @@ __fmode	0x0134FBAC	4	blocked	datum, not a body: VA 0x0134FBAC (.data, retail byt
 ?d_00c09620@@YAXXZ	0x00C09620	8	blocked	rechecked: unwind funclet of unidentified dynamic initializer blocker=eh/eh-funclet-no-native-label no new lever t=1min model=claude-opus-5-5
 ?d_00c09641@@YAXXZ	0x00C09641	8	blocked	rechecked: unwind funclet of unidentified dynamic initializer blocker=eh/eh-funclet-no-native-label no new lever t=1min model=claude-opus-5-5
 ?d_00c18b1d@@YAXXZ	0x00C18B1D	17	blocked	rechecked: Unwind@01018b1d EH funclet with no native owner label t=1min model=claude-opus-5-5 blocker=eh/eh-funclet-no-native-label
+?d_00c58a31@@YAXXZ	0x00C58A31	15	blocked	rechecked: Unwind@01058a31 HeaderedDelete funclet; only emitted by its unconverted parent's EH state t=2min model=claude-opus-5-5 blocker=eh/eh-funclet-no-native-label
+?d_00bf4181@@YAXXZ	0x00BF4181	11	blocked	Unwind@00ff4181 operator-delete funclet; emitted only by its unconverted parent's EH state t=1min model=claude-opus-5-5 blocker=eh/eh-funclet-no-native-label
+?d_00c3dc08@@YAXXZ	0x00C3DC08	11	blocked	Unwind@0103dc08 operator-delete funclet; emitted only by its unconverted parent's EH state t=1min model=claude-opus-5-5 blocker=eh/eh-funclet-no-native-label

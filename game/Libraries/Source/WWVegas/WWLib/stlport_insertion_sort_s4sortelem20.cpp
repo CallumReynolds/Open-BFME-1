@@ -21,19 +21,7 @@
 // of the temporary's address into the now-dead first parameter slot -- four
 // bytes -- does not appear.
 
-class BfmeStringBaseChar;
-
-template <class T>
-class StringBase
-{
-private:
-	StringBase(const StringBase<T> &other);			// retail 0x00887B60
-	~StringBase(void);
-
-	T *m_bfmeData;
-
-	friend struct S4SortElem20;
-};
+#include "ascii_string.h"
 
 class BfmeSortElem20Tail
 {
@@ -47,7 +35,7 @@ private:
 
 struct S4SortElem20
 {
-	StringBase<char> m_bfmeName;				// +0x00
+	AsciiString m_bfmeName;					// +0x00
 	char m_bfmeFlag;					// +0x04
 	BfmeSortElem20Tail m_bfmeTail;				// +0x08
 };

@@ -25,16 +25,18 @@
 
 #include "PreRTS.h"
 #include "Common/AsciiString.h"
+#include "GameNetwork/GameSpy/PeerDefs.h"
 
 typedef bool Bool;
 
 // The comparator has no name the bytes reach; it is spelled for the function
 // it calls, exactly as RvaTreeInsertUniqueNoCase.cpp already does for the
 // sibling insert bodies at this address range.
-class BfmeStringLocaleLess
+// BFME2 PeerDefs.cpp uses AsciiComparator for this by-value comparison.
+// Inherit its call operator so the existing opaque tree instantiation names
+// stay intact while calls reach the verified canonical comparator.
+class BfmeStringLocaleLess : public AsciiComparator
 {
-public:
-	bool operator()( AsciiString left, AsciiString right ) const;	// ILT 0x0000B4B0 -> 0x00631350 (dump)
 };
 
 struct Rva00632450Value

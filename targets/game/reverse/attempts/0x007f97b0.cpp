@@ -1,6 +1,5 @@
-// ?rva007F97B0@Rva007FA2C0@@QAEXPAVRva007E8810Message@@PAURva007F97B0State@@@Z
-// partial score=0.94 date=2026-09-28
-// FESL transactor.cpp chunked "data" decode: append Base64 into the state record, send when complete.
+// ?rva007F97B0@Rva007FA2C0@@QAEXPAVRva007E8810Message@@PAURva007FA170Slot@@@Z
+// partial score=0.9541 date=2026-10-16
 // cl: /O2 /GX- /GS
 
 typedef unsigned char Byte;
@@ -45,17 +44,27 @@ struct Rva007F93E0Envelope
 	volatile int m_20;
 };
 
+class BfmeThingUPB
+{
+public:
+    char bfmeGoUPB(void *key, char *out, void *size);
+};
+
 class Rva007E8810Message
 {
 public:
-	bool getString(const char *key, char *out, int size);
+    unsigned int getSize() const { return m_14; }
+	bool getString(const char *key, char *out, int size)
+    {
+        return ((BfmeThingUPB *)this)->bfmeGoUPB((void *)key, out, (void *)size) != 0;
+    }
 
 	int m_00;
 	int m_04;
 	int m_08;
 	int m_0c;
 	char *m_10;
-	int m_14;
+	unsigned int m_14;
 	int m_18;
 	unsigned int m_1c;
 	int m_20;
@@ -74,7 +83,7 @@ struct Rva007EB810Diag
 	virtual void v0();
 	virtual void v1();
 	virtual void log(int level, const char *format, ...);
-	virtual void fail(const char *expr, const char *file, int line);
+	virtual int fail(const char *expr, const char *file, int line);
 };
 
 extern Rva007EB810Diag *Rva007EB810Get();
@@ -92,11 +101,12 @@ class Rva007EFFC0Allocator
 public:
 	virtual void v0();
 	virtual void v1();
-	virtual char *allocate(int size, int flags);
+	virtual void *allocate(unsigned int size, int flags);
 	virtual void release(void *block, int flags);
 };
 
-extern Rva007EFFC0Allocator *Rva007EFFC0Get();
+extern void *bfmeGo929C();
+inline Rva007EFFC0Allocator *Rva007EFFC0Get() { return (Rva007EFFC0Allocator *)bfmeGo929C(); }
 
 class Rva007FA2C0Hub
 {
@@ -141,17 +151,24 @@ struct Rva007F97B0Record
 	char *m_08;
 };
 
-struct Rva007F97B0State
+struct Rva007FA170Slot
 {
-	char m_pad00[0x18];
-	Rva007F97B0Record *m_18;
+    int m_00;
+    int m_04;
+    Rva007E8810Message *m_08;
+    void (__cdecl *m_0C)(Rva007E8810Message *, void *);
+    void *m_10;
+    int m_14;
+    Rva007F97B0Record *m_18;
 };
+
+typedef Rva007FA170Slot Rva007F97B0State;
 
 class Rva007FA2C0
 {
 public:
 	void rva007F97B0(Rva007E8810Message *message,
-		Rva007F97B0State *state);
+		Rva007FA170Slot *state);
 
 private:
 	char m_pad00[0x1c];
@@ -160,8 +177,9 @@ private:
 	Rva007FA2C0Hub *m_24;
 };
 
+// FESL transactor.cpp chunked "data" decode: append Base64 into the state record, send when complete.
 void Rva007FA2C0::rva007F97B0(Rva007E8810Message *message,
-	Rva007F97B0State *state)
+	Rva007FA170Slot *state)
 {
 	Rva007F97B0Record *record = state->m_18;
 	if (!record)
@@ -175,7 +193,7 @@ void Rva007FA2C0::rva007F97B0(Rva007E8810Message *message,
 		record->m_08 = (char *)Rva007EFFC0Get()->allocate(
 			record->m_00 + 4, 1);
 	}
-	char *text = (char *)Rva007EFFC0Get()->allocate(message->m_14, 0);
+	char *text = (char *)Rva007EFFC0Get()->allocate(message->getSize(), 0);
 	message->getString("data", text, message->m_14);
 	unsigned int length = strlen(text);
 	if ((length & 3) != 0)

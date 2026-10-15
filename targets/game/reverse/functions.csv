@@ -38132,7 +38132,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_007e3d30@@YAXXZ,,0x007E3D30,243,game/gen_asm/d_007df1f0.asm,matched,gen-dump;ghidra=FUN_00be3d30
 ?d_007e3e60@@YAXXZ,,0x007E3E60,1804,game/gen_asm/d_007d9aa0.asm,matched,gen-dump;bounds=high
 ?d_007e4730@@YAXXZ,,0x007E4730,11,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,object-symbol=?invokeNext@VirtualSlot10IncrementedMemberCallThunk@@QAEXXZ;Open-BFME5 clean C++ virtual slot 10 incremented member call
-?d_007e4820@@YAXXZ,,0x007E4820,230,game/gen_asm/d_007df1f0.asm,matched,gen-dump;ghidra=FUN_00be4820
 ?d_007e8b00@@YAXXZ,,0x007E8B00,549,game/gen_asm/d_007e5080.asm,matched,gen-dump;ghidra=FUN_00be8b00
 ?d_007f4bb0@@YAXXZ,,0x007F4BB0,269,game/gen_asm/d_007f2a50.asm,matched,gen-dump;ghidra=FUN_00bf4bb0
 ?d_007f4cc0@@YAXXZ,,0x007F4CC0,52,game/GameEngine/Source/Common/Rva7F4CC0ConstructorThunk.cpp,matched,object-symbol=??0Rva7F4CC0ConstructorThunk@@QAE@XZ;Open-BFME5 clean C++ constructor
@@ -172549,3 +172548,4 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ?equals@Coord3D@@QBE_NABUCoord3DBase@@@Z,0x00001334,0x0016A110,60,game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions_doTeamGiveNearestTeamUpgrade002FE270.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
 ?normalize@Coord3D@@QAEXXZ,0x0002BD82,0x000FB930,79,game/GameEngine/Source/Common/System/BuildAssistant_buildTiledLocations.cpp,matched,inline header member emitted as pick-any COMDAT; exclusive out-of-line copy in coord3d.cpp removed;model=claude-opus-5-5;host=GreatFaram
 ??0XferException@@QAA@HPBDZZ,,0x009D6220,103,game/GameEngine/Source/Common/Gen009D6220.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/009d6220-xferexception-variadic-ctor.md;XferException variadic cdecl ctor; RTTI CT 0xDDFE34/TI 0xDDFE5C thrown after it at retail sites;model=claude-opus-5-5;host=GreatFaram
+?frame@Rva007E4820FrameClock@@QAEHH@Z,,0x007E4820,230,game/GameEngine/Source/Common/Rva007E4820FrameClock.cpp,matched,clean C++ VP6 frame clock; named by matched caller Rva007E4B80Vp6Stream::update; timeGetTime IAT and __int64 scale via __allmul;model=claude-opus-5-5;host=Chartreuse

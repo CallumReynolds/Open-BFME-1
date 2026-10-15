@@ -11,7 +11,7 @@ typedef struct statsgame_s
 	void *teamnums;
 } *statsgame_t;
 
-extern statsgame_t g_statsgame;
+statsgame_t g_statsgame = 0;
 extern "C" void __cdecl FreeBucketSet(void *);
 extern "C" void __cdecl ArrayFree(void *);
 extern "C" __declspec(dllimport) void __cdecl free(void *);

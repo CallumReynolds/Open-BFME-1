@@ -58,13 +58,24 @@ typedef bool Bool;
 #define S4_MEMBER( ADDR ) struct S4Mem##ADDR { ~S4Mem##ADDR(); };
 #define S4_BASE( ADDR ) struct S4Base##ADDR { virtual ~S4Base##ADDR(); };
 
-S4_MEMBER( 004948B0 )
+struct S4Mem004948B0
+{
+	S4Mem004948B0( void *owner );
+	~S4Mem004948B0();
+};
 S4_MEMBER( 005864A0 )
 S4_MEMBER( 005879C0 )
 S4_MEMBER( 005B33B0 )
 S4_MEMBER( 00887940 )
 
-S4_BASE( 00479CD0 )
+struct S4Base00479CD0
+{
+	S4Base00479CD0( void *owner );
+	virtual ~S4Base00479CD0();
+
+	char m_pad04[ 4 ];
+	unsigned int m_flags08;
+};
 S4_BASE( 0077C1F0 )
 
 // The two SubsystemInterface rows spell their padding explicitly because the
@@ -95,7 +106,54 @@ S4_BASE( 0077C1F0 )
 	{                                                                          \
 	}
 
-S4_TWO_MEMBER_DTOR( 00494090, S4Base00479CD0, 0x218 - 4, 004948B0, 0x3B, 00887940 )
+// The +0x254 member of the 0x00494090 class is the 0x00887940 type seen with
+// its four-byte handle, which its constructor zeroes.
+struct S4Str00887940 : S4Mem00887940
+{
+	S4Str00887940() : m_data( 0 ) {}
+	void *m_data;
+};
+
+// Retail 0x00494110 (132 bytes) constructs the 0x00494090 class: base
+// constructor (ILT 0x0001B9FA) with the owner, the +0x218 member
+// (Rva004948B0OwnedSubsystem's constructor, ILT 0x0004054D) with 0, then the
+// zeroed string handle and three zeroed words, the base flags at +0x08 or'ed
+// with 0x640 and copied to +0x250, and a cleared bool.  The three words are one
+// member object: as separate initialised members MSVC schedules their stores
+// after the flag update, where retail stores them before.
+struct S4Triple00494110
+{
+	S4Triple00494110() : m_a( 0 ), m_b( 0 ), m_c( 0 ) {}
+	int m_a;
+	int m_b;
+	int m_c;
+};
+
+struct S4Dtor00494090 : S4Base00479CD0
+{
+	S4Dtor00494090( void *owner );
+	virtual ~S4Dtor00494090();
+
+	char m_padA[ 0x218 - 0xC ];
+	S4Mem004948B0 m_first;
+	char m_padB[ 0x250 - 0x219 ];
+	unsigned int m_flags250;
+	S4Str00887940 m_second;
+	S4Triple00494110 m_258;
+	bool m_264;
+};
+
+S4Dtor00494090::S4Dtor00494090( void *owner )
+	: S4Base00479CD0( owner ), m_first( 0 )
+{
+	m_flags08 |= 0x640;
+	m_flags250 = m_flags08;
+	m_264 = false;
+}
+
+S4Dtor00494090::~S4Dtor00494090()
+{
+}
 S4_TWO_MEMBER_DTOR( 00587B30, SubsystemInterface, 0x18 - 8, 005864A0, 0xB, 005879C0 )
 S4_TWO_MEMBER_DTOR_NOPAD_A( 005B37C0, SubsystemInterface, 005B33B0, 0xB, 005B33B0 )
 S4_TWO_MEMBER_DTOR( 0077EB20, S4Base0077C1F0, 0x15C - 4, 00887940, 3, 00887940 )

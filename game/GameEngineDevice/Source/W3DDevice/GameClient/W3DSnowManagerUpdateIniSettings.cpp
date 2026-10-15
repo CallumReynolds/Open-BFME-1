@@ -95,7 +95,7 @@ static inline void BFMEAssignSnowTexture(
 	destination = texture.m_texture;
 }
 
-extern "C" __declspec(dllimport) int __cdecl stricmp(const char *, const char *);
+extern "C" __declspec(dllimport) int __cdecl _strcmpi(const char *, const char *);
 
 class W3DSnowManager
 {
@@ -123,7 +123,7 @@ void W3DSnowManager::updateIniSettings(void)
 
 		TextureClass *texture = m_snowTexture;
 		const char *textureName = texture ? texture->Get_Texture_Name() : 0;
-		if (stricmp(textureName, name) != 0)
+		if (_strcmpi(textureName, name) != 0)
 		{
 			const WeatherSetting *replacement =
 				walkSnowOverride(TheWeatherSetting.ptr);

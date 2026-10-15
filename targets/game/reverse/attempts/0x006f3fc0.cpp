@@ -1,5 +1,5 @@
 // ?draw@W3DDisplay@@UAEXXZ
-// partial score=0.9704 date=2026-10-13
+// partial score=0.9975 date=2026-10-15
 // cl: /DNDEBUG /MD /EHs-c- /Iinputs/reference/shims/sweep
 #include <windows.h>
 void * __cdecl operator new[](unsigned);
@@ -27,10 +27,12 @@ protected:
  void updateAverageFPS();
  void captureScreen(char *,unsigned);
  // ?captureScreen@W3DDisplay@@IAEXPADUStrideValue006F3FC0@@@Z absent-from-retail
- void captureScreen(char *p,StrideValue006F3FC0 stride) { captureScreen(p,stride.value); }
+ void captureScreen006EA890(char *,unsigned);
+ void captureScreen(char *p,StrideValue006F3FC0 stride) { captureScreen006EA890(p,stride.value); }
  void saveScreenShot(char *,unsigned,unsigned);
  // ?saveScreenShot@W3DDisplay@@IAEXPADUStrideValue006F3FC0@@I@Z absent-from-retail
- void saveScreenShot(char *p,StrideValue006F3FC0 width,unsigned height) { saveScreenShot(p,width.value,height); }
+ void saveScreenShot006EDF00(char *,unsigned,unsigned);
+ void saveScreenShot(char *p,StrideValue006F3FC0 width,unsigned height) { saveScreenShot006EDF00(p,width.value,height); }
 };
 class RvaDrawSlots { public:
  virtual void slot00();
@@ -108,6 +110,8 @@ class RvaDrawSlots { public:
  virtual void slot120();
  virtual void slot124();
 };
+// The one-register adapter preserves the slot receiver and its zero-stack contract.
+struct DispatchTable006F3FC0 { void *prefix[0x49]; void (__fastcall *slot124)(RvaDrawSlots *); };
 class Rva006F3FC0ClientSlots { public:
  virtual void slot00();
  virtual void slot04();
@@ -206,14 +210,28 @@ struct Rva006F3FC0Global {
  unsigned char fieldbb9; char padbba[0x9f]; unsigned char fieldc59; char padc5a[0x272];
  int fieldecc; unsigned char fielded0,fielded1; char paded2[2]; float fielded4,fielded8;
 };
-extern Rva006F3FC0Global *Rva012ED5C8;
-extern BfmeGameLogicPause *Rva012F0898;
-extern ScriptEngine *Rva012F076C;
-extern Rva006F3FC0Client *Rva012F1464;
-extern Rva006F3FC0Tactical *Rva012F1600;
-extern TerrainTracksRenderObjClassSystem *Rva012F9D98;
-extern unsigned Rva012BAA2C,Rva012F8064,Rva012BB1CC;
-extern int Rva012BAA5C,Rva012F804C;
+class GlobalData;
+class GameClient;
+class View;
+extern GlobalData *TheGlobalData;
+extern GameClient *TheGameClient;
+extern BfmeGameLogicPause *TheGameLogic;
+extern ScriptEngine *TheScriptEngine;
+extern View *TheTacticalView;
+extern TerrainTracksRenderObjClassSystem *TheTerrainTracksRenderObjClassSystem;
+extern int g_bfmeY1058,TheW3DFrameLengthInMsec,g_006eab10;
+extern unsigned g_va012F8064;
+extern int Rva012BAA5C;
+#define Rva012ED5C8 reinterpret_cast<Rva006F3FC0Global *>(TheGlobalData)
+#define Rva012F1464 reinterpret_cast<Rva006F3FC0Client *>(TheGameClient)
+#define Rva012F0898 TheGameLogic
+#define Rva012F076C TheScriptEngine
+#define Rva012F1600 reinterpret_cast<Rva006F3FC0Tactical *>(TheTacticalView)
+#define Rva012F9D98 TheTerrainTracksRenderObjClassSystem
+#define Rva012BAA2C (*reinterpret_cast<unsigned *>(&g_bfmeY1058))
+#define Rva012F8064 g_va012F8064
+#define Rva012BB1CC (*reinterpret_cast<unsigned *>(&TheW3DFrameLengthInMsec))
+#define Rva012F804C g_006eab10
 extern HWND ApplicationHWnd;
 extern const float Rva0111E36C,Rva010A13C4;
 
@@ -305,8 +323,10 @@ void W3DDisplay::draw()
     } while (frozen && !Rva012F1600->slot74() &&
              (Rva012F0898->field10c==1 || Rva012F0898->field10c==5 || Rva012F0898->isGamePaused()));
     if (Rva012F804C>0 && !Rva012ED5C8->fieldecc) {
-        --(*reinterpret_cast<volatile int *>(&Rva012F804C));
-        reinterpret_cast<RvaDrawSlots *>(this)->slot124();
+        int pending=*reinterpret_cast<volatile int *>(&Rva012F804C);
+        DispatchTable006F3FC0 *table=*reinterpret_cast<DispatchTable006F3FC0 **>(this);
+        *reinterpret_cast<volatile int *>(&Rva012F804C)=pending-1;
+        table->slot124(reinterpret_cast<RvaDrawSlots *>(this));
     }
     Rva00754A10();
 }  // end draw

@@ -168,7 +168,6 @@ StateReturnType AIAttackMeleeHordeWaitPathState::update()
 		goto schedulePathRetry;
 
 		returnToApproach:
-		__asm { }
 		return STATE_FAILURE;
 
 		schedulePathRetry:

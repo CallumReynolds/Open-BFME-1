@@ -624,3 +624,5 @@ game/GameEngine/Source/Common/BfmeConv1214.cpp|member||m_bfme08,m_stack,claude-s
 game/GameEngine/Source/Common/BfmeConv1214.cpp|local|bfmeGo1214|c,index,claude-sonnet+gpt-6-astra,agreed,2026-10-15
 game/GameEngine/Source/Common/BfmeConv1214.cpp|member||m_bfme08,m_stack,claude-sonnet+gpt-6-astra,applied,2026-10-15
 game/GameEngine/Source/Common/BfmeConv1214.cpp|local|bfmeGo1214|c,index,claude-sonnet+gpt-6-astra,applied,2026-10-15
+game/GameEngine/Source/GameNetwork/GameSpy/GenerateLadderGameResultsPacket.cpp|param|AsciiString#2|s,stringSrc,claude-sonnet+gpt-6-astra+grok,agreed,2026-10-15
+game/GameEngine/Source/GameNetwork/GameSpy/GenerateLadderGameResultsPacket.cpp|param|concat#2|s,stringSrc,claude-sonnet+gpt-6-astra+grok,agreed,2026-10-15

@@ -37903,7 +37903,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_006b7d2d@@YAXXZ,,0x006B7D2D,61,game/gen_asm/d_006b0a60.asm,matched,gen-dump;ghidra=FUN_00ab7d2d
 ?d_006b8a60@@YAXXZ,,0x006B8A60,379,game/gen_asm/d_006b0a60.asm,matched,gen-dump;ghidra=FUN_00ab8a60
 ?d_006b9500@@YAXXZ,,0x006B9500,1071,game/gen_asm/d_006b9500.asm,matched,gen-dump;ghidra=FUN_00ab9500
-?d_006b9c90@@YAXXZ,,0x006B9C90,588,game/gen_asm/d_006b9500.asm,matched,gen-dump;ghidra=FUN_00ab9c90
 ?d_006bba90@@YAXXZ,,0x006BBA90,7,game/gen_asm/d_006b9500.asm,matched,gen-dump;ghidra=FUN_00abba90
 ?d_006c96b0@@YAXXZ,,0x006C96B0,1587,game/gen_asm/d_00610140.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_00ac96b0
 ?d_006cf4f0@@YGXPAX00@Z,,0x006CF4F0,3,game/GameEngine/Source/Common/Rva006CF4F0ThreeArgVoid.cpp,matched,ILT 0x00006695 and retail ret 0x0C prove an address-derived stdcall helper with three pointer-sized arguments; no semantic owner is proven
@@ -172558,3 +172557,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?eraseFill@Rva006B0C50@@QAEXABVAsciiString@@@Z,,0x006B0C50,59,game/GameEngine/Source/Common/Rva006B0C50EraseFill.cpp,matched,address-derived; erase key then fill +0x188 with 0x02 when scale is not 1.0f; fill as element for-loop gives lea-first stosd; pad sized by sizeof(tree); de-asm'd;model=claude-opus-5.5;host=GreatFaram
 ?reset@Rva006ABB80@@QAEXXZ,,0x006ABB80,102,game/GameEngine/Source/Common/Rva006ABB80Reset.cpp,matched,STLport AsciiString tree reset; address-derived; 48-byte 0x02 fill as an element for-loop (lea-first rep stosd setup; memset emits lea last; shape_levers row); de-asm'd;model=claude-opus-5.5;host=GreatFaram
 ?rva001A3D30@TerrainLogic@@QAE_NABVVector3@@PAV2@@Z,,0x001A3D30,721,game/GameEngine/Source/GameLogic/Map/TerrainLogicSample001A3D30.cpp,matched,Bilinear BGR sampling; identity evidence=targets/game/reverse/identity_evidence/001a3d30-channel-loop.md;model=gpt-6.1-sol;host=fleet
+?update@MilesAudioManager@@UAEXXZ,,0x006B9C90,588,game/GameEngineDevice/Source/MilesAudioDevice/MilesAudioManagerUpdate.cpp,matched,vtable 0x0111C0C0 slot 5 (+0x14) via ILT 0x0002BD32 is SubsystemInterface::update after BFME loadIniFilesFromLegend at slot 2; LatchRestore<bool> vtable 0x010892D8;model=claude-opus-5-5;host=app

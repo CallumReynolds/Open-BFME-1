@@ -27,3 +27,26 @@ them. Native-derived empty variable and grouped-float constructors preserve
 16 differences. No such experimental wrapper was introduced in game/ or a
 shared header. The second preferred bank retains the native Snapshot and
 GameClientRandomVariable identities, and remains nonmatching evidence.
+
+## BFME-2 constructor transfer, 2026-10-15
+
+Reviewed donor revision `3f115674d31dc308b37736f942bcc41ee77d7747`,
+`Code/GameEngine/Source/GameClient/System/FXParticleSystem/EmissionInfoDefaultCtors.cpp`.
+The donor carries an empty coordinate constructor followed by a scalar body
+assignment and coordinate zeroing. Keeping the target bank's native Snapshot
+and random-variable declarations while using this coordinate lifetime produces
+all 91 target bytes, versus eleven differences in the preferred bank. The
+donor's extra two flag fields are absent from the target and are not copied.
+
+The target's existing DoXfer transfers a Coord3D from +4 and a float from +0x10;
+its native unwind state independently proves the Snapshot base. These target
+facts support correcting the shared header rather than adding another private
+class declaration. The coordinate helper retains an address-derived type name;
+it does not claim the donor's original field or type identity. The three
+coordinate floats, scalar word and random-variable offsets and 32-byte total
+size remain unchanged. Copy, assignment and transfer references use the grouped
+coordinate. All 755 rows in the constructor, bulk and main FX units pass strict
+byte checks together, including seven data rows.
+
+Raw probes and the pre-edit header/bulk sources are retained under
+`build/bfme2-physics-transfer/`. The full header gate is required before landing.

@@ -4331,9 +4331,7 @@ void _DefaultColorModuleInfo_copy(DefaultColorModuleInfo *dst, const DefaultColo
 
 // ??0DefaultPhysicsModuleInfo@FXParticleSystem@@QAE@ABV01@@Z
 DefaultPhysicsModuleInfo::DefaultPhysicsModuleInfo(const DefaultPhysicsModuleInfo &that)
-    : m_field0(that.m_field0)
-    , m_field1(that.m_field1)
-    , m_field2(that.m_field2)
+    : m_coord(that.m_coord)
     , m_field3(that.m_field3)
     , m_var1(that.m_var1)
 {
@@ -7797,7 +7795,7 @@ DefaultPhysicsModuleInfo &DefaultPhysicsModuleInfo::operator=(const DefaultPhysi
         unsigned int value2;
     };
 
-    *(Float3 *)&m_field0 = *(const Float3 *)&that.m_field0;
+    *(Float3 *)&m_coord.m_field0 = *(const Float3 *)&that.m_coord.m_field0;
     m_field3 = that.m_field3;
     *(VariableBlock *)&m_var1 = *(const VariableBlock *)&that.m_var1;
     return *this;
@@ -8249,7 +8247,7 @@ void DefaultPhysicsModuleInfo::DoXfer(Xfer &xfer)
     v.data[1] = 1;
     xfer == v;
     xfer == *(float *)&m_field3;
-    xfer == *(Coord3DBase *)&m_field0;
+    xfer == *(Coord3DBase *)&m_coord.m_field0;
     xferRandomVariable(xfer, m_var1);
 }
 

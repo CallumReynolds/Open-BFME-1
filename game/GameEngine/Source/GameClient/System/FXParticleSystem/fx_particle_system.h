@@ -239,7 +239,19 @@ public:
     DefaultDrawModuleInfo &operator=(const DefaultDrawModuleInfo &that);
 };
 
-class DefaultPhysicsModuleInfo {
+// BFME-2 EmissionInfoDefaultCtors.cpp and BFME-1 native unwind state
+// prove Snapshot plus an initially untouched three-float coordinate.
+// The coordinate's original type name remains unresolved.
+struct Rva005FD9E0Coord
+{
+    Rva005FD9E0Coord() {}
+    Rva005FD9E0Coord(const Rva005FD9E0Coord &that)
+      : m_field0(that.m_field0), m_field1(that.m_field1), m_field2(that.m_field2) {}
+    void zero() { m_field0=0.0f; m_field1=0.0f; m_field2=0.0f; }
+    float m_field0, m_field1, m_field2;
+};
+
+class DefaultPhysicsModuleInfo : public Snapshot {
 public:
     DefaultPhysicsModuleInfo();
     DefaultPhysicsModuleInfo(const DefaultPhysicsModuleInfo &that);
@@ -249,9 +261,7 @@ public:
     virtual void DoXfer(Xfer &xfer);
     DefaultPhysicsModuleInfo &operator=(const DefaultPhysicsModuleInfo &that);
 
-    float m_field0;
-    float m_field1;
-    float m_field2;
+    Rva005FD9E0Coord m_coord;
     int m_field3;
     GameClientRandomVariable m_var1;
 };

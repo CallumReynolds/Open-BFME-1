@@ -75,6 +75,6 @@ T1Base_005FDE80::T1Base_005FDE80(void *first, void *source)
     const T1SourceImage_005FDE80 *image =
         (const T1SourceImage_005FDE80 *)source;
     m_field3 = image->field3;
-    *(T1Float3_005FDE80 *)&m_field0 = image->values;
+    *(T1Float3_005FDE80 *)&m_coord.m_field0 = image->values;
     m_var1 = image->variable;
 }

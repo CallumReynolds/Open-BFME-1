@@ -10837,7 +10837,7 @@
   "before_sha256": "f7e5d09f1cbf930ac788454f477de0f8a34230a240809a07b39ad4de302464bb",
   "after_sha256": "d2b55bf8e53365558121bbc7b5b9e7ba359746f86886b4d7d44fffbbd6e4b1ec",
   "evidence": "targets/game/reverse/identity_evidence/00905140-gen-handle.md",
-  "reason": "The matched WaterRenderObjClass::ReAcquireResources source declares DX8Wrapper::Create_Render_Target as returning Gen_005D2040 and stores it in a Gen_005D2040 member. That signature refutes the bank’s RefCountPtr<TextureClass> return."
+  "reason": "The matched WaterRenderObjClass::ReAcquireResources source declares DX8Wrapper::Create_Render_Target as returning Gen_005D2040 and stores it in a Gen_005D2040 member. That signature refutes the bank\u2019s RefCountPtr<TextureClass> return."
  },
  {
   "old_path": "targets/game/reverse/attempts/0x00410f90.cpp",
@@ -20048,5 +20048,55 @@
   "after_sha256": "234aafd9f4d9d9bc975c29715fda795f8ee494028f4469436b355855d82feeee",
   "evidence": "targets/game/reverse/symbols.csv",
   "reason": "aptSlotUpdate was the bank's unproven guess on an invented Rva00467F20Owner. The matched caller WindowManager::update (WindowManager_update.cpp) already declares this ILT 0x0001DE9E callee as WindowManager::bfmeRva00467F20 and symbols.csv pins that name; the conversion keeps the caller's established address-derived name and only corrects its return type to Bool."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x006009b0.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/System/FXParticleSystem/Rva005EA080OwnerCtor.cpp",
+  "old_name": "BaseY005E7940",
+  "new_name": "Rva005EA080",
+  "before_sha256": "89d8406c55d522e70825634d705534f8513ce5e8e1f84c502b71fa7f560f8f7f",
+  "after_sha256": "f922b02f874e6fcfa57c3eb92c202b3ac63640f0084b696464969b6726cf056c",
+  "evidence": "targets/game/reverse/identity_evidence/006009b0-rva005ea080-owner-ctor.md",
+  "reason": "0x006009B0 stamps the Rva005EA080 vftables (0x01112A88/0x0111270C/0x011126F8) that dir32_addresses.csv records only for that class; address-derived BaseY005E7940 names were a placeholder model."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x006009b0.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/System/FXParticleSystem/Rva005EA080OwnerCtor.cpp",
+  "old_name": "BaseY005E7940Composite",
+  "new_name": "Rva005E9AB0",
+  "before_sha256": "89d8406c55d522e70825634d705534f8513ce5e8e1f84c502b71fa7f560f8f7f",
+  "after_sha256": "f922b02f874e6fcfa57c3eb92c202b3ac63640f0084b696464969b6726cf056c",
+  "evidence": "targets/game/reverse/identity_evidence/006009b0-rva005ea080-owner-ctor.md",
+  "reason": "0x006009B0 stamps the Rva005EA080 vftables (0x01112A88/0x0111270C/0x011126F8) that dir32_addresses.csv records only for that class; address-derived BaseY005E7940 names were a placeholder model."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x006009b0.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/System/FXParticleSystem/Rva005EA080OwnerCtor.cpp",
+  "old_name": "BaseY005E7940Composite",
+  "new_name": "Rva005E9AE0",
+  "before_sha256": "89d8406c55d522e70825634d705534f8513ce5e8e1f84c502b71fa7f560f8f7f",
+  "after_sha256": "f922b02f874e6fcfa57c3eb92c202b3ac63640f0084b696464969b6726cf056c",
+  "evidence": "targets/game/reverse/identity_evidence/006009b0-rva005ea080-owner-ctor.md",
+  "reason": "0x006009B0 stamps the Rva005EA080 vftables (0x01112A88/0x0111270C/0x011126F8) that dir32_addresses.csv records only for that class; address-derived BaseY005E7940 names were a placeholder model."
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "BaseY005E7940",
+  "new_name": "Rva005EA080",
+  "before_sha256": "862f1f6322054c4c4970361f17bb85002b4436b3183beb76ce84cc8e6a9960e3",
+  "after_sha256": "79e83b28cab2a021366a9f2d47862bb4ee1bcc0803931a03c123b2962d18a3a8",
+  "evidence": "targets/game/reverse/identity_evidence/006009b0-rva005ea080-owner-ctor.md",
+  "reason": "0x006009B0 stamps the Rva005EA080 vftables (0x01112A88/0x0111270C/0x011126F8) that dir32_addresses.csv records only for that class; address-derived BaseY005E7940 names were a placeholder model."
+ },
+ {
+  "old_path": "targets/game/reverse/symbols.csv",
+  "new_path": "targets/game/reverse/symbols.csv",
+  "old_name": "BaseY005E7940",
+  "new_name": "Rva005EA080",
+  "before_sha256": "d01f4e19699524f1d578326156dcab7975d5488a628e8392fd390b4e5786f704",
+  "after_sha256": "b8e625262d1baeb60006deb78d41b36c7372a1976b90b2448aca5a9a2ba36a0d",
+  "evidence": "targets/game/reverse/identity_evidence/006009b0-rva005ea080-owner-ctor.md",
+  "reason": "0x006009B0 stamps the Rva005EA080 vftables (0x01112A88/0x0111270C/0x011126F8) that dir32_addresses.csv records only for that class; address-derived BaseY005E7940 names were a placeholder model."
  }
 ]

@@ -64,8 +64,21 @@ Q4_MID_BODY( 005E7360, char m_pad[ 0x40 ]; )
 Q4_MID_DECL( 005E7620,  )
 Q4_MID_BODY( 005E7620, char m_pad[ 0x1c ]; )
 
-Q4_MID_DECL( 005E7940,  )
+// 0x005E7940's base constructor is 0x006009B0, which stamps the vftables
+// dir32_addresses.csv records for class Rva005EA080 (identity_evidence/
+// 006009b0-rva005ea080-owner-ctor.md).  Only the 4-byte view is modelled here.
+class OwnerY005E7940;
+class Rva005EA080
+{
+public:
+	Rva005EA080( OwnerY005E7940 *owner );
+	virtual void b0();
+};
+class MidY005E7940 { public: virtual void m0(); };
+class TailY005E7940 { public: virtual void t0(); };
+#define BaseY005E7940 Rva005EA080
 Q4_MID_BODY( 005E7940, char m_pad[ 0x34 ]; )
+#undef BaseY005E7940
 
 class GameClientRandomVariable
 {

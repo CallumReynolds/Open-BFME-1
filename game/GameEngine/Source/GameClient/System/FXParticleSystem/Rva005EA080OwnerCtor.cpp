@@ -1,11 +1,17 @@
-// ??0BaseY005E7940@@QAE@PAVOwnerY005E7940@@@Z
-// partial score=0.0 date=2026-10-15
-// Constructor at RVA 0x006009B0 (440 bytes): base of the 102-byte new family
-// 0x005E7940 (HostY005E7940::create in Q4NewInlineCtorAdjusted.cpp). Same
-// shape as BaseY005E7620 (0x005FFBB0): handle from owner->makeHandle(), then
-// the 13-dword value block Rva005EA0D0 filled from the owner's random values,
-// the first three lanes biased by the particle system's +0x184 field.
-// Address-derived names; identity not recovered.
+// ??0Rva005EA080@@QAE@PAVOwnerY005E7940@@@Z
+// Second constructor of class Rva005EA080 (RVA 0x006009B0, 440 bytes), named
+// by the matched HostY005E7940::create caller in Q4NewInlineCtorAdjusted.cpp.
+// IDENTITY: the final vptr stores (+0x70..+0x7d) are 0x01112A88 / 0x0111270C /
+// 0x011126F8, the same three constants the landed forwarding ctor
+// ??0Rva005EA080@@QAE@I@Z (0x005EA080) stamps, and dir32_addresses.csv records
+// those addresses only as the ??_7Rva005EA080@@6B* vftables.  Retail has no
+// COMDAT folding, so each vftable has one owner.  Earlier stores: 0x0110F9E8
+// (T4A2_0110F9E8) at +4 and 0x01112A98 (T4B005EA0D0) at +8, the bases.
+// The chain Rva005E9AB0 / Rva005E9AE0 below mirrors T4ForwardingCtorChainL2/L3
+// but with implicit constructors, because retail inlines them here.
+// Shape: handle from owner->makeHandle(), then the 13-dword value block
+// T4B005EA0D0 filled from the owner's random values, the first three lanes
+// biased by the particle system's +0x184 field.
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc
 
 #include "../../../Common/System/game_client_random_variable.h"
@@ -91,32 +97,34 @@ public:
 	unsigned int m_fieldB0;
 };
 
-class BaseY005E7940Primary
+class T4P0_Rva005E9AE0
 {
 public:
-	virtual void primarySlot();
+	virtual void s0();
 };
 
-class BaseY005E7940Secondary
+class T4A2_0110F9E8
 {
 public:
-	virtual void secondarySlot();
+	virtual void s0();
 };
 
-class BaseY005E7940Composite
-	: public BaseY005E7940Primary,
-	  public BaseY005E7940Secondary
+class Rva005E9AE0 : public T4P0_Rva005E9AE0, public T4A2_0110F9E8
 {
 public:
-	BaseY005E7940Composite() {}
-	virtual ~BaseY005E7940Composite();
+	Rva005E9AE0() {}
+	virtual ~Rva005E9AE0();
+};
+
+class Rva005E9AB0 : public Rva005E9AE0
+{
 };
 
 // The thirteen-dword value block whose copy constructor is 0x005EA0D0.
-class Rva005EA0D0
+class T4B005EA0D0
 {
 public:
-	Rva005EA0D0() throw()
+	T4B005EA0D0() throw()
 		: m_scale0( 1.0f ), m_scale1( 1.0f ), m_scale2( 1.0f ),
 		  m_value0( 0.0f ), m_value1( 0.0f ), m_value2( 0.0f ),
 		  m_value3( 0.0f ), m_value4( 0.0f ), m_value5( 0.0f ),
@@ -124,7 +132,7 @@ public:
 		  m_trailingValue( 1 )
 	{
 	}
-	virtual ~Rva005EA0D0();
+	virtual ~T4B005EA0D0();
 
 protected:
 	float m_scale0, m_scale1, m_scale2;
@@ -133,16 +141,13 @@ protected:
 	unsigned int m_trailingValue;
 };
 
-class BaseY005E7940
-	: public BaseY005E7940Composite,
-	  public Rva005EA0D0
+class Rva005EA080 : public Rva005E9AB0, public T4B005EA0D0
 {
 public:
-	BaseY005E7940( OwnerY005E7940 *owner );
-	virtual ~BaseY005E7940();
+	Rva005EA080( OwnerY005E7940 *owner );
 };
 
-BaseY005E7940::BaseY005E7940( OwnerY005E7940 *owner )
+Rva005EA080::Rva005EA080( OwnerY005E7940 *owner )
 {
 	BfmeHandleERU handle = owner->makeHandle();
 	m_scale0 = owner->m_random20.getValue();

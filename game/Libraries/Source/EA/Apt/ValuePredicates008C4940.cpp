@@ -10,7 +10,7 @@ struct ValuePredicates008C4940 {
     int isType8_008C4940();
     int isType5_008C4960();
     int isType4_008C4980();
-    int isType6_008C49A0();
+    int isFloat();
     int isType11_008C49C0();
 };
 int ValuePredicates008C4940::isType8_008C4940() {
@@ -28,7 +28,7 @@ int ValuePredicates008C4940::isType4_008C4980() {
     if(m_type==4 && !undefined) return 1;
     return 0;
 }
-int ValuePredicates008C4940::isType6_008C49A0() {
+int ValuePredicates008C4940::isFloat() {
     bool undefined=!m_valid15;
     if(m_type==6 && !undefined) return 1;
     return 0;

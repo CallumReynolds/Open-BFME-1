@@ -5,7 +5,7 @@
 // each resolved Object* onto the active list, notifying via vtable slot
 // 0x5c when a flag bit is set, and setting the object's m_containedBy
 // (this+0x214) field to this object's owner (this+8).  Both throw sites are
-// the same bfmeFormatText(tag=5)+_CxxThrowException(assert-style) call.
+// the same throw XferException(5, 0).
 // cl: /DNDEBUG /DWIN32 /MD /D_STLP_USE_STATIC_LIB
 // stlport
 #define _STLP_NO_EXCEPTIONS 1
@@ -37,7 +37,6 @@ public:
 	char *text;
 	int tag;
 };
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *object, void *throwInfo);
 
 class BfmeA987
 {

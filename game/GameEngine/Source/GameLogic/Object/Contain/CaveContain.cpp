@@ -40,9 +40,6 @@ public:
 	char *text;
 	int tag;
 };
-// Retail 0x009F6D00 is the MSVCR71 _CxxThrowException import thunk.
-extern "C" void __stdcall _CxxThrowException(
-	void *object, _ThrowInfo *throwInfo);
 
 class Xfer
 {

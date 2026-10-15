@@ -1,7 +1,7 @@
 // ?xfer@Rva001CB270BitFlags@@QAEXPAVXfer@@@Z
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /Igame
 // Retail 0x001CB270, 497-byte extent: 496 bytes of body ending on the
-// _CxxThrowException call plus the throw-site INT3, the same convention the
+// throw call plus the throw-site INT3, the same convention the
 // byte-matched sibling 0x001CB730 uses for its 481-byte extent.
 // Address-derived identity. The 304-bit cardinality is proven by the object
 // size (0x28) and the 0x130 loop bound; the bit-name table is VA 0x012A6918
@@ -26,7 +26,6 @@ public:
 	char *text;
 	int tag;
 };
-extern void __declspec(noreturn) __stdcall _CxxThrowException(void *,void *);
 extern int __cdecl bfmeLookup_001c62b0(void *);
 
 struct __declspec(align(4)) Version1CB270 { unsigned char version,current; };

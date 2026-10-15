@@ -94,8 +94,6 @@ public:
 	char *text;
 	int tag;
 };
-// Retail 0x9F6D00 jumps through the MSVCR71 _CxxThrowException IAT entry.
-extern "C" void __stdcall _CxxThrowException(void *object, _ThrowInfo *throwInfo);
 
 class Rva000EACD0ScoreKeeper
 {

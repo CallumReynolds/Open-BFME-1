@@ -20,7 +20,7 @@ class BfmeSeedTarget;
 class Gen_00212790 { public: void bfmeSeed(BfmeSeedTarget*); };
 class FlagXfer0020F000;
 class BitFlagSnapshot0020F000 { public: void xfer(FlagXfer0020F000*);unsigned bits; };
-class Rva0020DE10Poly { public: virtual ~Rva0020DE10Poly();unsigned id;Rva0020DE10Poly *next; };
+class Rva0020DE10Poly { public: virtual ~Rva0020DE10Poly(){}unsigned id;Rva0020DE10Poly *next; };
 struct Snapshot0020F330 { virtual void xfer(FlagPairTarget*);char pad[0x58]; };
 class Gen0020F330 { public:
  char pad[0x18]; float f18,f1c,f20,f24,f28,f2c;unsigned f30,f34,f38,f3c;Snapshot0020F330 snapshot;unsigned f9c,fa0;bool fa4,fa5,fa6,fa7;Rva0020DE10Poly *head;float fac[4];bool fbc[4];char gapc0[12];unsigned fcc;BitFlagSnapshot0020F000 fd0;

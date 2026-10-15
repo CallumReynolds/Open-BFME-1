@@ -14,7 +14,7 @@
 // carries a name yet.
 
 extern void __cdecl bfmeQueryCpuTierFlags(int *pTierA, int *pTierB, int *pTierC);
-extern int g_bfmeTableJX;
+int g_bfmeTableJX;
 
 // Individually named blob cells (not part of either 65-slot array); no real
 // identity yet, address-derived names, pinned in targets/game/reverse/symbols.csv.

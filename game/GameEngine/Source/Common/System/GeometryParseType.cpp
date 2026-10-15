@@ -10,7 +10,10 @@
 // flat collection of volatile scalar fields emits the same stores in a
 // different order around the saved scan result.
 
-extern "C" const char *const GeometryNames[];
+// BFME-2 donor 486d26ceaafb owns the complete enum-name table.
+// BFME-1 independently has these three literal pointers at VA 0x012D4CD8
+// followed by null. Independent scalar defaults begin at VA 0x012D4CE8.
+extern "C" const char *const GeometryNames[] = { "SPHERE", "CYLINDER", "BOX", 0 };
 
 class INI
 {

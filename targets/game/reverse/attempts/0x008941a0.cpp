@@ -1,6 +1,5 @@
 // ?find008941A0@Rva00894120Vector@@QAEXPAX@Z
-// partial score=0.669 date=2026-10-09
-// ?find008941A0@Rva00894120Vector@@QAEXPAX@Z
+// partial score=0.6713 date=2026-10-15
 // cl: /DNDEBUG /MD /EHsc /Oy
 
 extern "C" int memcmp(const void *, const void *, unsigned int);
@@ -115,15 +114,20 @@ void Rva00894120Vector::find008941A0(void *param)
         Rva008941A0Iterator item(m_items);
         if (item != Rva008941A0Iterator(m_items) + m_count)
         {
-            void *key = *(void **)param;
-            int keyLen = *(unsigned short *)((char *)key + 2);
+            struct Rva008941A0KeyView
+            {
+                int keyLen;
+                void *key;
+            } view;
+            view.key = *(void **)param;
+            view.keyLen = *(unsigned short *)((char *)view.key + 2);
             do
             {
                 void *itemKey = item->first;
                 int itemLen = *(unsigned short *)((char *)itemKey + 2);
-                if (itemLen == keyLen)
+                if (itemLen == view.keyLen)
                 {
-                    if (itemKey == key || memcmp((char *)itemKey + 8, (char *)key + 8, itemLen) == 0)
+                    if (itemKey == view.key || memcmp((char *)itemKey + 8, (char *)view.key + 8, itemLen) == 0)
                     {
                         if ((int)item->second == 2)
                             item->second = 3;

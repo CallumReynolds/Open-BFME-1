@@ -39,10 +39,10 @@ public:
 };
 
 extern OVERRIDE<WeatherSetting> TheWeatherSetting;
-static const WeatherSetting *weather(const WeatherSetting *p) {
-    if (!p) return 0;
-    if (p->next) return (const WeatherSetting *)p->next->getFinalOverride();
-    return p;
+static const WeatherSetting *weather(const WeatherSetting *setting) {
+    if (!setting) return 0;
+    if (setting->next) return (const WeatherSetting *)setting->next->getFinalOverride();
+    return setting;
 }
 struct Rva00725710Caps { char pad00[0x273]; unsigned char pointSprites; };
 struct Rva00725710Map {

@@ -91168,3 +91168,4 @@ _bfmeFormatText,0x009D6220,address-only compatibility pin for 10 frozen game/gen
 ?d_009bebb0@@YAXXZ,0x009BEBB0,address-only legacy compatibility for dispatch installer after source conversion; signature is not asserted
 ?d_009b6d80@@YAXXZ,0x009B6D80,legacy address-only compatibility for retired dump; complete body and seven-dword cdecl callback verified; identity_evidence/009b6d80-verbatim-donor.md
 ?d_009b8130@@YAXXZ,0x009B8130,Address-only compatibility for the retired VP6 dump; complete installer 009B0D60 stores this body at dispatch 01356E94; identity_evidence/009b8130-verbatim-donor.md
+?d_007f4bb0@@YAXXZ,0x007F4BB0,address-only compatibility pin for retired dump name referenced by BfmeConv969.cpp

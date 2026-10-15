@@ -38099,10 +38099,7 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_007e3e60@@YAXXZ,,0x007E3E60,1804,game/gen_asm/d_007d9aa0.asm,matched,gen-dump;bounds=high
 ?d_007e4730@@YAXXZ,,0x007E4730,11,game/GameEngine/Source/Common/VirtualSlot5CallThunk.cpp,matched,object-symbol=?invokeNext@VirtualSlot10IncrementedMemberCallThunk@@QAEXXZ;Open-BFME5 clean C++ virtual slot 10 incremented member call
 ?d_007e8b00@@YAXXZ,,0x007E8B00,549,game/gen_asm/d_007e5080.asm,matched,gen-dump;ghidra=FUN_00be8b00
-?d_007f4bb0@@YAXXZ,,0x007F4BB0,269,game/gen_asm/d_007f2a50.asm,matched,gen-dump;ghidra=FUN_00bf4bb0
 ?d_007f4cc0@@YAXXZ,,0x007F4CC0,52,game/GameEngine/Source/Common/Rva7F4CC0ConstructorThunk.cpp,matched,object-symbol=??0Rva7F4CC0ConstructorThunk@@QAE@XZ;Open-BFME5 clean C++ constructor
-?d_007f7cf0@@YAXXZ,,0x007F7CF0,167,game/gen_asm/d_007d9aa0.asm,matched,gen-dump;bounds=high
-?d_007f8840@@YAXXZ,,0x007F8840,242,game/gen_asm/d_007f2a50.asm,matched,gen-dump;ghidra=FUN_00bf8840
 ?d_007f97b0@@YAXXZ,,0x007F97B0,414,game/gen_asm/d_007f96c0.asm,matched,gen-dump;ghidra=FUN_00bf97b0
 ?d_00808e00@@YAXXZ,,0x00808E00,36,game/gen_asm/d_007ff4d0.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_0081de40@@YAXXZ,,0x0081DE40,1590,game/gen_asm/d_0081de40.asm,matched,gen-dump;ghidra=FUN_00c1de40
@@ -38264,7 +38261,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_008d22c0@@YAXXZ,,0x008D22C0,1357,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00cd22c0
 ?d_008d3050@@YAXXZ,,0x008D3050,127,game/gen_asm/d_008d1540.asm,matched,gen-dump;ghidra=FUN_00cd3050
 ?d_008d3860@@YAXXZ,,0x008D3860,473,game/gen_asm/d_008d1540.asm,matched,gen-dump;ghidra=FUN_00cd3860
-?d_008d3ae0@@YAXXZ,,0x008D3AE0,275,game/gen_asm/d_008d1540.asm,matched,gen-dump;ghidra=FUN_00cd3ae0
 ?d_008d60c0@@YAXXZ,,0x008D60C0,414,game/gen_asm/d_008d1540.asm,matched,gen-dump;ghidra=FUN_00cd60c0
 ?d_008f7f00@@YAXXZ,,0x008F7F00,415,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret+int3 callers=0;ghidra=FUN_00cf7f00
 ?d_008f80a0@@YAXXZ,,0x008F80A0,112,game/gen_asm/d_00882630.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0;ghidra=FUN_00cf80a0
@@ -172550,3 +172546,11 @@ eh_00c5febc,,0x00C5FEBC,10,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matc
 ?Rva009B6D80@@YAXPAURva009B6D80Context@@PAE1IIIPBI@Z,,0x009B6D80,5028,game/GameEngine/Source/Common/Rva009B6D80MmxBand.cpp,matched,Open BFME 2 donor Code/Libraries/Source/VP6/DeblockLoopFilteredBandMmx.cpp at game.dat 0x001C7680; address identity and seven-dword cdecl callback; evidence=targets/game/reverse/identity_evidence/009b6d80-verbatim-donor.md;model=gpt-6.1-sol;host=fleet
 ?PumpMessages@CDownload@@UAEJXZ,,0x00884EC0,1065,game/Libraries/Source/WWVegas/WWDownload/CDownloadDownloadFile.cpp,matched,Open BFME 2 CDownloadDownloadFile.cpp donor at game.dat 0x006C99D0; CDownload vtable slot0 and DownloadManager update caller; complete boundary and callback ABI decoded;model=gpt-6.1-sol;host=fleet
 _Rva009B8130Vp6Reconstruct,,0x009B8130,5572,game/GameEngine/Source/Common/Rva009B8130Vp6Reconstruct.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/009b8130-verbatim-donor.md;Open BFME 2 donor DeblockNonFilteredBandMmx.cpp at game.dat 0x001C8A30; seven-argument cdecl address identity from complete BFME 1 caller and installer; native scalar control and two permitted MMX kernels; identity_evidence/009b8130-verbatim-donor.md;model=gpt-6.1-sol;host=fleet
+_bfmeReload1221,,0x008D3AE0,281,game/GameEngine/Source/Common/BfmeReload1221.cpp,matched,Open BFME 2 donor BfmeReload1221.cpp at game.dat 0x0070F710; identity and extent in targets/game/reverse/identity_evidence/008d3ae0-reload.md;model=gpt-6.1-sol;host=fleet
+?dispatch@Gen007F4D00@@UAE_NABVRva00800780Addr@@PBEH@Z,,0x007F4BB0,269,game/GameEngine/Source/GameNetwork/Rva007F4BB0AriesUdp.cpp,matched,Open BFME 2 donor Rva00661650AriesUdp.cpp at game.dat 0x00661650; secondary vtable slot 2 and RET12 ABI; targets/game/reverse/identity_evidence/007f4bb0-datagram.md;model=gpt-6.1-sol;host=fleet
+?slot0@Rva007F8840Owner@@UAEXI@Z,,0x007F8840,242,game/GameEngine/Source/GameNetwork/Rva007F8840DemanglerStep.cpp,matched,Open BFME 2 donor Rva00664EC0Method.cpp at game.dat 0x00664EC0; secondary slot 0; targets/game/reverse/identity_evidence/007f8840-demangler-step.md;model=gpt-6.1-sol;host=fleet
+?rva007F7CF0@Rva007F7CF0Owner@@UAEXHPAUBfmeThingVFD@@@Z,,0x007F7CF0,167,game/GameEngine/Source/GameNetwork/Rva007F7CF0ProbeCallback.cpp,matched,Open BFME 2 donor Rva00664370Probe.cpp at game.dat 0x00664370; secondary slot 0 and RET8; targets/game/reverse/identity_evidence/007f7cf0-probe-callback.md;model=gpt-6.1-sol;host=fleet
+??0Rva007F0A90Record@@QAE@XZ,,0x007F0A90,47,game/GameEngine/Source/Common/SmallGaps/Rva007F0A90RecordCtor.cpp,matched,Open BFME 2 donor Rva007F0910RecordCtor.cpp at game.dat 0x0065D760; RET at +0x2E with surrounding INT3; targets/game/reverse/identity_evidence/007f0a90-record-init.md;model=gpt-6.1-sol;host=fleet
+??0Rva007F4950View@@QAE@XZ,,0x007F4950,37,game/Libraries/Source/DirtySock/Y2ScalarDeleters.cpp,matched,Open BFME 2 donor Y2ScalarDeleters.cpp at game.dat 0x00661400; RET+0x24 with surrounding INT3; recorded vtable view; targets/game/reverse/identity_evidence/007f4950-aries-init.md;model=gpt-6.1-sol;host=fleet
+?rva00806430@BfmeA1187@@QAEPAXI@Z,,0x00806430,33,game/GameEngine/Source/Common/BfmeConv1187.cpp,matched,Open BFME 2 donor Y2ScalarDeleters.cpp at game.dat 0x00672460; RET4+0x1E with surrounding INT3; targets/game/reverse/identity_evidence/00806430-deleting-wrapper.md;model=gpt-6.1-sol;host=fleet
+?getValue@Rva007EA9A0Owner@@QAEHXZ,,0x007EA9A0,30,game/GameEngine/Source/GameNetwork/Rva007EA970TextFallback.cpp,matched,Open BFME 2 donor Rva007EA970TextFallback.cpp at game.dat 0x00657940; RET+0x1D and indirect tail exit with surrounding INT3; targets/game/reverse/identity_evidence/007ea9a0-value-fallback.md;model=gpt-6.1-sol;host=fleet

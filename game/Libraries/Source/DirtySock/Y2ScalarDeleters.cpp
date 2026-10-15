@@ -379,3 +379,41 @@ Gen0080ACD0::~Gen0080ACD0()
 
 	m_flag174 = 0;
 }
+
+extern void *g_bfmeRva0112B3FCVt;
+extern void *const g_bfmeVft969D1[3];
+struct __declspec(novtable) Rva007F4950Base
+{
+	virtual ~Rva007F4950Base();
+};
+
+struct Rva007F4930Deleting
+{
+	// ??1Rva007F4930Deleting@@UAE@XZ absent-from-retail
+	virtual ~Rva007F4930Deleting() {}
+};
+
+struct __declspec(novtable) Rva007F4950View : Rva007F4950Base, Rva007F4930Deleting
+{
+	Rva007F4950View();
+	virtual ~Rva007F4950View();
+	void operator delete( void *p, unsigned int n );
+
+	int m_08;
+	int m_0C;
+	int m_10;
+	int m_14;
+};
+
+// Open BFME 2: Code/Libraries/Source/DirtySock/Y2ScalarDeleters.cpp
+// ??0Rva007F4950View@@QAE@XZ
+Rva007F4950View::Rva007F4950View()
+{
+	*(void **)this = &g_bfmeRva0112B3FCVt;
+	*(void *volatile *)((char *)this+4) = (void *)g_bfmeVft969D1;
+	m_08 = 0;
+	m_0C = 0;
+	m_10 = 0;
+	m_14 = 0;
+
+}

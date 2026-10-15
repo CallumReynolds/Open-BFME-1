@@ -113,25 +113,11 @@ static __forceinline void eraseStructureToppleFXBoneRange(
 {
 	FXBoneInfo *source = last;
 	FXBoneInfo *destination = first;
-	int count = vector.m_finish - last;
-	if (count > 0)
+	for (int count = vector.m_finish - last; count > 0; --count)
 	{
-		int loopCount = count;
-		int nextCount;
-		do
-		{
-			destination->boneName = source->boneName;
-			// MSVC 7.1 otherwise selects ECX for this trivial pointer copy; the
-			// retail STLport instantiation selects EDX. Keep the typed C++ around
-			// the two-instruction code-generation constraint.
-			__asm { mov edx, [ebx+4] }
-			nextCount = *(volatile int *)&loopCount;
-			__asm { mov [ebp+4], edx }
-			++source;
-			++destination;
-			--nextCount;
-			loopCount = nextCount;
-		} while (nextCount != 0);
+		*destination = *source;
+		++source;
+		++destination;
 	}
 
 	FXBoneInfo *oldFinish = vector.m_finish;
@@ -230,14 +216,8 @@ StructureToppleUpdateModuleData::StructureToppleUpdateModuleData()
 	m_crushingWeaponName.set(g_Rva0107301CEmptyString, 0);
 	m_bfmeUnknown44 = 0.06f;
 	m_bfmeUnknownB4 = -9.876540f;
-	// This is the source-level three-element initialization loop. MSVC 7.1
-	// otherwise reuses the zero register and changes the retail store shape.
-	__asm {
-		mov ecx, 1
-		mov [esi+90h], ecx
-		mov [esi+94h], ecx
-		mov [esi+98h], ecx
-	}
+	for (int i = 0; i < 3; ++i)
+		m_oclCount[i] = 1;
 
 	fxbones.clear();
 	angleFX.clear();

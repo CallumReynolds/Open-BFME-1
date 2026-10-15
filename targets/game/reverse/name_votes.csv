@@ -1239,3 +1239,4 @@ game/Libraries/Source/EA/Apt/ValuePredicates008C4940.cpp|function|ValuePredicate
 game/GameEngineDevice/Source/W3DDevice/GameClient/W3DSnowManagerRender.cpp|param|weather|p,7dac44a5c87a53843426bd4e,claude-sonnet,20261015142106-aeef98,2026-10-15
 game/GameEngine/Source/Common/BfmeThreeHundredSixtyFive.cpp|member||m_bfmeSub,07f0af8870a0cccd57f3aaf2,claude-sonnet,20261015142229-ab275e,2026-10-15
 game/GameEngine/Source/GameLogic/AI/AIGuardMachineCtor.cpp|param|StateConditionInfo|t,491a16c1d3c96cbde95a265f,claude-sonnet,20261015142320-9bb3f5,2026-10-15
+game/GameEngine/Source/GameLogic/Object/Behavior/OathbreakersFadeAwayBehaviorFriendNewModuleDataThunk.cpp|local|OathbreakersFadeAwayBehavior::friend_newModuleData|p,21c8151ea2914151a9877e29,claude-sonnet,20261015142417-66a9fa,2026-10-15

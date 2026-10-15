@@ -1,5 +1,4 @@
 // ?react0041EBD0@Drawable@@QAEXPBUReactionInfo0041EBD0@@@Z
-// partial score=0.9951 date=2026-10-08
 // Retail RVA 0x0041EBD0, 812 bytes, thiscall with one event-info pointer.
 // Original method identity is unproved; field names retain observed offsets.
 // The info +0x0C mask is 16 bits, +0x10 is a discriminator, +0x50 a float.
@@ -10,20 +9,15 @@
 // bfmeGoEZF body. It reads its Object stack argument, uses position +0x38,
 // calls the radar-event helper with 3, then the control-bar helper, and RET 4.
 // Its receiver is unused by the callee but is explicitly supplied by retail.
-// Coord3D retains the struct ABI of the existing Eva callee contracts;
-// the canonical WWMath header instead declares a nontrivial class Coord3D.
 // stlport
 #define _STLP_USE_STATIC_LIB 1
 #define _STLP_NO_EXCEPTIONS 1
 #include <list>
+#include "../../../Libraries/Include/Lib/Coord3D.h"
 class Object;
 class Drawable;
 class Team;
 class Module;
-struct Coord3D
-{
-    float x, y, z;
-};
 enum KindOfType
 {
     K7 = 7,
@@ -157,12 +151,15 @@ class Rva0058D8E0SlotLookup
   public:
     void selectMatchingSlot(Rva0058D8E0Target *);
 };
-struct Global0041EBD0
+// TheAptPalantir (data row at VA 0x012F4B98); only its +0x2B8 slot lookup is
+// witnessed here.
+class AptPalantir
 {
+  public:
     char m_00[0x2b8];
     Rva0058D8E0SlotLookup m_2b8;
 };
-extern Global0041EBD0 *g_012F4B98;
+extern AptPalantir *TheAptPalantir;
 class DrawableTiming0041E9E0
 {
   public:
@@ -200,20 +197,15 @@ class Drawable : public Thing
     unsigned m_310;
     void react0041EBD0(const ReactionInfo0041EBD0 *);
 };
-void Drawable::react0041EBD0(const ReactionInfo0041EBD0 *info)
+// The kind-7 Eva announcement is a force-inlined helper: written in the body
+// MSVC reloads the info and object spills in the opposite order at its join.
+static __forceinline void reactEva0041EBD0(Drawable *self, Object *object, Player *player)
 {
-    Object *object = m_object;
-    if (!object)
-        return;
-    Player *player = object->getControllingPlayer();
-    if (!(info->m_50 > 0.0f) || info->m_10 == 10 || info->m_10 == 7 ||
-        (info->m_0c & (unsigned short)(1 << player->m_playerIndex)))
-        return;
-    if (isKindOf(K7))
+    if (self->isKindOf(K7))
     {
         bool eligible = false;
         EvaMessage first = EVA1, second = EVA2;
-        if (isKindOf(K37))
+        if (self->isKindOf(K37))
             eligible = true;
         static NameKeyType key = TheNameKeyGenerator->nameToKey("CastleMemberBehavior");
         Module *member = object->findModule(key);
@@ -236,6 +228,17 @@ void Drawable::react0041EBD0(const ReactionInfo0041EBD0 *info)
             }
         }
     }
+}
+void Drawable::react0041EBD0(const ReactionInfo0041EBD0 *info)
+{
+    Object *object = m_object;
+    if (!object)
+        return;
+    Player *player = object->getControllingPlayer();
+    if (!(info->m_50 > 0.0f) || info->m_10 == 10 || info->m_10 == 7 ||
+        (info->m_0c & (unsigned short)(1 << player->m_playerIndex)))
+        return;
+    reactEva0041EBD0(this, object, player);
     if (!((BFMESelectionStatusBits *)object)->test(0x93) &&
         !((BFMESelectionStatusBits *)object)->test(0x3e) && !object->testStatusRva001CC880(STATUS37))
     {
@@ -281,6 +284,6 @@ void Drawable::react0041EBD0(const ReactionInfo0041EBD0 *info)
                 TheEva->setShouldPlay(getTemplate()->m_458, &object->m_position);
         }
         if (isKindOf(K89))
-            g_012F4B98->m_2b8.selectMatchingSlot((Rva0058D8E0Target *)object);
+            TheAptPalantir->m_2b8.selectMatchingSlot((Rva0058D8E0Target *)object);
     }
 }

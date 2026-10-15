@@ -91176,3 +91176,4 @@ _bfmeFormatText,0x009D6220,address-only compatibility pin for 10 frozen game/gen
 ??0Rva001A2D50Node@@QAE@HVAsciiString@@PBVCoord3D@@000_NH0@Z,0x001AB600,Address-derived pointer-ABI view; complete constructor and caller evidence targets/game/reverse/identity_evidence/001f96e0-waypoint-construction.md
 ?d_001f96e0@@YAXXZ,0x001F96E0,Address-only compatibility for the retired dump name; game/GameEngine/Source/Common/BfmeThreeHundredSixteen.cpp still calls it; body is ?createWaypoints@DynamicPortalBehaviour@@QAEXXZ
 ?d_00155da0@@YAXXZ,0x00155DA0,Address-only compatibility for the retired dump name; game/GameEngine/Source/GameLogic/AI/AIGroupGroupAttackObjectPrivateThunk.cpp still calls it; body is attack00155DA0
+?Rva009DB560Sleep@@YAXK@Z,0x009DB560,Address-derived cdecl one-dword Sleep wrapper; complete 12-byte decode and caller at 009090A0; evidence=identity_evidence/00908fe0-named-state-and-handle.md

@@ -1,5 +1,5 @@
 // ?Render@SegLineRendererClass@@QAEXAAVRenderInfoClass@@ABVMatrix3D@@IPAVVector3@@ABVSphereClass@@PAVVector4@@@Z
-// partial score=0.9964 date=2026-09-12
+// partial score=0.9994 date=2026-10-15
 // cl: /DNDEBUG /MD /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/Wwutil /Igame/Libraries/Source/WWVegas/WWDownload /Igame/Libraries/Source/Compression /Igame/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/shims/sweep
 /*
 **	Command & Conquer Generals Zero Hour(tm)
@@ -194,7 +194,7 @@ v.Z *= oolen;
 }
 static __forceinline Vector3 &ScaleSegLineExpansion(Vector3 &value, float factor)
 {
-value.X = *(volatile float *)&factor * value.X;
+value.X = factor * value.X;
 value.Y = *(volatile float *)&factor * value.Y;
 value.Z = *(volatile float *)&factor * value.Z;
 return value;
@@ -203,7 +203,7 @@ static WWINLINE void CrossSegLineMerge(const Vector3 &a,const Vector3 &b,Vector3
 {
 assert(set_result != &a);
 set_result->X = (*(const volatile float *)&a.Y * b.Z - a.Z * *(const volatile float *)&b.Y);
-set_result->Y = (a.Z * *(const volatile float *)&b.X - *(const volatile float *)&a.X * b.Z);
+set_result->Y = (a.Z * b.X - a.X * b.Z);
 const volatile float &next_y = b.Y;
 const volatile float &prev_y = a.Y;
 set_result->Z = (a.X * next_y - prev_y * b.X);
@@ -212,14 +212,14 @@ static WWINLINE void CrossSegLineStartPlane(const Vector3 &a,const Vector3 &b,Ve
 {
 assert(set_result != &a);
 set_result->X = (*(const volatile float *)&a.Y * b.Z - a.Z * *(const volatile float *)&b.Y);
-set_result->Y = (*(const volatile float *)&a.Z * b.X - *(const volatile float *)&a.X * b.Z);
+set_result->Y = (*(const volatile float *)&a.Z * b.X - a.X * b.Z);
 set_result->Z = (a.X * *(const volatile float *)&b.Y - *(const volatile float *)&a.Y * b.X);
 }
 static WWINLINE float DotSegLineLastTopSequential(const Vector3 &plane, const Vector3 &point)
 {
-float zy = *(const volatile float *)&point.Z * plane.Z;
+float zy = point.Z * plane.Z;
 zy += *(const volatile float *)&point.Y * plane.Y;
-zy += *(const volatile float *)&plane.X * point.X;
+zy += plane.X * point.X;
 return zy;
 }
 static WWINLINE float SegLineMergeNextEdgeDot(const Vector3 &direction,const Vector3 &plane)

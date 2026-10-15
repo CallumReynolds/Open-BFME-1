@@ -67,6 +67,5 @@ float StructureCollapseRetailLayout::getCollapseHeight()
 
 	const float result = resolveFinalOverride(
 		(Overridable *volatile *)&m_thing->m_template)->m_geometryInfo.getMaxHeightAbovePosition();
-	__asm { }
 	return result;
 }

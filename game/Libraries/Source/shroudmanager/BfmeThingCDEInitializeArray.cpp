@@ -7,6 +7,7 @@
 // is constructed.
 
 void *operator new[](unsigned int size);
+void operator delete[](void *p);
 
 class Element
 {

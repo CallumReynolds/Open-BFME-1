@@ -1,5 +1,5 @@
 // ?End_Scene@DX8Wrapper@@SAX_N@Z
-// partial score=0.9968 date=2026-10-15
+// Complete 616-byte retail body; identity: WW3D::End_Render caller.
 // cl: /Igame/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/shims/dx8wrapper /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Iinputs/reference/shims/sweep /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/Compression /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/debug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWLib /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngineDevice/Include /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WW3D2 /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWMath /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Main
 // stlport
 #define Matrix4x4 Matrix4  // BFME renamed it
@@ -62,7 +62,12 @@
 
 extern void bfmeEndSceneTouch00958910(void *);
 struct BfmeEndSceneDeviceVtable { void *slots0to2[3]; long (__stdcall *TestCooperativeLevel)(void *); void *slots4to16[13]; long (__stdcall *Present)(void *, const void *, const void *, void *, const void *); void *slots18to41[24]; long (__stdcall *EndScene)(void *); };
-struct BfmeEndSceneDevice { BfmeEndSceneDeviceVtable *vtable; };
+struct BfmeEndSceneDevice { BfmeEndSceneDeviceVtable *vtable;
+    // ?EndScene@BfmeEndSceneDevice@@QAEJXZ absent-from-retail
+    long EndScene() { return vtable->EndScene(this); }
+    // ?Present@BfmeEndSceneDevice@@QAEJPBX0PAX0@Z absent-from-retail
+    long Present(const void *a, const void *b, void *c, const void *d) { return vtable->Present(this, a, b, c, d); }
+};
 class BfmeAwakenLog { public: virtual BfmeAwakenLog *slot00(int); virtual void slot04(void); virtual void slot08(void); virtual void slot0c(void); virtual void slot10(void); virtual void slot14(void); virtual void slot18(void); virtual void slot1c(void); virtual void slot20(void); virtual void slot24(void); virtual void slot28(void); virtual void slot2c(void); virtual void slot30(void); virtual void slot34(void); virtual BfmeAwakenLog *slot38(const char *); virtual void slot3c(void); virtual void slot40(void); virtual void slot44(void); virtual void slot48(void); virtual BfmeAwakenLog *slot4c(int); };
 class BfmeAwakenDebug { public: virtual void slot00(void); virtual void slot04(void); virtual void slot08(void); virtual void slot0c(void); virtual void slot10(void); virtual void slot14(void); virtual void slot18(void); virtual void slot1c(void); virtual void slot20(void); virtual void slot24(void); virtual void slot28(void); virtual void slot2c(void); virtual void slot30(void); virtual void slot34(void); virtual void slot38(void); virtual void slot3c(void); virtual void slot40(void); virtual void slot44(void); virtual void slot48(void); virtual void slot4c(void); virtual void slot50(void); virtual void slot54(void); virtual void slot58(void); virtual void slot5c(void); virtual void slot60(void); virtual void slot64(void); virtual void slot68(void); virtual BfmeAwakenLog *slot6c(int, int); };
 extern BfmeAwakenDebug *TheBfmeAwakenDebug;
@@ -91,8 +96,9 @@ struct BfmeD3D9CapsMaxTextures {
     int MaxTexturesPerPass;
 };
 
-extern unsigned g_Va013405C4;
-extern unsigned g_Va013405C8;
+// Internal storage makes the device table independent of the counter clear.
+static unsigned g_Va013405C4;
+static unsigned g_Va013405C8;
 
 // ?End_Scene@DX8Wrapper@@SAX_N@Z
 void DX8Wrapper::End_Scene(bool flip_frames)
@@ -101,13 +107,13 @@ void DX8Wrapper::End_Scene(bool flip_frames)
     BfmeEndSceneDevice *dev = reinterpret_cast<BfmeEndSceneDevice *>(D3DDevice);
     BfmeEndSceneDeviceVtable *vtable = dev->vtable;
     g_Va013405C4 = 0;
-    vtable->EndScene(dev);
+    dev->EndScene();
     ++number_of_DX8_calls;
     bfmeEndSceneTouch00958910(0);
     if (flip_frames) {
         BfmeEndSceneDevice *present_device = reinterpret_cast<BfmeEndSceneDevice *>(D3DDevice);
         BfmeEndSceneDeviceVtable *present_vtable = present_device->vtable;
-        int result = present_vtable->Present(present_device, 0, 0, 0, 0);
+        int result = present_device->Present(0, 0, 0, 0);
         ++number_of_DX8_calls;
         if (result >= 0) { IsDeviceLost = false; ++FrameCount; } else IsDeviceLost = true;
         // If the device was lost we need to check for cooperative level and possibly reset the device

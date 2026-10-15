@@ -9,16 +9,14 @@
 // _Vector_base(size_t, const allocator &) constructor at 0x00026085 and
 // __copy_trivial at 0x00018179, and contradicts the int spelling at all three.
 //
-// Retail linked this TU's private copies of the first two, so their source
-// spellings are scoped to the observed RVAs: the plain void * _Vector_base
-// spelling already carries a pin for the 0x001F9330 body that
-// LargeGroupAudioKeyMap's TU encodes, and adding a second address to that name
-// would make one name mean two different bodies.  __copy_trivial keeps its real
+// _Vector_base<void *>(n, a) keeps its real spelling: it is pinned at ILT
+// 0x00026085 -> 0x00066A90, the base the hashtable bucket vector's ctor
+// 0x00066EB0 calls too (identity_evidence/00066eb0-vector-voidptr-fill-ctor.md).
+// get_allocator stays scoped to the observed RVA.  __copy_trivial keeps its real
 // spelling and is pinned beside the 0x000666E0 body the ledger already has.
 //
 // cl: /Od /Ob2 /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
-#define _Vector_base Rva00026085VectorBase
 #define get_allocator bfmeGetAllocator00009C28
 #pragma inline_depth(255)
 #pragma inline_recursion(on)
@@ -31,5 +29,4 @@ __declspec(noinline) void *__copy_trivial(const void *, const void *, void *) th
 #undef inline
 #include <vector>
 #undef get_allocator
-#undef _Vector_base
 template _STL::vector<void *, _STL::allocator<void *> >::vector(const _STL::vector<void *, _STL::allocator<void *> > &);

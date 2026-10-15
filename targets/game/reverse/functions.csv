@@ -38336,7 +38336,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00bfc2fe@@YAXXZ,,0x00BFC2FE,8,game/gen_asm/d_009f6921.asm,matched,gen-dump;ghidra=Unwind@00ffc2fe
 ?d_00bfc306@@YAXXZ,,0x00BFC306,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ffc306
 ?d_00bfc3d8@@YAXXZ,,0x00BFC3D8,17,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ffc3d8
-?d_00bfc450@@YAXXZ,,0x00BFC450,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ffc450
 ?d_00bfe008@@YAXXZ,,0x00BFE008,11,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@00ffe008
 ?d_00c032f0@@YAXXZ,,0x00C032F0,25,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@010032f0
 ?d_00c04810@@YAXXZ,,0x00C04810,34,game/gen_asm/d_00aa0d0d.asm,matched,gen-dump;ghidra=Unwind@01004810
@@ -38363,7 +38362,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c09c79@@YAXXZ,,0x00C09C79,11,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01009c79
 ?d_00c09c8f@@YAXXZ,,0x00C09C8F,31,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@01009c8f
 ?d_00c0b050@@YAXXZ,,0x00C0B050,22,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@0100b050
-?d_00c0b0b0@@YAXXZ,,0x00C0B0B0,22,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@0100b0b0
 ?d_00c0bbe0@@YAXXZ,,0x00C0BBE0,31,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@0100bbe0
 ?d_00c0bbff@@YAXXZ,,0x00C0BBFF,34,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@0100bbff
 ?d_00c0bc21@@YAXXZ,,0x00C0BC21,31,game/gen_asm/d_00c06477.asm,matched,gen-dump;ghidra=Unwind@0100bc21
@@ -38624,35 +38622,10 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_00c5e0f8@@YAXXZ,,0x00C5E0F8,11,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@0105e0f8
 ?d_00c5f0e0@@YAXXZ,,0x00C5F0E0,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@0105f0e0
 ?d_00c5f190@@YAXXZ,,0x00C5F190,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@0105f190
-?d_00c5fd7e@@YAXXZ,,0x00C5FD7E,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
-?d_00c5fd89@@YAXXZ,,0x00C5FD89,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fd94@@YAXXZ,,0x00C5FD94,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fd9f@@YAXXZ,,0x00C5FD9F,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
-?d_00c5fda7@@YAXXZ,,0x00C5FDA7,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fdb2@@YAXXZ,,0x00C5FDB2,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
-?d_00c5fdba@@YAXXZ,,0x00C5FDBA,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fdc5@@YAXXZ,,0x00C5FDC5,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
-?d_00c5fdcd@@YAXXZ,,0x00C5FDCD,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fde0@@YAXXZ,,0x00C5FDE0,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fdeb@@YAXXZ,,0x00C5FDEB,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
-?d_00c5fdf3@@YAXXZ,,0x00C5FDF3,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
 ?d_00c5fdfe@@YAXXZ,,0x00C5FDFE,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
-?d_00c5fe06@@YAXXZ,,0x00C5FE06,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
 ?d_00c5fe11@@YAXXZ,,0x00C5FE11,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
-?d_00c5fe19@@YAXXZ,,0x00C5FE19,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fe24@@YAXXZ,,0x00C5FE24,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
 ?d_00c5fe2f@@YAXXZ,,0x00C5FE2F,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
-?d_00c5fe37@@YAXXZ,,0x00C5FE37,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
-?d_00c5fe4a@@YAXXZ,,0x00C5FE4A,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
 ?d_00c5fe55@@YAXXZ,,0x00C5FE55,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
-?d_00c5fe5d@@YAXXZ,,0x00C5FE5D,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fe68@@YAXXZ,,0x00C5FE68,8,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail callers=0
-?d_00c5fe70@@YAXXZ,,0x00C5FE70,11,game/gen_asm/d_00bf2738.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail callers=0
-?d_00c5fe83@@YAXXZ,,0x00C5FE83,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
-?d_00c5fe8e@@YAXXZ,,0x00C5FE8E,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
-?d_00c5fe96@@YAXXZ,,0x00C5FE96,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
-?d_00c5fea1@@YAXXZ,,0x00C5FEA1,8,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=jmp-tail refs=0
-?d_00c5fea9@@YAXXZ,,0x00C5FEA9,11,game/gen_asm/d_00bf4ec3.asm,matched,gen-dump;carved start=ghidra-start end=ret-tail refs=0
 ?d_00c61328@@YAXXZ,,0x00C61328,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061328
 ?d_00c61819@@YAXXZ,,0x00C61819,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061819
 ?d_00c61840@@YAXXZ,,0x00C61840,25,game/gen_asm/d_00c5dc18.asm,matched,gen-dump;ghidra=Unwind@01061840
@@ -172555,3 +172528,30 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ??0Rva00597790@@QAE@XZ,,0x00597790,532,game/GameEngine/Source/GameClient/GUI/Palantir/Rva00597790Constructor.cpp,matched,address-qualified member constructor; complete caller and callback ABI; four-state unwind verified; evidence=targets/game/reverse/identity_evidence/00597790-constructor.md;model=gpt-6.1-sol;host=fleet
 ?dup_00651054@@YAXXZ,,0x00651054,81,game/GameEngine/Source/GameNetwork/GameSpy/Thread/PeerThread_ThreadFunction.cpp,matched,compiler-catch;gen-funclet;parent=?Thread_Function@PeerThreadClass@@UAEXXZ;object-symbol=$L45122;retail FuncInfo VA 0x0123267C catch(...) handler for try states 0..16 at 0x00651054 (contains the nested try whose handler is 0x006510A5) returning to 0x0064FF00;evidence=identity_evidence/0064fb90-peerthread-catch.md;model=claude-opus-5-5;host=app
 ?End_Scene@DX8Wrapper@@SAX_N@Z,,0x00908FE0,616,game/Libraries/Source/WWVegas/WW3D2/DX8WrapperEndScene.cpp,matched,WW3D End_Render caller and checked complete ABI;internal counter storage and visible COM dispatch;identity-evidence=targets/game/reverse/identity_evidence/00908fe0-internal-counters.md;model=gpt-6.1-sol;host=fleet
+?Rva00C5FD7ECleanup@@YAXXZ,,0x00C5FD7E,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27722;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state3 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FD89Cleanup@@YAXXZ,,0x00C5FD89,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27724;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state4 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FD94Cleanup@@YAXXZ,,0x00C5FD94,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27725;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state5 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FD9FCleanup@@YAXXZ,,0x00C5FD9F,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27820;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state6 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDA7Cleanup@@YAXXZ,,0x00C5FDA7,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27726;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state7 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDB2Cleanup@@YAXXZ,,0x00C5FDB2,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27836;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state8 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDBACleanup@@YAXXZ,,0x00C5FDBA,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27727;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state9 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDC5Cleanup@@YAXXZ,,0x00C5FDC5,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27852;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state10 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDCDCleanup@@YAXXZ,,0x00C5FDCD,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27728;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state11 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDE0Cleanup@@YAXXZ,,0x00C5FDE0,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27729;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state13 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDEBCleanup@@YAXXZ,,0x00C5FDEB,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27884;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state14 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FDF3Cleanup@@YAXXZ,,0x00C5FDF3,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27731;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state15 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE06Cleanup@@YAXXZ,,0x00C5FE06,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27733;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state17 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE19Cleanup@@YAXXZ,,0x00C5FE19,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27735;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state19 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE24Cleanup@@YAXXZ,,0x00C5FE24,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27736;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state20 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE37Cleanup@@YAXXZ,,0x00C5FE37,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27738;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state22 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE4ACleanup@@YAXXZ,,0x00C5FE4A,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27739;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state24 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE5DCleanup@@YAXXZ,,0x00C5FE5D,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27741;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state26 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE68Cleanup@@YAXXZ,,0x00C5FE68,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27993;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state27 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE70Cleanup@@YAXXZ,,0x00C5FE70,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27742;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state28 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE83Cleanup@@YAXXZ,,0x00C5FE83,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27743;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state30 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE8ECleanup@@YAXXZ,,0x00C5FE8E,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L28081;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state31 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FE96Cleanup@@YAXXZ,,0x00C5FE96,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27744;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state32 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FEA1Cleanup@@YAXXZ,,0x00C5FEA1,8,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L28121;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state33 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00C5FEA9Cleanup@@YAXXZ,,0x00C5FEA9,11,game/Libraries/Source/WWVegas/WW3D2/part_buf.cpp,matched,gen-funclet;object-symbol=$L27745;parent=??0ParticleBufferClass@@QAE@ABV0@@Z;retail 00989A20 -> handler 00C5FEBC -> FuncInfo 00E4F39C state34 judged by eh_state_pins;twin_proof=state-index;model=claude-opus-5-5;host=app
+?Rva00BFC450Cleanup@@YAXXZ,,0x00BFC450,11,game/GameEngine/Source/Common/System/BuildAssistant_buildTiledLocations.cpp,matched,gen-funclet;object-symbol=$L1660;parent=?buildTiledLocations@BuildAssistant@@UAEPAUTileBuildInfo@1@PBVThingTemplate@@MPBVCoord3D@@1MHPAVObject@@@Z;retail 000FC010 -> handler 00BFC45B -> FuncInfo 00DE9998 state0 judged by eh_state_pins;model=claude-opus-5-5;host=app
+?Rva00C0B0B0Cleanup@@YAXXZ,,0x00C0B0B0,22,game/GameEngine/Source/GameLogic/Object/Behavior/DynamicPortalBehaviourRva001F96E0.cpp,matched,gen-funclet;object-symbol=$L6808;parent=?createWaypoints@DynamicPortalBehaviour@@QAEXXZ;retail 001F96E0 -> handler 00C0B10B -> FuncInfo 00DF9A40 state0 judged by eh_state_pins;model=claude-opus-5-5;host=app

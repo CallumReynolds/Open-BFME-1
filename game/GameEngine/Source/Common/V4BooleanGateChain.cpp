@@ -25,7 +25,7 @@
 // `cmp word ptr [eax+4],0` -- reproduces to the byte in size and content but
 // with the two arms laid out the other way round, in all four spellings tried
 // (both `&&`/`||` polarities and both goto directions produced identical code).
-// It is NOT claimed.
+// It is now claimed in Glo012F1028Type_Rva003BDA10.cpp (inline isEmpty predicate).
 //
 // IDENTITY IS NOT RECOVERED.  Every name is derived from an address; the callee
 // pins are address-derived and additive.

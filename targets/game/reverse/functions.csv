@@ -37211,7 +37211,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_003b9200@@YAXXZ,,0x003B9200,79,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_007b9200
 ?d_003bbe30@@YAXXZ,,0x003BBE30,1,game/GameEngine/Source/Common/Rva003BBE30.cpp,matched,carved ret-only body at retail address with no proven semantic identity
 ?d_003bd250@@YAXXZ,,0x003BD250,1,game/GameEngine/Source/Common/Rva003BD250Noop.cpp,matched,opaque address-derived body with proven ret boundary
-?d_003bd9c0@@YAXXZ,,0x003BD9C0,63,game/gen_asm/d_003b8450.asm,matched,gen-dump;ghidra=FUN_007bd9c0
 ?d_003be020@@YAXXZ,,0x003BE020,239,game/gen_asm/d_003b8450.asm,matched,gen-dump;ghidra=FUN_007be020
 ?d_003bf9c0@@YAXXZ,,0x003BF9C0,1,game/GameEngine/Source/Common/Rva003BF9C0Empty.cpp,matched,carved boundary contains only ret; no semantic identity evidence
 ?d_003c2100@@YAXXZ,,0x003C2100,300,game/gen_asm/d_003c2100.asm,matched,gen-dump;ghidra=FUN_007c2100
@@ -172555,3 +172554,4 @@ _DeblockLoopFilteredBand_WMT_Rva009BFA40,,0x009BFA40,4068,game/GameEngine/Source
 ?stopSlavedEffects@SlavedUpdate@@AAEXXZ,,0x002A4720,68,game/GameEngine/Source/GameLogic/Object/Update/SlavedUpdate_startSlavedEffects.cpp,matched,SlavedUpdate stop effects from retail matched shape; no asm barrier;model=claude-opus-5.5;host=GreatFaram
 ?getCollapseHeight@StructureCollapseRetailLayout@@QAEMXZ,,0x002AE680,110,game/GameEngine/Source/GameLogic/Object/Update/StructureCollapseGetCollapseHeight.cpp,matched,Open-BFME5 exact clean C++ BFME layout model; call-derived identity from beginStructureCollapse; no asm barrier;model=claude-opus-5.5;host=GreatFaram
 ?update@AIAttackMeleeHordeWaitPathState@@UAE?AW4StateReturnType@@XZ,,0x00175C80,358,game/GameEngine/Source/GameLogic/AI/AIAttackMeleeHordeWaitPathState_update.cpp,matched,retail boundary and constructor identity; no asm barrier;model=claude-opus-5.5;host=GreatFaram
+?rva003BD9C0@Glo012F1028Type@@QAEXPAXPAURva003BDA10String@@0@Z,,0x003BD9C0,63,game/GameEngine/Source/Common/Glo012F1028Type_Rva003BDA10.cpp,matched,receiver Glo012F1028 proven by caller 0x003AD560 +0x170 via ILT 0x00036264; inline isEmpty predicate keeps retail arm order;model=claude-opus-5.5;host=GreatFaram

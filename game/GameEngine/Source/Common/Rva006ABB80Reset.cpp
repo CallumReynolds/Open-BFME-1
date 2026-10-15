@@ -65,16 +65,8 @@ void Rva006ABB80::reset()
 		return;
 	if (m_scaleBits != 0x3F800000)
 	{
-		// MSVC 7.1 emits the four setup instructions in a different order for
-		// the otherwise identical intrinsic; this is the proven codegen blocker
-		// recorded by the prior 87/102 attempt.
-		__asm
-		{
-			lea edi, [edx + 188h]
-			mov ecx, 0Ch
-			mov eax, 02020202h
-			rep stosd
-		}
+		for (int i = 0; i < 48; ++i)
+			m_buf[i] = 2;
 	}
 	Rva006ABB80Tree *tree = &m_tree;
 	if (m_tree.count != 0)

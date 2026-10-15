@@ -24,7 +24,7 @@ public:
 	char m_pad[0x9C];
 	unsigned m_scaleBits;
 	Rva006AEE00Tree m_tree;
-	char m_padA8[0x188 - 0xA8];
+	char m_padA8[0x188 - 0xA0 - sizeof(Rva006AEE00Tree)];
 	unsigned char m_buf[48];
 };
 
@@ -34,12 +34,7 @@ void Rva006ACE30::insertFill(const StringBase<char> &name)
 	InsertResult r = m_tree.insert_unique((const AsciiString &)name);
 	if (r.second && m_scaleBits != 0x3F800000)
 	{
-		__asm
-		{
-			lea edi, [esi + 188h]
-			mov ecx, 0Ch
-			mov eax, 02020202h
-			rep stosd
-		}
+		for (int i = 0; i < 48; ++i)
+			m_buf[i] = 2;
 	}
 }

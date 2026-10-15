@@ -1,7 +1,10 @@
 // cl: /Od
 // Open-BFME5 conversions.
 
-extern "C" char *__cdecl bfmeSearch1155(char *f0, char *f1, const char *s0, const char *s1);
+// BFME2 BfmeConv1155 calls this existing wrapper. BFME1 0x0082F7C0
+// independently calls its 0x0082F1A0 body and consumes the pointer in EAX.
+extern void __cdecl bfmeGoOV(void *first, void *last, void *setFirst, void *setLast);
+typedef char *(__cdecl *BfmeSearch1155Fn)(char *, char *, const char *, const char *);
 
 class BfmeS1155
 {
@@ -22,6 +25,6 @@ unsigned int BfmeS1155::bfmeFind1155(const char *s, unsigned int pos, unsigned i
 
 	n2 = s;
 	n3 = s + n;
-	n1 = bfmeSearch1155(m_bfme00 + pos, m_bfme04, n2, n3);
+	n1 = ((BfmeSearch1155Fn)bfmeGoOV)(m_bfme00 + pos, m_bfme04, n2, n3);
 	return (n1 != m_bfme04) ? (unsigned int)(n1 - m_bfme00) : 0xffffffff;
 }

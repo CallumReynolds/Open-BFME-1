@@ -91169,3 +91169,8 @@ _bfmeFormatText,0x009D6220,address-only compatibility pin for 10 frozen game/gen
 ?d_009b6d80@@YAXXZ,0x009B6D80,legacy address-only compatibility for retired dump; complete body and seven-dword cdecl callback verified; identity_evidence/009b6d80-verbatim-donor.md
 ?d_009b8130@@YAXXZ,0x009B8130,Address-only compatibility for the retired VP6 dump; complete installer 009B0D60 stores this body at dispatch 01356E94; identity_evidence/009b8130-verbatim-donor.md
 ?d_007f4bb0@@YAXXZ,0x007F4BB0,address-only compatibility pin for retired dump name referenced by BfmeConv969.cpp
+??1?$deque@UGen_t_008fbc70_p8cd@@V?$allocator@UGen_t_008fbc70_p8cd@@@_STL@@@_STL@@QAE@XZ,0x008FB410,eight-byte deque cleanup; full helper and ABI evidence=targets/game/reverse/identity_evidence/008fbd00-donor-search.md
+?d_008fbd00@@YAXXZ,0x008FBD00,address-only compatibility pin for retired dump name
+?d_008f7f00@@YAXXZ,0x008F7F00,address-only compatibility pin for retired dump name
+?d_008f8110@@YAXXZ,0x008F8110,address-only compatibility pin for retired dump name
+?d_008f80a0@@YAXXZ,0x008F80A0,address-only compatibility pin for retired dump name

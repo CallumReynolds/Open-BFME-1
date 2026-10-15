@@ -1,7 +1,6 @@
-// ?replace002382D0@ContainView002382D0@@UAEXPBVThingTemplate@@@Z
-// partial score=0.7072 date=2026-10-09
-// Retail secondary-interface slot 25; owner and method identities remain address-qualified.
-// Pointer payloads and the boolean latch follow complete decoded helpers.
+// ?changeToFormation@HordeContain@@UAEXPBVThingTemplate@@@Z
+// Secondary-interface slot 25; owner and method identities remain address-qualified.
+// Evidence: targets/game/reverse/identity_evidence/0x002382d0-exact-getter-lifetimes.md.
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include /Igame/GameEngine/Source/GameLogic/Object
 // stlport
 #include <list>
@@ -21,7 +20,7 @@ class GameLogic { public: void destroyObject(Object *); Object *findObjectByID(i
 extern ThingFactory *TheThingFactory;
 extern GameLogic *TheGameLogic;
 typedef _STL::list<Object *> MemberList002382D0;
-class ContainView002382D0;
+class HordeContain;
 struct Owner002382D0;
 class ModuleView002382D0 {
 public:
@@ -51,11 +50,15 @@ public:
  virtual void slot23();
  virtual void slot24();
  virtual void slot25();
- virtual ContainView002382D0 *slot26();
+ virtual HordeContain *slot26();
 };
 #define OBJECT_TU_MEMBERS void bfmeSwapContainModule(Object *);
 #include "object.h"
-class ContainView002382D0 { public:
+class HordeContain { public:
+ // ?getObject002382D0@HordeContain@@QBEPAVObject@@XZ absent-from-retail
+ Object *getObject002382D0() const { return *(Object **)((char *)this-0xdc); }
+ // ?getTeam002382D0@HordeContain@@QBEPAVTeam@@XZ absent-from-retail
+ Team *getTeam002382D0() const { return getObject002382D0()->m_team; }
  virtual void slot0();
  virtual void slot1();
  virtual void slot2();
@@ -81,7 +84,7 @@ class ContainView002382D0 { public:
  virtual void slot22();
  virtual void slot23();
  virtual void slot24();
- virtual void replace002382D0(const ThingTemplate *);
+ virtual void changeToFormation(const ThingTemplate *);
  virtual void slot26();
  virtual void slot27();
  virtual Object *slot28(Object *,Object *,bool);
@@ -182,15 +185,16 @@ class ContainView002382D0 { public:
 };
 struct Owner002382D0 {
  char prefix[0xe4];
- ContainView002382D0 view;
+ HordeContain view;
  char gap[0x210-0xe8];
  bool flag210;
 };
-void ContainView002382D0::replace002382D0(const ThingTemplate *t)
+void HordeContain::changeToFormation(const ThingTemplate *t)
 {
- Object *created=TheThingFactory->newObject(t,(*(Object **)((char *)this-0xdc))->m_team,BitFlags<86>(),0);
- ContainView002382D0 *contain=0;
- if ((ModuleView002382D0 *)created->m_contain) contain=((ModuleView002382D0 *)created->m_contain)->slot26();
+ Object *created=TheThingFactory->newObject(t,getTeam002382D0(),BitFlags<86>(),0);
+ ModuleView002382D0 *module=(ModuleView002382D0 *)created->m_contain;
+ HordeContain *contain=0;
+ if(module) contain=module->slot26();
  if (!contain) { TheGameLogic->destroyObject(created); return; }
  Owner002382D0 *replacement=contain->slot122();
  slot112();
@@ -201,9 +205,9 @@ void ContainView002382D0::replace002382D0(const ThingTemplate *t)
   MemberList002382D0::iterator it=_STL::find(members.begin(),members.end(),held);
   if(it!=members.end()) members.erase(it);
  }
- bool enabled=((char *)(*(Object **)((char *)this-0xdc))->getDrawable())[0x3ac]!=0;
- (*(Object **)((char *)this-0xdc))->bfmeSwapContainModule(created);
- ContainView002382D0 *other=&replacement->view;
+ bool enabled=((char *)getObject002382D0()->getDrawable())[0x3ac]!=0;
+ getObject002382D0()->bfmeSwapContainModule(created);
+ HordeContain *other=&replacement->view;
  other->slot81(*(int *)((char *)this+0xe8));
  other->slot29(&members);
  if(held) {

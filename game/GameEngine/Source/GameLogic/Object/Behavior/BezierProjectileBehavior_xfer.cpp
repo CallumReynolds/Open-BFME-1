@@ -69,7 +69,6 @@ class Rva00034045NameAccessor { public: AsciiString getName() const; };
 class WeaponTemplate;
 class WeaponStore { public: const WeaponTemplate *findWeaponTemplate(AsciiString) const; };
 extern WeaponStore *TheWeaponStore;
-extern const AsciiString Rva01336E50EmptyString;
 class BezierProjectileBehavior {
     char m_before28[0x24];
     int m_at28;
@@ -113,11 +112,11 @@ void BezierProjectileBehavior::xfer(Xfer *xfer) {
     xfer->xferCoord3D(m_at2C);
     xferCoord3DVector(xfer,(_STL::vector<Coord3D>*)m_at44);
     if (version.current>=2) xfer->xferReal(m_at84);
-    AsciiString name=Rva01336E50EmptyString;
+    AsciiString name=AsciiString::TheEmptyString;
     if (m_at40) name=((const Rva00034045NameAccessor*)m_at40)->getName();
     xfer->xferAsciiString(name);
     if (xfer->IsLoading()) {
-        if (((const StringBase<char>&)name).compare(Rva01336E50EmptyString)==0) m_at40=0;
+        if (((const StringBase<char>&)name).compare(AsciiString::TheEmptyString)==0) m_at40=0;
         else {
             m_at40=TheWeaponStore->findWeaponTemplate(name);
             if (!m_at40) {
@@ -125,11 +124,11 @@ void BezierProjectileBehavior::xfer(Xfer *xfer) {
             }
         }
     }
-    name=Rva01336E50EmptyString;
+    name=AsciiString::TheEmptyString;
     if (m_at3C) name=((const Rva00034045NameAccessor*)m_at3C)->getName();
     xfer->xferAsciiString(name);
     if (xfer->IsLoading()) {
-        if (((const StringBase<char>&)name).compare(Rva01336E50EmptyString)==0) m_at3C=0;
+        if (((const StringBase<char>&)name).compare(AsciiString::TheEmptyString)==0) m_at3C=0;
         else {
             m_at3C=TheWeaponStore->findWeaponTemplate(name);
             if (!m_at3C) {

@@ -114,6 +114,9 @@ public:
 	virtual void slot38(int);
 
 	void bindShownWithArg(const AsciiString &name, void *argument, Rva0050F920FunctorHolder callback);
+	void rva0046DD00(const AsciiString &name);
+	void _bfme_removeNamedAptGadget(const AsciiString &name);
+	void bfme_hideBackground(bool hide);
 	void bfme_setAptText(const AsciiString &name, const UnicodeString &text);
 };
 
@@ -121,6 +124,9 @@ class WindowLayout
 {
 public:
 	virtual void runInit(void *) = 0;
+	virtual ~WindowLayout();
+	virtual void slot08();
+	virtual void slot0C(bool flag);
 
 	AsciiString m_04;
 	void *m_windowList;
@@ -205,6 +211,7 @@ public:
 	AptMapPreview();
 	~AptMapPreview();
 	void initGadgets();
+	void bfmeReset();
 
 private:
 	char m_data[0x40];
@@ -236,6 +243,27 @@ private:
 };
 
 extern LoadScreen0051BF30 *g_loadScreen012F49B0;
+
+class Rva005A00B0AudioClient
+{
+public:
+	virtual void slot00(); virtual void slot04(); virtual void slot08(); virtual void slot0C();
+	virtual void slot10(); virtual void slot14(); virtual void slot18(); virtual void slot1C();
+	virtual void slot20(); virtual void slot24(); virtual void slot28(); virtual void slot2C();
+	virtual void slot30(); virtual void slot34(); virtual void slot38(); virtual void slot3C();
+	virtual void slot40(); virtual void slot44(); virtual void slot48(); virtual void slot4C();
+	virtual void slot50(); virtual void slot54(); virtual void slot58(); virtual void slot5C();
+	virtual void slot60(); virtual void slot64(); virtual void slot68();
+	virtual void slot6C(int one, int two, int three);
+};
+extern Rva005A00B0AudioClient *TheAudioClientUpdate;
+
+class GameWindowTransitionsHandler
+{
+public:
+	void setGroup(AsciiString group);
+};
+extern GameWindowTransitionsHandler *TheTransitionHandler;
 
 // ??0LoadScreen0051BF30@@QAE@I@Z
 LoadScreen0051BF30::LoadScreen0051BF30(unsigned int mode)
@@ -290,4 +318,41 @@ LoadScreen0051BF30::LoadScreen0051BF30(unsigned int mode)
 			g_rva012F19E8WindowManager->bfme_setAptText(level, TheGameText->fetch("GUI:Rank", 0));
 		}
 	}
+}
+
+// ??1LoadScreen0051BF30@@UAE@XZ (retail 0x0051B7E0, 546 bytes): the same
+// vtable store, the singleton the constructor set cleared, every binding the
+// constructor made undone, then the AptMapPreview member and the
+// Gen_00490420 base destroyed.
+LoadScreen0051BF30::~LoadScreen0051BF30()
+{
+	m_layout10->slot0C(false);
+	delete m_layout10;
+	m_layout10 = 0;
+	m_preview18.bfmeReset();
+
+	AsciiString colorName;
+	AsciiString clipName;
+	for (int player = 0; player < 8; ++player)
+	{
+		colorName.format("GameLoading:PlayerColor:%d", player);
+		g_rva012F19E8WindowManager->rva0046DD00(colorName);
+		clipName.format("UIClip/Level/%d", player);
+		g_rva012F19E8WindowManager->_bfme_removeNamedAptGadget(clipName);
+		clipName.format("UIClip/Fellowship/%d", player);
+		g_rva012F19E8WindowManager->_bfme_removeNamedAptGadget(clipName);
+	}
+	{
+		AsciiString typeName("GameLoadingType");
+		g_rva012F19E8WindowManager->rva0046DD00(typeName);
+	}
+	g_rva012F19E8WindowManager->bfme_hideBackground(false);
+	g_rva012F19E8WindowManager->slot38(1);
+	TheAudioClientUpdate->slot6C(2, 1, 0);
+	{
+		AsciiString level("GUI:Level");
+		g_rva012F19E8WindowManager->bfme_setAptText(level, TheGameText->fetch("GUI:Level", 0));
+	}
+	TheTransitionHandler->setGroup(AsciiString("MainMenuToSubMenu"));
+	g_loadScreen012F49B0 = 0;
 }

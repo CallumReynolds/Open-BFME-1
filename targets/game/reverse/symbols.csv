@@ -91153,3 +91153,6 @@ _bfmeFormatText,0x009D6220,address-only compatibility pin for 10 frozen game/gen
 ??1Rva006129E0@@QAE@XZ,0x000397E8,LivingWorldManager destructor 0x00617FB0 calls this ILT at +0x431 to destroy the +0x210 member
 ??1Rva006152A0@@QAE@XZ,0x0003337F,LivingWorldManager destructor 0x00617FB0 calls this ILT at +0x304 to destroy the +0x270 member
 ??1Rva00614820@@QAE@XZ,0x00043EC3,LivingWorldManager destructor 0x00617FB0 calls this ILT at +0x437 as the vector destructor element callback for the five +0x1AC elements
+??1AptMapPreview@@QAE@XZ,0x0001209E,ILT jmp to 0x00521720; the LoadScreen0051BF30 destructor (0x0051B7E0) destroys its +0x18 AptMapPreview member through it (ecx=this+0x18 after the body) and the constructor 0x0051BF30 builds that member with AptMapPreview::AptMapPreview 0x00520670
+??1Gen_00490420@@UAE@XZ,0x0004634E,ILT jmp to 0x00490470; the LoadScreen0051BF30 destructor (0x0051B7E0) ends with this base call and its constructor 0x0051BF30 starts with Gen_00490420::Gen_00490420 0x00490420
+?rva0046DD00@WindowManager@@QAEXABVAsciiString@@@Z,0x00023A60,ILT jmp to the 8-byte member tail thunk 0x0046DD00; the LoadScreen0051BF30 destructor (0x0051B7E0) calls it with ecx=the window manager at 0x012F19E8 and one AsciiString reference for each name the constructor bound with bindShownWithArg

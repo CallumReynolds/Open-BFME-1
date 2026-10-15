@@ -1,40 +1,8 @@
 // ?rva001e9380@WeaponTemplate@@QAEXPBVObject@@PBUCoord3D@@HHPAV2@H1ABUWeaponBonus@@_NPAVWeapon@@PAH@Z
-// partial score=0.944 date=2026-09-24
-// ?rva001e9380@WeaponTemplate@@QAEXPBVObject@@PBUCoord3D@@HHPAV2@H1ABUWeaponBonus@@_NPAVWeapon@@PAH@Z
-// BFME 1.03 RVA 0x001E9380, 1519 decoded bytes, through ret 0x2c at 0x001E996C.
-// Reached by Weapon::privateFireWeapon (001E9FD0) via ILT000425C3.
-// This BFME body has eleven slots including source position and victim ID;
-// the historical Zero Hour fireWeaponTemplate mangling does NOT describe it.
-// Keep the method address-qualified until its original signature is proved.
-// The 0x4c frame, all dispatch branches and direct call sites are reconstructed.
-// Best measured variant: 1,520 bytes, 139 differing non-relocation bytes, score 0.91.
-// getAimPosition/scatter have hidden coordinate returns; scatter additionally
-// takes its last coordinate by value. Both callees and caller stack cleanup
-// were decoded independently. Drawable FX consumes seven arguments (ret1c),
-// not the legacy eight-argument ledger prototype. The new declarations below
-// are intentionally unpinned while this caller remains unmatched.
-// Coord3D copy/empty-dtor lifetime agrees with the landed TerrainLogic
-// getLayerForDestinationObject and BaseUpgrade upgradeImplementation donors.
-// Retail calls Object vtable slot +0x28 at +0x196 with EAX and at +0x28B with EDX.
-// Separate typed local vtable views reduce relocation drift from nine sites to three.
-// The remaining control-flow residue starts at +0x1A3. Retail branches on victimObj
-// before loading recoil; this source loads recoil before the branch.
-
+// partial score=0.9789 date=2026-10-15
+// Decoded ABI and remaining mismatch: targets/game/reverse/identity_evidence/001e9380-fx-pathfinder-shape.md
 // stlport
 // cl: /DNDEBUG /MD /O2 /EHsc
-//
-// Open-BFME5: anonymous retail body 0x001E9380, 1519 bytes.  The caller at
-// 0x001E9FD0 supplies the legacy BFME ABI (eleven stack dwords): source,
-// source position, slot, barrel, victim, victim id, aimed position, bonus,
-// detonation flag, firing weapon and projectile id.  The address-derived
-// method name is intentional: the caller proves this WeaponTemplate-shaped
-// body, but does not prove the original source spelling.
-//
-// The layout witnesses are the matched WeaponTemplate copy/parse bodies.  In
-// particular, the retail accesses below prove +0x31, +0x58, +0x74, +0x94,
-// +0x4e4, +0x4fd, +0x514, +0x520, +0x524 and the nugget list head at +0x538.
-// The final list walk is kept as the witnessed three-pointer STLport node;
-// the nugget identity and the 0x00040287 helper remain address-derived.
 
 #include <math.h>
 #include <list>
@@ -405,6 +373,7 @@ class BFMEObjectLocalQuery
 public:
     char m_00[12];
     Pathfinder *m_pathfinder;
+    Pathfinder *pathfinder() { return m_pathfinder; }
 };
 class BFMEObjectStealthQuery
 {
@@ -413,8 +382,10 @@ public:
     UnsignedInt m_frame;
 };
 extern TerrainLogic *TheTerrainLogic;
-extern BFMEObjectStealthQuery *TheBfmeGameLogic;
-extern BFMEObjectLocalQuery *TheAI;
+class GameLogic;
+extern GameLogic *TheBfmeGameLogic;
+class AI;
+extern AI *TheAI;
 extern const float BfmeZeroRange;
 extern float g_bfmeDefaultBU;
 extern Real GetGameLogicRandomValueReal(Real low, Real high, char *file, Int line);
@@ -423,7 +394,7 @@ class FXList
 public:
     static void doFXObj(const FXList *, const Object *, const Object *);
 };
-#define BFME_GAME_LOGIC_FRAME (TheBfmeGameLogic->m_frame)
+#define BFME_GAME_LOGIC_FRAME (reinterpret_cast<BFMEObjectStealthQuery *>(TheBfmeGameLogic)->m_frame)
 #define BFME_RANDOM_FILE "F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Object\\Weapon.cpp"
 #define BFME_ZERO_RANGE BfmeZeroRange
 #define BFME_DEFAULT_BU g_bfmeDefaultBU
@@ -560,8 +531,8 @@ void WeaponTemplate::rva001e9380(const Object *sourceObj,
             handled = true;
         else
         {
-            Rva001E9380ThingVtable *effectDrawableVtable = *(Rva001E9380ThingVtable **)sourceObj;
-            handled = effectDrawableVtable->getDrawableEdx((Thing *)sourceObj, effectDrawableVtable)->handleWeaponFireFX((WeaponSlotType)wslot, specificBarrelToUse, fx, getWeaponSpeed(), recoilAngle, direction, &aimPosition);
+            Real speed = getWeaponSpeed();
+            handled = sourceObj->getDrawable()->handleWeaponFireFX((WeaponSlotType)wslot, specificBarrelToUse, fx, speed, recoilAngle, direction, &aimPosition);
         }
         if (!handled && fx)
             FXList::doFXObj(fx,sourceObj,victimObj);
@@ -576,7 +547,7 @@ void WeaponTemplate::rva001e9380(const Object *sourceObj,
     Coord3D damagePosition = *targetPosition;
     Bool scatter = false;
     if (m_infantryInaccuracyDist > 0.0f && victimObj && victimObj->isKindOf(KINDOF_INFANTRY) &&
-        (!m_disableScatterForTargetsOnWall || !TheAI->m_pathfinder->bfmeGroundCellThreshold(&victimObj->m_position,false)))
+        (!m_disableScatterForTargetsOnWall || !reinterpret_cast<BFMEObjectLocalQuery *>(TheAI)->pathfinder()->bfmeGroundCellThreshold(&victimObj->m_position,false)))
         scatter = true;
     if (m_hitPercentage < 1.0f)
     {

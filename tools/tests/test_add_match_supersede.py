@@ -334,3 +334,73 @@ def test_replace_existing_does_not_complete_a_name_at_another_address(tmp_path, 
         "--replace-existing", "--root", str(tmp_path)])
     with pytest.raises(SystemExit):
         add_match.main()
+
+
+# Vendored rows (approved by the project lead 2026-10-15): --correct-identity may
+# retire a matched vendored=<lib> row only with evidence naming its RVA and both names.
+VENDORED_OLD = "?swap@?$vector@PAX@_STL@@QAEXAAV12@@Z"
+VENDORED = DUMP.replace("?d_00abcd00@@YAXXZ", VENDORED_OLD).replace(
+    "game/gen_asm/d_00abcd00.asm", "game/gen_small/zhstl_001.cpp").replace(
+    "gen-dump;ghidra=FUN_00eacd00", "vendored=cnc-zh;zhstl")
+VENDORED_PROOF = "targets/game/reverse/identity_evidence/0x00abcd00-vendored.md"
+GOOD_PROOF = f"Retail 0x00ABCD00 is {REAL}, not {VENDORED_OLD}: matched caller.\n"
+
+
+def arrange_vendored(tmp_path, monkeypatch, scaffold=VENDORED, proof_text=GOOD_PROOF,
+                     with_evidence=True):
+    extra = ("--correct-identity", VENDORED_OLD)
+    if with_evidence:
+        extra += ("--identity-evidence", VENDORED_PROOF)
+    functions, deleted, source = arrange(tmp_path, monkeypatch, gate=0,
+                                         scaffold=scaffold, extra_args=extra)
+    proof = tmp_path / VENDORED_PROOF
+    proof.parent.mkdir(parents=True)
+    proof.write_text(proof_text)
+    return functions, deleted, source
+
+
+def assert_refused(functions, deleted, source):
+    before = functions.read_bytes(), deleted.read_bytes(), source.read_bytes()
+    with pytest.raises(SystemExit):
+        add_match.main()
+    assert (functions.read_bytes(), deleted.read_bytes(), source.read_bytes()) == before
+
+
+def test_vendored_correction_with_evidence_is_accepted(tmp_path, monkeypatch):
+    functions, deleted, _ = arrange_vendored(tmp_path, monkeypatch)
+    add_match.main()
+    ledger = functions.read_text()
+    assert VENDORED_OLD not in ledger
+    assert "identity-correction=" + VENDORED_PROOF in ledger
+    assert ledger.count("0x00ABCD00") == 1
+    tombstone = list(csv.reader(io.StringIO(deleted.read_text())))[-1]
+    assert tombstone[0] == VENDORED_OLD
+    assert REAL in tombstone[2]
+
+
+def test_vendored_correction_without_evidence_is_refused(tmp_path, monkeypatch):
+    assert_refused(*arrange_vendored(tmp_path, monkeypatch, with_evidence=False))
+
+
+@pytest.mark.parametrize("text", [
+    f"{REAL} replaces {VENDORED_OLD}.\n",                       # no RVA
+    f"0x00ABCD10 is {REAL}, not {VENDORED_OLD}.\n",             # wrong RVA
+    f"0x00ABCD00 is {REAL}.\n",                                 # no old name
+    f"0x00ABCD00 is not {VENDORED_OLD}.\n",                     # no new name
+])
+def test_vendored_correction_with_weak_evidence_is_refused(tmp_path, monkeypatch, text):
+    assert_refused(*arrange_vendored(tmp_path, monkeypatch, proof_text=text))
+
+
+def test_unmatched_vendored_row_is_refused(tmp_path, monkeypatch):
+    unmatched = VENDORED.replace(",matched,", ",unmatched,")
+    assert_refused(*arrange_vendored(tmp_path, monkeypatch, scaffold=unmatched))
+
+
+@pytest.mark.parametrize("notes", [
+    "gen-thunk;gap;target=0x00066C70",
+    "zhstl;source=vendored=cnc-zh",
+])
+def test_non_vendored_gen_row_still_refused_with_good_evidence(tmp_path, monkeypatch, notes):
+    gen = VENDORED.replace("vendored=cnc-zh;zhstl", notes)
+    assert_refused(*arrange_vendored(tmp_path, monkeypatch, scaffold=gen))

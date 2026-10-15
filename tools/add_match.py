@@ -69,6 +69,30 @@ def replaceable_scaffold(row):
                 re.fullmatch(r"game/gen_small/(?:fam|fun)_\d+\.cpp", row["source"]) is not None))
 
 
+def vendored_row(row):
+    """A vendored=<lib> row carries the upstream library's own identity."""
+    return any(part.strip().startswith("vendored=") for part in row["notes"].split(";"))
+
+
+def correctable_claim(old, old_name, new_name, evidence_text):
+    """May --correct-identity retire OLD (named OLD_NAME) for NEW_NAME?
+
+    A matched real-source claim qualifies as before. A matched vendored=<lib> row
+    (approved by the project lead 2026-10-15) qualifies only with identity
+    evidence that names its address and both names: vendored rows carry the
+    upstream's real identities, so the proof must show retail disagrees there."""
+    if old["name"] != old_name or old_name == new_name or old["status"] != "matched":
+        return False
+    if replaceable_scaffold(old):
+        return False
+    if (old["source"].startswith("game/") and
+            not old["source"].startswith(("game/gen_small/", "game/gen_asm/"))):
+        return True
+    text = (evidence_text or "").lower()
+    return (vendored_row(old) and f"0x{old['rva']:08x}" in text and
+            old_name.lower() in text and new_name.lower() in text)
+
+
 def fail(*lines):
     for line in lines:
         print(f"add_match: {line}", file=sys.stderr)
@@ -419,6 +443,7 @@ def main():
              "from fleet_run)")
 
     root = args.root.resolve()
+    evidence_text = None
     if args.identity_evidence:
         evidence_rel = Path(args.identity_evidence)
         if (evidence_rel.is_absolute() or ".." in evidence_rel.parts or
@@ -427,7 +452,8 @@ def main():
             fail("--identity-evidence must be a repo-relative "
                  "targets/game/reverse/identity_evidence/*.md path")
         evidence = root / evidence_rel
-        if not evidence.is_file() or not evidence.read_text(encoding="utf-8").strip():
+        evidence_text = evidence.read_text(encoding="utf-8") if evidence.is_file() else ""
+        if not evidence_text.strip():
             fail(f"--identity-evidence {evidence_rel} is missing or empty")
         evidence_key = "archive-import-evidence" if args.replace_archive_import else "identity-correction"
         args.notes = f"{evidence_key}={evidence_rel.as_posix()};{args.notes}"
@@ -514,13 +540,11 @@ def main():
                 fail(f"archive-import proof rejected: {error}")
         elif args.correct_identity:
             old = at_rva[0]
-            if (old["name"] != args.correct_identity or old["name"] == name or
-                    old["status"] != "matched" or
-                    not old["source"].startswith("game/") or
-                    old["source"].startswith(("game/gen_small/", "game/gen_asm/")) or
-                    replaceable_scaffold(old)):
+            if not correctable_claim(old, args.correct_identity, name, evidence_text):
                 fail(f"--correct-identity {args.correct_identity} does not name a "
-                     f"matched real-source claim at 0x{old_rva:08X}")
+                     f"matched real-source claim at 0x{old_rva:08X}",
+                     "a vendored=<lib> row is correctable only when the identity "
+                     "evidence names its 0xRVA, its old name and the new name")
         elif not replaceable_scaffold(at_rva[0]):
             fail(f"--replace-rva 0x{old_rva:08X} is {at_rva[0]['name']} "
                  f"({at_rva[0]['source']}), not a supported generated scaffold row",

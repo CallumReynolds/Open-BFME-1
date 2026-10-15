@@ -85,7 +85,15 @@ public:
 	BfmePartitionGridSmallFill *m_grid;
 	BfmeCoiSmallFill *m_first;
 	BfmeCoiSmallFill *m_next;
-	bool rva008F80A0(int firstX, int lastX, int y);
+
+};
+
+// BFME-2 ShroudVariantCircle008F9BB0.cpp uses the same three-word
+// range view. BFME-1's recovered span updater owns this callable name.
+class Rva008F80A0
+{
+public:
+ bool method(int firstX, int lastX, int y);
 };
 
 extern bool bfmeFillSmall(int cellCenterX, int cellCenterY, int cellRadius,
@@ -157,11 +165,11 @@ bool bfmeFillSmall(int cellCenterX, int cellCenterY, int cellRadius,
 				--leftX;
 			}
 
-			if (!range.rva008F80A0(leftX, rightX, cellCenterY + y))
+			if (!reinterpret_cast<Rva008F80A0 *>(&range)->method(leftX, rightX, cellCenterY + y))
 				return false;
 			if (y == 0)
 				return true;
-			if (!range.rva008F80A0(leftX, rightX, cellCenterY - y))
+			if (!reinterpret_cast<Rva008F80A0 *>(&range)->method(leftX, rightX, cellCenterY - y))
 				return false;
 
 			--y;

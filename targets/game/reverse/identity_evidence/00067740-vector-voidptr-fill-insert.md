@@ -52,3 +52,9 @@ A rel32 scan finds no call or jmp to 0x0083EA80 and no ILT thunk for it, while 0
 proven vector<void*>::_M_fill_insert. With no folding, the void* name belongs to 0x00066530. 0x0083EA80
 becomes `fill<Rva0083EA80Elem**,Rva0083EA80Elem*>` (Rva0083EA80PointerFill.cpp): same 30 bytes, element
 type unproven, address-named.
+
+## 0x0082EA80 is vector<void*>::vector(size_type)
+
+`?dup_0082ea80@@YAXXZ` (object-symbol vector<int>(n)) calls ILT 0x00026085 -> 0x00066A90, proven
+`_Vector_base<void*>(n, a)` (00066eb0-vector-voidptr-fill-ctor.md). No folding, so the counted ctor that
+builds that base is vector<void*>'s. No rel32 caller reaches 0x0082EA80.

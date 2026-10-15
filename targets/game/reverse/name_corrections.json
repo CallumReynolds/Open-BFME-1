@@ -20038,5 +20038,15 @@
   "after_sha256": "38b6e0c2e175437c79b8561c8432ad9a832f7fd4cdc6c525898a42ef46fa3542",
   "evidence": "targets/game/reverse/identity_evidence/00462d40-disablecomponents-callback.md",
   "reason": "No rename: the bank declared a local stand-in class GameWindowManager (44 dummy slots); the conversion includes the real GameClient/GameWindowManager.h and still uses GameWindowManager/TheWindowManager. Token alignment pairs the removed stand-in class with the matched for_each functor Rva0045F0A0 (named by ledger row 0x00462710)."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x00467f20.cpp",
+  "new_path": "game/GameEngine/Source/GameClient/GUI/WindowManagerRva00467F20.cpp",
+  "old_name": "aptSlotUpdate",
+  "new_name": "bfmeRva00467F20",
+  "before_sha256": "55337ac2e2c0a78147f311328e434fb019ce0048ec97c5f74d72971ff034cbdc",
+  "after_sha256": "234aafd9f4d9d9bc975c29715fda795f8ee494028f4469436b355855d82feeee",
+  "evidence": "targets/game/reverse/symbols.csv",
+  "reason": "aptSlotUpdate was the bank's unproven guess on an invented Rva00467F20Owner. The matched caller WindowManager::update (WindowManager_update.cpp) already declares this ILT 0x0001DE9E callee as WindowManager::bfmeRva00467F20 and symbols.csv pins that name; the conversion keeps the caller's established address-derived name and only corrects its return type to Bool."
  }
 ]

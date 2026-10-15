@@ -79569,7 +79569,7 @@ name,address,notes
 ?bfmeRunVJF@BfmeMsgVJF@@QAEXXZ,0x007E8AC0,pin
 ?bfmeRunZC@BfmeOwnZC@@QAEXVBfmeRoomZC@@PAX@Z,0x0000D97C,pin
 ?bfmeRva00462A20@@YAXXZ,0x0001F271,address-derived pin: ILT E9 to unclaimed dump 0x00462A20 (no stack args; plain ret); called from WindowManager::update 0x0046E850
-?bfmeRva00467F20@WindowManager@@QAEXH@Z,0x0001DE9E,address-derived pin: ILT E9 to unclaimed dump 0x00467F20 (thiscall ret 4; index < 12 into the +0xA8 APT records); WindowManager::update 0x0046E850 calls it per record whose +0x10 bit 0 is set
+?bfmeRva00467F20@WindowManager@@QAE_NH@Z,0x0001DE9E,route=0x00467F20; ILT E9 to the Bool method body; WindowManager::update 0x0046E850 calls it per +0xA8 APT record whose +0x10 bit 0 is set (retail returns AL 0/1)
 ?bfmeRva0046E170@WindowManager@@QAEXXZ,0x0000364D,address-derived pin: ILT E9 to unclaimed dump 0x0046E170 (thiscall no args; reads the +0x1A4 flag); WindowManager::update 0x0046E850 calls it with ecx=this
 ?bfmeRva0083A2D0CopyWide@@YA?AV?$ostreambuf_iterator@GV?$char_traits@G@_STL@@@_STL@@PBG0V12@ABUrandom_access_iterator_tag@2@PAH@Z,0x0083A2D0,retail 0x00846C30 calls duplicate wide STLport copy at 0x0083A2D0 identical 106-byte body to 0x00835EF0
 ?bfmeRva00894660@@YAXI@Z,0x00894780,address-derived pin: jump stub E9 to unclaimed dump 0x00894660 (cdecl one arg); WindowManager::update 0x0046E850 passes the clamped timeGetTime delta

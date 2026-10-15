@@ -62507,3 +62507,4 @@ _bfmeReload1221	0x008D3AE0	281	partial	Rewritten in the published Cokus pointer-
 ?Rva00463E30@@YAXPBURva0045DD90FloatPair@@0PBD1@Z	0x00463E30	466	converted	boundary ret+0x1A5/+0x1D1 then INT3; clean C++ with inline StringBase set/isEmpty specialisations; t=25min model=claude-opus-5-5
 ?Rva00462D40@@YAXPAX@Z	0x00462D40	126	converted	RET +0x7D then INT3; inline begin()/end() wrapper fixes the EAX/ECX for_each result-slot residue; begin pin at 0x0045FA00 added (typed by matched for_each 0x00462710); t=20min model=claude-opus-5-5
 ?Rva00462CB0@@YAXPAX@Z	0x00462CB0	110	converted	RETs +0x62/+0x6D then INT3; EnableComponents twin of 0x00462D40 in the same TU; t=5min model=claude-opus-5-5
+?bfmeRva00467F20@WindowManager@@QAE_NH@Z	0x00467F20	293	converted	RET4 +0x4C/+0x122 then INT3; separate early-return ifs reproduce retail's inline false epilogue; caller decl corrected void->Bool and ILT pin renamed with route=; t=20min model=claude-opus-5-5

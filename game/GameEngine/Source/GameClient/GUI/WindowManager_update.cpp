@@ -283,7 +283,7 @@ class WindowManager : public SubsystemInterface
 public:
 	virtual void update();
 
-	void bfmeRva00467F20(Int index);	// ILT 0x0001DE9E
+	Bool bfmeRva00467F20(Int index);	// ILT 0x0001DE9E
 	void bfmeRva0046E170();			// ILT 0x0000364D
 
 private:

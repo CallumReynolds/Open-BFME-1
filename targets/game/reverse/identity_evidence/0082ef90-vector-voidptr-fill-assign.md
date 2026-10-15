@@ -15,7 +15,8 @@ Retail 1.03 unpacked; rel32 scan of every E8/E9; tools/callees.py 0x82EF90 513.
 - `get_allocator` 0x000665A0 through ILT 0x00009C28. This is already the matched
   `?get_allocator@?$vector@PAXV?$allocator@PAX@_STL@@@_STL@@QBE?AV?$allocator@PAX@2@XZ`, and every
   hashtable::resize calls it.
-- erase 0x000CF750 through ILT 0x00002A3B.
+- erase 0x000CF750 through ILT 0x00002A3B. Its only other rel32 caller is 0x0082FA70 (`bfmeResizeV17`, an /Od
+  resize placeholder), which also calls vector<void*>::_M_fill_insert 0x00067740. That is consistent with void*.
 - swap 0x00066F00 through ILT 0x000063E3. This is its only rel32 caller.
 - ~_Vector_base 0x00066C30 through ILT 0x00031647. This is its only rel32 caller.
 
@@ -71,3 +72,14 @@ These are the ScienceInfo "folded body" pins on void* bodies:
 
 0x00066BC0's only caller is 0x00066F00, which is vector<void*>::swap. So the `<int*>` proxy-swap pin there is
 wrong, and the `<void**>` pin takes its place.
+
+## The alloc_proxy<void**> swap helpers: 0x00066BC0 and 0x00066670
+
+- 0x00066BC0 is `swap<_STLP_alloc_proxy<void**,void*>>`. It is called only by vector<void*>::swap 0x00066F00, through
+  ILT 0x0001C7BF. The gen-tgrid row tg_00066bc0 takes the real name, sourced from stlport_vector_voidptr_members.cpp
+  (probe EXACT). The pin that held the name is dropped because the row now carries it.
+- 0x00066670 is `_STLP_alloc_proxy<void**,void*>`'s copy constructor
+  (`??0?$_STLP_alloc_proxy@PAPAXPAXV?$allocator@PAX@_STL@@@_STL@@QAE@ABV01@@Z`). Its only reference is a call from
+  0x00066BCA, inside 0x00066BC0, through ILT 0x000010FF. STLport's swap does `_Tp __tmp = __a;`, which is that copy.
+  The gen-shim row ?m@Gen_00066670 takes the real name from the same TU (probe EXACT).
+- Retired: the `_STLP_alloc_proxy<int*>` copy-ctor pin at 0x00066670 (ilt_contradicted line removed).

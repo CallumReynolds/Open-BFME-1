@@ -8548,7 +8548,6 @@ pins	0x0005B8E0	?AtlW2AHelper@ATL@@YGPADPADPBGHI@Z
 pins	0x0005C0C0	?release@DcPool@@QAEXPAX@Z
 pins	0x0005E4C0	?isEmpty@AsciiString@@QBE_NXZ
 pins	0x0005EE90	?add@TeamsInfoRecAddTeamShim@@QAEXPBVDict@@@Z
-pins	0x00066670	??0?$_STLP_alloc_proxy@PAHHV?$allocator@H@_STL@@@_STL@@QAE@ABV01@@Z
 pins	0x000668C0	??0?$_STLP_alloc_proxy@PAVAsciiString@@V1@V?$allocator@VAsciiString@@@_STL@@@_STL@@QAE@ABV?$allocator@VAsciiString@@@1@PAVAsciiString@@@Z
 pins	0x00066A90	??0?$_Vector_base@HV?$allocator@H@_STL@@@_STL@@QAE@IABV?$allocator@H@1@@Z
 pins	0x000673D0	??$_M_allocate_and_copy@PAH@?$vector@HV?$allocator@H@_STL@@@_STL@@IAEPAHIPAH0@Z

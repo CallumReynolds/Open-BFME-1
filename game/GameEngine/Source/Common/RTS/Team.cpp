@@ -3186,54 +3186,7 @@ void Team::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-// byte-exact reconstruction: game/GameEngine/Source/Common/Team_loadPostProcessMethodThunk.cpp
-// ?loadPostProcess@Team@@MAEXXZ present-unmatched
-void Team::loadPostProcess( void )
-{
-
-	//
-	// now that all objects have actually been loaded, populate the member list with
-	// real object pointers
-	//
-	Object *obj;
-	std::list< ObjectID >::const_iterator it;
-	for( it = m_xferMemberIDList.begin(); it != m_xferMemberIDList.end(); ++it )
-	{
-
-		// find object
-		obj = TheGameLogic->findObjectByID( *it );
-		if( obj == NULL )
-		{
-
-			DEBUG_CRASH(( "Team::loadPostProcess - Unable to post process object to member list, object ID = '%d'\n", *it ));
-			throw SC_INVALID_DATA;
-
-		}  // end if
-
-		//
-		// we are now disabling this code since the objects set their team during their
-		// own xfer function which will actually put it on the team ... however, we will sanity
-		// check everything here to make sure that all the objects that should be on the team,
-		// are in fact on the team
-		//
-		if( isInList_TeamMemberList( obj ) == FALSE )
-		{
-
-			DEBUG_CRASH(( "Team::loadPostProcess - Object '%s'(%d) should be in team list but is not\n",
-										obj->getTemplate()->getName().str(), obj->getID() ));
-			throw SC_INVALID_DATA;
-
-		}  // end if
-
-	}  // end for
-
-	// since we prepended the object member pointers, reverse that list so it's just like before
-//	reverse_TeamMemberList();
-
-	// we're done with the xfer list now
-	m_xferMemberIDList.clear();
-
-}  // end loadPostProcess
+// Retail Team::loadPostProcess (0x000F1800) is implemented in Team_loadPostProcess.cpp.
 
 
 

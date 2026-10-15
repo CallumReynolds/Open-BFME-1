@@ -39,10 +39,9 @@ public:
 		++data->m_refCount;
 	}
 
-	BfmeStrVKI()
+	BfmeStrVKI() : m_data(sharedEmptyString012D5298())
 	{
-		++sharedEmptyString012D5298()->m_refCount;
-		m_data = sharedEmptyString012D5298();
+		++m_data->m_refCount;
 	}
 
 	~BfmeStrVKI()

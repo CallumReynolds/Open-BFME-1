@@ -39,10 +39,9 @@ static inline BfmeStringData3AF0 *sharedEmptyString012D5298()
 class BfmeStrVKI
 {
 public:
-	BfmeStrVKI()
+	BfmeStrVKI() : m_data((BfmeHdrVKI *)sharedEmptyString012D5298())
 	{
-		sharedEmptyString012D5298()->m_refCount++;
-		m_data = (BfmeHdrVKI *)sharedEmptyString012D5298();
+		m_data->m_refCount++;
 	}
 	BfmeStrVKI(const char *text)
 	{

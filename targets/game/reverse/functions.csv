@@ -36284,7 +36284,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_000cf200@@YAXXZ,,0x000CF200,55,game/GameEngine/Source/Common/UnsignedShortListInsert.cpp,matched,Open-BFME5 clean two-byte list insert;object-symbol=?insert@BFMEUnsignedShortListABI@@QAE?AUBFMEUnsignedShortListIterator@@U2@ABG@Z
 ?d_000d4500@@YAXXZ,,0x000D4500,273,game/gen_asm/d_000d4500.asm,matched,gen-dump;int3-carved start=int3-aligned end=ret+int3 refs=0
 ?d_000d4660@@YAXXZ,,0x000D4660,100,game/gen_asm/d_000c81e0.asm,matched,gen-dump;ghidra=FUN_004d4660
-?d_000d6cf0@@YAXXZ,,0x000D6CF0,476,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_004d6cf0
 ?d_000dc270@@YAXXZ,,0x000DC270,3401,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_004dc270
 ?d_000dfcd0@@YAXXZ,,0x000DFCD0,726,game/gen_asm/d_00096570.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_004dfcd0
 ?d_000e0d50@@YAXXZ,,0x000E0D50,5,game/GameEngine/Source/Common/RvaE0D50IdentityWithArgumentThunk.cpp,matched,object-symbol=?identity@RvaE0D50IdentityWithArgumentThunk@@QAEPAU1@H@Z;Open-BFME5 clean C++ RVA E0D50 identity with one argument
@@ -172549,3 +172548,4 @@ dup_93ea10,,0x0093EA10,67,game/Libraries/Source/WWVegas/WW3D2/HAnimVectorArrayOp
 ??0XferException@@QAA@HPBDZZ,,0x009D6220,103,game/GameEngine/Source/Common/Gen009D6220.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/009d6220-xferexception-variadic-ctor.md;XferException variadic cdecl ctor; RTTI CT 0xDDFE34/TI 0xDDFE5C thrown after it at retail sites;model=claude-opus-5-5;host=GreatFaram
 ?frame@Rva007E4820FrameClock@@QAEHH@Z,,0x007E4820,230,game/GameEngine/Source/Common/Rva007E4820FrameClock.cpp,matched,clean C++ VP6 frame clock; named by matched caller Rva007E4B80Vp6Stream::update; timeGetTime IAT and __int64 scale via __allmul;model=claude-opus-5-5;host=Chartreuse
 ?decodeFrame@Rva007E3D30Vp6Stream@@QAEXXZ,,0x007E3D30,243,game/GameEngine/Source/Common/Rva007E3D30Vp6Stream.cpp,matched,clean C++ VP6 chunk scan: BfmeB996 movePair until AV0K/AV0F then MV0K/MV0F and five-arg cdecl call to 0x009A5800; keeps the established banked name;model=claude-opus-5-5;host=Chartreuse
+?xfer@Rva000D6CF0BitFlags@@QAEXPAVXfer@@@Z,,0x000D6CF0,484,game/GameEngine/Source/Common/Rva000D6CF0BitFlagsXfer.cpp,matched,Address-derived 181-bit named transfer over BitFlags<181>::s_bitNameList; extent includes throw-site INT3 like 0x001CB270;model=claude-opus-5-5;host=Chartreuse

@@ -1230,7 +1230,6 @@ static,0x004582D0,?parseRadiusDecalTemplate@RadiusDecalTemplate@@SAXPAVINI@@PAX1
 static,0x0058AE70,?getFieldParseTable@AudioManager@@QBEPBUFieldParse@@XZ,+1 _audioSettingsFieldParseTable outside the retail image
 static,0x006250A0,?parseOnlineChatColorDefinition@INI@@SAXPAV1@@Z,"+5 _GameSpyColorFieldParse@0x01117700: 8 byte(s) differ, first +432: source 000000000000000000000000000000000000000000000000 retail 14570701e031c500000000000000"
 tail,0x00853B30,?load@INI@@QAE_NVBFMERetailAsciiString@@00HH@Z,"compiled=377 ledger=250 tail=127: 18 byte(s) differ from retail, first +287"
-tail,0x009C4C40,?bfmeProbeSse2@@YAHXZ,"compiled=123 ledger=78 tail=45: 22 byte(s) differ from retail, first +84"
 tail,0x00C23607,?dup_00C23607@@YAXXZ,"compiled=32 ledger=24 tail=8: 3 byte(s) differ from retail, first +24"
 tail,0x00C409F0,?a_00c409f0@@YAXXZ,"compiled=16 ledger=8 tail=8: 2 byte(s) differ from retail, first +9"
 genalias,0x003AA480,??$__uninitialized_copy@PBUHideShowSubObjInfo@ModelConditionInfo@@PAU12@@_STL@@YAPAUHideShowSubObjInfo@ModelConditionInfo@@PBU12@0PAU12@ABU__false_type@0@@Z,masked call is not a retail twin; fix the callee or drop the gen-alias note

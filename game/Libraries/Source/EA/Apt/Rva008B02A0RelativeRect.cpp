@@ -44,7 +44,8 @@ struct Float008B02A0 {
 
 class BfmeItemDX;
 void bfmePush(BfmeItemDX*);
-class Rva00899F00Base {
+class Rva008A3160HeaderedDelete { public: static void operator delete(void *storage, unsigned int size); };
+class Rva00899F00Base : public Rva008A3160HeaderedDelete {
 public:
  Rva00899F00Base(unsigned,int);
  void *operator new(unsigned size) {
@@ -52,7 +53,6 @@ public:
   char *p=raw+8;
   bfmePush((BfmeItemDX*)p); return p;
  }
- void operator delete(void*);
  char m_bytes[32];
 };
 class BfmeN1235 { public: void bfmeDo1235(void*,void*); };

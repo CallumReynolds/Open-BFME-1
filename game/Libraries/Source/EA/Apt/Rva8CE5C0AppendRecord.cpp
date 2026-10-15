@@ -149,7 +149,14 @@ struct Rva008CE740Record
  int m_line;
  int m_column;
 };
-class Rva008D62F0Object : public Rva8CE5C0Value, public Rva008BA800HeaderedDelete
+// Retail's construction-unwind funclet 0x00C5A310 frees through the 0x008BA870 copy.
+class Rva008BA870HeaderedDelete
+{
+public:
+	static void operator delete(void *storage, unsigned int size);
+};
+
+class Rva008D62F0Object : public Rva8CE5C0Value, public Rva008BA870HeaderedDelete
 {
 public:
  Rva008D62F0Object(void *, Rva8CE5C0Value *, int, void *);

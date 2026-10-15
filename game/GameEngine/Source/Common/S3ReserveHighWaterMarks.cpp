@@ -4,6 +4,9 @@
 
 extern void *__cdecl operator new[](size_t size);
 extern void __cdecl operator delete[](void *pointer) throw();
+// WWLib always.h placement-array overloads; the Resize unwind funclet calls the delete (retail ??_V@YAXPAX0@Z).
+inline void *__cdecl operator new[](size_t s, void *p) { return p; }
+inline void __cdecl operator delete[](void *, void *p) { }
 
 class ShaderClass
 {

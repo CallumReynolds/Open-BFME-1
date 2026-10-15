@@ -156,7 +156,7 @@ void CaveSystem::registerNewCave( Int theIndex )
 	}
 
 	if( needToCreate )// if true, we new theIndex is the index of a NULL to be filled
-		m_tunnelTrackerVector[theIndex] = newInstance(TunnelTracker);
+		m_tunnelTrackerVector[theIndex] = ::new TunnelTracker;
 }
 
 // ?unregisterCave@CaveSystem@@QAEXH@Z present-unmatched

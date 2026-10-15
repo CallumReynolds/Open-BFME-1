@@ -132,7 +132,9 @@ typedef PathfindCell *PathfindCellP;
 // Forward-declaring the array overload (as the sibling PathfindZoneManagerConstructor.cpp
 // does) keeps the compiler from folding `new T[n]` into a call to scalar operator new;
 // retail links both `new[]` expressions below to ??_U@YAPAXI@Z (mem_ops.cpp), not ??2@YAPAXI@Z.
+// The matching operator delete[] declaration does the same for the construction-unwind funclet (retail ??_V@YAXPAX@Z).
 void *operator new[](unsigned int size);
+void operator delete[](void *pointer);
 
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AIPathfind.h
 // Witnessed prefix, then padded to the real stride: the verified caller

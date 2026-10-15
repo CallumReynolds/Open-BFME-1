@@ -12,6 +12,9 @@
 
 extern void *__cdecl operator new[](size_t size);
 extern void __cdecl operator delete[](void *pointer);
+// WWLib always.h placement-array overloads; the constructor unwind funclet calls the delete (retail ??_V@YAXPAX0@Z).
+inline void *__cdecl operator new[](size_t s, void *p) { return p; }
+inline void __cdecl operator delete[](void *, void *p) { }
 
 class TextureBaseClassWide
 {

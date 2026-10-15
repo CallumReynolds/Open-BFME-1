@@ -61,6 +61,7 @@ public:
 	{
 		return Rva008C5D70Alloc(bytes);
 	}
+	static void operator delete(void *memory, unsigned int bytes);
 
 	__forceinline void clearRegistered()
 	{

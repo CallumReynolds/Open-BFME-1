@@ -97,7 +97,7 @@ void ScriptActions::doUnitStartSequentialScript(ScriptActionParameter *unitParam
 	if (!script)
 		return;
 
-	Bfme5CtorA0 *sequentialScript = new(Bfme5CtorA0::GLUE_NOT_IMPLEMENTED, "") Bfme5CtorA0;
+	Bfme5CtorA0 *sequentialScript = ::new Bfme5CtorA0;
 	sequentialScript->m_objectID = object->getId();
 	AsciiString *nameA = &sequentialScript->m_nameA;
 	nameA->StringBase<char>::set(scriptNameOut);

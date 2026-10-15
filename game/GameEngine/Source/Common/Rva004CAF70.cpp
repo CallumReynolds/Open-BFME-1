@@ -1,10 +1,12 @@
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD
 // Open-BFME5: BFME's lanUpdateSlotList, the 125-byte guard/overlay callback at retail 0x004CAF70.
 //
-// The control-flow and object fast path are ordinary C++.  Retail's +0xC0
-// entries are cdecl vtable calls that retain the object in ECX; MSVC 7.1 has
-// no C++ spelling for that mixed ABI, so the two dispatch sequences are kept
-// as the narrow, proven code-generation exception here.
+// The tail is Zero Hour's
+//   UpdateSlotList(TheLAN->GetMyGame(), comboBoxPlayer, ..., buttonStart, ...);
+//   updateMapStartSpots(TheLAN->GetMyGame(), buttonMapStartPosition, 0);
+// (identity_evidence/004caf70.md).  Both callees are reached through untyped
+// ILT placeholders, so the calls go through the cdecl signatures retail's
+// 0x20/0x0C stack cleanup proves.
 
 struct Rva004CAF70Obj
 {
@@ -14,9 +16,63 @@ struct Rva004CAF70Obj
 
 // retail loads the LAN singleton (0x012F7730, defined as
 // `LANAPI *TheLAN` in game/GameEngine/Source/GameNetwork/LANAPICallbacks.cpp)
-// into ECX/EAX for the two slot-24 virtual calls below; only its address
-// is needed here.
-class LANAPI;
+// and calls GetMyGame at vtable +0xC0 (slot 48, as in
+// GenerateGameOptionsString.cpp).  Slots 0..47 are deliberately unnamed; this
+// declaration never instantiates LANAPI.
+class LANGameInfo;
+class LANAPI
+{
+public:
+	virtual void slot00(void) = 0;
+	virtual void slot01(void) = 0;
+	virtual void slot02(void) = 0;
+	virtual void slot03(void) = 0;
+	virtual void slot04(void) = 0;
+	virtual void slot05(void) = 0;
+	virtual void slot06(void) = 0;
+	virtual void slot07(void) = 0;
+	virtual void slot08(void) = 0;
+	virtual void slot09(void) = 0;
+	virtual void slot10(void) = 0;
+	virtual void slot11(void) = 0;
+	virtual void slot12(void) = 0;
+	virtual void slot13(void) = 0;
+	virtual void slot14(void) = 0;
+	virtual void slot15(void) = 0;
+	virtual void slot16(void) = 0;
+	virtual void slot17(void) = 0;
+	virtual void slot18(void) = 0;
+	virtual void slot19(void) = 0;
+	virtual void slot20(void) = 0;
+	virtual void slot21(void) = 0;
+	virtual void slot22(void) = 0;
+	virtual void slot23(void) = 0;
+	virtual void slot24(void) = 0;
+	virtual void slot25(void) = 0;
+	virtual void slot26(void) = 0;
+	virtual void slot27(void) = 0;
+	virtual void slot28(void) = 0;
+	virtual void slot29(void) = 0;
+	virtual void slot30(void) = 0;
+	virtual void slot31(void) = 0;
+	virtual void slot32(void) = 0;
+	virtual void slot33(void) = 0;
+	virtual void slot34(void) = 0;
+	virtual void slot35(void) = 0;
+	virtual void slot36(void) = 0;
+	virtual void slot37(void) = 0;
+	virtual void slot38(void) = 0;
+	virtual void slot39(void) = 0;
+	virtual void slot40(void) = 0;
+	virtual void slot41(void) = 0;
+	virtual void slot42(void) = 0;
+	virtual void slot43(void) = 0;
+	virtual void slot44(void) = 0;
+	virtual void slot45(void) = 0;
+	virtual void slot46(void) = 0;
+	virtual void slot47(void) = 0;
+	virtual LANGameInfo *GetMyGame(void);
+};
 
 extern char g_rva004CAF70_gate;
 class BfmeAptScreenLanLobby;
@@ -37,6 +93,11 @@ extern void j_0001e4bb(void);
 extern void j_00022ab6(void);
 
 typedef char (*Rva004CAF70Gate)(void);
+typedef void (__cdecl *Rva004CAF70UpdateSlotList)(LANGameInfo *game,
+	GameWindow **comboPlayer, char *comboColor, char *comboTemplate,
+	char *comboTeam, char *buttonAccept, GameWindow *start, char *startPositions);
+typedef void (__cdecl *Rva004CAF70UpdateMapStartSpots)(LANGameInfo *game,
+	char *startPositions, int onLoadScreen);
 
 void lanUpdateSlotList004CAF70(void)
 {
@@ -51,28 +112,9 @@ void lanUpdateSlotList004CAF70(void)
 		return;
 	}
 
-	__asm {
-		mov eax, dword ptr [buttonStart]
-		mov ecx, dword ptr [TheLAN]
-		mov edx, dword ptr [ecx]
-		push offset g_rva004CAF70_f
-		push eax
-		push offset g_rva004CAF70_e
-		push offset g_rva004CAF70_d
-		push offset g_rva004CAF70_c
-		push offset g_rva004CAF70_b
-		push offset comboBoxPlayer
-		call dword ptr [edx+0c0h]
-		push eax
-		call j_0001e4bb
-		mov ecx, dword ptr [TheLAN]
-		mov eax, dword ptr [ecx]
-		add esp, 20h
-		push 0
-		push offset g_rva004CAF70_f
-		call dword ptr [eax+0c0h]
-		push eax
-		call j_00022ab6
-		add esp, 0ch
-	}
+	((Rva004CAF70UpdateSlotList)j_0001e4bb)(TheLAN->GetMyGame(), comboBoxPlayer,
+		g_rva004CAF70_b, g_rva004CAF70_c, g_rva004CAF70_d, g_rva004CAF70_e,
+		buttonStart, g_rva004CAF70_f);
+	((Rva004CAF70UpdateMapStartSpots)j_00022ab6)(TheLAN->GetMyGame(),
+		g_rva004CAF70_f, 0);
 }

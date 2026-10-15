@@ -560,7 +560,6 @@ dir32,0x011123D8,?g_vtbl_011123D8@@3PAPAXA,"retail 0x011123D8 is already recorde
 dir32,0x011123DC,?g_vtbl_011123DC@@3PAPAXA,"retail 0x011123DC is already recorded as ??_7Rva005EDDE0@@6BV3Slot1@@@ (+1 more); reference that name, not a new one"
 dir32,0x011123E0,?g_vtbl_011123E0@@3PAPAXA,"retail 0x011123E0 is already recorded as ??_7Rva005EDDE0@@6BV3Slot0@@@ (+1 more); reference that name, not a new one"
 dir32,0x01112404,?g_01112404@@3QBDB,"nothing in the ledger owns 0x01112404. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
-dir32,0x01112404,?g_vtbl_01112404@@3PAPAXA,"nothing in the ledger owns 0x01112404. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
 dir32,0x01112418,?g_01112418@@3QBDB,"nothing in the ledger owns 0x01112418. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
 dir32,0x01112418,?g_vtbl_01112418@@3PAPAXA,"nothing in the ledger owns 0x01112418. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"
 dir32,0x0111241C,?g_0111241C@@3QBDB,"nothing in the ledger owns 0x0111241C. Give the datum a data row first (tools/add_data_match.py), or use an address name (g_Va<VA>)"

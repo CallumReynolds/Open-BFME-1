@@ -317,7 +317,7 @@ extern void *g_vtbl_011123C4[];
 extern void *g_vtbl_011123D8[];
 extern void *g_vtbl_011123DC[];
 extern void *g_vtbl_011123E0[];
-extern void *g_vtbl_01112404[];
+extern void *g_vtbl_01112404[4];
 extern void *g_vtbl_01112418[];
 extern void *g_vtbl_0111241C[];
 extern void *g_vtbl_01112420[];
@@ -11076,4 +11076,13 @@ void j_000245c8();
 extern "C" void *const __identifier("?g_vtbl_01110E8C@@3PAPAXA")[1] =
 {
     (void *)j_000245c8
+};
+
+void j_0000f673();
+void j_0003aed1();
+void j_00035198();
+void j_0000e77d();
+extern "C" void *__identifier("?g_vtbl_01112404@@3PAPAXA")[4] =
+{
+    (void *)j_0000f673, (void *)j_0003aed1, (void *)j_00035198, (void *)j_0000e77d
 };

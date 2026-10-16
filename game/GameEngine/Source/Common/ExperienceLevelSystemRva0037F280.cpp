@@ -1,15 +1,16 @@
-// ?call@Gen0002B7F6@@QAEXPAVExperienceLevelData@@PAVObject@@_N@Z
-// partial score=0.9826 date=2026-10-03
-// ?call@Gen0002B7F6@@QAEXPAVExperienceLevelData@@PAVObject@@_N@Z
 // cl: /DNDEBUG /DWIN32 /MD /D_STLP_USE_STATIC_LIB /DBFME_STLP_NODE_ALLOC /Iinputs/reference/shims/stlp_nodealloc /Igame/Libraries/Source/WWVegas/WWLib /Igame/GameEngine/Source/GameLogic/Object
 // stlport
-// Bank only: full459B through RET12 at0037F448; next INT3 at0037F44B.
-// Scope audit: both effect calls are guarded; explicit frame load and upgrade
-// local reduce47 differences to9, native Object getter reduces to8 (quality0.9826).
-// Native object.h/ascii_string.h adopted; getter is the ZH Object.h inline.
-// Remaining8 differences surround tracker string assignment and first store.
-// Inherited tracker/data labels, member-pointer union, and21 relocation bindings
-// remain unaudited for production. See identity_evidence/0037f280-effect-scope.md.
+// Retail 0x0037F280 (459B): RET 12 at 0x0037F448, INT3 at 0x0037F44B.
+// ExperienceLevelSystem::update (0x0037F4C0, ExperienceLevelSystemUpdate.cpp)
+// calls it through ILT 0x0002B7F6 for each pending level record; the
+// receiver keeps the address-derived name pinned at that ILT.
+// Byte levers: the tracker string is assigned through AsciiString's inline
+// operator= (receiver lea before the argument push) and the first tracker
+// store goes through an inline setter; the explicit set() call and a plain
+// field store each left one register rotation.
+// The ExperienceTracker labels at +0x08/+0x10/+0x14 are inherited bank labels;
+// name_oracle has no BFME witness for them.
+// Evidence: targets/game/reverse/identity_evidence/0037f280-effect-scope.md.
 
 #define _STLP_NO_EXCEPTIONS 1
 #include <hash_map>
@@ -19,7 +20,7 @@
 typedef bool Bool;
 typedef int Int;
 typedef unsigned int ObjectID;
-typedef unsigned int NameKeyType;
+enum NameKeyType { NAMEKEY_INVALID = 0 };
 
 #include "ascii_string.h"
 
@@ -52,16 +53,13 @@ public:
 	void bfmeDispatch( void *key );
 };
 
-class BfmeThingVKP
+// BFME model-condition mask: 320 bits in ten words.
+template <int NUMBITS> class BitFlags
 {
 public:
-	void bfmeSetVKP( Int first, Int second );
+	unsigned int m_bits[ ( NUMBITS + 31 ) / 32 ];
 };
-
-struct ModelConditionFlags
-{
-	unsigned int m_bits[ 10 ];
-};
+typedef BitFlags<320> ModelConditionFlags;
 
 class ExperienceLevelData
 {
@@ -94,6 +92,7 @@ class ExperienceTracker
 {
 public:
 	void bfmeSetScalarIndex( Int index );
+	void setExperience( Int value ) { m_experience = value; }
 
 	char m_base[ 8 ];
 	AsciiString m_name;
@@ -108,7 +107,8 @@ public:
  ExperienceTracker *getExperienceTracker() { return m_experienceTracker; } \
  Bool applyAttributeModifier(const AsciiString &, Int); \
  void giveUpgrade(const UpgradeTemplate *); \
- Module *findModule(NameKeyType); \
+ Module *findModule(NameKeyType) const; \
+ void clearAndSetModelConditionFlags(const ModelConditionFlags &, const ModelConditionFlags &); \
  void bfmeApplySpecialModelCondition(Int, const void *, Int);
 #include "object.h"
 #undef OBJECT_TU_MEMBERS
@@ -197,8 +197,8 @@ void Gen0002B7F6::call( ExperienceLevelData *level, Object *object,
 		((BfmeItemRY *)object)->bfmeDoRY( (void *)0xc7, (void *)0xf );
 	}
 
-	object->getExperienceTracker()->m_name.set( level->m_name );
-	object->getExperienceTracker()->m_experience = level->m_experienceAward;
+	object->getExperienceTracker()->m_name = level->m_name;
+	object->getExperienceTracker()->setExperience( level->m_experienceAward );
 	object->getExperienceTracker()->m_experienceAwardOwnGuysDie =
 		level->m_experienceAwardOwnGuysDie;
 	++object->getExperienceTracker()->m_scalarIndex;
@@ -216,16 +216,14 @@ void Gen0002B7F6::call( ExperienceLevelData *level, Object *object,
 	if ( nonzero != 0 )
 	{
 		ModelConditionFlags clear = {};
-		((BfmeThingVKP *)object)->bfmeSetVKP(
-			reinterpret_cast<Int>( &clear ),
-			reinterpret_cast<Int>( level->m_modelConditionState.m_bits ) );
+		object->clearAndSetModelConditionFlags( clear, level->m_modelConditionState );
 	}
 
 	Int trueValue = 1;
 	if ( level->m_informUpdateModule )
 	{
 		static NameKeyType key = TheNameKeyGenerator->nameToKey(
-			reinterpret_cast<const char *>( 0x010904a4 ) );
+			"BannerCarrierUpdate" );
 
 		Module *module = object->findModule( key );
 		if ( module != 0 )

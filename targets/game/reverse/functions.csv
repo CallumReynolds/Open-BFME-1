@@ -37152,7 +37152,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_0037c600@@YAXXZ,,0x0037C600,508,game/gen_small/dumps_000.cpp,matched,gen-dump;ghidra=FUN_0077c600
 ?d_0037d3e0@@YAXXZ,,0x0037D3E0,1,game/GameEngine/Source/Common/Rva0037D3E0Noop.cpp,matched,carved ret boundary; address-derived identity
 ?d_0037d710@@YAXXZ,,0x0037D710,1,game/GameEngine/Source/Common/Rva0037D710NoOp.cpp,matched,carved one-byte ret; no caller or identity table proves a semantic owner so the address-derived name remains
-?d_0037f280@@YAXXZ,,0x0037F280,459,game/gen_asm/d_002e22f0.asm,matched,gen-dump;carved start=rel32-call/jmp;ghidra-start end=ret+int3 callers=1;ghidra=FUN_0077f280
 ?d_00384340@@YAXXZ,,0x00384340,8,game/gen_asm/d_00377550.asm,matched,gen-dump;ghidra=FUN_00784340
 ?d_00384520@@YAXXZ,,0x00384520,8,game/gen_asm/d_00377550.asm,matched,gen-dump;ghidra=FUN_00784520
 ?d_00384720@@YAXXZ,,0x00384720,8,game/gen_asm/d_00377550.asm,matched,gen-dump;ghidra=FUN_00784720
@@ -172555,3 +172554,4 @@ dup_69ec0,,0x00069EC0,45,game/Libraries/Source/WWVegas/WWLib/Rva00069C80PointerV
 ?Rva003C5270Find@@YGHPAVRva003C5820Owner@@PAVRva003C5820Key@@@Z,,0x003C5270,181,game/GameEngine/Source/Common/Rva003C5820AppendMatch.cpp,matched,address-derived; sole caller Rva003C5820Owner::appendMatch 0x003C5820 via ILT 0x0002FA1D (stdcall owner/key); owner is the STLport vector<Item*> loop re-testing size();model=claude-opus-5.5;host=GreatFaram
 ?Rva00694230@Gen0002857EOwner@@QAEXPAVGen0002857E@@@Z,,0x00694230,654,game/GameEngineDevice/Source/MilesAudioDevice/MilesAudioCacheReadAudioFile00694230.cpp,matched,AudioFileCache readAudioFile semantic pairing; complete caller and helper ABI; native AsciiString set; compression-before-size statement order; identity=targets/game/reverse/identity_evidence/00694230-statement-order.md;model=gpt-6.1-sol;host=fleet
 ?Rva00C54C00Cleanup@@YAXXZ,,0x00C54C00,25,game/Libraries/Source/STLport/LocaleGlobal.cpp,matched,gen-funclet;object-symbol=$L84366;parent=?global@locale@_STL@@SA?AV12@ABV12@@Z;retail 008366E0 -> handler 00C54C19 -> FuncInfo 00E44000 state0 native label of the matched parent;model=claude-opus-5-5;host=app
+?call@Gen0002B7F6@@QAEXPAVExperienceLevelData@@PAVObject@@_N@Z,,0x0037F280,459,game/GameEngine/Source/Common/ExperienceLevelSystemRva0037F280.cpp,matched,pending-level apply callee of ExperienceLevelSystem::update via ILT 0x0002B7F6; RET12+INT3 extent; caller-types lever: AsciiString inline operator= + inline tracker setter;model=claude-opus-5.5;host=GreatFaram

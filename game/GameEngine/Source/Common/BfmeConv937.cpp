@@ -1,18 +1,21 @@
 // Open-BFME5 conversions.
 
-extern char g_bfme937Obj[];
-void bfmeCall937A(char *p);
+// 0x009F8AB0 registers the Miles shutdown tail (_Rva009F8AA0@0, 0x009F8AA0)
+// with CRT atexit (0x009F6E26).
+extern "C" void __stdcall Rva009F8AA0();
+extern "C" int __cdecl atexit(void (__cdecl *)(void));
 
 int bfmeGo937A(void)
 {
-	bfmeCall937A(g_bfme937Obj);
+	atexit((void (__cdecl *)(void))Rva009F8AA0);
 	return 0;
 }
 
-class BfmeSub937B
+// 0x0090CD00, the matched Rva0090C2F0Inner::rva0090CD00LoadFromMemory.
+class Rva0090C2F0Inner
 {
 public:
-	void bfmeCall937B(void *r);
+	void rva0090CD00LoadFromMemory(const char *r);
 };
 
 class BfmeThing937B
@@ -21,13 +24,13 @@ public:
 	virtual void *bfmeVirt937B();
 	void bfmeGo937B();
 	char m_bfmePad[0x10];
-	BfmeSub937B *m_bfmeSub;
+	Rva0090C2F0Inner *m_bfmeSub;
 };
 
 void BfmeThing937B::bfmeGo937B()
 {
 	void *r = bfmeVirt937B();
-	m_bfmeSub->bfmeCall937B(r);
+	m_bfmeSub->rva0090CD00LoadFromMemory((const char *)r);
 }
 
 // comutil.h declares `void __stdcall _com_issue_error(HRESULT)`; the sweep

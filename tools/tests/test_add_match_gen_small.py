@@ -29,6 +29,21 @@ SIBLING_ROW = (f"??_EGen_dtorv_00707f00@@UAEPAXI@Z,,0x00707F00,84,{DTOR_TU},matc
 REAL = "??_ERoadType@@QAEPAXI@Z"
 SOURCE_REL = "game/GameEngineDevice/Source/W3DDevice/GameClient/W3DRoadBuffer.cpp"
 
+# The destructors the placeholders call: RoadType's behind its matched ILT row (as in
+# retail: ??1Gen_dtorv_00707e60 is pinned at ILT 0x0001DE49 -> 0x007070C0), Thing's
+# directly at its pinned address.
+SUPPORT = [
+    "?j_0001de49@@YAXXZ,,0x0001DE49,5,game/gen_small/gthunks_032.cpp,matched,"
+    "gen-thunk;gap;target=0x007070C0",
+    "??1RoadType@@QAE@XZ,,0x007070C0,131,game/GameEngine/RoadTypeDestructor.cpp,matched,real",
+    "??1Thing@@UAE@XZ,,0x00709000,20,game/GameEngine/Thing.cpp,matched,real",
+]
+PINS = [
+    "??1Gen_dtorv_00707e60@@UAE@XZ,0x0001DE49,gen-dtor class destructor",
+    "??1Gen_dtor_0070a000@@UAE@XZ,0x00709000,gen-dtor class destructor",
+    "??1Gen_dtorv_0070a000@@UAE@XZ,0x00709000,gen-dtor class destructor",
+]
+
 HAND_OLD = "?init@Rva0005DA80WideToAnsi@@QAEXPBGI@Z"
 HAND_TU = "game/gen_small/W3AtlStringConversion.cpp"
 HAND_RVA = "0x0005DA80"
@@ -56,14 +71,17 @@ class Recorder:
 
 def arrange(tmp_path, monkeypatch, *, rows, name=REAL, rva=RVA, size="84",
             source=SOURCE_REL, replace_rva=RVA, extra=(), gate=0,
-            callers=(), shadow=False, proof=None):
+            callers=(), shadow=False, proof=None, definers=(), support=True,
+            pins=PINS):
     reverse = tmp_path / "targets/game/reverse"
     reverse.mkdir(parents=True)
     src = tmp_path / source
     src.parent.mkdir(parents=True, exist_ok=True)
     src.write_bytes(b"void body() {}\r\n")
     functions = reverse / "functions.csv"
+    rows = list(rows) + (SUPPORT if support else [])
     functions.write_bytes((HEADER + "\r\n" + "".join(r + "\r\n" for r in rows)).encode())
+    (reverse / "symbols.csv").write_text("name,address,notes\n" + "".join(p + "\n" for p in pins))
     deleted = reverse / "deleted_rows.csv"
     deleted.write_bytes(b"name,target_rva,reason\n")
     if proof is not None:
@@ -75,7 +93,7 @@ def arrange(tmp_path, monkeypatch, *, rows, name=REAL, rva=RVA, size="84",
     build_sh.chmod(0o755)
     recorder = Recorder(gate)
     monkeypatch.setattr(add_match.subprocess, "run", recorder)
-    seen = SimpleNamespace(callers=[], shadow=[])
+    seen = SimpleNamespace(callers=[], shadow=[], definers=[])
 
     def fake_callers(root, replaced):
         seen.callers.append((replaced["name"], replaced["rva"]))
@@ -85,6 +103,11 @@ def arrange(tmp_path, monkeypatch, *, rows, name=REAL, rva=RVA, size="84",
         seen.shadow.append((source_rel, symbol))
         return shadow
 
+    def fake_definers(root, symbol):
+        seen.definers.append(symbol)
+        return list(definers)
+
+    monkeypatch.setattr(add_match, "gen_small_definers", fake_definers)
     monkeypatch.setattr(add_match, "orphaned_caller_selectors", fake_callers)
     monkeypatch.setattr(add_match, "frozen_tu_defines", fake_defines)
     monkeypatch.setattr(sys, "argv", [
@@ -120,21 +143,22 @@ def test_gen_dtor_repoint_lands_and_reverifies_frozen_tu_and_callers(tmp_path, m
     assert command[1:] == [SOURCE_REL, *callers, DTOR_TU]
     assert seen.callers == [(DTOR_OLD, 0x00707E60)]
     assert seen.shadow == [(DTOR_TU, REAL)]
+    assert seen.definers == [REAL]
     tombstone = list(csv.reader(io.StringIO(files[1].read_text())))[-1]
     assert tombstone[:2] == [DTOR_OLD, RVA]
     assert "gen-dtor scaffold placeholder" in tombstone[2]
     assert "Prior notes: gen-dtor;ghidra=gap" in tombstone[2]
 
 
-@pytest.mark.parametrize("tu,old", [
-    ("game/gen_small/dtors_004.cpp", "??_GGen_dtor_0070a000@@UAEPAXI@Z"),
-    ("game/gen_small/dtorsv_000.cpp", "??_EGen_dtorv_0070a000@@UAEPAXI@Z"),
+@pytest.mark.parametrize("tu,old,new", [
+    ("game/gen_small/dtors_004.cpp", "??_GGen_dtor_0070a000@@UAEPAXI@Z", "??_GThing@@UAEPAXI@Z"),
+    ("game/gen_small/dtorsv_000.cpp", "??_EGen_dtorv_0070a000@@UAEPAXI@Z",
+     "??_EThing@@UAEPAXI@Z"),
 ])
-def test_both_gen_dtor_families_are_admitted(tmp_path, monkeypatch, tu, old):
+def test_both_gen_dtor_families_are_admitted(tmp_path, monkeypatch, tu, old, new):
     row = f"{old},,0x0070A000,30,{tu},matched,gen-dtor"
     files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[row], rva="0x0070A000",
-                                 size="30", replace_rva="0x0070A000",
-                                 name="??_GThing@@UAEPAXI@Z")
+                                 size="30", replace_rva="0x0070A000", name=new)
     add_match.main()
     assert old not in files[0].read_text()
     # last row of its TU: nothing left there to re-verify or to shadow the new body
@@ -296,3 +320,127 @@ def test_live_state_helpers_refuse_a_test_root(tmp_path):
         add_match.orphaned_caller_selectors(tmp_path, row)
     with pytest.raises(SystemExit):
         add_match.frozen_tu_defines(tmp_path, DTOR_TU, REAL)
+
+
+# --- review round 1 regressions ---------------------------------------------------
+
+@pytest.mark.parametrize("source", [
+    "game/./gen_small/RoadType.cpp",                    # S1: '.' detour
+    "game/GameEngine/../gen_small/RoadType.cpp",        # S1: '..' detour
+    "game//gen_small/RoadType.cpp",                     # S1: empty component
+    "game/Gen_Small/RoadType.cpp",                      # S1: case-insensitive host
+    "game/GEN_ASM/RoadType.cpp",
+])
+def test_s1_successor_path_detours_refused(tmp_path, monkeypatch, source):
+    files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW],
+                                 source=source)
+    refused(files)
+    assert recorder.builds == []
+
+
+def test_s1_symlinked_successor_refused(tmp_path, monkeypatch):
+    files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW])
+    real = tmp_path / "game/gen_small/RoadType.cpp"
+    real.parent.mkdir(parents=True, exist_ok=True)
+    real.write_text("void body() {}\n")
+    link = tmp_path / "game/GameEngine/Link.cpp"
+    link.parent.mkdir(parents=True, exist_ok=True)
+    link.symlink_to(real)
+    sys.argv[sys.argv.index(SOURCE_REL)] = "game/GameEngine/Link.cpp"
+    refused(files)
+    assert recorder.builds == []
+
+
+def test_s1_leading_dot_slash_still_accepted(tmp_path, monkeypatch):
+    files, _, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW],
+                          source=SOURCE_REL)
+    sys.argv[sys.argv.index(SOURCE_REL)] = "./" + SOURCE_REL
+    add_match.main()
+    assert REAL in files[0].read_text()
+
+
+@pytest.mark.parametrize("name", [
+    "??_ERva00707E60Dtor@@QAEPAXI@Z",                   # S2: address-derived class
+    "??_EGen_dtorv_00707e61@@UAEPAXI@Z",                # S2: generator class
+    "??_Edup_00707e60@@QAEPAXI@Z",
+    "??_ERoad0070Type7E60@@QAEPAXI@Z",
+    "??_GRoadType@@QAEPAXI@Z",                          # S2: wrong kind for a ??_E slot
+    "?d_00707e60@@YAXXZ",                               # S2: not a deleting destructor
+    "?freeRoadBuffers@W3DRoadBuffer@@QAEXXZ",
+])
+def test_s2_gen_dtor_successor_must_be_a_real_class_deleting_dtor(tmp_path, monkeypatch, name):
+    files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW], name=name)
+    refused(files)
+    assert recorder.builds == []
+
+
+@pytest.mark.parametrize("support,pins", [
+    # S3: ??1RoadType only pinned, no matched row
+    ([SUPPORT[0]], PINS + ["??1RoadType@@QAE@XZ,0x007070C0,pin only"]),
+    # S3: the matched ??1RoadType sits elsewhere than the destructor the placeholder calls
+    ([SUPPORT[0], SUPPORT[1].replace("0x007070C0", "0x00706000")], PINS),
+    # S3: ??1RoadType unmatched
+    ([SUPPORT[0], SUPPORT[1].replace(",matched,", ",unmatched,")], PINS),
+    # S3: no pin says which destructor the placeholder calls
+    (SUPPORT, PINS[1:]),
+])
+def test_s3_gen_dtor_needs_a_matched_destructor_row_at_the_called_address(
+        tmp_path, monkeypatch, support, pins):
+    files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW, *support],
+                                 support=False, pins=pins)
+    refused(files)
+    assert recorder.builds == []
+
+
+def test_s3_direct_destructor_placement_is_accepted(tmp_path, monkeypatch):
+    pins = ["??1Gen_dtorv_00707e60@@UAE@XZ,0x007070C0,gen-dtor class destructor"]
+    files, _, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SUPPORT[1]], support=False,
+                          pins=pins)
+    add_match.main()
+    assert REAL in files[0].read_text()
+
+
+def test_s5_any_linked_gen_small_definer_refuses(tmp_path, monkeypatch):
+    files, recorder, seen = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW],
+                                    definers=["game_gen_small_uw_gen_000.obj"])
+    refused(files)
+    assert seen.definers == [REAL]
+    assert len(recorder.builds) == 1                    # refused after the build, restored
+
+
+def test_s5_last_row_still_checks_census_definers(tmp_path, monkeypatch):
+    files, _, seen = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW],
+                             definers=["game_gen_small_named_001.obj"])
+    refused(files)
+    assert seen.definers == [REAL] and seen.shadow == []
+
+
+@pytest.mark.parametrize("old_source,new_source,ok", [
+    (HAND_TU, SOURCE_REL, False),                       # S6: moves out of gen_small
+    ("game/gen_small/tgrid_001.cpp", SOURCE_REL, False),
+    (HAND_TU, HAND_TU, True),                           # same file: nothing new is linked
+    ("game/GameEngine/Old.cpp", SOURCE_REL, True),      # unrelated: unchanged behaviour
+])
+def test_s6_replace_existing_cannot_move_a_gen_small_claim(
+        tmp_path, monkeypatch, old_source, new_source, ok):
+    row = f"{REAL},,{RVA},84,{old_source},matched,address-derived name"
+    files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[row], replace_rva=None,
+                                 source=new_source, extra=("--replace-existing",))
+    if ok:
+        add_match.main()
+        assert f"{REAL},,{RVA},84,{new_source},matched," in files[0].read_text()
+    else:
+        refused(files)
+        assert recorder.builds == []
+
+
+@pytest.mark.parametrize("notes", [
+    "address-derived name;gen-shim",                    # S8: a gen- part anywhere
+    "hand body;identity=generated",
+    "hand body; gen-alias;x",
+])
+def test_s8_generated_marker_in_any_note_part_is_not_hand_written(tmp_path, monkeypatch, notes):
+    row = HAND_ROW.replace("Open-BFME1 wide-to-ANSI conversion holder init; address-derived name",
+                           notes)
+    files, _, _ = hand(tmp_path, monkeypatch, proof=GOOD_PROOF, row=row)
+    refused(files)

@@ -91,8 +91,66 @@ def hand_gen_small_claim(row):
     if HAND_GEN_SMALL_SOURCE.fullmatch(row["source"]) is None:
         return False
     parts = [part.strip() for part in row["notes"].split(";")]
-    return not (parts[0].startswith("gen-") or
-                any(part.startswith(("vendored=", "object-symbol=")) for part in parts))
+    return not any(part.startswith(("gen-", "vendored=", "object-symbol=")) or
+                   "identity=generated" in part for part in parts)
+
+
+# A gen-dtor successor names the real class whose destructor the body calls.
+DTOR_SUCCESSOR = re.compile(r"\?\?_[GE](?P<cls>.+)@@[A-Z]AEPAXI@Z")
+GEN_DTOR_NAME = re.compile(r"\?\?_[GE](?P<cls>Gen_dtorv?_[0-9a-f]{8})@@UAEPAXI@Z")
+
+
+def opaque_class(cls):
+    """An address-derived or generator class spelling: never a proven identity."""
+    return (re.search(r"Gen_|dup_|(?:^|[@?$])[dj]_[0-9a-fA-F]{8}", cls) is not None or
+            any(re.search(r"\d", run) for run in re.findall(r"[0-9A-Fa-f]{8,}", cls)))
+
+
+def gen_dtor_successor_problem(root, replaced, name, rows):
+    """Why NAME cannot replace the gen-dtor placeholder REPLACED, or None.
+
+    The placeholder's only identity is the destructor it calls, which the gate
+    resolves through a symbols.csv pin (??1Gen_dtor*_X). A real successor must be
+    ??_G/??_E of a real (not address-derived) class C whose destructor ??1C is a
+    MATCHED ledger row placed at that pinned address, directly or behind a
+    matched ILT row's target=: a pin-only ??1C would byte-match a wrong class."""
+    successor = DTOR_SUCCESSOR.fullmatch(name)
+    if successor is None or name[3] != replaced["name"][3]:
+        return (f"{name} is not a {replaced['name'][:4]}<Class>@@?AEPAXI@Z deleting destructor "
+                f"like the {replaced['name']} placeholder it replaces")
+    cls = successor.group("cls")
+    if opaque_class(cls):
+        return (f"{cls} is an address-derived or generator class name; a gen-dtor "
+                "placeholder is only replaced by the deleting destructor of a real class")
+    placeholder = GEN_DTOR_NAME.fullmatch(replaced["name"])
+    if placeholder is None:
+        return f"{replaced['name']} is not a Gen_dtor placeholder name"
+    pin_name = f"??1{placeholder.group('cls')}@@UAE@XZ"
+    pins = set()
+    symbols = Path(root) / "targets/game/reverse" / "symbols.csv"
+    if symbols.exists():
+        with symbols.open(encoding="utf-8", newline="") as handle:
+            for pin in csv.DictReader(handle):
+                if pin.get("name") == pin_name:
+                    try:
+                        pins.add(int(pin["address"], 16))
+                    except (KeyError, TypeError, ValueError):
+                        continue
+    if not pins:
+        return f"no symbols.csv pin {pin_name} says which destructor the placeholder calls"
+    behind = set(pins)
+    for row in rows:
+        if row["status"] == "matched" and row["rva"] in pins:
+            target = re.search(r"(?:^|;)target=0x([0-9A-Fa-f]{8})(?:;|$)", row["notes"])
+            if target:
+                behind.add(int(target.group(1), 16))
+    dtor = re.compile(r"\?\?1" + re.escape(cls) + r"@@[A-Z]AE@XZ")
+    if not any(row["status"] == "matched" and dtor.fullmatch(row["name"]) and
+               row["rva"] in behind for row in rows):
+        return (f"no matched functions.csv row ??1{cls}@@?AE@XZ sits at the destructor the "
+                f"placeholder calls ({', '.join(f'0x{a:08X}' for a in sorted(pins))} or the "
+                "body its ILT row targets); land or prove that destructor first")
+    return None
 
 
 def gen_small_repoint(row):
@@ -297,6 +355,25 @@ def orphaned_caller_selectors(root, replaced):
     return [delta_sources.row_selector(rows[index]) for index in
             delta_sources.affected_row_indices(deleted, pins, rows,
                                                "gen_small repoint candidate losses")]
+
+
+def gen_small_definers(root, name):
+    """Census objects of game/gen_small/ TUs that define NAME (strong or COMDAT).
+
+    game/gen_small/ files are frozen (never edited), so the last link census's
+    definitions for them stay exact; the retired row's own TU is re-read fresh by
+    frozen_tu_defines. A COMDAT copy in ANY linked generated TU could fold with,
+    and win over, the verified body."""
+    import build
+    import link_check
+    if Path(root).resolve() != Path(build.ROOT).resolve():
+        fail("the game/gen_small/ repoint reads the live build state; it cannot run "
+             "against a test --root")
+    index = link_check.load_index()
+    objects = index["objects"]
+    found = set(index["strong"].get(name, ()))
+    found.update(entry[0] for entry in index["comdat"].get(name, ()))
+    return sorted(objects[i] for i in found if objects[i].startswith("game_gen_small_"))
 
 
 def frozen_tu_defines(root, source_rel, name):
@@ -680,7 +757,19 @@ def main():
         if gen_small_repoint(replaced):
             # Same proof bar as a gen_asm dump, and no wider: real compiled C++
             # outside every generated root, the exact old extent, a real build.
-            if (not source_rel.startswith("game/") or source_rel.startswith(GENERATED_ROOTS)
+            # The path is judged as the filesystem resolves it: no '.'/'..' or
+            # symlink detour, and case-folded for case-insensitive hosts.
+            try:
+                canonical = source_path.resolve().relative_to(root).as_posix()
+            except ValueError:
+                canonical = None
+            folded = source_rel.casefold()
+            given = re.split(r"[\\/]", args.source)
+            if given[:1] == ["."]:
+                given = given[1:]               # one leading ./ is the usual spelling
+            if (canonical != source_rel or any(part in (".", "..", "") for part in given)
+                    or not folded.startswith("game/")
+                    or folded.startswith(tuple(r.casefold() for r in GENERATED_ROOTS))
                     or source_path.suffix.lower() not in COMPILED_SOURCE_SUFFIXES):
                 fail(f"--replace-rva 0x{old_rva:08X} retires {replaced['source']}; its "
                      f"successor must be real C++ under game/ outside "
@@ -688,6 +777,10 @@ def main():
             if args.boundary_evidence or args.no_verify:
                 fail("a game/gen_small/ repoint keeps the old extent and is byte-verified: "
                      "no --boundary-evidence or --no-verify")
+            if gen_dtor_scaffold(replaced):
+                problem = gen_dtor_successor_problem(root, replaced, name, rows)
+                if problem:
+                    fail(problem)
     if args.replace_existing:
         if not claims:
             # 36 named __emit lifts carry a truncated decoration such as
@@ -705,6 +798,12 @@ def main():
             fail(f"--replace-existing requires exactly one existing row for {name}; "
                  f"found {len(claims)}")
         replaced = claims[0]
+        if (replaced["source"].casefold().startswith("game/gen_small/") and
+                source_rel != replaced["source"]):
+            fail(f"--replace-existing would move {name} out of {replaced['source']}, which "
+                 "keeps defining it: a generated copy that could win the link",
+                 "a game/gen_small/ claim moves to real C++ only through --replace-rva "
+                 "(and --correct-identity for a named hand-written row)")
     elif claims:
         addresses = ", ".join(f"0x{row['rva']:08X} ({row['source']}, {row['status']})"
                               for row in claims)
@@ -839,16 +938,18 @@ def main():
         restore()
         fail(f"verification failed (exit {result.returncode}) — append and "
              "marker strip REVERTED; nothing was changed")
-    if frozen_tu is not None:
+    if replaced is not None and args.replace_rva and gen_small_repoint(replaced):
         try:
-            shadowed = frozen_tu_defines(root, frozen_tu, name)
+            definers = gen_small_definers(root, name)
+            if frozen_tu is not None and frozen_tu_defines(root, frozen_tu, name):
+                definers.append(frozen_tu)
         except BaseException:
             restore()
             raise
-        if shadowed:
+        if definers:
             restore()
-            fail(f"{frozen_tu} also defines {name}: its generated copy could win the "
-                 "link over the verified body — append and marker strip REVERTED")
+            fail(f"{', '.join(definers)} also define(s) {name}: a generated copy could win "
+                 "the link over the verified body — append and marker strip REVERTED")
     print("add_match: verified OK — row is live")
     admit_compiler_label_alias(root, args.notes, rva, raw,
                                None if replaced is None else replaced["rva"])

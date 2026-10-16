@@ -1,5 +1,5 @@
 // ?rva00205AC0@ShareExperienceBehavior@@UAEXM@Z
-// partial score=0.9238 date=2026-10-13
+// partial score=0.9365 date=2026-10-15
 // cl: /DNDEBUG /MD /EHsc /D_STLP_USE_STATIC_LIB
 // stlport
 // Retail 0x00205AC0 (630 B, ret 4 at +0x273).  The ledger calls this
@@ -27,7 +27,12 @@ struct Coord3D { Real x, y, z; };
 class Overridable
 {
 public:
-	const Overridable *getFinalOverride() const;
+	const Overridable *getFinalOverride() const
+	{
+		if (m_nextOverride)
+			return m_nextOverride->getFinalOverride();
+		return this;
+	}
 	void *_vptr;
 	Overridable *m_nextOverride;
 };
@@ -44,6 +49,24 @@ private:
 enum KindOfType { KINDOF_59 = 0x59 };
 enum { KINDOF_WORD2_BIT25_MASK = 0x02000000 };
 
+template <class T> class OVERRIDE
+{
+public:
+	const T *operator->() const
+	{
+		if (!m_overridable) return 0;
+		return (const T *)m_overridable->getFinalOverride();
+	}
+	const T *operator*() const
+	{
+		if (!m_overridable) return 0;
+		return (const T *)m_overridable->getFinalOverride();
+	}
+	operator const T *() const { return operator*(); }
+
+	const T *m_overridable;
+};
+
 class Player;
 class ExperienceTracker
 {
@@ -56,18 +79,10 @@ class Thing
 {
 public:
 	Bool isKindOf(KindOfType t) const;
-	const ThingTemplate *getTemplate() const
-	{
-		const ThingTemplate *tmpl = m_template;
-		if (tmpl == 0)
-			return 0;
-		if (tmpl->m_nextOverride != 0)
-			tmpl = static_cast<const ThingTemplate *>(tmpl->m_nextOverride->getFinalOverride());
-		return tmpl;
-	}
+	const ThingTemplate *getTemplate() const { return m_template; }
 private:
 	void *_vptr;
-	const ThingTemplate *m_template;
+	OVERRIDE<ThingTemplate> m_template;
 };
 
 class Object : public Thing

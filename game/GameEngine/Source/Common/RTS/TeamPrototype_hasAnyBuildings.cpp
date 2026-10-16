@@ -1,6 +1,10 @@
 // cl: /DNDEBUG /DWIN32 /MD /EHsc /Iinputs/reference/shims/objectdlink
 // ?hasAnyBuildings@Team@@QAE_NV?$BitFlags@$0MA@@@_N@Z
 // Retail 0x000F4A70, Team::hasAnyBuildings(BitFlags<192>, Bool), 190 bytes.
+// The template reads are Zero Hour's OVERRIDE<ThingTemplate> with the reference's
+// inline recursive Overridable::getFinalOverride (outer level inline, recursive
+// call at ILT 0x000022BB); with that typing MSVC aligns the loop head itself,
+// which is the retail nop at +0x1F.
 
 #include "ObjectDlinkPmf.h"
 
@@ -8,7 +12,6 @@ typedef bool Bool;
 typedef unsigned int UnsignedInt;
 
 extern void j_00001140();
-extern void j_000022bb();
 
 #define callMemberFunction(object,ptrToMember) ((object).*(ptrToMember))
 
@@ -60,18 +63,47 @@ typedef BitFlags<116> KindOfMask116;
 // local Team mask is still passed by address through that same four-dword view.
 extern const BitFlags<192> KINDOFMASK_NONE;
 
-class BfmeOverridable
+class Overridable
 {
 public:
+	const Overridable *getFinalOverride() const
+	{
+		if (m_nextOverride)
+			return m_nextOverride->getFinalOverride();
+		return this;
+	}
+
 	void *m_vtable;
-	BfmeOverridable *m_nextOverride;
+	Overridable *m_nextOverride;
 };
+
+template <class T> class OVERRIDE
+{
+public:
+	const T *operator->() const
+	{
+		if (!m_overridable) return 0;
+		return (const T *)m_overridable->getFinalOverride();
+	}
+	const T *operator*() const
+	{
+		if (!m_overridable) return 0;
+		return (const T *)m_overridable->getFinalOverride();
+	}
+	operator const T *() const { return operator*(); }
+
+	const T *m_overridable;
+};
+
+class ThingTemplate;
 
 class BfmeObjectTemplateView
 {
 public:
+	const ThingTemplate *getTemplate() const { return m_template; }
+
 	void *m_vptr;
-	BfmeOverridable *m_template;
+	OVERRIDE<ThingTemplate> m_template;
 };
 
 class BfmeObjectStatusView
@@ -81,10 +113,10 @@ public:
 	unsigned char m_status118;
 };
 
-class ThingTemplate
+class ThingTemplate : public Overridable
 {
 public:
-	unsigned char m_head[0xC8];
+	unsigned char m_head[0xC8 - 8];
 	unsigned int m_kindOf0;
 	unsigned int m_kindOf1;
 };
@@ -116,25 +148,9 @@ public:
 	}
 };
 
-static BfmeOverridable *bfmeFinalTemplate(Object *obj)
+static inline const ThingTemplate *getTemplate(Object *obj)
 {
-	typedef const BfmeOverridable *(BfmeOverridable::*FinalOverrideFunc)() const;
-	union { void (*fn)(); FinalOverrideFunc call; } u = { j_000022bb };
-	BfmeOverridable *tmpl = ((BfmeObjectTemplateView *)obj)->m_template;
-	if (tmpl != 0 && tmpl->m_nextOverride != 0)
-		tmpl = (BfmeOverridable *)(tmpl->m_nextOverride->*u.call)();
-	return tmpl;
-}
-
-static BfmeOverridable *bfmeFinalTemplateGuard(Object *obj)
-{
-	typedef const BfmeOverridable *(BfmeOverridable::*FinalOverrideFunc)() const;
-	union { void (*fn)(); FinalOverrideFunc call; } u = { j_000022bb };
-	if (!obj) return 0;
-	BfmeOverridable *tmpl = ((BfmeObjectTemplateView *)obj)->m_template;
-	if (tmpl != 0 && tmpl->m_nextOverride != 0)
-		tmpl = (BfmeOverridable *)(tmpl->m_nextOverride->*u.call)();
-	return tmpl;
+	return ((BfmeObjectTemplateView *)obj)->getTemplate();
 }
 
 Bool Team::hasAnyBuildings(KindOfMaskType kindOf, Bool bfmeFlag)
@@ -142,16 +158,15 @@ Bool Team::hasAnyBuildings(KindOfMaskType kindOf, Bool bfmeFlag)
 	DLINK_ITERATOR<Object> iter = iterate_TeamMemberList();
 	if (iter.done())
 		return false;
-	__asm { nop }
 	for (; !iter.done(); iter.advance())
 	{
-		ThingTemplate *tmpl = (ThingTemplate *)bfmeFinalTemplateGuard(iter.cur());
+		const ThingTemplate *tmpl = getTemplate(iter.cur());
 		if ((tmpl->m_kindOf1 & 0x400000) != 0)
 			continue;
 
 		if (bfmeFlag)
 		{
-			tmpl = (ThingTemplate *)bfmeFinalTemplate(iter.cur());
+			tmpl = getTemplate(iter.cur());
 			BfmeObjectStatusView *obj = (BfmeObjectStatusView *)iter.cur();
 			if ((tmpl->m_kindOf0 & (1u << 7)) != 0 && (obj->m_status118 & 0x0C) != 0)
 				continue;

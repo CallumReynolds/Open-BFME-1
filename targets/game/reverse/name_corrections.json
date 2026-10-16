@@ -20218,5 +20218,35 @@
   "after_sha256": "27e77111c75f924a03146c19e388695a9ec95ca5bf99dde3639f24afb569647a",
   "evidence": "targets/game/reverse/identity_evidence/0075be60-rva001c86b0object-view.md",
   "reason": "false pairing approved by the project lead 2026-10-15: the bank's TU-local Object declared the aggregate-return position view of ILT 0x000421AE (0x001C86B0); the landed body keeps the real Object for draw->object and getControllingPlayer and calls the position through the address-named ABI view Rva001C86B0Object; Object is not renamed."
+ },
+ {
+  "old_path": "game/GameEngine/Source/Common/BfmeConv617.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/AI/AIDock.cpp",
+  "old_name": "AIInternalMoveToState",
+  "new_name": "BFMERetailDockVTable",
+  "before_sha256": "82e16063d037f8878797b8be8af7b6f378fca8b2fe43de9562de0642fcba7673",
+  "after_sha256": "2bd84d5aeeb7fb44f9c20a7dc4e35fff7c32457d65eab4d4fcaca2975dc1d066",
+  "evidence": "targets/game/reverse/identity_evidence/0014eba0-aidock-movetoentry-update.md",
+  "reason": "false pairing approved by the project lead 2026-10-15: the anonymous BfmeConv617.cpp body (bfmeGoCKE) is AIDockMoveToEntryState::update and moves into AIDock.cpp, which still uses AIInternalMoveToState (the update tail-calls AIInternalMoveToState::update); nothing is renamed to BFMERetailDockVTable, which is AIDock.cpp's existing dock vtable view."
+ },
+ {
+  "old_path": "game/GameEngine/Source/Common/BfmeConv618.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/AI/AIDock.cpp",
+  "old_name": "AIInternalMoveToState",
+  "new_name": "BFMERetailDockVTable",
+  "before_sha256": "a62dc05e3a244080b680d03e9c98a0dda5f84a8bc50089277d871c9dcdb64ebe",
+  "after_sha256": "2bd84d5aeeb7fb44f9c20a7dc4e35fff7c32457d65eab4d4fcaca2975dc1d066",
+  "evidence": "targets/game/reverse/identity_evidence/0014efc0-aidock-movetoexit-update.md",
+  "reason": "false pairing approved by the project lead 2026-10-15: the anonymous BfmeConv618.cpp body (bfmeGoCKF) is AIDockMoveToExitState::update and moves into AIDock.cpp, which still uses AIInternalMoveToState (the update tail-calls AIInternalMoveToState::update); nothing is renamed to BFMERetailDockVTable, which is AIDock.cpp's existing dock vtable view."
+ },
+ {
+  "old_path": "game/GameEngine/Source/GameLogic/AI/AIDock.cpp",
+  "new_path": "game/GameEngine/Source/GameLogic/AI/AIDock.cpp",
+  "old_name": "if",
+  "new_name": "bfmeRetailSetAdjustsDestinationFalse",
+  "before_sha256": "5df7b23dad3556ad0f5230ae0cc4946aaf070194ea8424351127d3ceaf4ab1a1",
+  "after_sha256": "2bd84d5aeeb7fb44f9c20a7dc4e35fff7c32457d65eab4d4fcaca2975dc1d066",
+  "evidence": "targets/game/reverse/identity_evidence/0014ec80-0014ef00-aidock-onenter-swap.md",
+  "reason": "false pairing approved by the project lead 2026-10-15: the MoveToDock and MoveToExit onEnter bodies exchange classes in AIDock.cpp (bytes unchanged); the token aligner pairs the moved guard's if with the bfmeRetailSetAdjustsDestinationFalse call that moved the other way; no name is lost."
  }
 ]

@@ -209,8 +209,8 @@ public:
 	virtual void slot00c() = 0;
 	virtual void slot010() = 0;
 	virtual void getEnterPosition( Object *owner, Coord3D *enterPosition ) = 0;	///< +0x14
-	virtual void getExitPosition( Object *owner, Coord3D *exitPosition ) = 0;	///< +0x18
-	virtual void getDockPosition( Object *owner, Coord3D *dockPosition ) = 0;	///< +0x1C
+	virtual void getDockPosition( Object *owner, Coord3D *dockPosition ) = 0;	///< +0x18
+	virtual void getExitPosition( Object *owner, Coord3D *exitPosition ) = 0;	///< +0x1C
 	virtual void slot020() = 0;
 	virtual void slot024() = 0;
 	virtual void slot028() = 0;
@@ -667,7 +667,7 @@ StateReturnType AIDockMoveToEntryState::onEnter( void )
 	}
 
 	AIUpdateInterface *ai = bfmeRetailAIUpdate( bfmeRetailMachineOwner( this ) );
-	if( ai  &&  ((BFMERetailDockVTable *)dock)->isAllowPassthroughType() ) 
+	if( ai  &&  ((BFMERetailDockVTable *)dock)->isAllowPassthroughType() )
 	{
 		ai->ignoreObstacle( bfmeRetailMachine( this )->getGoalObject() );
 	}
@@ -682,12 +682,25 @@ StateReturnType AIDockMoveToEntryState::onEnter( void )
 }
 
 //----------------------------------------------------------------------------------------------
-// ?update@AIDockMoveToEntryState@@ present-unmatched
+// Retail 0x0014EBA0 is slot 6 (+0x18) of table 0x01095CC0, the table the
+// AIDockMoveToEntryState-named constructor installs (slot 4 is this class's
+// onEnter 0x0014EAE0, slot 5 its onExit 0x0014EBF0). Like the MoveToDock
+// update, BFME null-checks the dock and refreshes the enter position every
+// frame before continuing the move.
 StateReturnType AIDockMoveToEntryState::update( void )
 {
+	Object *goalObject = bfmeRetailMachine( this )->getGoalObject();
+
+	DockUpdateInterface *dock = NULL;
+	if( goalObject )
+		dock = goalObject->getDockUpdateInterface();
+
 	// if we have nothing to dock with, fail
-	if (bfmeRetailMachine( this )->getGoalObject() == NULL)
+	if (dock == NULL)
 		return STATE_FAILURE;
+
+	// the dock may have moved its enter point
+	dock->getEnterPosition( bfmeRetailMachineOwner( this ), &m_goalPosition );
 
 	// this behavior is an extention of basic MoveTo
 	return AIInternalMoveToState::update();
@@ -728,9 +741,11 @@ void AIDockMoveToEntryState::onExit( StateExitType status )
 /**
  * Move to the dock's docking position.
  */
-// Retail carries neither ZH's isDockOpen guard nor the machine lock: the two
-// null tests share one failure epilogue, and the passthrough branch ends in the
-// desync-traced setAdjustsDestination(FALSE) rather than a plain field write.
+// Retail 0x0014EC80 is slot 4 of table 0x01095D38, the table the
+// AIDockMoveToDockState-named constructor at 0x0014F590 installs; like Zero
+// Hour's MoveToDock onEnter it carries the isDockOpen guard and the machine
+// lock. getDockPosition sits at vtable +0x18, one slot before getExitPosition,
+// as in Zero Hour's DockUpdateInterface.
 StateReturnType AIDockMoveToDockState::onEnter( void )
 {
 	Object *goalObject = bfmeRetailMachine( this )->getGoalObject();
@@ -743,15 +758,32 @@ StateReturnType AIDockMoveToDockState::onEnter( void )
 	if (dock == NULL)
 		return STATE_FAILURE;
 
+	// fail if the dock is closed
+	if( dock->isDockOpen() == FALSE )
+	{
+		dock->cancelDock( bfmeRetailMachineOwner( this ) );
+		return STATE_FAILURE;
+	}
+
 	// get the docking position
 	((BFMERetailDockVTable *)dock)->getDockPosition( bfmeRetailMachineOwner( this ), &m_goalPosition );
 
 	AIUpdateInterface *ai = bfmeRetailAIUpdate( bfmeRetailMachineOwner( this ) );
-	if( ai  &&  ((BFMERetailDockVTable *)dock)->isAllowPassthroughType() ) 
+	if( ai  &&  ((BFMERetailDockVTable *)dock)->isAllowPassthroughType() )
 	{
 		ai->ignoreObstacle( bfmeRetailMachine( this )->getGoalObject() );
-		bfmeRetailSetAdjustsDestinationFalse( this );
+
+		if( Glo012F0239 )
+		{
+			if( TheCRCParameterCheck )
+				bfmeRetailCritterDesyncLog( TheCRCParameterCheck, "CritterDesync: setAdjustDestination(FALSE) 1" );
+		}
+
+		*((char *)this + 0x4C) = 0;
 	}
+
+	// lock the machine
+	*((char *)bfmeRetailMachine( this ) + 0x40) = 1;
 
 	// this behavior is an extention of basic MoveTo
 	return AIInternalMoveToState::onEnter();
@@ -956,9 +988,11 @@ void AIDockProcessDockState::onExit( StateExitType status )
 /**
  * Move to the dock's exit position.
  */
-// Retail carries the same isDockOpen guard and machine lock as
-// AIDockMoveToEntryState::onEnter; getExitPosition sits at vtable +0x18, one
-// slot before getDockPosition.
+// Retail 0x0014EF00 is slot 4 of table 0x01095E28, the table the
+// AIDockMoveToExitState-named constructor installs. Like Zero Hour's MoveToExit
+// onEnter it has no isDockOpen guard and no machine lock: the two null tests
+// share one failure epilogue, and the passthrough branch ends in the
+// desync-traced setAdjustsDestination(FALSE) rather than a plain field write.
 StateReturnType AIDockMoveToExitState::onEnter( void )
 {
 	Object *goalObject = bfmeRetailMachine( this )->getGoalObject();
@@ -971,13 +1005,6 @@ StateReturnType AIDockMoveToExitState::onEnter( void )
 	if (dock == NULL)
 		return STATE_FAILURE;
 
-	// fail if the dock is closed
-	if( dock->isDockOpen() == FALSE )
-	{
-		dock->cancelDock( bfmeRetailMachineOwner( this ) );
-		return STATE_FAILURE;
-	}
-
 	// get the exit position
 	((BFMERetailDockVTable *)dock)->getExitPosition( bfmeRetailMachineOwner( this ), &m_goalPosition );
 
@@ -985,30 +1012,32 @@ StateReturnType AIDockMoveToExitState::onEnter( void )
 	if( ai  &&  ((BFMERetailDockVTable *)dock)->isAllowPassthroughType() )
 	{
 		ai->ignoreObstacle( bfmeRetailMachine( this )->getGoalObject() );
-
-		if( Glo012F0239 )
-		{
-			if( TheCRCParameterCheck )
-				bfmeRetailCritterDesyncLog( TheCRCParameterCheck, "CritterDesync: setAdjustDestination(FALSE) 1" );
-		}
-
-		*((char *)this + 0x4C) = 0;
+		bfmeRetailSetAdjustsDestinationFalse( this );
 	}
-
-	// lock the machine
-	*((char *)bfmeRetailMachine( this ) + 0x40) = 1;
 
 	// this behavior is an extention of basic MoveTo
 	return AIInternalMoveToState::onEnter();
 }
 
 //----------------------------------------------------------------------------------------------
-// ?update@AIDockMoveToExitState@@ present-unmatched
+// Retail 0x0014EFC0 is slot 6 (+0x18) of table 0x01095E28, the table the
+// AIDockMoveToExitState-named constructor installs (slot 4 is this class's
+// onEnter 0x0014EF00). Like the MoveToEntry update, BFME null-checks the dock
+// and refreshes the exit position every frame before continuing the move.
 StateReturnType AIDockMoveToExitState::update( void )
 {
+	Object *goalObject = bfmeRetailMachine( this )->getGoalObject();
+
+	DockUpdateInterface *dock = NULL;
+	if( goalObject )
+		dock = goalObject->getDockUpdateInterface();
+
 	// if we have nothing to dock with, fail
-	if (bfmeRetailMachine( this )->getGoalObject() == NULL)
+	if (dock == NULL)
 		return STATE_FAILURE;
+
+	// the dock may have moved its exit point
+	dock->getExitPosition( bfmeRetailMachineOwner( this ), &m_goalPosition );
 
 	// this behavior is an extention of basic MoveTo
 	return AIInternalMoveToState::update();

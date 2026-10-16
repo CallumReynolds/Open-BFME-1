@@ -1550,8 +1550,6 @@ functions	0x0014E130	?parseAttackPriority@AI@@SAXPAVINI@@PAX1PBX@Z
 functions	0x0014E5C0	??0Vector3i@@QAE@HHH@Z
 functions	0x0014E6A0	?loadPostProcess@AIDockMachine@@MAEXXZ
 functions	0x0014E7A0	?update@AIDockAdvancePositionState@@UAE?AW4StateReturnType@@XZ
-functions	0x0014EC80	?onEnter@AIDockMoveToExitState@@UAE?AW4StateReturnType@@XZ
-functions	0x0014EF00	?onEnter@AIDockMoveToDockState@@UAE?AW4StateReturnType@@XZ
 functions	0x0014F470	?loadPostProcess@AIDockWaitForClearanceState@@MAEXXZ
 functions	0x0014F760	?loadPostProcess@AIDockProcessDockState@@MAEXXZ
 functions	0x00150010	?setGuardMode@AITNGuardMachine@@QAEXW4GuardMode@@@Z

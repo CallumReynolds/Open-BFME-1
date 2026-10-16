@@ -88411,6 +88411,7 @@ name,address,notes
 ?setOverrideTeamRelationship@Team@@QAEXIH@Z,0x000340B3,ILT to 0x004F46D0; callee of doTeamSetOverrideRelationToTeam 0x002F4C20
 ?setParentCell@PathfindCell@@QAEXPAV1@@Z,0x00040313,additive: retail call target of the red row ?checkPathCost@Pathfinder@@IAEHPAVObject@@ABVLocomotorSet@@PBUCoord3D@@2@Z
 ?setPasswordMode@@YAXW4PasswordMode@@@Z,0x004D7AF0,pinharvest x2 (body)
+?setPathExtraDistance@AIUpdateInterface@@QAEXM@Z,0x0000EBAB,ILT to the 0x0026FE90 setter (ledger ?set@Rva0026FE90DwordSlot); ZH AIPanicState::onEnter passes it calcExtraPathDistance() and the body stores that float to AIUpdateInterface+0x168 (name_oracle m_pathExtraDistance layout_witness)
 ?setPeer@Rva007F9B80@@QAEXPAX@Z,0x007F9590,stores peer pointer on the 0x6B8 service object
 ?setPercentage@NetProgressCommandMsg@@QAEXE@Z,0x00030C56,pinharvest x1 (thunk)
 ?setPlayerIndex@AudioEventRTS@@QAEXH@Z,0x0003AC88,doSoundPlayFromNamed player-index ILT thunk

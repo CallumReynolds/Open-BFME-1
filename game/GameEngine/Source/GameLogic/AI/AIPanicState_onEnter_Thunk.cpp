@@ -1,370 +1,242 @@
-// cl: /DNDEBUG /MD /EHsc
-// Open-BFME5: lift MASM dump to standalone C++ thunk.
+// cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
+// ?onEnter@AIPanicState@@UAE?AW4StateReturnType@@XZ
+// stlport
+// Clean C++ recovery of AIPanicState::onEnter, the Zero Hour AIStates.cpp
+// body.  Retail boundary: 0x0017B680, 353 bytes, ends RET at 0x0017B7E0.
+// Identity: the body is ZH AIPanicState::onEnter statement for statement (the
+// only waypoint-path onEnter that sets MODELCONDITION_PANICKING), with the call
+// order (computeGoal ILT 0x00019DC1, AIInternalMoveToState::onEnter ILT
+// 0x00021E27, calcExtraPathDistance ILT 0x000428E8, setPathExtraDistance on
+// the witnessed AIUpdateInterface+0x168, notifyModelConditionChanged ILT
+// 0x0002191D) and the AIStates.cpp random-value line numbers 9810/9811.
+// Locomotor::m_template is Zero Hour's OVERRIDE<LocomotorTemplate> with the
+// reference's inline recursive Overridable::getFinalOverride, and the model
+// condition flags are STLport bitset BitFlags.
 
-enum StateReturnType {};
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/AIStateMachine.h
-class AIPanicState
+typedef bool Bool;
+typedef int Int;
+typedef float Real;
+typedef unsigned int UnsignedInt;
+
+extern "C" __declspec(dllimport) double __cdecl floor(double);
+
+__forceinline long fast_float2long_round(float value)
+{
+	long result;
+	__asm {
+		fld [value]
+		fistp [result]
+	}
+	return result;
+}
+
+#define REAL_TO_INT_FLOOR(x) (fast_float2long_round((float)floor((double)(x))))
+
+int GetGameLogicRandomValue(int lo, int hi, char *file, int line);
+#define GameLogicRandomValue(lo, hi) GetGameLogicRandomValue(lo, hi, __FILE__, __LINE__)
+
+enum StateReturnType
+{
+	STATE_CONTINUE = 0,
+	STATE_SUCCESS = -1,
+	STATE_FAILURE = -2
+};
+
+enum { PATHFIND_CELL_SIZE = 10 };
+
+#include "../../../../Libraries/Include/Lib/Coord2D.h"
+
+#include <bitset>
+
+class Waypoint;
+
+template <int NUMBITS>
+class BitFlags
+{
+public:
+	Bool test(Int idx) const { return m_bits.test(idx); }
+	void set(Int idx) { m_bits.set(idx); }
+
+private:
+	_STL::bitset<NUMBITS> m_bits;
+};
+
+enum ModelConditionFlagType { MODELCONDITION_PANICKING = 12 };
+
+class Overridable
+{
+public:
+	const Overridable *getFinalOverride() const
+	{
+		if (m_nextOverride)
+			return m_nextOverride->getFinalOverride();
+		return this;
+	}
+
+	void *m_vtable;
+	Overridable *m_nextOverride;
+};
+
+template <class T> class OVERRIDE
+{
+public:
+	const T *operator->() const
+	{
+		if (!m_overridable) return 0;
+		return (const T *)m_overridable->getFinalOverride();
+	}
+	const T *operator*() const
+	{
+		if (!m_overridable) return 0;
+		return (const T *)m_overridable->getFinalOverride();
+	}
+	operator const T *() const { return operator*(); }
+
+	const T *m_overridable;
+};
+
+class LocomotorTemplate : public Overridable
+{
+public:
+	unsigned char m_pad08[0xEC - 8];
+	Real m_wanderWidthFactor;
+};
+
+class Locomotor
+{
+public:
+	Real getWanderWidthFactor() const { return m_template->m_wanderWidthFactor; }
+
+	void *m_vtable;
+	OVERRIDE<LocomotorTemplate> m_template;
+};
+
+class AIUpdateInterface
+{
+public:
+	Locomotor *getCurLocomotor() const { return m_curLocomotor; }
+	void setPathExtraDistance(Real dist);
+
+private:
+	unsigned char m_pad00[0x1CC];
+	Locomotor *m_curLocomotor;
+};
+
+class Object
+{
+public:
+	AIUpdateInterface *getAI() const { return m_ai; }
+	UnsignedInt getID() const { return m_id; }
+	void notifyModelConditionChanged();
+	void setModelConditionState(ModelConditionFlagType a)
+	{
+		if (!m_modelConditionFlags.test(a))
+		{
+			m_modelConditionFlags.set(a);
+			notifyModelConditionChanged();
+		}
+	}
+
+private:
+	unsigned char m_pad00[0x74];
+	UnsignedInt m_id;
+	unsigned char m_pad78[0x118 - 0x78];
+	BitFlags<32> m_modelConditionFlags;
+	unsigned char m_pad11C[0x204 - 0x11C];
+	AIUpdateInterface *m_ai;
+};
+
+class StateMachine
+{
+public:
+	Object *getOwner() const { return m_owner; }
+	Waypoint *getGoalWaypoint() const { return m_goalWaypoint; }
+
+private:
+	unsigned char m_pad00[0x10];
+	Object *m_owner;
+	unsigned char m_pad14[0x50 - 0x14];
+	Waypoint *m_goalWaypoint;
+};
+
+class State
+{
+public:
+	virtual ~State();
+	StateMachine *getMachine() const { return m_machine; }
+	Object *getMachineOwner() const { return m_machine->getOwner(); }
+
+protected:
+	UnsignedInt m_id;
+	UnsignedInt m_successStateID;
+	UnsignedInt m_failureStateID;
+	void *m_transitions[3];
+	StateMachine *m_machine;
+};
+
+class AIInternalMoveToState : public State
 {
 public:
 	virtual StateReturnType onEnter();
+
+protected:
+	unsigned char m_pad20[0x50 - 0x20];
 };
 
-// ?onEnter@AIPanicState@@UAE?AW4StateReturnType@@XZ
-__declspec(naked) StateReturnType AIPanicState::onEnter()
+class AIFollowWaypointPathState : public AIInternalMoveToState
 {
-	__asm {
-        __emit 0x83
-        __emit 0xec
-        __emit 0x0c
-        __emit 0x53
-        __emit 0x55
-        __emit 0x56
-        __emit 0x8b
-        __emit 0xf1
-        __emit 0x8b
-        __emit 0x46
-        __emit 0x1c
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x50
-        __emit 0x85
-        __emit 0xc9
-        __emit 0x89
-        __emit 0x4e
-        __emit 0x60
-        __emit 0x8b
-        __emit 0x68
-        __emit 0x10
-        __emit 0x8b
-        __emit 0x9d
-        __emit 0x04
-        __emit 0x02
-        __emit 0x00
-        __emit 0x00
-        __emit 0x89
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x14
-        __emit 0x75
-        __emit 0x0c
-        __emit 0x5e
-        __emit 0x5d
-        __emit 0xb8
-        __emit 0xfe
-        __emit 0xff
-        __emit 0xff
-        __emit 0xff
-        __emit 0x5b
-        __emit 0x83
-        __emit 0xc4
-        __emit 0x0c
-        __emit 0xc3
-        __emit 0x57
-        __emit 0x8b
-        __emit 0xbb
-        __emit 0xcc
-        __emit 0x01
-        __emit 0x00
-        __emit 0x00
-        __emit 0x85
-        __emit 0xff
-        __emit 0x0f
-        __emit 0x84
-        __emit 0xbf
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x47
-        __emit 0x04
-        __emit 0x85
-        __emit 0xc0
-        __emit 0x74
-        __emit 0x0c
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x04
-        __emit 0x85
-        __emit 0xc9
-        __emit 0x74
-        __emit 0x05
-        __emit 0xe8
-        __emit 0xeb
-        __emit 0x6b
-        __emit 0xe8
-        __emit 0xff
-        __emit 0xd9
-        __emit 0x80
-        __emit 0xec
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0xd8
-        __emit 0x1d
-        __emit 0x50
-        __emit 0x53
-        __emit 0x07
-        __emit 0x01
-        __emit 0xdf
-        __emit 0xe0
-        __emit 0xf6
-        __emit 0xc4
-        __emit 0x41
-        __emit 0x0f
-        __emit 0x85
-        __emit 0x95
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x47
-        __emit 0x04
-        __emit 0x85
-        __emit 0xc0
-        __emit 0x74
-        __emit 0x0c
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x04
-        __emit 0x85
-        __emit 0xc9
-        __emit 0x74
-        __emit 0x05
-        __emit 0xe8
-        __emit 0xc1
-        __emit 0x6b
-        __emit 0xe8
-        __emit 0xff
-        __emit 0xd9
-        __emit 0x80
-        __emit 0xec
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x83
-        __emit 0xec
-        __emit 0x08
-        __emit 0xd8
-        __emit 0x05
-        __emit 0x3c
-        __emit 0x53
-        __emit 0x07
-        __emit 0x01
-        __emit 0xdd
-        __emit 0x1c
-        __emit 0x24
-        __emit 0xff
-        __emit 0x15
-        __emit 0xb8
-        __emit 0x93
-        __emit 0x35
-        __emit 0x01
-        __emit 0xd9
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x18
-        __emit 0x83
-        __emit 0xc4
-        __emit 0x08
-        __emit 0xd9
-        __emit 0x44
-        __emit 0x24
-        __emit 0x10
-        __emit 0xdb
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x14
-        __emit 0x8b
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x14
-        __emit 0x83
-        __emit 0xfb
-        __emit 0x01
-        __emit 0x7d
-        __emit 0x05
-        __emit 0xbb
-        __emit 0x01
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x68
-        __emit 0x52
-        __emit 0x26
-        __emit 0x00
-        __emit 0x00
-        __emit 0x68
-        __emit 0x9c
-        __emit 0x76
-        __emit 0x09
-        __emit 0x01
-        __emit 0x8b
-        __emit 0xfb
-        __emit 0xf7
-        __emit 0xdf
-        __emit 0x53
-        __emit 0x57
-        __emit 0xe8
-        __emit 0x6a
-        __emit 0x64
-        __emit 0xe8
-        __emit 0xff
-        __emit 0x8d
-        __emit 0x04
-        __emit 0x80
-        __emit 0x68
-        __emit 0x53
-        __emit 0x26
-        __emit 0x00
-        __emit 0x00
-        __emit 0xd1
-        __emit 0xe0
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x28
-        __emit 0xdb
-        __emit 0x44
-        __emit 0x24
-        __emit 0x28
-        __emit 0x68
-        __emit 0x9c
-        __emit 0x76
-        __emit 0x09
-        __emit 0x01
-        __emit 0x53
-        __emit 0x57
-        __emit 0xd9
-        __emit 0x5e
-        __emit 0x50
-        __emit 0xe8
-        __emit 0x49
-        __emit 0x64
-        __emit 0xe8
-        __emit 0xff
-        __emit 0x8b
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x38
-        __emit 0x8d
-        __emit 0x0c
-        __emit 0x80
-        __emit 0x83
-        __emit 0xc4
-        __emit 0x20
-        __emit 0xd1
-        __emit 0xe1
-        __emit 0x89
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x14
-        __emit 0xdb
-        __emit 0x44
-        __emit 0x24
-        __emit 0x14
-        __emit 0xd9
-        __emit 0x5e
-        __emit 0x54
-        __emit 0x6a
-        __emit 0x00
-        __emit 0x8b
-        __emit 0xce
-        __emit 0xe8
-        __emit 0x3c
-        __emit 0xe6
-        __emit 0xe9
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xce
-        __emit 0xe8
-        __emit 0x9b
-        __emit 0x66
-        __emit 0xea
-        __emit 0xff
-        __emit 0x8b
-        __emit 0x56
-        __emit 0x1c
-        __emit 0xc7
-        __emit 0x46
-        __emit 0x70
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0xf8
-        __emit 0x8b
-        __emit 0x42
-        __emit 0x10
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x74
-        __emit 0x83
-        __emit 0xe1
-        __emit 0x07
-        __emit 0x83
-        __emit 0xc1
-        __emit 0x0a
-        __emit 0x89
-        __emit 0x4e
-        __emit 0x6c
-        __emit 0x8b
-        __emit 0xce
-        __emit 0xe8
-        __emit 0x3a
-        __emit 0x71
-        __emit 0xec
-        __emit 0xff
-        __emit 0x51
-        __emit 0x8b
-        __emit 0xcb
-        __emit 0xd9
-        __emit 0x1c
-        __emit 0x24
-        __emit 0xe8
-        __emit 0xf2
-        __emit 0x33
-        __emit 0xe9
-        __emit 0xff
-        __emit 0x8b
-        __emit 0x8d
-        __emit 0x18
-        __emit 0x01
-        __emit 0x00
-        __emit 0x00
-        __emit 0xb8
-        __emit 0x00
-        __emit 0x10
-        __emit 0x00
-        __emit 0x00
-        __emit 0x85
-        __emit 0xc8
-        __emit 0x75
-        __emit 0x0f
-        __emit 0x0b
-        __emit 0xc8
-        __emit 0x89
-        __emit 0x8d
-        __emit 0x18
-        __emit 0x01
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0xcd
-        __emit 0xe8
-        __emit 0x46
-        __emit 0x61
-        __emit 0xea
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xc7
-        __emit 0x5f
-        __emit 0x5e
-        __emit 0x5d
-        __emit 0x5b
-        __emit 0x83
-        __emit 0xc4
-        __emit 0x0c
-        __emit 0xc3
+public:
+	void computeGoal(Bool useGroupOffsets);
+
+protected:
+	Real calcExtraPathDistance();
+
+	Coord2D m_groupOffset;
+	unsigned char m_pad58[8];
+	Waypoint *m_currentWaypoint;
+};
+
+class AIPanicState : public AIFollowWaypointPathState
+{
+public:
+	virtual StateReturnType onEnter();
+
+protected:
+	unsigned char m_pad64[8];
+	Int m_waitFrames;
+	UnsignedInt m_timer;
+};
+
+StateReturnType AIPanicState::onEnter()
+{
+	m_currentWaypoint = getMachine()->getGoalWaypoint();
+
+	Object *obj = getMachineOwner();
+	AIUpdateInterface *ai = obj->getAI();
+	if (m_currentWaypoint == 0)
+		return STATE_FAILURE;
+	// set initial movement goal
+	Locomotor *curLoco = ai->getCurLocomotor();
+	if (curLoco && curLoco->getWanderWidthFactor() > 0.0f)
+	{
+		Int delta = REAL_TO_INT_FLOOR(curLoco->getWanderWidthFactor() + 0.5f);
+		if (delta < 1)
+			delta = 1;
+#line 9810 "F:\\bfme\\Code\\gameengine\\Source\\GameLogic\\Ai\\AIStates.cpp"
+		m_groupOffset.x = GameLogicRandomValue(-delta, delta) * PATHFIND_CELL_SIZE;
+		m_groupOffset.y = GameLogicRandomValue(-delta, delta) * PATHFIND_CELL_SIZE;
 	}
+	computeGoal(false);
+	StateReturnType ret = AIInternalMoveToState::onEnter();
+
+	m_timer = 0;
+	m_waitFrames = 10 + (getMachineOwner()->getID() & 0x7);
+	// Update the extra path distance.   AIInternalMoveToState::onEnter resets it.
+	ai->setPathExtraDistance(calcExtraPathDistance());
+	if (obj)
+	{
+		obj->setModelConditionState(MODELCONDITION_PANICKING);
+	}
+
+	return ret;
 }

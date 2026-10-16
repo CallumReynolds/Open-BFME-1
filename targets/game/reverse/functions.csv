@@ -37885,7 +37885,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?d_006f83f0@@YAXXZ,,0x006F83F0,618,game/gen_asm/d_006f2cc0.asm,matched,gen-dump;ghidra=FUN_00af83f0
 ?d_006f9a30@@YAXXZ,,0x006F9A30,76,game/gen_asm/d_006f2cc0.asm,matched,gen-dump;ghidra=FUN_00af9a30
 ?d_006f9cd0@@YAXXZ,,0x006F9CD0,589,game/gen_asm/d_006e7d70.asm,matched,gen-dump;bounds=high
-?d_006fa9b0@@YAXXZ,,0x006FA9B0,1426,game/gen_asm/d_006f2cc0.asm,matched,gen-dump;ghidra=FUN_00afa9b0
 ?d_006fb0b0@@YAXXZ,,0x006FB0B0,835,game/gen_asm/d_006f2cc0.asm,matched,gen-dump;ghidra=FUN_00afb0b0
 ?d_006fd700@@YAXXZ,,0x006FD700,524,game/gen_asm/d_006fb8e0.asm,matched,gen-dump;ghidra=FUN_00afd700
 ?d_006ff160@@YAXXZ,,0x006FF160,3023,game/gen_asm/d_006fb8e0.asm,matched,gen-dump;ghidra=FUN_00aff160
@@ -172555,3 +172554,4 @@ _rva009B1ED0,,0x009B1ED0,701,game/GameEngine/Source/Common/Rva009B1ED0Filter.cpp
 ?update@AIDockMoveToExitState@@UAE?AW4StateReturnType@@XZ,,0x0014EFC0,59,game/GameEngine/Source/GameLogic/AI/AIDock.cpp,matched,identity-correction=targets/game/reverse/identity_evidence/0014efc0-aidock-movetoexit-update.md;slot 6 of table 0x01095E28 installed by the AIDockMoveToExitState-named ctor 0x0014F690 (slot 4 = this class onEnter 0x0014EF00); dock +0x1C getExitPosition refresh;model=claude-opus-5.5;host=GreatFaram
 ?updateAnimationSounds@AnimationSoundClientBehavior@@QAEXXZ,,0x006059F0,903,game/GameEngine/Source/GameClient/Drawable/Behavior/AnimationSoundClientBehaviorUpdateAnimationSounds.cpp,matched,EA aligned name and confirmed ILT decoration; complete caller and constructor receiver layout; opaque helper ABI from full value copy and unwind; output-first scalar adapter restores x87 order; evidence=targets/game/reverse/identity_evidence/0x006059f0-x87-close.md;model=gpt-6.1-sol;host=fleet
 ?getDefaultMap@@YA?AVAsciiString@@_N@Z,,0x00457FB0,361,game/GameEngine/Source/GameClient/MapUtilGetDefaultMap.cpp,matched,clean C++ getDefaultMap; updateCache inlined; maps collected via 0x00453480 (visible inline body keeps the vector unescaped) and sorted via 0x004568C0; thin BFME AsciiString copy ctor 0x00887B60; replaces the naked __emit lift;model=claude-opus-5-5;host=app
+?doParticles006FA9B0@W3DParticleSystemManager@@UAEXAAVRenderInfoClass@@@Z,,0x006FA9B0,1426,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DFXParticleSystemDoParticles.cpp,matched,identity-evidence=targets/game/reverse/identity_evidence/006fa9b0-render-count-recovery.md;address-suffixed bank spelling;intrusive handle payload and EH cleanup verified;model=gpt-6.1-sol;host=fleet

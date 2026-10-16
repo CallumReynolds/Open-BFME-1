@@ -1,8 +1,6 @@
-// ?doParticles@W3DParticleSystemManager@@UAEXAAVRenderInfoClass@@@Z
-// partial score=0.8703 date=2026-10-13
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /Igame/Libraries/Source/WWVegas /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/WWDebug /Igame/Libraries/Source/WWVegas/WWSaveLoad /Iinputs/reference/shims/sweep /Iinputs/reference/shims/smudgenopool
 // stlport
-// Retail 0x006FA9B0 uses 12-byte intrusive handles and a deferred renderer.
+// Evidence: targets/game/reverse/identity_evidence/006fa9b0-render-count-recovery.md
 #define Matrix4x4 Matrix4
 #define __PLACEMENT_VEC_NEW_INLINE
 #include "winbase_shim.h"
@@ -146,7 +144,7 @@ public:
 extern ParticleSystemManager *TheParticleSystemManager;
 class W3DParticleSystemManager {
 public:
-    virtual void doParticles(RenderInfoClass &);
+    virtual void doParticles006FA9B0(RenderInfoClass &);
     unsigned char m_beforeFieldCount[0x84];
     int m_fieldParticleCount;
     unsigned char m_beforeOnScreen[4];
@@ -160,8 +158,8 @@ typedef char check_handle[sizeof(GenNode_006fa270)==12?1:-1];
 typedef char check_ready[offsetof(W3DParticleSystemManager,m_readyToRender)==0xbc?1:-1];
 typedef char check_deferred[offsetof(W3DParticleSystemManager,m_deferred)==0xc0?1:-1];
 
-// ?doParticles@W3DParticleSystemManager@@UAEXAAVRenderInfoClass@@@Z
-void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
+// ?doParticles006FA9B0@W3DParticleSystemManager@@UAEXAAVRenderInfoClass@@@Z
+void W3DParticleSystemManager::doParticles006FA9B0(RenderInfoClass &rinfo)
 {
     if (!m_readyToRender) return;
     // external mechanism must tell us when it's OK to render again...
@@ -215,7 +213,7 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
                     smudge->m_pos.Set(pos->X,pos->Y,pos->Z);
                     smudge->m_offset.Set(
                         GetGameClientRandomValueReal(-2.0f*jitter,2.0f*jitter,"F:\\bfme\\Code\\gameenginedevice\\Source\\W3DDevice\\GameClient\\W3DFXParticleSystem.cpp",189),
-                        GetGameClientRandomValueReal(-psize,psize,"F:\\bfme\\Code\\gameenginedevice\\Source\\W3DDevice\\GameClient\\W3DFXParticleSystem.cpp",189));
+                        GetGameClientRandomValueReal(-jitter,jitter,"F:\\bfme\\Code\\gameenginedevice\\Source\\W3DDevice\\GameClient\\W3DFXParticleSystem.cpp",189));
                     smudge->m_size=psize;
                     smudge->m_opacity=((Rva005C3160Owner *)p)->Rva005C3160();
                     ++g_bfmeVal991;
@@ -224,19 +222,25 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
             continue;
         }
         Rva006FA9B0Renderer *renderer=sys.m_owner->m_renderer;
-        if (renderer)
-            m_onScreenParticleCount+=renderer->render(rinfo,bbox,&m_fieldParticleCount);
+        if (renderer) {
+            int count=renderer->render(rinfo,bbox,&m_fieldParticleCount);
+            m_onScreenParticleCount+=count;
+        }
     }// next system
     if (g_get_006f9ff0) {
         bool sorting=Rva012D6D75;
         if (sorting) Rva012D6D75=0;
         for (int pass=1;pass>=0;--pass) {
-            for (int i=m_deferred[pass].size()-1;i>=0;--i) {
-                GenNode_006fa270 sys(m_deferred[pass][i]);
-                if (!sys.m_owner) continue;
-                Rva006FA9B0Renderer *renderer=sys.m_owner->m_renderer;
-                if (renderer)
-                    m_onScreenParticleCount+=renderer->render(rinfo,bbox,&m_fieldParticleCount);
+            int i=m_deferred[pass].size()-1;
+            if (i>=0) {
+                int byteOffset=i*sizeof(GenNode_006fa270);
+                for (;i>=0;--i,byteOffset-=sizeof(GenNode_006fa270)) {
+                    GenNode_006fa270 sys(*(GenNode_006fa270 *)((char *)m_deferred[pass].begin()+byteOffset));
+                    if (!sys.m_owner) continue;
+                    Rva006FA9B0Renderer *renderer=sys.m_owner->m_renderer;
+                    if (renderer)
+                        m_onScreenParticleCount+=renderer->render(rinfo,bbox,&m_fieldParticleCount);
+                }
             }
             m_deferred[pass].clear();
         }

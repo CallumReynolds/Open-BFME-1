@@ -41,12 +41,24 @@ struct BfmeObjectNode : public BfmeListNodeBase
 	Object *m_bfmeValue;				// +0x08
 };
 
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/GlobalData.h
+class GlobalData
+{
+public:
+	char m_slice_pad[0xB60];
+	Int m_maxTunnelCapacity;			// +0xB60 (name_oracle)
+};
+
+extern GlobalData *TheWritableGlobalData;
+
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/TunnelTracker.h
 class TunnelTracker
 {
 public:
 	UnsignedInt getContainCount(Int filterArg);
 	static void healObject(Object *obj, void *frames);
+	Int getContainMax() const { return TheWritableGlobalData->m_maxTunnelCapacity; }
+	Bool isValidContainerFor(const Object *obj, Bool checkCapacity) const;
 
 private:
 	unsigned char m_bfmeHead[0x08 - 0x00];
@@ -109,15 +121,53 @@ public:
 	virtual Real getMaxHealth(void) const = 0;
 };
 
+// retail 0x00087A80 (matched): follows m_nextOverride to the final override.
+class Overridable
+{
+public:
+	const Overridable *getFinalOverride() const;
+
+	const Overridable *friend_getFinalOverride() const
+	{
+		if (m_nextOverride)
+			return m_nextOverride->getFinalOverride();
+		return this;
+	}
+
+private:
+	void *m_vtbl;
+	Overridable *m_nextOverride;			// +0x04
+};
+
+// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/Common/ThingTemplate.h
+class ThingTemplate : public Overridable
+{
+public:
+	UnsignedInt getKindOfWord0(UnsignedInt mask) const { return m_kindofWord0 & mask; }
+
+private:
+	char m_slice_pad[0xC8 - 0x08];
+	UnsignedInt m_kindofWord0;			// +0xC8, first word of the KindOf mask
+};
+
 // upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameLogic/Object.h
 class Object
 {
 public:
 	BodyModuleInterface *getBodyModule(void) const { return m_body; }
 	UnsignedInt getContainedByFrame(void) const { return m_containedByFrame; }
+	UnsignedInt isKindOfWord0(UnsignedInt mask) const
+	{
+		const ThingTemplate *tmpl = m_template;
+		if (tmpl)
+			tmpl = (const ThingTemplate *)tmpl->friend_getFinalOverride();
+		return tmpl->getKindOfWord0(mask);
+	}
 
 private:
-	char m_slice_padA[0x200];
+	char m_slice_pad0[0x04];
+	const ThingTemplate *m_template;		// +0x04
+	char m_slice_padA[0x200 - 0x08];
 	BodyModuleInterface *m_body;
 	char m_slice_padB[0x21C - 0x204];
 	UnsignedInt m_containedByFrame;
@@ -174,4 +224,29 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		body->attemptHealing( &healInfo );
 
 	}  // end else
+}
+
+// ?isValidContainerFor@TunnelTracker@@QBE_NPBVObject@@_N@Z, retail 0x000F9170.
+// Only caller is TunnelContain::isValidContainerFor (0x0022F260): it takes the
+// container object's controlling player, reads its tunnel system at +0x22C and
+// tail-jumps here through ILT 0x0002818C with (obj, checkCapacity).
+// The count is BFME's out-of-line getContainCount(Int filter) above, inlined
+// with no filter; reading the member directly loads it before the maximum.
+Bool TunnelTracker::isValidContainerFor(const Object *obj, Bool checkCapacity) const
+{
+	// ZH excludes aircraft here; BFME tests bit 12 of the KindOf mask.
+	if (obj && !obj->isKindOfWord0(0x1000))
+	{
+		if (checkCapacity)
+		{
+			Int containMax = getContainMax();
+			Int containCount = const_cast<TunnelTracker *>(this)->getContainCount(0);
+			return (containCount < containMax);
+		}
+		else
+		{
+			return true;
+		}
+	}
+	return false;
 }

@@ -138,26 +138,7 @@ void TunnelTracker::updateNemesis(const Object *target)
 // byte-exact reconstruction: game/GameEngine/Source/Common/RTS/TunnelTrackerGetCurNemesis.cpp
 
 // ------------------------------------------------------------------------
-// ?isValidContainerFor@TunnelTracker@@ present-unmatched
-Bool TunnelTracker::isValidContainerFor(const Object* obj, Bool checkCapacity) const
-{
-	//October 11, 2002 -- Kris : Dustin wants ALL units to be able to use tunnels!
-	// srj sez: um, except aircraft. 
-	if (obj && !obj->isKindOf(KINDOF_AIRCRAFT))
-	{
-		if (checkCapacity)
-		{
-			Int containMax = getContainMax();
-			Int containCount = getContainCount();
-			return ( containCount < containMax );
-		}
-		else
-		{
-			return true;
-		}
-	}
-	return false;
-}
+// byte-exact reconstruction: game/GameEngine/Source/Common/RTS/TunnelTracker_getContainCount.cpp
 
 // ------------------------------------------------------------------------
 // ?addToContainList@TunnelTracker@@ present-unmatched

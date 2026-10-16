@@ -1,5 +1,4 @@
-// ?update006059F0@Node004092A0@@QAEXXZ
-// partial score=0.9799 date=2026-10-15
+// ?updateAnimationSounds@AnimationSoundClientBehavior@@QAEXXZ
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib
 
 // stlport
@@ -30,6 +29,7 @@ template<> inline int StringBase<char>::compareNoCase(const StringBase<char> &st
 }
 
 extern "C" __declspec(dllimport) long __stdcall InterlockedDecrement(long volatile *);
+extern "C" __declspec(dllimport) long __stdcall InterlockedIncrement(long volatile *);
 class Rva006059F0Counted {
 public:
     virtual ~Rva006059F0Counted();
@@ -39,6 +39,11 @@ public:
 class EventNameRef006059F0 {
 public:
     EventNameRef006059F0() : m_eventRef(0) {}
+    // ??0EventNameRef006059F0@@QAE@ABV0@@Z absent-from-retail
+    EventNameRef006059F0(const EventNameRef006059F0 &that) : m_eventRef(that.m_eventRef) {
+        if (m_eventRef) InterlockedIncrement(&m_eventRef->m_refCount);
+    }
+    EventNameRef006059F0 &operator=(const EventNameRef006059F0 &that);
     ~EventNameRef006059F0() { if (m_eventRef) m_eventRef->Release_Ref(); }
     Rva006059F0Counted *m_eventRef;
 };
@@ -196,10 +201,11 @@ public:
 class BfmeResetSubsystem;
 extern BfmeResetSubsystem *g_animationSoundClientBehaviorGlobal;
 
-struct Node004092A0
+class AnimationSoundClientBehavior
 {
-	void update006059F0();
-	// ?getModuleData006059F0@Node004092A0@@QBEPAUModuleData006059F0@@XZ absent-from-retail
+public:
+	void updateAnimationSounds();
+	// ?getModuleData006059F0@AnimationSoundClientBehavior@@QBEPAUModuleData006059F0@@XZ absent-from-retail
 	__forceinline ModuleData006059F0 *getModuleData006059F0() const { return m_moduleData; }
 
 	UnsignedByte m_unmodelled00[4];
@@ -207,11 +213,22 @@ struct Node004092A0
 	Drawable *m_drawable;
 	UnsignedByte m_unmodelled0C[4];
 	Real m_rangeSqr;
-	Node004092A0 *m_next;
-	Node004092A0 *m_prev;
+	AnimationSoundClientBehavior *m_next;
+	AnimationSoundClientBehavior *m_prev;
 };
 
-void Node004092A0::update006059F0()
+struct Rva006059F0Delta {
+    Real dx, dy, dz;
+    // ??0Rva006059F0Delta@@QAE@MMM@Z absent-from-retail
+    __forceinline Rva006059F0Delta(Real x, Real y, Real z) : dx(x), dy(y), dz(z) {}
+    // ?lengthSqr@Rva006059F0Delta@@QBEMXZ absent-from-retail
+    __forceinline Real lengthSqr() const { return dx * dx + dy * dy + dz * dz; }
+};
+// ?delta006059F0@@YAXPAURva006059F0Delta@@MMM@Z absent-from-retail
+// The output parameter precedes the independent deltas to preserve their evaluation order.
+static __forceinline void delta006059F0(Rva006059F0Delta *result, Real dz, Real dy, Real dx) { result->dx = dx; result->dy = dy; result->dz = dz; }
+
+void AnimationSoundClientBehavior::updateAnimationSounds()
 {
 	Drawable *draw = m_drawable;
 	if (!draw)
@@ -224,10 +241,9 @@ void Node004092A0::update006059F0()
 			return;
 		Coord3D listener = *TheAudioClientUpdate->getListenerPosition006059F0();
 		const Coord3D *pos = draw->getPosition();
-		Real dx = listener.x - pos->x;
-		Real dy = listener.y - pos->y;
-		Real dz = listener.z - pos->z;
-		inRange = !(dx * dx + dy * dy + dz * dz > m_rangeSqr);
+		Rva006059F0Delta delta(0.0f, 0.0f, 0.0f);
+		delta006059F0(&delta, listener.z - pos->z, listener.y - pos->y, listener.x - pos->x);
+		inRange = !(delta.lengthSqr() > m_rangeSqr);
 	}
 	if (!inRange)
 	{

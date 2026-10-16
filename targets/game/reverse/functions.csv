@@ -59285,7 +59285,6 @@ $L314,,0x00C1FC1D,24,game/GameEngine/Source/Common/Rva00C1FC1DVecDtor.cpp,matche
 ?hasAnyBuildFacility@TeamPrototype@@QBE_NXZ,,0x000F0DA0,52,game/GameEngine/Source/Common/RTS/Team.cpp,matched,
 ?hasAnyBuildings@Player@@QBE_NV?$BitFlags@$0MA@@@_N@Z,,0x000CDF70,118,game/GameEngine/Source/Common/RTS/PlayerHasAny.cpp,matched,
 ?hasAnyBuildings@Player@@QBE_N_N@Z,,0x000CDF20,60,game/GameEngine/Source/Common/RTS/PlayerHasAny.cpp,matched,
-?hasAnyBuildings@Team@@QBE_N_N@Z,,0x000F4980,184,game/GameEngine/Source/Common/RTS/Team_damageTeamMembers.cpp,matched,TeamPrototype caller at 0x000F6FD0 and BFME Object DLINK layout prove identity
 ?hasAnyBuildings@TeamPrototype@@QAE_NV?$BitFlags@$0MA@@@_N@Z,,0x000F7020,117,game/GameEngine/Source/Common/RTS/TeamPrototypeInstanceWalks.cpp,matched,
 ?hasAnyBuildings@TeamPrototype@@QAE_N_N@Z,,0x000F6FD0,59,game/GameEngine/Source/Common/RTS/TeamPrototypeInstanceWalks.cpp,matched,
 ?hasAnyFreeBlocks@MemoryPoolBlob@@QAE_NXZ,,0x003CB9E0,11,game/GameEngine/Source/Common/System/GameMemory.cpp,matched,
@@ -172555,3 +172554,4 @@ dup_69ec0,,0x00069EC0,45,game/Libraries/Source/WWVegas/WWLib/Rva00069C80PointerV
 ?update@Rva006E8310TransitionState@@QAEXXZ,,0x006E8310,555,game/GameEngineDevice/Source/W3DDevice/GameClient/W3DDisplayTransition006E8310.cpp,matched,Decoded no-argument thiscall transition state; identity_evidence/006e8310-transition.md; exact interpolation and callback reload; address-derived bank identity retained;model=gpt-6.1-sol;host=fleet
 _rva009B1ED0,,0x009B1ED0,701,game/GameEngine/Source/Common/Rva009B1ED0Filter.cpp,matched,Address-derived cdecl-view scalar filter; boundary and ABI evidence=targets/game/reverse/identity_evidence/009b1ed0-exact-filter.md;model=gpt-6.1-sol;host=fleet
 ?hasAnyBuildings@Team@@QAE_NV?$BitFlags@$0MA@@@_N@Z,,0x000F4A70,190,game/GameEngine/Source/Common/RTS/TeamPrototype_hasAnyBuildings.cpp,matched,TeamPrototype caller at 0x000F7020 and Team member DLINK layout prove identity; clean C++ without the inline asm nop: OVERRIDE<ThingTemplate> plus the inline recursive getFinalOverride lets MSVC align the loop head itself;model=claude-opus-5.5;host=GreatFaram
+?hasAnyBuildings@Team@@QBE_N_N@Z,,0x000F4980,184,game/GameEngine/Source/Common/RTS/Team_damageTeamMembers.cpp,matched,TeamPrototype caller at 0x000F6FD0 and BFME Object DLINK layout prove identity; clean C++ without the inline asm nop: OVERRIDE<ThingTemplate> plus the inline recursive getFinalOverride lets MSVC align the loop head itself;model=claude-opus-5.5;host=GreatFaram

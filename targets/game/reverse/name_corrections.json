@@ -20198,5 +20198,15 @@
   "after_sha256": "2cac60d4d740ba3e1d62bf27d1e2e3ed4abd2cee408cb3cf04f1a653dfb01557",
   "evidence": "targets/game/reverse/identity_evidence/007aaa30-water-render.md",
   "reason": "false pairing: Render's ZH reflection block (Vector3 locals) is outlined in BFME into the matched 0x007A2330 body, which Render now calls through the existing opaque Rva007A2330 route; Vector3 is not renamed."
+ },
+ {
+  "old_path": "targets/game/reverse/functions.csv",
+  "new_path": "targets/game/reverse/functions.csv",
+  "old_name": "endMenu",
+  "new_name": "bfme_appendGameOverDetails",
+  "before_sha256": "d4b55ac4306e64f650eed12e6867bee58de6c46a76646a5f8df0f81d58b257c6",
+  "after_sha256": "6f5d96f8b2965c55e7304ae6aeb64c8b9ee52920d579fd533e79b0b2f2c5981b",
+  "evidence": "targets/game/reverse/identity_evidence/00387a50-gamelogic-game-over-details.md",
+  "reason": "identity correction approved by the project lead 2026-10-15: the 657-byte body at 0x00387A50 is the GameLogic Game Over Details formatter (matched caller GameLogic::bfme_processLogicCRC 0x0038B597 and dispatcher 0x00397789 via ILT 0x0004A10B, both with ecx = TheGameLogic), not ZH's one-call EstablishConnectionsMenu::endMenu; the row takes the ledger's existing pin ?bfme_appendGameOverDetails@GameLogic@@QAEXXZ that the matched caller already spells."
  }
 ]

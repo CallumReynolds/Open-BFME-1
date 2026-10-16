@@ -1,5 +1,3 @@
-// ?bfme_appendGameOverDetails@GameLogic@@QAEXXZ
-// partial score=1.0 date=2026-10-15
 // cl: /DNDEBUG /MD /GX /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS /Igame/Libraries/Source/WWVegas/WWLib
 // stlport
 // GameLogic Game Over Details formatter at retail 0x00387A50 (657 bytes).

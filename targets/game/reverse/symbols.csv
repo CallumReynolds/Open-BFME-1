@@ -82973,7 +82973,6 @@ name,address,notes
 ?g_bfmeKey803A00B@@3PADA,0x00D2C74C,string key B for 0x00803A00
 ?g_bfmeKeyAVHC@@3HA,0x00D2B580,pin
 ?g_bfmeKeyBVHC@@3HA,0x00D2B578,pin
-?g_bfmeKeyCVHD@@3HA,0x00D2B490,pin
 ?g_bfmeKeyDVHD@@3HA,0x00D2B588,pin
 ?g_bfmeKeyGenEQW@@3PAVNameKeyGenerator@@A,0x00EED600,pin
 ?g_bfmeKeyGenERA@@3PAVBfmeKeyGenERA@@A,0x00EED600,pin

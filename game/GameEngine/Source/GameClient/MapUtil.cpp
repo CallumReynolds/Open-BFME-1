@@ -885,8 +885,8 @@ Int populateMapListbox( GameWindow *listbox, Bool useSystemMaps, Bool isMultipla
 /** Find a valid map */
 //-------------------------------------------------------------------------------------------------
 // ?getDefaultMap@@YA?AVAsciiString@@_N@Z
-// Body in MapUtil_getDefaultMap.asm (exact 361B retail @ 0x00457FB0).
-// BFME uses helper 0x453480 for the map walk (not ZH inline begin/end).
+// Body in MapUtilGetDefaultMap.cpp (retail 0x00457FB0, 361 bytes): BFME collects
+// the maps through helper 0x453480 and sorts them (not ZH inline begin/end).
 
 
 AsciiString getDefaultOfficialMap()

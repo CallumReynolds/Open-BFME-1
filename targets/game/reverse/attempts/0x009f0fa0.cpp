@@ -1,9 +1,12 @@
 // ?m009F0FA0@Q1Receiver0134FAAC@@QAEXPAVRva009EF0D0Element@@@Z
-// partial score=0.8917 date=2026-10-13
+// partial score=0.8933 date=2026-10-16
 // cl: /DNDEBUG /DWIN32 /D_WINDOWS /MD /EHsc /D_STLP_USE_STATIC_LIB
-// stlport
-// Evidence: targets/game/reverse/identity_evidence/009f0fa0-count-boundary.md
 
+// stlport
+// Evidence: targets/game/reverse/identity_evidence/009f0fa0-declaration-audit.md
+
+extern "C" void _ReadWriteBarrier();
+#pragma intrinsic(_ReadWriteBarrier)
 #include <deque>
 #define _BFME_RETAIL_TREE_INSERT_LAYOUT
 #include <set>
@@ -89,12 +92,12 @@ public:
 	virtual void Slot2C(void);
 	virtual void Slot30(void);
 	virtual void Slot34(void);
-	virtual BFMEIndexBufferDebugStream *Put_String(const char *text);
+	virtual BFMEIndexBufferDebugStream &Put_String(const char *text);
 	virtual void Slot3C(void);
 	virtual void Slot40(void);
 	virtual void Slot44(void);
 	virtual void Slot48(void);
-	virtual BFMEIndexBufferDebugStream *Finish(int report);
+	virtual bool Finish(int report);
 };
 
 class BFMEIndexBufferDebugClass
@@ -106,9 +109,9 @@ public:
 	virtual void Slot30(void); virtual void Slot34(void); virtual void Slot38(void); virtual void Slot3C(void);
 	virtual void Slot40(void); virtual void Slot44(void); virtual void Slot48(void); virtual void Slot4C(void);
 	virtual void Slot50(void); virtual void Slot54(void); virtual void Slot58(void); virtual void Slot5C(void);
-	virtual void Begin_Report(void);
+	virtual bool Begin_Report(void);
 	virtual void Slot64(void); virtual void Slot68(void);
-	virtual BFMEIndexBufferDebugStream *Get_Stream(void *owner, void *context);
+	virtual BFMEIndexBufferDebugStream &Get_Stream(const char *owner, int context);
 };
 
 extern BFMEIndexBufferDebugClass *g_BFMEIndexBufferDebug;
@@ -191,9 +194,9 @@ void Q1Receiver0134FAAC::m009F0FA0(Rva009EF0D0Element *entry)
 				_bfme_debugRecordCallsite(1);
 				g_BFMEIndexBufferDebug->Begin_Report();
 				g_BFMEIndexBufferDebug->Get_Stream(0, 0)
-					->Put_String("[info] Demand load: ")
-					->Put_String(name)
-					->Finish(2);
+					.Put_String("[info] Demand load: ")
+					.Put_String(name)
+					.Finish(2);
 			}
 		}
 		m_set190.m_set.insert(entry->m_key08);
@@ -225,6 +228,8 @@ void Q1Receiver0134FAAC::m009F0FA0(Rva009EF0D0Element *entry)
 		if (i < m_deques78[queue].size())
 		{
 			unsigned int count = m_deques78[queue].size();
+			// Keep the size calculation separate from the index expression.
+			_ReadWriteBarrier();
 			int lastIndex = count - 1;
 			Rva009EF0D0Element *&last = m_deques78[queue][lastIndex];
 			m_deques78[queue][i] = last;

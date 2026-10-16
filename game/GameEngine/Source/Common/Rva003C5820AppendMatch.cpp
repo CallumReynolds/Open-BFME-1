@@ -6,14 +6,51 @@
 #include <vector>
 #undef _M_insert_overflow
 
+extern char Rva006A16B0Empty[];
+
+// Refcounted string data: length word at +4, text at +8.
+struct Rva003C5270Blob
+{
+	void *m_00;
+	unsigned short m_len;
+	unsigned short m_pad;
+	char m_data[ 1 ];
+};
+
 class Rva003C5890Item
 {
+public:
+	Rva003C5270Blob *m_blob;
 };
 
 typedef Rva003C5890Item Rva003C5820Item;
 
 class Rva003C5820Key
 {
+public:
+	Rva003C5270Blob *m_blob;
+};
+
+extern "C" int memcmp( const void *, const void *, unsigned int );
+#pragma intrinsic( memcmp )
+
+class Rva003C5270BorrowedView
+{
+public:
+	Rva003C5270Blob *m_blob;
+
+	int compare( const Rva003C5820Item &that ) const
+	{
+		int thatLength = that.m_blob ? that.m_blob->m_len : 0;
+		const char *thatText = that.m_blob ? that.m_blob->m_data : Rva006A16B0Empty;
+		int thisLength = m_blob ? m_blob->m_len : 0;
+		const char *thisText = m_blob ? m_blob->m_data : Rva006A16B0Empty;
+		int length = thisLength < thatLength ? thisLength : thatLength;
+		int difference = memcmp( thisText, thatText, length );
+		if( difference != 0 )
+			return difference;
+		return thisLength - thatLength;
+	}
 };
 
 class Rva003C5820Output
@@ -26,23 +63,37 @@ public:
     void append( Rva003C5820Item *item );
 };
 
+class Rva003C5820Owner;
+int __stdcall Rva003C5270Find( Rva003C5820Owner *owner, Rva003C5820Key *key );
+
 class Rva003C5820Owner
 {
 public:
     void appendMatch( Rva003C5820Output *output, Rva003C5820Key *key );
+    friend int __stdcall Rva003C5270Find( Rva003C5820Owner *owner, Rva003C5820Key *key );
 
 private:
     _STL::vector<Rva003C5820Item *> m_items;
 };
 
-extern void d_003c5270();
+// Retail 0x003C5270, 181 bytes: index of the first item whose string equals
+// the key's, or -1. The loop re-tests the vector's size() each pass; caching
+// raw begin/end pointers instead puts the owner in EAX rather than EDX.
+int __stdcall Rva003C5270Find( Rva003C5820Owner *owner, Rva003C5820Key *key )
+{
+    for( unsigned int i = 0; i < owner->m_items.size(); ++i )
+    {
+        Rva003C5270BorrowedView query = { key->m_blob };
+        if( query.compare( *owner->m_items[ i ] ) == 0 )
+            return i;
+    }
+    return -1;
+}
 
 void Rva003C5820Owner::appendMatch( Rva003C5820Output *output,
                                     Rva003C5820Key *key )
 {
-    typedef int (__stdcall *FindFunction)( Rva003C5820Owner *,
-                                           Rva003C5820Key * );
-    int index = reinterpret_cast<FindFunction>( d_003c5270 )( this, key );
+    int index = Rva003C5270Find( this, key );
     if( index != -1 )
     {
         Rva003C5820Item *item = m_items[ index ];

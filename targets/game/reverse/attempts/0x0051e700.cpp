@@ -1,8 +1,19 @@
 // ?input@AptMainMenu@@UAEHIII@Z
-// partial score=0.644444 date=2026-09-25
-// cl: /DNDEBUG /MD /EHsc
+// partial score=0.9506 date=2026-10-16
+// cl: /DNDEBUG /MD /EHsc /Iinputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/Libraries/Include
 
 #include <stdlib.h>
+
+#include "Lib/BaseType.h"
+
+// ?decodePosition0051E700@@YA?AUICoord2D@@I@Z absent-from-retail
+static __forceinline ICoord2D decodePosition0051E700(unsigned int data)
+{
+	ICoord2D result;
+	result.y = (int)(data >> 16);
+	result.x = (int)(data & 0xffff);
+	return result;
+}
 
 class WindowManager
 {
@@ -40,9 +51,7 @@ private:
 	int m_i264;
 };
 
-__declspec(noinline) AptMainMenu::~AptMainMenu() {}
-
-// ?input@AptMainMenu@@UAEHIII@Z
+// ?input@AptMainMenu@@UAEHIII@Z present-unmatched
 int AptMainMenu::input( unsigned int message, unsigned int data, unsigned int state )
 {
 	if ( m_i264 == 8 )
@@ -50,7 +59,7 @@ int AptMainMenu::input( unsigned int message, unsigned int data, unsigned int st
 
 	if ( m_b259 )
 	{
-		if ( message != 0x15 || (unsigned char)data - 1 != 0 )
+		if (message == 0x15 ? (unsigned char)data - 1 : 1)
 			return 0;
 
 		if ( ( state & 1 ) == 0 )
@@ -62,7 +71,7 @@ int AptMainMenu::input( unsigned int message, unsigned int data, unsigned int st
 		if ( m_i264 == 4 )
 		{
 			g_theWindowManager->_bfme_callAptFunction(
-				m_field250, "MainMenuLevel", 0, 0, 0, 0, 0, 0 );
+				m_field250, "HideCredits", 0, 0, 0, 0, 0, 0 );
 			return 1;
 		}
 
@@ -73,7 +82,7 @@ int AptMainMenu::input( unsigned int message, unsigned int data, unsigned int st
 		}
 
 		g_theWindowManager->_bfme_callAptFunction(
-			m_field250, "MainMenuContinueCampaign", 0, 0, 0, 0, 0, 0 );
+			m_field250, "EscapeKeyPressed", 0, 0, 0, 0, 0, 0 );
 
 		return 1;
 	}
@@ -85,27 +94,15 @@ int AptMainMenu::input( unsigned int message, unsigned int data, unsigned int st
 	{
 		if ( message == 0x18 )
 		{
-			int y = (int)( data >> 16 );
-			int x = (int)( data & 0xffff );
+			ICoord2D position = decodePosition0051E700(data);
 
-			if ( x != 0 || y != 0 )
+			if ( position.x != 0 || position.y != 0 )
 			{
-				unsigned int flags = *(unsigned int *)0x012F49C0;
-				if ( ( flags & 1 ) == 0 )
-				{
-					flags |= 1;
-					*(unsigned int *)0x012F49C0 = flags;
-					*(int *)0x012F49BC = x;
-				}
-				if ( ( flags & 2 ) == 0 )
-				{
-					flags |= 2;
-					*(unsigned int *)0x012F49C0 = flags;
-					*(int *)0x012F49B8 = y;
-				}
+				static int previousX = position.x;
+				static int previousY = position.y;
 
-				if ( abs( x - *(int *)0x012F49BC ) > 20 ||
-					abs( y - *(int *)0x012F49B8 ) > 20 )
+				if ( abs( position.x - previousX ) > 20 ||
+					abs( position.y - previousY ) > 20 )
 					m_b259 = 1;
 			}
 		}
@@ -118,7 +115,7 @@ int AptMainMenu::input( unsigned int message, unsigned int data, unsigned int st
 		TheMouse->_bfme_setEngineVisibility( true );
 		m_b259 = 1;
 		g_theWindowManager->_bfme_callAptFunction(
-			m_field250, "BlinkBattleSchoolOff", 0, 0, 0, 0, 0, 0 );
+			m_field250, "ShowMainMenu", 0, 0, 0, 0, 0, 0 );
 	}
 
 	return 0;

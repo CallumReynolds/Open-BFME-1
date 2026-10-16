@@ -42,6 +42,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
+#include "Common/PlayerList.h"
 #include "Common/PerfTimer.h"
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
@@ -50,6 +51,7 @@
 #include "Common/GameState.h"
 #include "Common/QuickTrig.h"
 #include "GameClient/Drawable.h"
+#include "GameClient/RadiusDecal.h"
 #include "GameClient/FXList.h"
 #include "GameClient/Shadow.h"
 #include "GameLogic/GameLogic.h"		// for real-time frame
@@ -4392,3 +4394,66 @@ template void std::_Construct( std::pair<const unsigned __int64, Gen_mci_002e114
 // ??$_Construct@U?$pair@$$CB_KUGen_mci_007408f0@@@_STL@@U12@@_STL@@YAXPAU?$pair@$$CB_KUGen_mci_007408f0@@@0@ABU10@@Z present-unmatched
 template void std::_Construct( std::pair<const unsigned __int64, Gen_mci_007408f0> *,
 	const std::pair<const unsigned __int64, Gen_mci_007408f0> & );
+
+//-------------------------------------------------------------------------------------------------
+// 0x0075BE60: a draw-module virtual taking (selected, color). The owner and
+// method identity are unproven, so every name below keeps its address. The
+// two callee views are ABI views of ILT 0x000421AE (0x001C86B0: returns its
+// first pointer argument, so the caller lets it construct the position in
+// the outgoing argument slot) and ILT 0x0000D3E6 (0x004588D0: RET 28, a
+// twelve-byte position then count, color, RadiusDecal reference and scale).
+struct Rva0075BE60Globals { char prefix[0xA75]; unsigned char enabled; };
+struct Rva0075BE60Players { char prefix[0xC]; Player *local; };
+struct Rva0075BE60Scale { char prefix[0xE8]; float scale; };
+
+struct Rva0075BE60Position : Coord3D
+{
+	Rva0075BE60Position() {}
+	Rva0075BE60Position(const Rva0075BE60Position &other) { x = other.x; y = other.y; z = other.z; }
+	~Rva0075BE60Position() {}
+};
+
+class Rva001C86B0Object
+{
+public:
+	Rva0075BE60Position position(Coord3D *normal);
+};
+
+class Rva004588D0DecalTemplate
+{
+public:
+	void create(Rva0075BE60Position pos, unsigned selected, int color, RadiusDecal &decal, float scale);
+};
+
+struct Rva0075BE60Drawable { char prefix[0xFC]; Object *object; };
+
+class Rva0075BE60
+{
+public:
+	virtual void rva0075BE60(unsigned selected, int color);
+	char m_pad04[4];
+	Rva0075BE60Drawable *m_drawable;
+	int m_pad0c;
+	Rva0075BE60Scale *m_holder;
+	char m_pad14[0x178 - 0x14];
+	char m_decal[0x10];
+	Rva004588D0DecalTemplate m_template;
+};
+
+void Rva0075BE60::rva0075BE60(unsigned selected, int color)
+{
+	if (!reinterpret_cast<Rva0075BE60Globals *>(TheWritableGlobalData)->enabled)
+		return;
+	Rva0075BE60Drawable *draw = m_drawable;
+	Object *object = draw->object;
+	if (!object)
+		return;
+	if (ThePlayerList) {
+		Player *local = reinterpret_cast<Rva0075BE60Players *>(ThePlayerList)->local;
+		if (object->getControllingPlayer() != local)
+			return;
+	}
+	float scale = m_holder ? m_holder->scale : 0.0f;
+	m_template.create(reinterpret_cast<Rva001C86B0Object *>(object)->position(0), selected, color,
+		*reinterpret_cast<RadiusDecal *>(m_decal), scale);
+}

@@ -20208,5 +20208,15 @@
   "after_sha256": "6f5d96f8b2965c55e7304ae6aeb64c8b9ee52920d579fd533e79b0b2f2c5981b",
   "evidence": "targets/game/reverse/identity_evidence/00387a50-gamelogic-game-over-details.md",
   "reason": "identity correction approved by the project lead 2026-10-15: the 657-byte body at 0x00387A50 is the GameLogic Game Over Details formatter (matched caller GameLogic::bfme_processLogicCRC 0x0038B597 and dispatcher 0x00397789 via ILT 0x0004A10B, both with ecx = TheGameLogic), not ZH's one-call EstablishConnectionsMenu::endMenu; the row takes the ledger's existing pin ?bfme_appendGameOverDetails@GameLogic@@QAEXXZ that the matched caller already spells."
+ },
+ {
+  "old_path": "targets/game/reverse/attempts/0x0075be60.cpp",
+  "new_path": "game/GameEngineDevice/Source/W3DDevice/GameClient/Drawable/Draw/W3DModelDraw.cpp",
+  "old_name": "Object",
+  "new_name": "Rva001C86B0Object",
+  "before_sha256": "d8020210c8635612a77e6ebd87c6c3faedad4380c244f4bad36dcbda94d0ab47",
+  "after_sha256": "27e77111c75f924a03146c19e388695a9ec95ca5bf99dde3639f24afb569647a",
+  "evidence": "targets/game/reverse/identity_evidence/0075be60-rva001c86b0object-view.md",
+  "reason": "false pairing approved by the project lead 2026-10-15: the bank's TU-local Object declared the aggregate-return position view of ILT 0x000421AE (0x001C86B0); the landed body keeps the real Object for draw->object and getControllingPlayer and calls the position through the address-named ABI view Rva001C86B0Object; Object is not renamed."
  }
 ]

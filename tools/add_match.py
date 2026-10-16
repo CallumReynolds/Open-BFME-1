@@ -66,7 +66,38 @@ def replaceable_scaffold(row):
     return ((kind == "gen-tgrid" and
              re.fullmatch(r"game/gen_small/tgrid_\d+\.cpp", row["source"]) is not None)
             or (kind == "gen-shim" and
-                re.fullmatch(r"game/gen_small/(?:fam|fun)_\d+\.cpp", row["source"]) is not None))
+                re.fullmatch(r"game/gen_small/(?:fam|fun)_\d+\.cpp", row["source"]) is not None)
+            or gen_dtor_scaffold(row))
+
+
+# Approved by the project lead 2026-10-15: two kinds of game/gen_small/ claim may be
+# repointed to real C++ elsewhere, as gen-dump dumps already are. A gen-dtor row is a
+# placeholder deleting destructor of a synthetic Gen_dtor* class (no identity, so
+# --replace-rva alone retires it, like gen-dump). A hand-written U3*/W3* TU's row
+# carries a name, so retiring it is an identity correction (--correct-identity).
+GEN_DTOR_SOURCE = re.compile(r"game/gen_small/dtorsv?_\d+\.cpp")
+HAND_GEN_SMALL_SOURCE = re.compile(r"game/gen_small/[UW]3\w*\.cpp")
+GENERATED_ROOTS = ("game/gen_small/", "game/gen_asm/", "game/masm_dumps/")
+
+
+def gen_dtor_scaffold(row):
+    """A generator-written deleting destructor in game/gen_small/dtors*_NNN.cpp."""
+    return (row["notes"].lstrip().split(";", 1)[0] == "gen-dtor" and
+            GEN_DTOR_SOURCE.fullmatch(row["source"]) is not None)
+
+
+def hand_gen_small_claim(row):
+    """A hand-written (not generator-output) claim in a game/gen_small/ U3*/W3* TU."""
+    if HAND_GEN_SMALL_SOURCE.fullmatch(row["source"]) is None:
+        return False
+    parts = [part.strip() for part in row["notes"].split(";")]
+    return not (parts[0].startswith("gen-") or
+                any(part.startswith(("vendored=", "object-symbol=")) for part in parts))
+
+
+def gen_small_repoint(row):
+    """Does retiring ROW take the narrow game/gen_small/ repoint path?"""
+    return gen_dtor_scaffold(row) or hand_gen_small_claim(row)
 
 
 def vendored_row(row):
@@ -94,7 +125,9 @@ def correctable_claim(old, old_name, new_name, evidence_text):
     (approved by the project lead 2026-10-15) qualifies only with identity
     evidence that names its 0xRVA and both exact (case-sensitive) names as whole
     tokens, outside the paused D3DX9 region: vendored rows carry the upstream's
-    real identities, so the proof must show retail disagrees at that address."""
+    real identities, so the proof must show retail disagrees at that address.
+    A hand-written claim in a game/gen_small/ U3*/W3* TU (same approval) needs the
+    same token-exact evidence."""
     if any(not n or re.search(r"\s", n) for n in (old_name, new_name)):
         return False
     if old["name"] != old_name or old_name == new_name or old["status"] != "matched":
@@ -104,7 +137,9 @@ def correctable_claim(old, old_name, new_name, evidence_text):
     if (old["source"].startswith("game/") and
             not old["source"].startswith(("game/gen_small/", "game/gen_asm/"))):
         return True
-    if not vendored_row(old) or D3DX_PAUSED[0] <= old["rva"] <= D3DX_PAUSED[1]:
+    if not (vendored_row(old) or hand_gen_small_claim(old)):
+        return False
+    if D3DX_PAUSED[0] <= old["rva"] <= D3DX_PAUSED[1]:
         return False
     text = evidence_text or ""
     return (evidence_names(text, f"0x{old['rva']:08X}", case_insensitive=True) and
@@ -237,6 +272,53 @@ def batch_verification_environment(request_path):
     return environment
 
 
+def orphaned_caller_selectors(root, replaced):
+    """Exact build selectors for matched rows whose call into REPLACED loses its target.
+
+    A retired game/gen_small/ name stays defined by its frozen TU (that file is never
+    edited), but the resolver only knows ledger rows and symbols.csv pins: a matched
+    caller compiled against the old name would turn red in someone else's gate. Run
+    after the ledger is rewritten; the same question the commit hook asks
+    (delta_sources), asked early so a failure here restores the ledger."""
+    import build
+    import delta_sources
+    if Path(root).resolve() != Path(build.ROOT).resolve():
+        fail("the game/gen_small/ repoint reads the live build state; it cannot run "
+             "against a test --root")
+    rows = build.load_all_function_rows()
+    pins = set()
+    with build.SYMBOLS.open(encoding="utf-8", newline="") as handle:
+        for pin in csv.DictReader(handle):
+            try:
+                pins.add((pin["name"], int(pin["address"], 16)))
+            except (KeyError, TypeError, ValueError):
+                continue
+    deleted = {(replaced["name"], replaced["rva"])}
+    return [delta_sources.row_selector(rows[index]) for index in
+            delta_sources.affected_row_indices(deleted, pins, rows,
+                                               "gen_small repoint candidate losses")]
+
+
+def frozen_tu_defines(root, source_rel, name):
+    """True when the frozen game/gen_small/ TU's (just verified) object defines NAME.
+
+    The old file keeps compiling for its other rows. If it also emitted the new
+    name, the link would hold two definitions and COMDAT selection could pick the
+    generated copy over the verified one. A missing object is not evidence of
+    safety."""
+    import build
+    if Path(root).resolve() != Path(build.ROOT).resolve():
+        fail("the game/gen_small/ repoint reads the live build state; it cannot run "
+             "against a test --root")
+    obj = build.obj_path(Path(root) / source_rel)
+    if not obj.exists():
+        fail(f"no object for {source_rel} after verification; cannot prove it does not "
+             f"also define {name}")
+    stat = obj.stat()
+    _data, _sections, symbols = build._object_layout(str(obj), stat.st_mtime_ns, stat.st_size)
+    return any(symbol["name"] == name and symbol["section"] > 0 for symbol in symbols)
+
+
 def remove_stash(rva, root):
     """Drop the banked attempt for `rva` now that real C++ owns the address.
 
@@ -292,9 +374,11 @@ def replacement_tombstone_record(replaced, successor_name, successor_rva,
             f"claim at 0x{replaced['rva']:08X}/{replaced['size']}B from "
             f"{replaced['source']} was retired."
         )
-    if identity_evidence and vendored_row(replaced):
+    if identity_evidence and (vendored_row(replaced) or hand_gen_small_claim(replaced)):
         reason += (f" Identity evidence: {identity_evidence}. "
                    f"Prior notes: {replaced['notes']}")
+    elif gen_dtor_scaffold(replaced):
+        reason += f" Prior notes: {replaced['notes']}"
     buffer = io.StringIO()
     csv.writer(buffer, lineterminator="\n").writerow(
         [replaced["name"], f"0x{replaced['rva']:08X}", reason])
@@ -593,6 +677,17 @@ def main():
             fail("--boundary-evidence needs a changed extent or start; "
                  "this replacement already preserves the old range")
         replaced = at_rva[0]
+        if gen_small_repoint(replaced):
+            # Same proof bar as a gen_asm dump, and no wider: real compiled C++
+            # outside every generated root, the exact old extent, a real build.
+            if (not source_rel.startswith("game/") or source_rel.startswith(GENERATED_ROOTS)
+                    or source_path.suffix.lower() not in COMPILED_SOURCE_SUFFIXES):
+                fail(f"--replace-rva 0x{old_rva:08X} retires {replaced['source']}; its "
+                     f"successor must be real C++ under game/ outside "
+                     f"{', '.join(GENERATED_ROOTS)}, not {source_rel}")
+            if args.boundary_evidence or args.no_verify:
+                fail("a game/gen_small/ repoint keeps the old extent and is byte-verified: "
+                     "no --boundary-evidence or --no-verify")
     if args.replace_existing:
         if not claims:
             # 36 named __emit lifts carry a truncated decoration such as
@@ -715,6 +810,23 @@ def main():
     else:
         verify_cmd = [str(build_sh), source_rel]
         verify_label = f"./build.sh {source_rel}"
+    frozen_tu = None
+    if replaced is not None and args.replace_rva and gen_small_repoint(replaced):
+        # The frozen TU still compiles for its remaining rows: re-verify them, and
+        # every matched caller of the retired name, in the same build.
+        try:
+            extra = orphaned_caller_selectors(root, replaced)
+        except BaseException:
+            restore()
+            print("add_match: caller check failed — append and marker strip REVERTED",
+                  file=sys.stderr)
+            raise
+        if any(row["source"] == replaced["source"] and row["status"] == "matched"
+               for row in rows if row is not replaced):
+            frozen_tu = replaced["source"]
+            extra.append(frozen_tu)
+        verify_cmd += extra
+        verify_label += "".join(f" {item}" for item in extra)
     print(f"add_match: verifying: {verify_label}")
     verify_env = verification_environment(source_path, source_rel, name, rva)
     try:
@@ -727,6 +839,16 @@ def main():
         restore()
         fail(f"verification failed (exit {result.returncode}) — append and "
              "marker strip REVERTED; nothing was changed")
+    if frozen_tu is not None:
+        try:
+            shadowed = frozen_tu_defines(root, frozen_tu, name)
+        except BaseException:
+            restore()
+            raise
+        if shadowed:
+            restore()
+            fail(f"{frozen_tu} also defines {name}: its generated copy could win the "
+                 "link over the verified body — append and marker strip REVERTED")
     print("add_match: verified OK — row is live")
     admit_compiler_label_alias(root, args.notes, rva, raw,
                                None if replaced is None else replaced["rva"])

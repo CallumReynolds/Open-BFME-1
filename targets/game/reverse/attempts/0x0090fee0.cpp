@@ -1,14 +1,6 @@
 // ?render@Rva0090FEE0Renderer@@QAEXI@Z
-// partial score=0.6902459242884775 date=2026-09-27
+// partial score=0.8348 date=2026-10-16
 // cl: /DNDEBUG /MD /EHsc /Igame/Libraries/Source/WWVegas/WWMath /Igame/Libraries/Source/WWVegas/WWLib /Igame/Libraries/Source/WWVegas/WWSaveLoad /Igame/Libraries/Source/WWVegas/WW3D2 /Igame/Libraries/Source/WWVegas/Wwutil /Igame/Libraries/Source/WWVegas/WWDownload /Igame/Libraries/Source/Compression /Igame/Libraries/Source/WWVegas/WWDebug /Iinputs/reference/shims/sweep
-// Anonymous quad-buffer renderer, full retail 0x0090FEE0/3619 bytes.
-// Four refcounted source buffers +0/+4/+8/+C, count+10, texture+14,
-// shader+18 and default float4+1C..28 are independently witnessed by the
-// matched setter90F8C0, constructor90F650 and destructor90F680.
-// The raw particle caller5F1370 independently supplies the same object and
-// one forwarded stack argument. Keep the address-derived member identity.
-// Bank only: 3611 bytes,1113 probe-masked differences; extent penalty8.
-// See targets/game/reverse/identity_evidence/0090fee0-quad-buffer-renderer.md.
 #define Matrix4x4 Matrix4
 #include "sharebuf.h"
 #include "vector.h"
@@ -72,18 +64,14 @@ struct Rva0093B340Center
  float X, Y, Z;
  Rva0093B340Center() : X(0.0f), Y(0.0f), Z(0.0f) {}
 };
-extern "C" void bfme_SortingRenderer_InsertTriangles_93B340(const Rva0093B340Center &, unsigned short, unsigned short, unsigned short, unsigned short);
+#include "sortingrenderer.h"
 static __forceinline void InsertPointTriangles(unsigned short a, unsigned short b, unsigned short c, unsigned short d)
 {
  Rva0093B340Center center;
- bfme_SortingRenderer_InsertTriangles_93B340(center,a,b,c,d);
+ SortingRendererClass::Insert_Triangles(reinterpret_cast<const SphereClass&>(center),a,b,c,d);
 }
 
-// CMOV branch donor: the independently matched 328-byte Clamp_Color at
-// 0x0090F310 (DX8WrapperClampColor.cpp). Its 94-byte CMOV branch starts at
-// 0x0090F3FA. Native component statements retain retail's unrolled fallback.
-// VC7.1 uses branches for the equivalent native integer clamp; the submit
-// algorithm below remains C++ and uses the canonical x87 color pack helper.
+// Clamp each float component with the runtime CMOV feature flag.
 static __forceinline void ClampPointColor(Vector4 &color)
 {
 	if (!CPUDetectClass::Has_CMOV_Instruction())
@@ -144,6 +132,15 @@ static __forceinline unsigned ConvertPointColor(Vector4 color){
  return DX8Wrapper::Convert_Color(reinterpret_cast<const Vector3&>(color),color[3]);
 }
 
+static __forceinline void Rva0090FEE0NextUV(Vector2 *destination,Vector2 &value)
+{
+ *destination=value;
+ if(value.X!=0){value.X=0;value.Y=1-value.Y;}else value.X=1;
+}
+
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
+
 void Rva0090FEE0Renderer::render(unsigned)
 {
  if(!Count)return;
@@ -169,12 +166,13 @@ void Rva0090FEE0Renderer::render(unsigned)
   BoxDynamicVBAccessClass vertices(sort?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8,5,delta*4,0);
   {
    BoxDynamicVBAccessClass::WriteLockClass lock(&vertices);
-   unsigned char *vb=(unsigned char*)lock.Get_Formatted_Vertex_Array();
    const FVFInfoClass &fvf=vertices.FVF_Info();
-   unsigned stride=fvf.Get_FVF_Size();
-   unsigned char *position=vb+fvf.Get_Location_Offset();
-   Vector3 *source=Positions->Get_Array()+current*4;
+   volatile unsigned stride=fvf.Get_FVF_Size();
+   unsigned locationOffset=fvf.Get_Location_Offset();
+   unsigned char *vb=(unsigned char*)lock.Get_Formatted_Vertex_Array();
    int count=delta*4;
+   Vector3 *source=Positions->Get_Array()+current*4;
+   unsigned char *position=vb+locationOffset;
    for(int i=count;i;--i){*(Vector3*)position=*source++;position+=stride;}
    if(Colors){
     Vector4 *source=Colors->Get_Array()+current*4;
@@ -190,19 +188,15 @@ void Rva0090FEE0Renderer::render(unsigned)
     for(int i=count;i;--i){*(Vector3*)normal=*source++;normal+=stride;}
    }else{
     unsigned char *normal=vb+fvf.Get_Normal_Offset();
-    for(int i=count;i;--i){*(Vector3*)normal=Vector3(0,0,1);normal+=stride;}
+    for(int i=count;i;--i){unsigned step=stride;*(Vector3*)normal=Vector3(0,0,1);normal+=step;}
    }
    unsigned char *uv=vb+fvf.Get_Tex_Offset(0);
    if(UVs){
     Vector2 *source=UVs->Get_Array()+current*4;
-    for(int i=count;i;--i){*(Vector2*)uv=*source++;uv+=stride;}
+    for(int i=count;i;--i){unsigned x=((unsigned*)source)[0];unsigned step=stride;((unsigned*)uv)[0]=x;((unsigned*)uv)[1]=((unsigned*)source)[1];++source;uv+=step;}
    }else{
     Vector2 value(0,0);
-    for(int i=count;i;--i){
-     *(Vector2*)uv=value;
-     if(value.X!=0){value.X=0;value.Y=1-value.Y;}else value.X=1;
-     uv+=stride;
-    }
+    for(int i=count;i;--i){Rva0090FEE0NextUV((Vector2*)uv,value);uv+=stride;}
    }
   }
   DX8Wrapper::Set_Vertex_Buffer(*reinterpret_cast<DynamicVBAccessClass*>(&vertices));
@@ -212,4 +206,6 @@ void Rva0090FEE0Renderer::render(unsigned)
  }
  DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
  DX8Wrapper::Set_Transform(D3DTS_WORLD,world);
+ // Keep the transform-state stores ahead of the function exit.
+ _ReadWriteBarrier();
 }

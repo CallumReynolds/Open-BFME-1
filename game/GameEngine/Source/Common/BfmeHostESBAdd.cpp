@@ -1,29 +1,25 @@
-// cl: /D_STLP_USE_STATIC_LIB
+// cl: /D_STLP_USE_STATIC_LIB /D_STLP_NO_EXCEPTIONS
 // stlport
-#include <memory>
+#include <list>
 
 // ?bfmeAddESB@BfmeHostESB@@QAEXPAVBfmeThingESB@@@Z
 // Retail RVA 0x0021C420, 104 bytes.  The body is the BFME host's guarded
-// intrusive-list insertion: compare the candidate thing id, query virtual
+// list insertion: compare the candidate thing id, query virtual
 // slot 64, allocate a 12-byte node, and link it before the sentinel.
 //
 // The class owner is cross-checked by the existing BfmeHostESB::bfmeOtherESB
 // pin at 0x00034955 and the BfmeThingESB::bfmeIdESB pin at 0x00020824.  The
 // three direct callees are already ledger-pinned (id, allocator, fallback).
 //
-// VC7.1's clean source schedules the callee-saved EDI pop before the final
-// two intrusive-list stores, while retail schedules it after both stores.
-// The narrow inline-asm block below encodes only those already-proven field
-// stores; all guards, allocation, placement construction, and control flow
-// remain authored C++ and the block contains no byte-emission directives.
+// The +0x99C member is an STLport list<BfmeThingESB *>: the tail is its
+// inlined push_back (_M_create_node, then the four link stores before the
+// sentinel), which keeps retail's store order ahead of the register pops.
 
 class BfmeThingESB
 {
 public:
 	int bfmeIdESB();
 };
-
-typedef BfmeThingESB *BfmeThingPtrESB;
 
 // Retail 0x0021C428 and 0x0021C435 call the thing-id accessor and the host's
 // other-add helper through the incremental-link ILT thunks at RVA 0x00020824
@@ -35,13 +31,6 @@ extern void j_00020824(void);
 extern void j_00034955(void);
 
 typedef int (__fastcall *BfmeThingIdESBCall)(BfmeThingESB *);
-
-struct BfmeNodeESB
-{
-	BfmeNodeESB *m_bfmeNextESB;
-	BfmeNodeESB *m_bfmePrevESB;
-	BfmeThingESB *m_bfmeValueESB;
-};
 
 class BfmeHostESB
 {
@@ -115,7 +104,7 @@ public:
 	void bfmeAddESB(BfmeThingESB *thing);
 
 	unsigned char m_bfmeHeadESB[0x998];
-	BfmeNodeESB *m_bfmeListESB;
+	_STL::list<BfmeThingESB *> m_bfmeListESB;
 };
 
 // Retail's tail call at 0x0021C47D is `push edi; mov ecx,esi; call <rel32>`
@@ -144,21 +133,7 @@ void BfmeHostESB::bfmeAddESB(BfmeThingESB *thing)
 		((BfmeThingIdESBCall)j_00020824)(*(BfmeThingESB **)((char *)this - 0x18)) &&
 		bfmeSlot64ESB(0))
 	{
-		BfmeNodeESB *head = m_bfmeListESB;
-		BfmeNodeESB *node = (BfmeNodeESB *)_STL::__node_alloc<true, 0>::allocate(12);
-
-		new (&node->m_bfmeValueESB) BfmeThingPtrESB(thing);
-
-		BfmeNodeESB *prev = head->m_bfmePrevESB;
-
-		node->m_bfmeNextESB = head;
-		node->m_bfmePrevESB = prev;
-
-		__asm {
-			mov dword ptr [ecx], eax
-			mov dword ptr [esi + 4], eax
-		}
-
+		m_bfmeListESB.push_back(thing);
 		return;
 	}
 

@@ -100,6 +100,12 @@ DTOR_SUCCESSOR = re.compile(r"\?\?_[GE](?P<cls>.+)@@[A-Z]AEPAXI@Z")
 GEN_DTOR_NAME = re.compile(r"\?\?_[GE](?P<cls>Gen_dtorv?_[0-9a-f]{8})@@UAEPAXI@Z")
 
 
+def generated_spelling(name):
+    """A generator's own spelling (Gen_*, dup_*, ?d_/?j_ placeholders) anywhere in NAME.
+    Address-derived Rva* names stay allowed for hand-written rows (AGENTS.md)."""
+    return re.search(r"Gen_|dup_|(?:^|[@?$])[dj]i?_[0-9a-fA-F]{8}", name) is not None
+
+
 def opaque_class(cls):
     """An address-derived or generator class spelling: never a proven identity."""
     return (re.search(r"Gen_|dup_|(?:^|[@?$])[dj]_[0-9a-fA-F]{8}", cls) is not None or
@@ -124,7 +130,10 @@ def gen_dtor_successor_problem(root, replaced, name, rows):
                 "placeholder is only replaced by the deleting destructor of a real class")
     placeholder = GEN_DTOR_NAME.fullmatch(replaced["name"])
     if placeholder is None:
-        return f"{replaced['name']} is not a Gen_dtor placeholder name"
+        # Out of scope: a gen-dtor row already renamed to a real class (EA renames,
+        # e.g. ??_EAssetManagerImpl...) has no Gen_dtor pin to prove its destructor.
+        return (f"{replaced['name']} is not a Gen_dtor placeholder name; renamed gen-dtor "
+                "rows are out of scope for this path")
     pin_name = f"??1{placeholder.group('cls')}@@UAE@XZ"
     pins = set()
     symbols = Path(root) / "targets/game/reverse" / "symbols.csv"
@@ -136,11 +145,16 @@ def gen_dtor_successor_problem(root, replaced, name, rows):
                         pins.add(int(pin["address"], 16))
                     except (KeyError, TypeError, ValueError):
                         continue
-    if not pins:
-        return f"no symbols.csv pin {pin_name} says which destructor the placeholder calls"
+    if len(pins) != 1:
+        return (f"{len(pins)} symbols.csv pins {pin_name}; exactly one must say which "
+                "destructor the placeholder calls")
     behind = set(pins)
     for row in rows:
-        if row["status"] == "matched" and row["rva"] in pins:
+        # Only a matched 5-byte ILT thunk row's target= says where a call lands.
+        ilt = (row["size"] == 5 and
+               (re.fullmatch(r"\?j_[0-9a-fA-F]{8}@@YAXXZ", row["name"]) is not None or
+                row["notes"].lstrip().split(";", 1)[0] == "gen-thunk"))
+        if row["status"] == "matched" and row["rva"] in pins and ilt:
             target = re.search(r"(?:^|;)target=0x([0-9A-Fa-f]{8})(?:;|$)", row["notes"])
             if target:
                 behind.add(int(target.group(1), 16))
@@ -357,6 +371,29 @@ def orphaned_caller_selectors(root, replaced):
                                                "gen_small repoint candidate losses")]
 
 
+def census_gen_small_problem(root, index):
+    """Why the census INDEX cannot vouch for game/gen_small/ as it is now, or None.
+
+    The files are frozen against hand edits, not against tool renames (EA renames
+    rewrite them), so the census must have been taken at a commit whose
+    game/gen_small/ equals the working tree's."""
+    meta = index.get("meta") if isinstance(index, dict) else None
+    commit = meta.get("commit") if isinstance(meta, dict) else None
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-fA-F]{7,40}", commit):
+        return ("the link census index records no commit; cannot trust its game/gen_small/ "
+                "definitions (rebuild it: python3 tools/link_census.py --build --history)")
+    known = subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=root,
+                           capture_output=True)
+    if known.returncode != 0:
+        return f"the link census commit {commit} is unknown here; refresh the census first"
+    same = subprocess.run(["git", "diff", "--quiet", commit, "--", "game/gen_small"],
+                          cwd=root, capture_output=True)
+    if same.returncode != 0:
+        return (f"game/gen_small/ changed since the link census at {commit}: its definitions "
+                "are stale; refresh the census first")
+    return None
+
+
 def gen_small_definers(root, name):
     """Census objects of game/gen_small/ TUs that define NAME (strong or COMDAT).
 
@@ -370,6 +407,9 @@ def gen_small_definers(root, name):
         fail("the game/gen_small/ repoint reads the live build state; it cannot run "
              "against a test --root")
     index = link_check.load_index()
+    problem = census_gen_small_problem(root, index)
+    if problem:
+        fail(problem)
     objects = index["objects"]
     found = set(index["strong"].get(name, ()))
     found.update(entry[0] for entry in index["comdat"].get(name, ()))
@@ -764,7 +804,8 @@ def main():
             except ValueError:
                 canonical = None
             folded = source_rel.casefold()
-            given = re.split(r"[\\/]", args.source)
+            given = (source_rel.split("/") if Path(args.source).is_absolute()
+                     else re.split(r"[\\/]", args.source))
             if given[:1] == ["."]:
                 given = given[1:]               # one leading ./ is the usual spelling
             if (canonical != source_rel or any(part in (".", "..", "") for part in given)
@@ -777,6 +818,9 @@ def main():
             if args.boundary_evidence or args.no_verify:
                 fail("a game/gen_small/ repoint keeps the old extent and is byte-verified: "
                      "no --boundary-evidence or --no-verify")
+            if generated_spelling(name):
+                fail(f"{name} is a generator spelling (Gen_, dup_, ?d_/?j_); a game/gen_small/ "
+                     "claim is only replaced by a real or address-derived (Rva*) name")
             if gen_dtor_scaffold(replaced):
                 problem = gen_dtor_successor_problem(root, replaced, name, rows)
                 if problem:

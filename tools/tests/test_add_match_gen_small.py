@@ -444,3 +444,120 @@ def test_s8_generated_marker_in_any_note_part_is_not_hand_written(tmp_path, monk
                            notes)
     files, _, _ = hand(tmp_path, monkeypatch, proof=GOOD_PROOF, row=row)
     refused(files)
+
+
+# --- review round 2 regressions ---------------------------------------------------
+
+@pytest.mark.parametrize("name", [
+    "??_EGen_dtorv_0005da80@@UAEPAXI@Z",                # R2-1: generator class
+    "?init@Gen_0005da80@@QAEXPBGI@Z",
+    "?dup_0005da80@@YAXXZ",
+    "?d_0005da80@@YAXXZ",
+    "?j_0005da80@@YAXXZ",
+])
+def test_r2_1_hand_written_successor_cannot_be_a_generator_spelling(
+        tmp_path, monkeypatch, name):
+    proof = f"`{HAND_RVA}` ledgered as `{HAND_OLD}` is `{name}`.\n"
+    files, recorder, _ = hand(tmp_path, monkeypatch, proof=proof)
+    sys.argv[1] = name
+    refused(files)
+    assert recorder.builds == []
+
+
+def test_r2_1_address_derived_rva_successor_still_allowed(tmp_path, monkeypatch):
+    name = "?convert@Rva0005DA80WideToAnsi@@QAEXPBGI@Z"
+    files, _, _ = hand(tmp_path, monkeypatch, proof=f"{HAND_RVA} {HAND_OLD} {name}\n")
+    sys.argv[1] = name
+    add_match.main()
+    assert name in files[0].read_text()
+
+
+def test_r2_2_second_placeholder_pin_refused(tmp_path, monkeypatch):
+    # ??1Thing matched at a second pin of the RoadType placeholder must not land ??_EThing.
+    pins = PINS + ["??1Gen_dtorv_00707e60@@UAE@XZ,0x00709000,second pin"]
+    files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW],
+                                 name="??_EThing@@UAEPAXI@Z", pins=pins)
+    refused(files)
+    assert recorder.builds == []
+    # and the real class is refused too while the pin is ambiguous
+    files, recorder, _ = arrange(tmp_path / "b", monkeypatch, rows=[DTOR_ROW, SIBLING_ROW],
+                                 pins=pins)
+    refused(files)
+
+
+@pytest.mark.parametrize("row", [
+    # R2-3: a non-thunk matched row at the pin address carrying target=
+    "?notThunk@@YAXXZ,,0x0001DE49,5,game/GameEngine/X.cpp,matched,authored;target=0x007070C0",
+    "?j_0001de49@@YAXXZ,,0x0001DE49,9,game/gen_small/gthunks_032.cpp,matched,"
+    "gen-thunk;gap;target=0x007070C0",
+])
+def test_r2_3_only_an_ilt_thunk_row_routes_to_the_destructor(tmp_path, monkeypatch, row):
+    files, recorder, _ = arrange(tmp_path, monkeypatch,
+                                 rows=[DTOR_ROW, SIBLING_ROW, row, SUPPORT[1]], support=False)
+    refused(files)
+    assert recorder.builds == []
+
+
+def test_r2_3_named_ilt_row_without_gen_note_is_accepted(tmp_path, monkeypatch):
+    row = "?j_0001de49@@YAXXZ,,0x0001DE49,5,game/GameEngine/Ilt.cpp,matched,target=0x007070C0"
+    files, _, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW, row, SUPPORT[1]],
+                          support=False)
+    add_match.main()
+    assert REAL in files[0].read_text()
+
+
+def git(cwd, *args):
+    import subprocess
+    return subprocess.run(["git", *args], cwd=cwd, check=True, capture_output=True,
+                          text=True).stdout.strip()
+
+
+@pytest.fixture
+def repo(tmp_path):
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "config", "user.email", "t@t")
+    git(tmp_path, "config", "user.name", "t")
+    (tmp_path / "game/gen_small").mkdir(parents=True)
+    (tmp_path / "game/gen_small/dtorsv_000.cpp").write_text("struct A {};\n")
+    (tmp_path / "game/Other.cpp").write_text("int x;\n")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-qm", "census")
+    return tmp_path, git(tmp_path, "rev-parse", "HEAD")
+
+
+def test_r2_4_census_at_an_equal_gen_small_is_trusted(repo):
+    root, commit = repo
+    (root / "game/Other.cpp").write_text("int y;\n")          # outside gen_small: irrelevant
+    git(root, "commit", "-qam", "later")
+    assert add_match.census_gen_small_problem(root, {"meta": {"commit": commit}}) is None
+
+
+@pytest.mark.parametrize("change", ["commit", "worktree"])
+def test_r2_4_stale_census_refused(repo, change):
+    root, commit = repo
+    (root / "game/gen_small/dtorsv_000.cpp").write_text("struct Renamed {};\n")
+    if change == "commit":
+        git(root, "commit", "-qam", "EA rename")
+    assert "changed since" in add_match.census_gen_small_problem(root, {"meta": {"commit": commit}})
+
+
+@pytest.mark.parametrize("index", [{}, {"meta": {}}, {"meta": {"commit": ""}},
+                                   {"meta": {"commit": "--quiet"}},
+                                   {"meta": {"commit": "0123456789abcdef0123"}}])
+def test_r2_4_missing_or_unknown_census_commit_refused(repo, index):
+    root, _ = repo
+    assert add_match.census_gen_small_problem(root, index)
+
+
+def test_r2_5_absolute_successor_path_accepted(tmp_path, monkeypatch):
+    files, _, _ = arrange(tmp_path, monkeypatch, rows=[DTOR_ROW, SIBLING_ROW])
+    sys.argv[sys.argv.index(SOURCE_REL)] = str(tmp_path / SOURCE_REL)
+    add_match.main()
+    assert f"{REAL},,{RVA},84,{SOURCE_REL},matched," in files[0].read_text()
+
+
+def test_r2_6_renamed_gen_dtor_placeholder_is_out_of_scope(tmp_path, monkeypatch, capsys):
+    row = DTOR_ROW.replace(DTOR_OLD, "??_EAssetManagerImpl@@UAEPAXI@Z")
+    files, recorder, _ = arrange(tmp_path, monkeypatch, rows=[row, SIBLING_ROW])
+    refused(files)
+    assert "out of scope" in capsys.readouterr().err

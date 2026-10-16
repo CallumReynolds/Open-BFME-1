@@ -93,9 +93,9 @@ extern void Rva0081BA40( void );
 extern "C" void Rva0081B9B0( void *comm );
 
 extern "C" int Rva0081B9D0( void *comm );
-// The generated row keeps the exact retail COFF spelling/address. CreateThread
-// consumes that address as a DWORD WINAPI(void *) thread entry.
-extern void d_00819920( void );
+// CreateThread consumes the matched thread worker at 0x00819920 as a
+// DWORD WINAPI(void *) thread entry.
+extern "C" int Rva00819920( struct Rva00819920Comm *parameter );
 typedef unsigned long ( __stdcall *Rva00819920ThreadProc )( void *parameter );
 extern void *Rva007F0000Alloc( int size );
 
@@ -193,7 +193,7 @@ extern "C" void *Rva00819630( int first, int second, int third )
 	comm->m_event0 = CreateEventA( 0, 1, 1, 0 );
 	comm->m_event1 = CreateEventA( 0, 1, 1, 0 );
 	comm->m_event2 = CreateEventA( 0, 1, 1, 0 );
-	result = CreateThread( 0, 0, (Rva00819920ThreadProc)d_00819920,
+	result = CreateThread( 0, 0, (Rva00819920ThreadProc)Rva00819920,
 		comm, 0, &pid );
 	if( result == 0 )
 		return 0;

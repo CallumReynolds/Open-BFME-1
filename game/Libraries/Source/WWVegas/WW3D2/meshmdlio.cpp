@@ -1859,16 +1859,7 @@ void MeshModelClass::install_alternate_material_desc(MeshLoadContextClass * cont
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshLoadContextClass::MeshLoadContextClass(void)
-{
-	memset(&Header,0,sizeof(Header));
-	memset(&MatInfo,0,sizeof(MatInfo));
-	PrelitChunkID = 0xffffffff;
-	CurPass = 0;
-	CurTexStage = 0;
-	TexCoords = NULL;
-	LoadedDIG = false;
-}
+// Complete BFME constructor: MeshLoadContextLifecycle.cpp (0x00970180, 358 bytes).
 
 
 /***********************************************************************************************
@@ -2722,3 +2713,8 @@ void forceGetDCGSource(MeshMatDescClass *desc, int pass)
 	desc->Get_DCG_Source(pass);
 }
 #pragma inline_depth()
+
+// The retail constructor lives in MeshLoadContextLifecycle.cpp; this TU still owns the
+// legacy-material vector instantiations its inline construction used to emit.
+template class VectorClass<MeshLoadContextClass::LegacyMaterialClass *>;
+template class DynamicVectorClass<MeshLoadContextClass::LegacyMaterialClass *>;

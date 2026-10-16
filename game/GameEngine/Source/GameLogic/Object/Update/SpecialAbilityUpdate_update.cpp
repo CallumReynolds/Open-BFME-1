@@ -162,7 +162,8 @@ struct BfmeThingFEC {int bfmeGoFEC();char pad000[4];SpecialAbilityUpdateModuleDa
 // BfmeConv894.cpp owns the byte-verified bfmeGoFEC definition.
 static __forceinline int bfmeGoFECInline(BfmeThingFEC* self){if(!self->active){if(!self->data->m_alwaysValidateSpecialObjects){if(self->field02c==0)return 0x3fffffff;}}return 1;}
 struct BfmeA999 {char bfmeGo999A();};
-// Retail 0x002A59F0: needToFace lives in this TU; the update body below
+// Retail 0x002A59F0: ZH SpecialAbilityUpdate::needToFace (Bool return: the
+// constant false is a byte xor, the logical tail a full-width 0/1). The update body below
 // matches only with its definition visible here.
 typedef unsigned char Bool;
 
@@ -178,7 +179,7 @@ public:
 class Gen_002A59F0
 {
 public:
-	int needToFace(void) const;
+	bool needToFace(void) const;
 
 private:
 	unsigned char m_gap00[8];
@@ -188,20 +189,12 @@ private:
 	unsigned char m_working;
 };
 
-int Gen_002A59F0::needToFace(void) const
+bool Gen_002A59F0::needToFace(void) const
 {
-	BfmeAi59F0 *ai = m_ai;
+	const BfmeAi59F0 *ai = m_ai;
 	if (ai->m_work == 0)
-	{
-		__asm
-		{
-			xor al, al
-			ret
-		}
-	}
-	if (m_marked != 0 && m_working != 0)
-		return 0;
-	return 1;
+		return false;
+	return !m_marked || !m_working;
 }
 class BfmeThing5F30 {public:unsigned char bfmeReady5F30()const;};
 class BfmeThingXR {public:unsigned char bfmeReadyXR()const;};

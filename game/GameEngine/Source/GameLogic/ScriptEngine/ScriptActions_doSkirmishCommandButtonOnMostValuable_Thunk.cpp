@@ -1,813 +1,274 @@
-// cl: /DNDEBUG /MD /EHsc
-// readable body of ?doSkirmishCommandButtonOnMostValuable@ScriptActions@@IAEXABVAsciiString@@0M_N@Z: game/GameEngine/Source/GameLogic/ScriptEngine/ScriptActions.cpp
-// Open-BFME5: lift MASM dump ScriptActions::doSkirmishCommandButtonOnMostValuable to C++ thunk.
+// cl: /DNDEBUG /DWIN32 /MD /EHsc /D_STLP_USE_STATIC_LIB /Iinputs/reference/shims/stringinline
+// ?doSkirmishCommandButtonOnMostValuable@ScriptActions@@IAEXABVAsciiString@@0M_N@Z
+// stlport
+// Clean C++ recovery of ScriptActions::doSkirmishCommandButtonOnMostValuable.
+// Retail boundary: 0x002FF770, 795 bytes.  The executeAction
+// SKIRMISH_PERFORM_COMMANDBUTTON_ON_MOST_VALUABLE_OBJECT arm names this
+// four-argument body.  BFME keeps the reference action's group/filter flow,
+// with the BFME ScriptEngine by-value string ABI and the retail filter views.
+// Thing::m_template is Zero Hour's OVERRIDE<ThingTemplate> (Common/Override.h)
+// and Overridable::getFinalOverride is the reference's inline recursive
+// accessor (Common/Overridable.h): with that typing the first max-cost loop
+// keeps retail's ESI object / EDI template registers.
 
-class AsciiString;
-// upstream layout: inputs/reference/CnC_Generals_Zero_Hour/GeneralsMD/Code/GameEngine/Include/GameLogic/ScriptActions.h
+#include "StringInline.h"
+#include <vector>
+#include "../command_source_type.h"
+enum GUICommandType {};
+
+typedef bool Bool;
+typedef int Int;
+typedef float Real;
+
+#include "../../../../Libraries/Include/Lib/Coord3D.h"
+
+class Object;
+class Player;
+class CommandButton;
+class SpecialPowerTemplate;
+
+class ScriptEngine
+{
+public:
+	virtual void slot00() = 0; virtual void slot01() = 0;
+	virtual void slot02() = 0; virtual void slot03() = 0;
+	virtual void slot04() = 0; virtual void slot05() = 0;
+	virtual void slot06() = 0; virtual void slot07() = 0;
+	virtual void slot08() = 0; virtual void slot09() = 0;
+	virtual void slot10() = 0; virtual void slot11() = 0;
+	virtual void slot12() = 0; virtual void slot13() = 0;
+	virtual void slot14() = 0; virtual void slot15() = 0;
+	virtual void slot16() = 0;
+	virtual class Team *getTeamNamed(AsciiString name, Bool exact) = 0;
+};
+
+class Player
+{
+};
+
+class Team
+{
+public:
+	void getTeamAsAIGroup(class AIGroup *group);
+	Player *getControllingPlayer() const;
+};
+
+class AIGroup
+{
+public:
+	Object *getSpecialPowerSourceObject(unsigned id);
+	Object *getCommandButtonSourceObject(GUICommandType commandType);
+	bool getCenter(Coord3D *center);
+	void groupDoCommandButtonAtObject(const CommandButton *button,
+		Object *object, CommandSourceType source);
+ void groupDoCommandButtonAtPosition(const CommandButton*,const Coord3D*,CommandSourceType);
+};
+
+class AI
+{
+public:
+	AIGroup *createGroup();
+};
+
+class SpecialPowerTemplate
+{
+public:
+	unsigned getID() const;
+};
+
+class CommandButton
+{
+public:
+	SpecialPowerTemplate *getSpecialPowerTemplate() const
+	{
+		return *(SpecialPowerTemplate **)((char *)this + 0x34);
+	}
+	GUICommandType getCommandType() const
+	{
+		return *(const GUICommandType *)((const char *)this + 0x10);
+	}
+	bool needsPosition() const { return (getOptions() >> 5) & 1; }
+ unsigned getOptions() const
+	{
+		return *(const unsigned *)((const char *)this + 0x18);
+	}
+};
+
+class ControlBar
+{
+public:
+	const CommandButton *findCommandButton(const AsciiString &name);
+};
+
+class PartitionFilter
+{
+public:
+	PartitionFilter() : m_next(0) {}
+	virtual ~PartitionFilter() {}
+	virtual Bool allow(Object *object) = 0;
+ virtual Int getPlayerMask();
+	PartitionFilter *link(PartitionFilter *next);
+
+	PartitionFilter *m_next;
+};
+
+class PartitionFilterPlayerAffiliation : public PartitionFilter
+{
+public:
+	PartitionFilterPlayerAffiliation(const Player *player,
+		unsigned int affiliation, Bool match)
+		: m_player(player), m_match(match), m_affiliation(affiliation) {}
+
+protected:
+	virtual Bool allow(Object *object);
+ virtual Int getPlayerMask();
+
+private:
+	const Player *m_player;
+	Bool m_match;
+	unsigned int m_affiliation;
+};
+
+class PartitionFilterValidCommandButtonTarget : public PartitionFilter
+{
+public:
+	__declspec(noinline) PartitionFilterValidCommandButtonTarget(Object *source,
+		const CommandButton *button, Bool match, CommandSourceType sourceType)
+		: m_source(source), m_button(button), m_match(match),
+		  m_sourceType(sourceType) {}
+
+protected:
+	virtual Bool allow(Object *object);
+
+private:
+	Object *m_source;
+	const CommandButton *m_button;
+	Bool m_match;
+	CommandSourceType m_sourceType;
+};
+
+class PartitionFilterSameMapStatus : public PartitionFilter
+{
+public:
+	PartitionFilterSameMapStatus(const Object *object) : m_object(object) {}
+
+protected:
+	virtual Bool allow(Object *object);
+
+private:
+	const Object *m_object;
+};
+
+class Overridable { public: const Overridable *getFinalOverride() const { if (m_nextOverride) return m_nextOverride->getFinalOverride(); return this; } void *vtable; Overridable *m_nextOverride; };
+class ThingTemplate : public Overridable { char pad08[0x47a-8]; unsigned short m_buildCost; public: unsigned short getBuildCost() const {return m_buildCost;} };
+template <class T> class OVERRIDE { public:
+ const T *operator->() const { if (!m_overridable) return 0; return (T*)m_overridable->getFinalOverride(); }
+ const T *operator*() const { if (!m_overridable) return 0; return (T*)m_overridable->getFinalOverride(); }
+ operator const T*() const { return operator*(); }
+ const T *m_overridable; };
+class Object { void *vtable; OVERRIDE<ThingTemplate> m_template; char pad08[0x30]; Coord3D m_position; public:
+ const ThingTemplate *getTemplate() const { return m_template; }
+ const Coord3D *getPosition() const {return &m_position;}
+};
+inline bool moreExpensive(const Object *a,const Object *b) { const ThingTemplate *at=a->getTemplate(); const ThingTemplate *bt=b->getTemplate(); return at->getBuildCost()>bt->getBuildCost(); }
+struct BfmeIterEntry { Object *m_obj; void *m_extra; };
+struct BfmeObjectIterator { std::vector<BfmeIterEntry> m_entries; BfmeIterEntry *m_cur; int m_refCount; };
+class BfmeThingCAD { public: void bfmeGoCAD(); };
+class BfmeThingEOF { public: void *bfmeGoEOF(); };
+struct BfmeWideResult {
+ BfmeObjectIterator *m_value;
+ BfmeWideResult(); BfmeWideResult(const BfmeWideResult &);
+ ~BfmeWideResult() { ((BfmeThingCAD*)this)->bfmeGoCAD(); }
+ Object *first() { return (Object*)((BfmeThingEOF*)this)->bfmeGoEOF(); }
+ Object *next() { if(m_value->m_cur==m_value->m_entries.end()) return 0; return (m_value->m_cur++)->m_obj; }
+};
+enum IterOrderType {};
+class PartitionManager { public: BfmeWideResult iterate(const Coord3D*,float,IterOrderType,PartitionFilter*,bool); };
+
+extern ScriptEngine *TheScriptEngine;
+extern AI *TheAI;
+extern ControlBar *TheControlBar;
+extern PartitionManager *ThePartitionManager;
+
+enum
+{
+	ALLOW_ENEMIES = 4,
+
+	FROM_CENTER_2D = 0,
+	ITER_SORTED_EXPENSIVE_TO_CHEAP = 3
+};
+
 class ScriptActions
 {
 protected:
-void doSkirmishCommandButtonOnMostValuable(const AsciiString &, const AsciiString &, float, bool);
+	void doSkirmishCommandButtonOnMostValuable(const AsciiString &teamName,
+		const AsciiString &ability, Real range, Bool allTeamMembers);
 };
 
 // ?doSkirmishCommandButtonOnMostValuable@ScriptActions@@IAEXABVAsciiString@@0M_N@Z
-__declspec(naked) void ScriptActions::doSkirmishCommandButtonOnMostValuable(const AsciiString &, const AsciiString &, float, bool)
+void ScriptActions::doSkirmishCommandButtonOnMostValuable(
+	const AsciiString &teamName, const AsciiString &ability, Real range,
+	Bool allTeamMembers)
 {
-__asm {
-        __emit 0x6a
-        __emit 0xff
-        __emit 0x68
-        __emit 0xb8
-        __emit 0x6a
-        __emit 0x01
-        __emit 0x01
-        __emit 0x64
-        __emit 0xa1
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x50
-        __emit 0x64
-        __emit 0x89
-        __emit 0x25
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x83
-        __emit 0xec
-        __emit 0x4c
-        __emit 0x8b
-        __emit 0x44
-        __emit 0x24
-        __emit 0x5c
-        __emit 0x53
-        __emit 0x55
-        __emit 0x56
-        __emit 0x57
-        __emit 0x33
-        __emit 0xdb
-        __emit 0x53
-        __emit 0x51
-        __emit 0x89
-        __emit 0x64
-        __emit 0x24
-        __emit 0x1c
-        __emit 0x8b
-        __emit 0xcc
-        __emit 0x50
-        __emit 0xe8
-        __emit 0xc0
-        __emit 0x83
-        __emit 0x58
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x0d
-        __emit 0x6c
-        __emit 0x07
-        __emit 0x2f
-        __emit 0x01
-        __emit 0x8b
-        __emit 0x11
-        __emit 0xff
-        __emit 0x52
-        __emit 0x44
-        __emit 0x8b
-        __emit 0xf8
-        __emit 0x3b
-        __emit 0xfb
-        __emit 0x0f
-        __emit 0x84
-        __emit 0xc1
-        __emit 0x02
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x0d
-        __emit 0x14
-        __emit 0xf2
-        __emit 0x2e
-        __emit 0x01
-        __emit 0xe8
-        __emit 0xb0
-        __emit 0xbd
-        __emit 0xd3
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xf0
-        __emit 0x56
-        __emit 0x8b
-        __emit 0xcf
-        __emit 0x89
-        __emit 0x74
-        __emit 0x24
-        __emit 0x14
-        __emit 0xe8
-        __emit 0xf3
-        __emit 0x36
-        __emit 0xd2
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xcf
-        __emit 0xe8
-        __emit 0xc6
-        __emit 0x3e
-        __emit 0xd2
-        __emit 0xff
-        __emit 0x3b
-        __emit 0xc3
-        __emit 0x0f
-        __emit 0x84
-        __emit 0x99
-        __emit 0x02
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x44
-        __emit 0x24
-        __emit 0x70
-        __emit 0x8b
-        __emit 0x0d
-        __emit 0xf8
-        __emit 0x33
-        __emit 0x2f
-        __emit 0x01
-        __emit 0x50
-        __emit 0xe8
-        __emit 0xb0
-        __emit 0xbd
-        __emit 0xd3
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xe8
-        __emit 0x3b
-        __emit 0xeb
-        __emit 0x89
-        __emit 0x6c
-        __emit 0x24
-        __emit 0x14
-        __emit 0x0f
-        __emit 0x84
-        __emit 0x7b
-        __emit 0x02
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x4d
-        __emit 0x34
-        __emit 0x3b
-        __emit 0xcb
-        __emit 0x74
-        __emit 0x0f
-        __emit 0xe8
-        __emit 0x73
-        __emit 0xd4
-        __emit 0xd0
-        __emit 0xff
-        __emit 0x50
-        __emit 0x8b
-        __emit 0xce
-        __emit 0xe8
-        __emit 0x07
-        __emit 0x97
-        __emit 0xd1
-        __emit 0xff
-        __emit 0xeb
-        __emit 0x0b
-        __emit 0x8b
-        __emit 0x45
-        __emit 0x10
-        __emit 0x50
-        __emit 0x8b
-        __emit 0xce
-        __emit 0xe8
-        __emit 0xb0
-        __emit 0xd4
-        __emit 0xd3
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xf0
-        __emit 0x3b
-        __emit 0xf3
-        __emit 0x0f
-        __emit 0x84
-        __emit 0x50
-        __emit 0x02
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x24
-        __emit 0x51
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x14
-        __emit 0xe8
-        __emit 0xf9
-        __emit 0xa3
-        __emit 0xd0
-        __emit 0xff
-        __emit 0x8b
-        __emit 0x55
-        __emit 0x18
-        __emit 0xc1
-        __emit 0xea
-        __emit 0x05
-        __emit 0xf6
-        __emit 0xc2
-        __emit 0x01
-        __emit 0x89
-        __emit 0x74
-        __emit 0x24
-        __emit 0x20
-        __emit 0xc7
-        __emit 0x44
-        __emit 0x24
-        __emit 0x18
-        __emit 0xd0
-        __emit 0x5d
-        __emit 0x08
-        __emit 0x01
-        __emit 0x89
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x1c
-        __emit 0x0f
-        __emit 0x84
-        __emit 0xfe
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x8b
-        __emit 0xcf
-        __emit 0x89
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x64
-        __emit 0xe8
-        __emit 0x3d
-        __emit 0x3e
-        __emit 0xd2
-        __emit 0xff
-        __emit 0x89
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x34
-        __emit 0xc7
-        __emit 0x44
-        __emit 0x24
-        __emit 0x30
-        __emit 0x9c
-        __emit 0x68
-        __emit 0x09
-        __emit 0x01
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x38
-        __emit 0xc6
-        __emit 0x44
-        __emit 0x24
-        __emit 0x3c
-        __emit 0x01
-        __emit 0xc7
-        __emit 0x44
-        __emit 0x24
-        __emit 0x40
-        __emit 0x04
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x53
-        __emit 0x8d
-        __emit 0x44
-        __emit 0x24
-        __emit 0x1c
-        __emit 0x50
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x38
-        __emit 0xc6
-        __emit 0x44
-        __emit 0x24
-        __emit 0x6c
-        __emit 0x01
-        __emit 0xe8
-        __emit 0x51
-        __emit 0x32
-        __emit 0x6f
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x78
-        __emit 0x50
-        __emit 0x53
-        __emit 0x51
-        __emit 0x8b
-        __emit 0x0d
-        __emit 0xb8
-        __emit 0xd5
-        __emit 0x2e
-        __emit 0x01
-        __emit 0x8d
-        __emit 0x54
-        __emit 0x24
-        __emit 0x34
-        __emit 0x52
-        __emit 0x8d
-        __emit 0x84
-        __emit 0x24
-        __emit 0x80
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x50
-        __emit 0xe8
-        __emit 0xb2
-        __emit 0x30
-        __emit 0x6f
-        __emit 0x00
-        __emit 0xb8
-        __emit 0x5c
-        __emit 0x3b
-        __emit 0x08
-        __emit 0x01
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x6c
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x30
-        __emit 0xc6
-        __emit 0x44
-        __emit 0x24
-        __emit 0x64
-        __emit 0x03
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x18
-        __emit 0xe8
-        __emit 0x1f
-        __emit 0x7c
-        __emit 0xd3
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xe8
-        __emit 0xeb
-        __emit 0x03
-        __emit 0x8d
-        __emit 0x49
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x6c
-        __emit 0x8b
-        __emit 0x41
-        __emit 0x04
-        __emit 0x8b
-        __emit 0x51
-        __emit 0x0c
-        __emit 0x3b
-        __emit 0xd0
-        __emit 0x74
-        __emit 0x52
-        __emit 0x8b
-        __emit 0xc2
-        __emit 0x8b
-        __emit 0x30
-        __emit 0x83
-        __emit 0xc0
-        __emit 0x08
-        __emit 0x3b
-        __emit 0xf3
-        __emit 0x89
-        __emit 0x41
-        __emit 0x0c
-        __emit 0x74
-        __emit 0x44
-        __emit 0x8b
-        __emit 0x46
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xc3
-        __emit 0x75
-        __emit 0x04
-        __emit 0x33
-        __emit 0xff
-        __emit 0xeb
-        __emit 0x0e
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xcb
-        __emit 0x74
-        __emit 0x05
-        __emit 0xe8
-        __emit 0xb8
-        __emit 0x29
-        __emit 0xd0
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xf8
-        __emit 0x8b
-        __emit 0x45
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xc3
-        __emit 0x75
-        __emit 0x04
-        __emit 0x33
-        __emit 0xc0
-        __emit 0xeb
-        __emit 0x0c
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xcb
-        __emit 0x74
-        __emit 0x05
-        __emit 0xe8
-        __emit 0x9f
-        __emit 0x29
-        __emit 0xd0
-        __emit 0xff
-        __emit 0x66
-        __emit 0x8b
-        __emit 0x8f
-        __emit 0x7a
-        __emit 0x04
-        __emit 0x00
-        __emit 0x00
-        __emit 0x66
-        __emit 0x3b
-        __emit 0x88
-        __emit 0x7a
-        __emit 0x04
-        __emit 0x00
-        __emit 0x00
-        __emit 0x76
-        __emit 0xa4
-        __emit 0x8b
-        __emit 0xee
-        __emit 0xeb
-        __emit 0xa0
-        __emit 0x3b
-        __emit 0xeb
-        __emit 0x74
-        __emit 0x14
-        __emit 0x8b
-        __emit 0x54
-        __emit 0x24
-        __emit 0x14
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x10
-        __emit 0x6a
-        __emit 0x01
-        __emit 0x83
-        __emit 0xc5
-        __emit 0x38
-        __emit 0x55
-        __emit 0x52
-        __emit 0xe8
-        __emit 0x69
-        __emit 0x7f
-        __emit 0xd4
-        __emit 0xff
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x6c
-        __emit 0xe9
-        __emit 0x18
-        __emit 0x01
-        __emit 0x00
-        __emit 0x00
-        __emit 0x6a
-        __emit 0x01
-        __emit 0x6a
-        __emit 0x01
-        __emit 0x55
-        __emit 0x56
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x54
-        __emit 0xc7
-        __emit 0x44
-        __emit 0x24
-        __emit 0x74
-        __emit 0x05
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0xe8
-        __emit 0x45
-        __emit 0xac
-        __emit 0xd3
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xf0
-        __emit 0x8b
-        __emit 0xcf
-        __emit 0xc6
-        __emit 0x44
-        __emit 0x24
-        __emit 0x64
-        __emit 0x06
-        __emit 0xe8
-        __emit 0x25
-        __emit 0x3d
-        __emit 0xd2
-        __emit 0xff
-        __emit 0x89
-        __emit 0x5c
-        __emit 0x24
-        __emit 0x34
-        __emit 0xc7
-        __emit 0x44
-        __emit 0x24
-        __emit 0x30
-        __emit 0x9c
-        __emit 0x68
-        __emit 0x09
-        __emit 0x01
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x38
-        __emit 0xc6
-        __emit 0x44
-        __emit 0x24
-        __emit 0x3c
-        __emit 0x01
-        __emit 0xc7
-        __emit 0x44
-        __emit 0x24
-        __emit 0x40
-        __emit 0x04
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x53
-        __emit 0x8d
-        __emit 0x44
-        __emit 0x24
-        __emit 0x1c
-        __emit 0x50
-        __emit 0x8b
-        __emit 0xce
-        __emit 0xc6
-        __emit 0x44
-        __emit 0x24
-        __emit 0x6c
-        __emit 0x07
-        __emit 0xe8
-        __emit 0x3b
-        __emit 0x31
-        __emit 0x6f
-        __emit 0x00
-        __emit 0x50
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x38
-        __emit 0xe8
-        __emit 0x31
-        __emit 0x31
-        __emit 0x6f
-        __emit 0x00
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x78
-        __emit 0x50
-        __emit 0x53
-        __emit 0x51
-        __emit 0x8b
-        __emit 0x0d
-        __emit 0xb8
-        __emit 0xd5
-        __emit 0x2e
-        __emit 0x01
-        __emit 0x8d
-        __emit 0x54
-        __emit 0x24
-        __emit 0x34
-        __emit 0x52
-        __emit 0x8d
-        __emit 0x84
-        __emit 0x24
-        __emit 0x84
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x50
-        __emit 0xe8
-        __emit 0x92
-        __emit 0x2f
-        __emit 0x6f
-        __emit 0x00
-        __emit 0xb8
-        __emit 0x5c
-        __emit 0x3b
-        __emit 0x08
-        __emit 0x01
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x70
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x30
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x44
-        __emit 0xc6
-        __emit 0x44
-        __emit 0x24
-        __emit 0x64
-        __emit 0x09
-        __emit 0x89
-        __emit 0x44
-        __emit 0x24
-        __emit 0x18
-        __emit 0xe8
-        __emit 0xfb
-        __emit 0x7a
-        __emit 0xd3
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xe8
-        __emit 0x90
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x70
-        __emit 0x8b
-        __emit 0x41
-        __emit 0x04
-        __emit 0x8b
-        __emit 0x51
-        __emit 0x0c
-        __emit 0x3b
-        __emit 0xd0
-        __emit 0x74
-        __emit 0x52
-        __emit 0x8b
-        __emit 0xc2
-        __emit 0x8b
-        __emit 0x30
-        __emit 0x83
-        __emit 0xc0
-        __emit 0x08
-        __emit 0x3b
-        __emit 0xf3
-        __emit 0x89
-        __emit 0x41
-        __emit 0x0c
-        __emit 0x74
-        __emit 0x44
-        __emit 0x8b
-        __emit 0x46
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xc3
-        __emit 0x75
-        __emit 0x04
-        __emit 0x33
-        __emit 0xff
-        __emit 0xeb
-        __emit 0x0e
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xcb
-        __emit 0x74
-        __emit 0x05
-        __emit 0xe8
-        __emit 0x98
-        __emit 0x28
-        __emit 0xd0
-        __emit 0xff
-        __emit 0x8b
-        __emit 0xf8
-        __emit 0x8b
-        __emit 0x45
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xc3
-        __emit 0x75
-        __emit 0x04
-        __emit 0x33
-        __emit 0xc0
-        __emit 0xeb
-        __emit 0x0c
-        __emit 0x8b
-        __emit 0x48
-        __emit 0x04
-        __emit 0x3b
-        __emit 0xcb
-        __emit 0x74
-        __emit 0x05
-        __emit 0xe8
-        __emit 0x7f
-        __emit 0x28
-        __emit 0xd0
-        __emit 0xff
-        __emit 0x66
-        __emit 0x8b
-        __emit 0x8f
-        __emit 0x7a
-        __emit 0x04
-        __emit 0x00
-        __emit 0x00
-        __emit 0x66
-        __emit 0x3b
-        __emit 0x88
-        __emit 0x7a
-        __emit 0x04
-        __emit 0x00
-        __emit 0x00
-        __emit 0x76
-        __emit 0xa4
-        __emit 0x8b
-        __emit 0xee
-        __emit 0xeb
-        __emit 0xa0
-        __emit 0x3b
-        __emit 0xeb
-        __emit 0x74
-        __emit 0x11
-        __emit 0x8b
-        __emit 0x54
-        __emit 0x24
-        __emit 0x14
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x10
-        __emit 0x6a
-        __emit 0x01
-        __emit 0x55
-        __emit 0x52
-        __emit 0xe8
-        __emit 0x6b
-        __emit 0xc6
-        __emit 0xd1
-        __emit 0xff
-        __emit 0x8d
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x70
-        __emit 0xc7
-        __emit 0x44
-        __emit 0x24
-        __emit 0x64
-        __emit 0xff
-        __emit 0xff
-        __emit 0xff
-        __emit 0xff
-        __emit 0xe8
-        __emit 0xfb
-        __emit 0xc9
-        __emit 0xd2
-        __emit 0xff
-        __emit 0x8b
-        __emit 0x4c
-        __emit 0x24
-        __emit 0x5c
-        __emit 0x5f
-        __emit 0x5e
-        __emit 0x5d
-        __emit 0x64
-        __emit 0x89
-        __emit 0x0d
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x00
-        __emit 0x5b
-        __emit 0x83
-        __emit 0xc4
-        __emit 0x58
-        __emit 0xc2
-        __emit 0x10
-        __emit 0x00
+	Team *team = TheScriptEngine->getTeamNamed(teamName, false);
+	if (!team)
+		return;
+
+	AIGroup *theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup);
+
+	Player *player = team->getControllingPlayer();
+	if (!player)
+		return;
+
+	const CommandButton *commandButton =
+		TheControlBar->findCommandButton(ability);
+	if (!commandButton)
+		return;
+
+	Object *srcObj = 0;
+	if (commandButton->getSpecialPowerTemplate())
+	{
+		srcObj = theGroup->getSpecialPowerSourceObject(
+			commandButton->getSpecialPowerTemplate()->getID());
+	}
+	else
+	{
+		srcObj = theGroup->getCommandButtonSourceObject(
+			commandButton->getCommandType());
+	}
+
+	if (!srcObj)
+		return;
+
+	Coord3D pos;
+	theGroup->getCenter(&pos);
+
+ 
+ if (commandButton->needsPosition()) {
+  BfmeWideResult result=ThePartitionManager->iterate(&pos,range,(IterOrderType)0,
+   PartitionFilterPlayerAffiliation(team->getControllingPlayer(),ALLOW_ENEMIES,true).link(&PartitionFilterSameMapStatus(srcObj)),false);
+  Object *target=result.first();
+  
+  while((srcObj=result.next())!=0) {
+   const ThingTemplate *otherTemplate=srcObj->getTemplate();
+   const ThingTemplate *targetTemplate=target->getTemplate();
+   if(otherTemplate->getBuildCost()>targetTemplate->getBuildCost()) target=srcObj;
+  }
+  if(target) theGroup->groupDoCommandButtonAtPosition(commandButton,target->getPosition(),CMD_FROM_SCRIPT);
+ } else {
+  BfmeWideResult result=ThePartitionManager->iterate(&pos,range,(IterOrderType)0,
+   PartitionFilterPlayerAffiliation(team->getControllingPlayer(),ALLOW_ENEMIES,true).link(
+    PartitionFilterValidCommandButtonTarget(srcObj,commandButton,true,CMD_FROM_SCRIPT).link(&PartitionFilterSameMapStatus(srcObj))),false);
+  Object *target=result.first();
+  
+  while((srcObj=result.next())!=0) {
+   const ThingTemplate *otherTemplate=srcObj->getTemplate();
+   const ThingTemplate *targetTemplate=target->getTemplate();
+   if(otherTemplate->getBuildCost()>targetTemplate->getBuildCost()) target=srcObj;
+  }
+  if(target) theGroup->groupDoCommandButtonAtObject(commandButton,target,CMD_FROM_SCRIPT);
+ }
 }
-}
+
+
